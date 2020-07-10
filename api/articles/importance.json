@@ -1,0 +1,1 @@
+{"title":"importance","slug":"importance","date":"2020-07-10T15:44:07.557Z","updated":"2020-07-10T15:44:28.936Z","comments":true,"path":"api/articles/importance.json","photos":[],"link":"","excerpt":null,"covers":null,"content":"<p>添加的方法:</p>\n<p>source 右键 git bash </p>\n<p>命令行输入：<br>hexo new name</p>\n<p>hexo clean</p>\n<p>hexo g</p>\n<p>hexo d</p>\n","categories":[],"tags":[]}
