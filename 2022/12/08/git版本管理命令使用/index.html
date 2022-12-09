@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">739</span>
+            <span class="post-count">1.3k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">2 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -110,7 +110,7 @@
     <div class="article-entry" itemprop="articleBody">
        
   <h4 id="权限问题"><a href="#权限问题" class="headerlink" title="权限问题"></a>权限问题</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_50790981/article/details/124991911">https://blog.csdn.net/qq_50790981&#x2F;article&#x2F;details&#x2F;124991911</a></p>
-<h4 id="创建版本库及版本管理"><a href="#创建版本库及版本管理" class="headerlink" title="创建版本库及版本管理"></a>创建版本库及版本管理</h4><p>1.创建工程目录</p>
+<h4 id="创建版本库及版本管理命令"><a href="#创建版本库及版本管理命令" class="headerlink" title="创建版本库及版本管理命令"></a>创建版本库及版本管理命令</h4><p>1.创建工程目录</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir project(任取)</span><br></pre></td></tr></table></figure>
 
 <p>2.进入工程目录下，新建版本仓库（或者合并成git init project）</p>
@@ -261,6 +261,123 @@
 <p>将文件删除并提交到暂存区（需要先从工作区删除，再使用本条命令，之后还要commit）</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm 文件名</span><br></pre></td></tr></table></figure>
 
+<p>只从stage中删除，保留物理文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm --cached 文件名</span><br></pre></td></tr></table></figure>
+
+<p>11.分支</p>
+<p>建立一个副本，在副本上修改，主分支master的内容不变</p>
+<p>（1）创建分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git branch</td>
+<td>列出所有本地分支</td>
+</tr>
+<tr>
+<td>$ git branch -r</td>
+<td>列出所有远程分支</td>
+</tr>
+<tr>
+<td>$ git branch -a</td>
+<td>列出所有本地和远程分支</td>
+</tr>
+<tr>
+<td>$ git branch dev</td>
+<td>新建一个分支dev，但不切换到此分支</td>
+</tr>
+<tr>
+<td>$ git branch dev commit_id</td>
+<td>新建一个分支，并指向某个commit</td>
+</tr>
+<tr>
+<td>$ git branch –d dev</td>
+<td>删除本地分支dev</td>
+</tr>
+<tr>
+<td>$ git branch –dr</td>
+<td>删除远程分支</td>
+</tr>
+</tbody></table>
+<p>在dev2上不存在第一个修改的记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928778.png" alt="QQ图片20221209092742" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928402.png" alt="QQ图片20221209092738" style="zoom:67%;" />
+
+<p>（2）切换分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git checkout –b dev</td>
+<td>新建一个分支dev，并切换到此分支</td>
+</tr>
+<tr>
+<td>$ git checkout  dev</td>
+<td>切换到分支dev，并更新工作区</td>
+</tr>
+</tbody></table>
+<p>（3）分支合并</p>
+<p>将分支dev合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git merge dev</span><br></pre></td></tr></table></figure>
+
+<p>选择一个commit，合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry --pick commit_id</span><br></pre></td></tr></table></figure>
+
+<p>（4）解决冲突</p>
+<p>如果同一个文件在合并分支时都被修改了则会引起冲突</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091109742.png" alt="QQ图片20221209110831" style="zoom: 80%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091110869.png" alt="QQ图片20221209110835" style="zoom:80%;" />
+
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt;，&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;，&gt;&gt;&gt;&gt;&gt;&gt;&gt;标记出不同分支的内容，其中&lt;&lt;&lt;HEAD是指主分支修改的内容，&gt;&gt;&gt;&gt;&gt;dev6 是指dev6上修改的内容</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091114906.png" alt="QQ图片20221209110838"></p>
+<p>解决的办法是可以修改冲突文件后重新提交。master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作，工作一般情况下在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上。用<em>git log –graph</em>命令可以看到分支合并图。</p>
+<p>（5）删除本地分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d [branch-name] -D（大写）强制删除</span><br></pre></td></tr></table></figure>
+
+<p>12.为不好记的commit_id打标签</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git tag</td>
+<td>查看所有标签</td>
+</tr>
+<tr>
+<td>$git tag V1.0</td>
+<td>为当前分支打上标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag -d v1.0</td>
+<td>删除当前分支的标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag V1.0 commit_id</td>
+<td>为指定的某次提交打上标签</td>
+</tr>
+<tr>
+<td>$git tag -a V1.0 -m “version1.0 released”</td>
+<td>为当前分支创建带说明性文字的标签号</td>
+</tr>
+<tr>
+<td>$git show V1.0</td>
+<td>查看标签为V1.0的信息</td>
+</tr>
+</tbody></table>
+<p>远程相关、忽略文件相关</p>
  
       <!-- reward -->
       
