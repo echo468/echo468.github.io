@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">5 min</span>
+            <span class="post-count">6 min</span>
         </span>
     </span>
 </div>
@@ -135,6 +135,18 @@
 <h4 id="示例九-3"><a href="#示例九-3" class="headerlink" title="示例九-3"></a>示例九-3</h4><p>内容：另一种读取纹理索引的封装函数（效果同示例九）</p>
 <h4 id="示例十"><a href="#示例十" class="headerlink" title="示例十"></a>示例十</h4><p>内容：透明（关闭背面剔除，启用混合函数）</p>
 <p>两个混合函数：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42050609/article/details/125215948">https://blog.csdn.net/weixin_42050609&#x2F;article&#x2F;details&#x2F;125215948</a></p>
+<p>在封装成纹理贴图的时，需要丢弃片段，混合函数用于渲染半透明的纹理。</p>
+<p>如果不采用丢弃片段：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251520987.png" alt="image-20221225152021510" style="zoom: 33%;" />
+
+<p>此时可以将四边形背景颜色的透明度设置为0，图案的透明度设置为1（或者反过来），在片段着色器添加如下代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(color.a &lt; <span class="number">1.0</span>)discard;</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251523443.png" alt="image-20221225152327554" style="zoom:33%;" />
+
+<p>但是会丢弃一部分绘制的图案，可能图案与背景衔接的部分也是&lt;1.0的，所以需要调节参数，如果把参数改成0.5：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251525815.png" style="zoom:33%;" />
+
 <h4 id="示例十一"><a href="#示例十一" class="headerlink" title="示例十一"></a>示例十一</h4><p>内容：2D文本（初始化，打印显示，删除）</p>
 <h4 id="示例十二"><a href="#示例十二" class="headerlink" title="示例十二"></a>示例十二</h4><p>内容：opengl扩展函数debug</p>
 <h4 id="示例十三"><a href="#示例十三" class="headerlink" title="示例十三"></a>示例十三</h4><p>内容：法线贴图显示凹凸感</p>
@@ -160,6 +172,13 @@
 <h4 id="示例十六-1"><a href="#示例十六-1" class="headerlink" title="示例十六-1"></a>示例十六-1</h4><p>内容：简化版，便于理解</p>
 <h4 id="示例十七"><a href="#示例十七" class="headerlink" title="示例十七"></a>示例十七</h4><p>内容：利用欧拉和四元组进行物体旋转 旋转矩阵和平移放缩计算出模型矩阵，再计算MVP矩阵</p>
 <p>欧拉原理：<a target="_blank" rel="noopener" href="https://blog.csdn.net/D_XingGuang/article/details/97148669">https://blog.csdn.net/D_XingGuang&#x2F;article&#x2F;details&#x2F;97148669</a></p>
+<p>旋转的时候一定要注意正向旋转还是反向旋转，在绘制背景图的时候，由于纹理只会渲染在四面形的一面，所以如果旋转反了会显示不出纹理。</p>
+<p>正向：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251531481.png" alt="image-20221225153133707" style="zoom:33%;" />
+
+<p>反向：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251530788.png" alt="image-20221225153021951" style="zoom: 33%;" />
+
 <h4 id="示例十八"><a href="#示例十八" class="headerlink" title="示例十八"></a>示例十八</h4><p>内容：绘制公告牌，正面永远正对相机方向</p>
 <p>已知公告板（定义在世界空间）中心位置，先计算相机世界空间向量，根据此向量进行调整，调整后进入VP矩阵</p>
 <p>公告板通过几何着色器利用四个顶点画出三角形条带（四边形）</p>

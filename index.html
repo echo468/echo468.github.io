@@ -118,6 +118,87 @@
     
     
     <article
+  id="post-细分着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >细分着色器</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2022-12-20T07:47:36.000Z" itemprop="datePublished">2022-12-20</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="细分着色器"><a href="#细分着色器" class="headerlink" title="细分着色器"></a>细分着色器</h4><p>细分曲面过程并不对OpenGL典型的几何图元（点、线和三角形）进行操作，而是使用一个新的图元，称为patch。patch仅仅是传入到OpenGL的一列顶点列表。当用细分曲面与patch进行渲染时，使用像glDrawArrays()这样的渲染命令，并指定从绑定的顶点缓存对象（VBO）将被读出的顶点的总数，然后为该绘制调用进行处理。当使用一个patch时，需要告诉OpenGL顶点数组中要使用多少个顶点来组成一个patch。由同一个绘制调用所处理的patch每个patch的顶点个数将是相同的。</p>
+<p>（1）在cpp文件中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置只画线,更容易看见使用细分着色器后的变化</span></span><br><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br><span class="line"><span class="comment">//告诉OpenGL顶点数组中要使用多少个顶点来组成一个patch</span></span><br><span class="line"><span class="built_in">glPatchParameteri</span>(GL_PATCH_VERTICES, <span class="number">4</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*顶点/颜色缓冲区相关设置，顶点数组中的顶点个数与设置的patch顶点个数相同，不然多余的不会绘制*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//绘制patch</span></span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_PATCHES, <span class="number">0</span>, <span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<p>glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);的设置可能会影响后续其他图形的绘制，所以需要用glPolygonMode(GL_FRONT, GL_FILL);设置填充绘制。</p>
+<p>（2）曲面细分控制着色文件</p>
+<p>细分控制着色器负责控制要渲染的输出面片类型，也就是细分发生的区域。OpenGL有三种细分域：四边形 三角形 等值线集合。</p>
+<p>内侧细分层级：设置的是细分区域的内部划分方式 保存在gl_TessLevelInner中，内测细分层级的值设置了区域内水平和垂直方向上各自划分多少“区域”。</p>
+<p>外侧细分层级：负责控制细分区域的周长划分成几段，保存在gl_TessLevelOuter数组中，外侧细分层级的值于周长上每条边的段数是对应的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251631262.png" alt="image-20221225163139088" style="zoom:50%;" />
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gl_TessLevelOuter[<span class="number">0</span>] = <span class="number">2.0</span>;</span><br><span class="line">gl_TessLevelOuter[<span class="number">1</span>] = <span class="number">3.0</span>;</span><br><span class="line">gl_TessLevelOuter[<span class="number">2</span>] = <span class="number">2.0</span>;</span><br><span class="line">gl_TessLevelOuter[<span class="number">3</span>] = <span class="number">5.0</span>;</span><br><span class="line">gl_TessLevelInner[<span class="number">0</span>] = <span class="number">3.0</span>;</span><br><span class="line">gl_TessLevelInner[<span class="number">1</span>] = <span class="number">4.0</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251632158.png" alt="image-20221225163207047" style="zoom:50%;" />
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gl_TessLevelOuter[<span class="number">0</span>] = <span class="number">6</span>;</span><br><span class="line">gl_TessLevelOuter[<span class="number">1</span>] = <span class="number">8</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251632243.png" alt="image-20221225163235088" style="zoom:50%;" />
+
+<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gl_TessLevelOuter[<span class="number">0</span>] = <span class="number">6</span>;</span><br><span class="line">gl_TessLevelOuter[<span class="number">1</span>] = <span class="number">5</span>;</span><br><span class="line">gl_TessLevelOuter[<span class="number">2</span>] = <span class="number">8</span>;</span><br><span class="line">gl_TessLevelInner[<span class="number">0</span>] = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<p>以细分四边形为例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 410 core</span></span><br><span class="line"><span class="comment">//注意设置输出的patch顶点个数</span></span><br><span class="line"><span class="built_in">layout</span> (vertices = <span class="number">4</span>) out;</span><br><span class="line">in vec3 fragmentColor[];</span><br><span class="line">out vec3 tcs_color[];<span class="comment">//输出给曲面细分求值着色文件</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//细分层级</span></span><br><span class="line">    <span class="keyword">if</span> (gl_InvocationID == <span class="number">0</span>) &#123; </span><br><span class="line">    gl_TessLevelInner[<span class="number">0</span>] = <span class="number">8</span>;</span><br><span class="line">    gl_TessLevelInner[<span class="number">1</span>] = <span class="number">8</span>;</span><br><span class="line">    gl_TessLevelOuter[<span class="number">0</span>] = <span class="number">3</span>;</span><br><span class="line">    gl_TessLevelOuter[<span class="number">1</span>] = <span class="number">3</span>;</span><br><span class="line">    gl_TessLevelOuter[<span class="number">2</span>] = <span class="number">3</span>;</span><br><span class="line">    gl_TessLevelOuter[<span class="number">3</span>] = <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//gl_in输入面片的顶点数量；gl_out输出面片的顶点数量；gl_InvocationID当前细分着色器在控制的顶点索引（颜色数组同理）</span></span><br><span class="line">    <span class="comment">//一般gl_out和gl_in可以设置相同</span></span><br><span class="line">    <span class="comment">//gl_Position和fragmentColor在顶点着色器中赋值</span></span><br><span class="line">    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;</span><br><span class="line">    tcs_color[gl_InvocationID] = fragmentColor[gl_InvocationID];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）曲面细分求值着色文件</p>
+<p>以细分四边形为例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 410 core                                           </span></span><br><span class="line"><span class="comment">//第一个参数：图元生成域（quads,triangles,isolines）,第三个参数：图元面朝向（cw顺，ccw逆）</span></span><br><span class="line"><span class="built_in">layout</span> (quads, equal_spacing, ccw) in;   </span><br><span class="line">in vec3 tcs_color[];<span class="comment">//由曲面细分控制着色文件输入</span></span><br><span class="line">out vec3 fragmentColor; <span class="comment">//输出的fragmentColor给片段着色器</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//生成细分顶点和颜色坐标</span></span><br><span class="line"><span class="type">float</span> u = gl_TessCoord.x; </span><br><span class="line"><span class="type">float</span> v = gl_TessCoord.y;         </span><br><span class="line">vec4 p0=gl_in[<span class="number">0</span>].gl_Position; </span><br><span class="line">vec4 p1 = gl_in[<span class="number">1</span>].gl_Position; </span><br><span class="line">vec4 p2 = gl_in[<span class="number">2</span>].gl_Position; </span><br><span class="line">vec4 p3 = gl_in[<span class="number">3</span>].gl_Position; </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span>                                             </span></span><br><span class="line"><span class="function"></span>&#123;                                                           </span><br><span class="line">gl_Position = p0 * (<span class="number">1</span>-u) * (<span class="number">1</span>-v) + p1 * u * (<span class="number">1</span>-v) + p3 * v * (<span class="number">1</span>-u) + p2 * u * v; </span><br><span class="line">fragmentColor=tcs_color[<span class="number">0</span>] * (<span class="number">1</span>-u) * (<span class="number">1</span>-v) + tcs_color[<span class="number">1</span>] * u * (<span class="number">1</span>-v) + tcs_color[<span class="number">2</span>] * v * (<span class="number">1</span>-u) + tcs_color[<span class="number">3</span>] * u * v; </span><br><span class="line">&#125; </span><br><span class="line"><span class="comment">//patch顶点为3的细分坐标计算</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">layout(triangles, equal_spacing,ccw) in;</span></span><br><span class="line"><span class="comment">vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)</span></span><br><span class="line"><span class="comment">&#123;</span></span><br><span class="line"><span class="comment">    return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">void main(void)                                             </span></span><br><span class="line"><span class="comment">&#123;   </span></span><br><span class="line"><span class="comment">vec3 iterP = interpolate3D(tcs_pos[0].xyz,tcs_pos[1].xyz,tcs_pos[2].xyz);</span></span><br><span class="line"><span class="comment"> vec3 iterCd = interpolate3D(tcs_color[0],tcs_color[1],tcs_color[2]);</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>参考链接：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lele0503/article/details/105881101">https://blog.csdn.net/lele0503/article/details/105881101</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aoxuestudy/article/details/124116047">https://blog.csdn.net/aoxuestudy/article/details/124116047</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-封装纹理贴图"
   class="article article-type-post"
   itemscope
@@ -154,6 +235,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">initRTT</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//生成一个纹理（如果四边形上要绘制多个纹理，就修改数字1）</span></span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">1</span>, renderTextureID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//纹理数组（空数组，仅分配了内存）</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span>* voxels;</span><br><span class="line">	voxels =</span><br><span class="line">		(<span class="type">unsigned</span> <span class="type">char</span>*)</span><br><span class="line">		<span class="built_in">malloc</span>((<span class="type">size_t</span>)(<span class="number">4</span> * <span class="number">1200</span> * <span class="number">800</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">        for (GLint i = 0; i &lt; 4; i++)</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        glBindTexture(GL_TEXTURE_2D, renderTextureID[i]);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span></span><br><span class="line"><span class="comment">        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fboWidth, fboHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, voxels);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//绑定纹理为2D渲染纹理</span></span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, renderTextureID[<span class="number">0</span>]);</span><br><span class="line">    <span class="comment">//纹理过滤</span></span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">    <span class="comment">//定义纹理，用空数组为纹理填充空图像</span></span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGBA, <span class="number">1200</span>, <span class="number">800</span>, <span class="number">0</span>, GL_RGBA, GL_UNSIGNED_BYTE, voxels);</span><br><span class="line">	<span class="built_in">free</span>(voxels);</span><br><span class="line">    </span><br><span class="line">     <span class="comment">//生成并绑定一个帧缓冲（至少一个颜色附件）</span></span><br><span class="line">	<span class="built_in">glGenFramebuffers</span>(<span class="number">1</span>, &amp;framebufferID);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//渲染一个3D模型，要进行深度测试，生成并绑定一个深度渲染缓冲区</span></span><br><span class="line">	<span class="built_in">glGenRenderbuffers</span>(<span class="number">1</span>, &amp;renderbufferID);</span><br><span class="line">	<span class="built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER, renderbufferID);</span><br><span class="line">    <span class="comment">//指定深度渲染缓冲区的数据格式和大小</span></span><br><span class="line">	<span class="built_in">glRenderbufferStorage</span>(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, <span class="number">1200</span>, <span class="number">800</span>);</span><br><span class="line">    <span class="comment">//深度渲染缓冲绑定为帧缓冲的深度附件</span></span><br><span class="line">	<span class="built_in">glFramebufferRenderbuffer</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferID);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//纹理绑定为帧缓冲的颜色附件（颜色附件可以有多个）</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     for (int i = 0; i &lt; 4; i++)</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, renderTextureID[i], 0);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTextureID[<span class="number">0</span>], <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//默认渲染到窗口</span></span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
 <p>2.主循环重点代码</p>
+<p>第二行设置的是四边形的背景颜色，不过一般需要剔除所以可以不用刻意设置，不设置的话四边形的背景颜色就是整个窗口的背景颜色。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一次清屏</span></span><br><span class="line">   <span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line">   <span class="built_in">glClearColor</span>(<span class="number">1.0f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,<span class="number">1.0f</span>);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//把渲染目标绑定到我们定义的帧缓冲</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//第二次清屏</span></span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line"><span class="built_in">glViewport</span>(<span class="number">0</span>, <span class="number">50</span>, <span class="number">1200</span>, <span class="number">800</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定接下来渲染时需要渲染到哪些颜色附件（此处仅一个颜色附件）</span></span><br><span class="line">GLenum buf[<span class="number">1</span>] = &#123; GL_COLOR_ATTACHMENT0 &#125;;</span><br><span class="line"><span class="built_in">glDrawBuffers</span>(<span class="number">1</span>, buf);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">绘制图案的代码（全部绘制在帧缓冲,不会显示在屏幕，用于接下来渲染四边形）</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">//渲染目标绑定到默认帧缓冲，显示在屏幕</span></span><br><span class="line">   <span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">绘制四边形的代码</span></span><br><span class="line"><span class="comment">（注意n个颜色附件就需要使用n个采样器，绑定n次纹理）</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
 
 <p>3.着色器文件</p>
@@ -486,65 +568,6 @@
 </tr>
 </tbody></table>
 <p>远程相关、忽略文件相关</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-hello-world"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/08/hello-world/"
-    >Hello World</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/08/hello-world/" class="article-date">
-  <time datetime="2022-12-08T01:55:10.385Z" itemprop="datePublished">2022-12-08</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
  
       <!-- reward -->
       
@@ -986,6 +1009,18 @@
 <h4 id="示例九-3"><a href="#示例九-3" class="headerlink" title="示例九-3"></a>示例九-3</h4><p>内容：另一种读取纹理索引的封装函数（效果同示例九）</p>
 <h4 id="示例十"><a href="#示例十" class="headerlink" title="示例十"></a>示例十</h4><p>内容：透明（关闭背面剔除，启用混合函数）</p>
 <p>两个混合函数：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42050609/article/details/125215948">https://blog.csdn.net/weixin_42050609&#x2F;article&#x2F;details&#x2F;125215948</a></p>
+<p>在封装成纹理贴图的时，需要丢弃片段，混合函数用于渲染半透明的纹理。</p>
+<p>如果不采用丢弃片段：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251520987.png" alt="image-20221225152021510" style="zoom: 33%;" />
+
+<p>此时可以将四边形背景颜色的透明度设置为0，图案的透明度设置为1（或者反过来），在片段着色器添加如下代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(color.a &lt; <span class="number">1.0</span>)discard;</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251523443.png" alt="image-20221225152327554" style="zoom:33%;" />
+
+<p>但是会丢弃一部分绘制的图案，可能图案与背景衔接的部分也是&lt;1.0的，所以需要调节参数，如果把参数改成0.5：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251525815.png" style="zoom:33%;" />
+
 <h4 id="示例十一"><a href="#示例十一" class="headerlink" title="示例十一"></a>示例十一</h4><p>内容：2D文本（初始化，打印显示，删除）</p>
 <h4 id="示例十二"><a href="#示例十二" class="headerlink" title="示例十二"></a>示例十二</h4><p>内容：opengl扩展函数debug</p>
 <h4 id="示例十三"><a href="#示例十三" class="headerlink" title="示例十三"></a>示例十三</h4><p>内容：法线贴图显示凹凸感</p>
@@ -1011,6 +1046,13 @@
 <h4 id="示例十六-1"><a href="#示例十六-1" class="headerlink" title="示例十六-1"></a>示例十六-1</h4><p>内容：简化版，便于理解</p>
 <h4 id="示例十七"><a href="#示例十七" class="headerlink" title="示例十七"></a>示例十七</h4><p>内容：利用欧拉和四元组进行物体旋转 旋转矩阵和平移放缩计算出模型矩阵，再计算MVP矩阵</p>
 <p>欧拉原理：<a target="_blank" rel="noopener" href="https://blog.csdn.net/D_XingGuang/article/details/97148669">https://blog.csdn.net/D_XingGuang&#x2F;article&#x2F;details&#x2F;97148669</a></p>
+<p>旋转的时候一定要注意正向旋转还是反向旋转，在绘制背景图的时候，由于纹理只会渲染在四面形的一面，所以如果旋转反了会显示不出纹理。</p>
+<p>正向：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251531481.png" alt="image-20221225153133707" style="zoom:33%;" />
+
+<p>反向：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251530788.png" alt="image-20221225153021951" style="zoom: 33%;" />
+
 <h4 id="示例十八"><a href="#示例十八" class="headerlink" title="示例十八"></a>示例十八</h4><p>内容：绘制公告牌，正面永远正对相机方向</p>
 <p>已知公告板（定义在世界空间）中心位置，先计算相机世界空间向量，根据此向量进行调整，调整后进入VP矩阵</p>
 <p>公告板通过几何着色器利用四个顶点画出三角形条带（四边形）</p>
