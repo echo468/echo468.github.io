@@ -910,6 +910,16 @@
 <p>（2）数据存放在服务端，同时允许客户端修改</p>
 <p>（3）顶点数据和索引数据在两个缓冲区</p>
 <p>（4）数不再从指针所指的位置取数据。函数会先把指针转化为整数，假设转化后结果为k，则会从当前缓冲区的第k个字节开始取数据。</p>
+<p>使用缓冲，从缓冲读数据到现存而不是从内存中读取数据，所以运行速度会快很多。</p>
+<p>测速代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> lastTime = <span class="built_in">glfwGetTime</span>();</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line"><span class="comment">//计算1秒内的帧数从而计算一帧需要的毫秒数</span></span><br><span class="line"><span class="type">double</span> current = <span class="built_in">glfwGetTime</span>();</span><br><span class="line">nbFrames++;</span><br><span class="line"><span class="keyword">if</span> (current - lastTime &gt;= <span class="number">1.0</span>) &#123; </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%f ms/frame\n&quot;</span>, <span class="number">1000.0</span> / <span class="built_in">double</span>(nbFrames));</span><br><span class="line">	nbFrames = <span class="number">0</span>;</span><br><span class="line">	lastTime += <span class="number">1.0</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>顶点缓冲：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212260850812.png" alt="image-20221226085052532" style="zoom:67%;" />
+
+<p>显示列表顶点数组：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212260850847.png" alt="image-20221226085030449" style="zoom:67%;" />
+
 <h4 id="示例三"><a href="#示例三" class="headerlink" title="示例三"></a>示例三</h4><p>内容：自己绘制纹理，使用纹理数组选择要渲染的对象，绘制时利用封装的函数</p>
 <h4 id="示例四"><a href="#示例四" class="headerlink" title="示例四"></a>示例四</h4><p>内容：利用显示列表进行颜色渲染</p>
 <p> glFrontFace函数：[<a target="_blank" rel="noopener" href="https://blog.csdn.net/zhongjling/article/details/7528091">https://blog.csdn.net/zhongjling/article/details/7528091</a>]</p>
