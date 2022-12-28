@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">805</span>
+            <span class="post-count">840</span>
         </span>
     </span>
 
@@ -126,6 +126,9 @@
 
 <p>（3）不分屏的四边形片段着色器文件主函数</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span> <span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    vec4 color=<span class="built_in">texture2D</span>(samplerRTT1, UV);</span><br><span class="line">    gl_FragColor = color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该方法生成的纹理数据作为一张静态图由采样器根据UV采样访问，渲染在其他地方。</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221227143718485.png" alt="image-20221227143718485" style="zoom:50%;" />
 
  
       <!-- reward -->
