@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    几何着色器 |  Hexo
+    TransformFeedback |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-几何着色器"
+  id="post-TransformFeedback"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  几何着色器
+  TransformFeedback
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
-  <time datetime="2022-12-28T01:30:43.000Z" itemprop="datePublished">2022-12-28</time>
+      <a href="/2022/12/30/TransformFeedback/" class="article-date">
+  <time datetime="2022-12-30T07:42:14.000Z" itemprop="datePublished">2022-12-30</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">478</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
+            <span class="post-count">4 min</span>
         </span>
     </span>
 </div>
@@ -109,28 +109,41 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="几何着色器"><a href="#几何着色器" class="headerlink" title="几何着色器"></a>几何着色器</h4><img src="C:\Users\华为\Desktop\QQ图片20221228095854.png" alt="QQ图片20221228095854" style="zoom:50%;" />
+  <h3 id="变换反馈"><a href="#变换反馈" class="headerlink" title="变换反馈"></a>变换反馈</h3><p>将顶点数据发给着色器，变换后从着色器获取数据作为新的顶点数据进行绘制，可以用于绘制粒子及动画效果</p>
+<h4 id="一、shader-cpp文件"><a href="#一、shader-cpp文件" class="headerlink" title="一、shader.cpp文件"></a>一、shader.cpp文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> GLchar* feedbackVaryings[] = &#123; <span class="string">&quot;outposition&quot;</span>,<span class="string">&quot;fragcolor&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">glTransformFeedbackVaryings</span>(ProgramID, <span class="number">2</span>, feedbackVaryings, GL_SEPARATE_ATTRIBS);</span><br></pre></td></tr></table></figure>
 
-<p>渲染管线：顶点着色器-细分着色器-几何着色器-片段着色器</p>
-<p>作用：由于几何着色器可以在顶点发送到下一着色阶段之前对他们随意变换，所以作用就是将一个图元变换为另一个完全不同的图元，或者修改图元的位置</p>
-<p>使用方法：</p>
-<ul>
-<li>在几何着色器的顶部，声明从顶点着色器输入的图元类型：layout (primitive) in;</li>
-<li>可以输入的图元有5类：points，lines，lines_adjacency，triangles，triangles_adjacency</li>
-<li>指定几何着色器的输出图元类型：layout (primitive, max_vertices &#x3D; n) out;</li>
-<li>输出图元有三种选项：points，line_strip，triangle_strip</li>
-<li>几何着色器还要设置一个他的最大输出顶点数量，如果绘制时超过了这个值，OpenGL将不会绘制多出的顶点</li>
-</ul>
-<p>以一个简单的几何着色器为例（顶点和细分着色器都不用修改，但是要注意细分着色器的patch不能为四边形）：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="meta">#extension GL_ARB_geometry_shader4:enable</span></span><br><span class="line"><span class="built_in">layout</span>( triangles ) in;</span><br><span class="line"><span class="comment">//layout( line_strip, max_vertices = 3 ) out;的话一个三角形三个顶点用2条线绘制，四边形不能封口</span></span><br><span class="line"><span class="built_in">layout</span>( line_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line">out vec4 color;<span class="comment">//将该输出的color传给片段着色器的gl_FragColor</span></span><br><span class="line">in vec4 fragmentColor[];<span class="comment">//几何着色器的输入为图元的一组顶点相关数据，必须设置为数组类型</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	color=fragmentColor[<span class="number">0</span>];<span class="comment">//颜色传入一组，选一个</span></span><br><span class="line">	<span class="type">int</span> i =<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//输入图元的一组顶点的个数</span></span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;gl_PositionIn.<span class="built_in">length</span>();i++)</span><br><span class="line">	&#123;</span><br><span class="line">	    gl_Position=gl_PositionIn[i];</span><br><span class="line">		color=fragmentColor[<span class="number">0</span>];</span><br><span class="line">	     <span class="built_in">EmitVertex</span>();<span class="comment">//输出一个顶点</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//四边形在[0]封口</span></span><br><span class="line">	gl_Position=gl_PositionIn[<span class="number">0</span>];</span><br><span class="line">	color=fragmentColor[<span class="number">0</span>];</span><br><span class="line">	<span class="built_in">EmitVertex</span>();</span><br><span class="line">	<span class="built_in">EndPrimitive</span>();<span class="comment">//结束一个图元的输出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这两行代码需要放在glLinkProgram(ProgramID);之前。第一个数组说明了捕获到一个缓冲区中的输出属性（与顶点着色器中需要捕获的out的名字相同）。第二个函数的第一个参数是着色器程序；第二个参数和第三个参数指定了输出名称数组和数组本身的长度，最后一个参数指定了应该如何写入数据。以下两种格式可供选择:</p>
+<p>1.–GL_INTERLEAVED_ATTRIBS:将所有属性写入一个缓冲区对象。</p>
+<p>2.–GL_SEPARATE_ATTRIBS: 将属性写入多个缓冲区对象，或将不同的偏移量写入缓冲区。</p>
+<p>比如一个程序有颜色和顶点两个缓冲区，使用第一个参数只能绑定一个缓冲区，此时想变换颜色和顶点需要把这两组数据写在同一个数组并设置读取的偏移量：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
 
-<p>以上几何着色器代码实现的效果同理：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br></pre></td></tr></table></figure>
+<p>使用第二个参数就可以将颜色数据和顶点数据分开，将两个缓冲区绑定到trasnformfeedback上：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbuffera);</span><br></pre></td></tr></table></figure>
 
-<p>效果如下：</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221228133913472.png" alt="image-20221228133913472" style="zoom:50%;" />
+<p>其中第二个参数就是缓冲区索引，绑定两个的话，第一个缓冲区索引是0，第二个是1，可以区分缓冲区。</p>
+<h4 id="二、顶点着色器文件"><a href="#二、顶点着色器文件" class="headerlink" title="二、顶点着色器文件"></a>二、顶点着色器文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">in vec4 inposition;</span><br><span class="line">in vec4 color;</span><br><span class="line">out vec4 outposition;</span><br><span class="line">out vec4 fragcolor;<span class="comment">//与feedbackVaryings[]同名</span></span><br><span class="line"><span class="comment">/*在main函数中对inposition和color进行变换*/</span></span><br><span class="line">gl_Position=MVP * inposition;</span><br></pre></td></tr></table></figure>
 
-<p>暂时不太会用几何着色器和细分着色器的情况下添加光照计算</p>
+<p>输入的顶点属性数据inposition经过MVP变换后作为最终的gl_Position数据用来绘制图形；将inposition数据变换后存入outposition写入tf缓冲。（color同理）</p>
+<h4 id="三、应用程序文件"><a href="#三、应用程序文件" class="headerlink" title="三、应用程序文件"></a>三、应用程序文件</h4><p>以GL_INTERLEAVED_ATTRIBS参数为例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//tf缓冲区只用创建一个</span></span><br><span class="line">GLuint tfbuffera;</span><br><span class="line"><span class="built_in">glGenTransformFeedbacks</span>(<span class="number">1</span>, &amp;tfbuffera);</span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="comment">//给tf缓冲绑定相应的缓冲对象（databuffer用GL_ARRAY_BUFFER类型创建）</span></span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
+
+<p>相同的缓存不能同时作为输入和输出，所以如果想产生连续变换，需要两个缓冲区交换数据。所以需要两个databuffer。第一个buffer绑定data数据用于绘制第一个图形，第二个传递了一个nullptr，以创建一个足够大的缓冲区。（比如粒子系统生成的定点数会越来越多，此处不需要考虑该问题）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), data, GL_DYNAMIC_DRAW);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), <span class="literal">nullptr</span>, GL_DYNAMIC_DRAW);</span><br></pre></td></tr></table></figure>
+
+<p>主要代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffer[flag]);<span class="comment">//将变换后数据写入databufferb</span></span><br><span class="line"><span class="built_in">glEnable</span>(GL_RASTERIZER_DISCARD);<span class="comment">//此次绘制写入tf缓冲因此不进行绘制，禁用光栅化</span></span><br><span class="line"><span class="built_in">glBeginTransformFeedback</span>(GL_TRIANGLES);<span class="comment">//开启tf缓冲，设置绘制模式与draw相同</span></span><br><span class="line"><span class="comment">//用databuffera也就是最初的数据传入顶点着色器，数据进行第一次变换，但此时不显示，而是写入tf缓冲的databufferb</span></span><br><span class="line"><span class="built_in">glEnableVertexAttribArray</span>(positionID);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[!flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"><span class="comment">//结束转换反馈模式</span></span><br><span class="line"><span class="built_in">glEndTransformFeedback</span>();</span><br><span class="line"><span class="comment">//使用光栅化，绘制图形</span></span><br><span class="line"><span class="built_in">glDisable</span>(GL_RASTERIZER_DISCARD);</span><br><span class="line"><span class="comment">//使用databufferb第一次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲</span></span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">flag = !flag;<span class="comment">//进行第二次循环</span></span><br></pre></td></tr></table></figure>
+<p>第二次循环将变换后的数据写入databuffera，将databufferb第一次变换的数据传入顶点着色器，数据进行第二次变换，但此时不显示，而是写入tf缓冲的databuffera。使用databuffera第二次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲。</p>
+<p>原始数据：-0.1f,0.1f, 0.1f,1.0f,0.1f,0.1f, 0.1f,1.0f</p>
+<p>如下是经过两次循环后tf缓冲中的数据：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021755919.png" alt="image-20230102175536791"></p>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>如下数据每行前四个是顶点坐标数据，后四个是顶点颜色数据：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021804938.png" alt="image-20230102180412855"></p>
+<p>第五个参数：步长(Stride)，在连续的顶点属性组之间的间隔。上图一行8个数是一个顶点属性，所以步长为8*4&#x3D;32</p>
+<p>第六个参数：使用VBO时是缓冲对象数据存储区的字节偏移量（不使用VBO时是顶点数组指针）</p>
+<p>颜色数据从第五个数据读起，前面有四个顶点坐标数据，因此偏移量为4*4&#x3D;16</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br></pre></td></tr></table></figure>
+
  
       <!-- reward -->
       
@@ -197,7 +210,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/12/30/TransformFeedback/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -208,19 +221,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2022/12/30/TransformFeedback/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            TransformFeedback
-          
-        </div>
-      </a>
     
-    
-      <a href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+      <a href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">细分着色器</div>
+        <div class="article-nav-title">几何着色器</div>
       </a>
     
   </nav>
