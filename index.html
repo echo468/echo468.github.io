@@ -118,6 +118,167 @@
     
     
     <article
+  id="post-光照详解"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/"
+    >光照详解</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time datetime="2023-01-06T06:40:50.000Z" itemprop="datePublished">2023-01-06</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="基于平行光的环境光"><a href="#基于平行光的环境光" class="headerlink" title="基于平行光的环境光"></a>基于平行光的环境光</h4><p>​	环境光是平行光，平行光有特定的方向但是没有特定的光源，所有的光都互相平行，计算时完全忽略光的方向，整个场景被均匀照亮。平行光的另外一个重要性质是不管它离物体多远亮度是不变的。</p>
+<p>​	光源的颜色定义为一个包含三个浮点数的三元组，浮点数介于[0,1]之间。光源的颜色和物体表面的颜色相乘得到反射回来的颜色。同时，加入强度，可以定义为一个[0，1]之间的一个单一的浮点数，然后和之前的相乘，从而得到最终的颜色值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061119134.png" alt="image-20230106111932045" style="zoom: 33%;" />
+
+<p>​	一般只是添加少量的环境光来避免出现物体一面被照亮而另一面完全是黑色的现象。例如希望物体的背后有一点亮光，因为在现实生活中灯泡会照亮它背后的墙，而墙会反过来（微弱地）照亮物体的背后，但计算这种光照的代价过大，因此通常可以简单地以假的光源代替这种计算。</p>
+<h4 id="基于点光源的漫反射光"><a href="#基于点光源的漫反射光" class="headerlink" title="基于点光源的漫反射光"></a>基于点光源的漫反射光</h4><p>​	漫射光的特性依赖光线的方向，漫射光使物体朝向它的那一面比其他背向光的面要更亮，亮度取决于光线和物体表面的角度。光线如果要对物体表面的亮度产生影响，那么光线和法线的角度要在0-90度之间但不包含90度。这种影响通过光向量l和法线向量n的点积计算。基于点光源的漫反射，表面收到的光通量依赖于表面到光源的距离：越远光越少，与距离的平方成反比。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061444894.png" style="zoom:50%;" />
+
+<p>​	顶点和法线都定义在本地坐标系空间，MVP变化后到裁剪空间。然而光照在世界空间中定义，所以在计算之前首先要将法线向量变换到世界坐标系空间。</p>
+<p>​	一个多边形面上分布的任意法向量都是一样的，足以用其中一个代表来计算顶点着色器中的漫射光。但有时一个顶点的多个面法线不同。需要使用到一个概念叫做‘顶点法线’，顶点法线是共用一个顶点的所有三角形法线的平均值。将顶点法线作为一个成员属性传给片段着色器。光栅器会得到三个不同的法向量并对其之间进行插值运算。片段着色器将会对每个像素计算其特定的插值法向量对应的颜色值，对漫射光的计算可以达到像素级别。效果是光照效果在每个相邻三角形面之间会平滑的变化。</p>
+<h4 id="基于点光源的镜面反射光"><a href="#基于点光源的镜面反射光" class="headerlink" title="基于点光源的镜面反射光"></a>基于点光源的镜面反射光</h4><p>​	基于点光源的镜面反射，比起漫反射还包含了观察者的位置。镜面反射时光以一定角度照射到物体表面，同时会在法线的另一侧对称的角度上反射出去，如果观察者刚好在反射光线的路径上那么就会看到格外强烈的光线。镜面反射最终的结果是物体在从某个角度看上去会十分明亮，而移动开后这个光亮又会消失。镜面反射光的存在更取决于反射物体的材料性质而不是光源本身。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061445748.png" alt="image-20230106144515706" style="zoom:50%;" />
+
+<p>​	亮度取决于观察者和反射光的夹角，随着角度增大反射光衰弱。这种影响通过R和V的点积计算。随着夹角’α’增大余弦值慢慢减小，直到夹角达到90°时无镜面反射的效果，夹角大于90°时余弦值为负，也没有任何反射效果，也就是观察者不在反射光的路径范围内。</p>
+<p>反射光线’R’使用’I’向量来计算，如下图：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061445499.png" alt="image-20230106144537465" style="zoom:80%;" />
+
+<p>​	向量没有起点的概念，所有方向相同且长度相同的向量都是同一个向量。因此，图中将入射光向量’I’复制到表面下面位置向量本身是不变的。根据向量的加法，’R’等于’I’+’V’，’I’已知求’V’。法线’N’的反向向量为’-N’，计算’I’和’-N’的点积可以得到’I’在’-N’上的投影，这是’V’的模长度的一半。另外’V’和’N’的方向是相同的，所以只要用计算的那个投影长度乘以单位向量’N’再乘以2就是向量’V’了。用公式简单表示如下，通过’reflect’内部函数计算：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446642.png" alt="image-20230106144604599" style="zoom: 67%;" />
+
+<p>​	计算镜面反射的最终公式：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446532.png" alt="image-20230106144620480" style="zoom:67%;" />
+
+<p>​	开始先是将光的颜色和物体表面的颜色相乘，这个和在计算环境光以及漫反射光时一样。得到的结果再和材料的镜面反射强度参数（’M’）相乘。如果材料没有反射性能，比如木头，那么镜面反射参数就为0，而像金属这种发光材料镜面反射能力就会很强。之后再乘以光线和观察者视线夹角的余弦值，即镜面参数’或者叫做‘发光参数’，用来增强加剧反射光区域边缘的强度。</p>
+<h4 id="聚光灯光源"><a href="#聚光灯光源" class="headerlink" title="聚光灯光源"></a>聚光灯光源</h4><p>​	聚光灯光源也会随着距离衰减，相当于取点光源的一个锥形的一小部分，聚光灯光源呈锥形，离光源越远，照亮的圆形区域会越大（光源位于锥形体的尖端）。如下图：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446864.png" alt="image-20230106144647823" style="zoom:67%;" />
+
+<p>​	图中L是光源方向，实现让光源只照亮两条红线夹角之间的区域。可以定义光锥为光线方向L和红线之间的夹角（两条红线之间夹角的一半）。点积计算夹角的余弦值‘C’以及L和V夹角的余弦，其中V指的是光源到某个像素的向量，如果后者的值大于余弦值‘C’，说明L和V之间的夹角偏小，该像素就位于被照亮的区域内。反之，像素位于区域外就不会被该光源照亮。</p>
+<p>​	如果仅按照上面说的在照亮区域内就点亮像素，否则就不点亮，照亮区域和未照亮区域之间的边界边缘会非常明显。一个真实的聚光灯光源会从照亮区域的中心向圆形边缘慢慢衰减。可以利用上面计算得到的那些点积作为一个衰减的参数。但是用余弦来做衰减参数会有问题，因为聚光灯光源的夹角不能太大，否则范围太广就失去了聚光灯的效果，但是在夹角从0到一个比较小的角度范围内，cos值得变化是很缓慢的，导致衰减不明显。要想衰减效果明显这个参数范围应该是[0,1]。解决方法是将这个参数的小范围映射到[0,1]的范围。</p>
+<p>​	聚光灯光源需要光源的方向向量和截断光源照亮范围的一个阈值。阈值代表的是光源方向向量和光源到可照亮像素之间的最大夹角。比这个阈值夹角大的像素是不会被该光源照亮的。</p>
+<p>​	首先得到光源到某个像素的向量，将向量单位化方便点积运算，然后和单位化了的光源方向向量进行点积运算得到他们之间夹角的余弦值。将得到的余弦值和光源的阈值（定义光源范围的最大夹角的余弦值）进行比较，如果余弦值比阈值小，说明夹角太大像素在照亮圆区域的外面，这样像素就不会被该光源点亮。反之如果像素在照亮区域内，我们就先像点光源那样计算光源的基础颜色。然后将计算的余弦值插值到0到1的范围，最后和点光源颜色相乘计算得到最终的聚光灯颜色值。</p>
+<h4 id="基于点光源的着色器文件编写"><a href="#基于点光源的着色器文件编写" class="headerlink" title="基于点光源的着色器文件编写"></a>基于点光源的着色器文件编写</h4><p>顶点着色器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">attribute vec3 vertexPosition_modelspace;</span><br><span class="line">attribute vec2 vertexUV;</span><br><span class="line">attribute vec3 vertexNormal_modelspace;<span class="comment">//法线数组</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform mat4 MVP;</span><br><span class="line">uniform mat4 V;</span><br><span class="line">uniform mat4 M;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//计算世界空间下的物体矩阵（便于等下计算世界空间下光与表面的距离）</span></span><br><span class="line">	Position_worldspace = (M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的物体矩阵</span></span><br><span class="line">	vec3 vertexPosition_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">    </span><br><span class="line">	EyeDirection_cameraspace = <span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>) - vertexPosition_cameraspace;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//观察空间下光的位置</span></span><br><span class="line">	vec3 LightPosition_cameraspace = ( V * <span class="built_in">vec4</span>(LightPosition_worldspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//观察空间下表面到点光源的向量</span></span><br><span class="line">    <span class="comment">//如果是基于平行光的漫反射此处直接归一化光的方向</span></span><br><span class="line">    LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的法线数组</span></span><br><span class="line">	Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexNormal_modelspace,<span class="number">0</span>)).xyz; </span><br><span class="line"></span><br><span class="line">	UV = vertexUV;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>片段着色器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 120</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform sampler2D myTextureSampler;</span><br><span class="line">uniform mat4 MV;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//光照颜色和强度</span></span><br><span class="line">	vec3 LightColor = <span class="built_in">vec3</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">	<span class="type">float</span> LightPower = <span class="number">50.0f</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//材质本身的颜色也影响最终颜色</span></span><br><span class="line">    <span class="comment">//漫反射分量</span></span><br><span class="line">	vec3 MaterialDiffuseColor = <span class="built_in">texture2D</span>( myTextureSampler, UV ).rgb;</span><br><span class="line">    <span class="comment">//环境光分量</span></span><br><span class="line">	vec3 MaterialAmbientColor = <span class="built_in">vec3</span>(<span class="number">0.1</span>,<span class="number">0.1</span>,<span class="number">0.1</span>) * MaterialDiffuseColor;</span><br><span class="line">    <span class="comment">//镜面光分量</span></span><br><span class="line">	vec3 MaterialSpecularColor = <span class="built_in">vec3</span>(<span class="number">0.3</span>,<span class="number">0.3</span>,<span class="number">0.3</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//计算光与表面的距离：光通量与距离的平方成反比（世界空间下）</span></span><br><span class="line">	<span class="type">float</span> distance = <span class="built_in">length</span>( LightPosition_worldspace - Position_worldspace );</span><br><span class="line"></span><br><span class="line">	<span class="comment">//归一化n和l（观察空间下计算（可以是任意空间））</span></span><br><span class="line">	vec3 n = <span class="built_in">normalize</span>( Normal_cameraspace );</span><br><span class="line">	vec3 l = <span class="built_in">normalize</span>( LightDirection_cameraspace );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//n：表面法线，l表面到光源的单位向量（与光相反，简化计算），二者计算点积</span></span><br><span class="line">    <span class="comment">//如果光源在三角形后面，n和l方向相反，那么n.l是负值。这意味着colour将是一个负值，没有意义。因此这种情况下必须用clamp()将cosTheta截取为0：</span></span><br><span class="line">	<span class="type">float</span> cosTheta = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( n,l ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//E：观察者，R反射光，二者计算点积</span></span><br><span class="line">	vec3 E = <span class="built_in">normalize</span>(EyeDirection_cameraspace);</span><br><span class="line">	vec3 R = <span class="built_in">reflect</span>(-l,n);<span class="comment">//内置函数计算反射光</span></span><br><span class="line">	<span class="type">float</span> cosAlpha = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( E,R ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//最终颜色计算</span></span><br><span class="line">    <span class="comment">//聚光灯需要添加余弦参数</span></span><br><span class="line">	gl_FragColor.rgb = </span><br><span class="line">		MaterialAmbientColor +</span><br><span class="line">		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">        <span class="comment">//pow(cosAlpha,5)用来控制镜面反射的波瓣，镜面反射与材料本社有关</span></span><br><span class="line">		MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-step-by-step实例学习"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/"
+    >step_by_step实例学习</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2023-01-06T00:52:54.000Z" itemprop="datePublished">2023-01-06</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="矩阵变换"><a href="#矩阵变换" class="headerlink" title="矩阵变换"></a>矩阵变换</h3><h4 id="平移"><a href="#平移" class="headerlink" title="平移"></a>平移</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060903912.png" alt="image-20230106090323761" style="zoom: 67%;" />
+
+<p>​	因为所有的位移值都要乘以向量的w行，所以位移值会加到向量的原始值上。这样使用一个4维向量表示一个3维向量叫做齐次坐标。通常对于表示点的矩阵会让w&#x3D;1，而对于表示向量的矩阵会让w&#x3D;0，因为点可以被做变换而向量不可以，可以改变一个向量的长度和方向，但是长度和方向一样的所有向量都是相等的，不管他们的起点在哪里，所以可以把所有的向量起点放到原点来看。对于向量设置w&#x3D;0然后乘以变换矩阵会得到和自身一样的向量。</p>
+<h4 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060933717.png" alt="image-20230106093340662" style="zoom:50%;" />
+
+<p>旋转后的坐标变换</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093352086.png" alt="image-20230106093352086" style="zoom:50%;" />
+
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093404574.png" alt="image-20230106093404574" style="zoom:50%;" />
+
+<p>旋转矩阵</p>
+<p>绕z轴</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093419847.png" alt="image-20230106093419847" style="zoom:50%;" />
+
+<p>绕y轴</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093429878.png" alt="image-20230106093429878" style="zoom:50%;" />
+
+<p>绕z轴</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060934083.png" alt="image-20230106093440038" style="zoom:50%;" />
+
+<p>更好的方法是四元组</p>
+<h4 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h4><p>进行缩放变换其实很简单。我们从最开始的原变换矩阵来看，回忆平移变换矩阵的样子，我们保持结果矩阵中V1,V2和V3保持原样的办法是让变换矩阵主对角线上的值都为’1’，这样原向量一次都<strong>和1相乘</strong>之后依然保持不变，各分量之间互不影响。所以，这里的缩放变换，只要把那些‘1’换成我们想缩放的值，原向量各分量分别乘以这些值之后就会在相应坐标轴上进行相应的缩放了，值大于1则放大，值小于1则缩小。</p>
+<p>如果片断着色器没有显式地请求那个变量（你可以使用同一个顶点着色器混合并匹配多个片断着色器）那么一般的驱动优化会丢弃顶点着色器vs中只是影响该变量的操作（特定的shader程序是针对vs和fs的配对组合）。但如果片断着色器fs确实使用到了那个变量，光栅器会在光栅化阶段对其进行插值，并且每一次片断着色器fs的调用都会提供一个匹配特定位置的插值后的值，这意味着相邻的两个像素的值都略有不同（虽然随着三角形离摄像头越来越远那样会越来越不合适）。</p>
+<p>***经常情况下依赖插值的两个变量是三角形的法向量和纹理坐标***。顶点的法向量通常是计算包含这个顶点的所有三角形法向量的平均值而得。如果物体不是平坦的话那么每个三角形的三个顶点的法向量会各不相同，那样我们可以通过插值来计算每个像素的法向量，那些向量会用于光线的计算，从而产生更逼真可信的光照效果。插值对于纹理坐标的应用也类似，这些坐标作为模型的一部分定义在每个顶点上。为了用贴图覆盖三角形你必须对每个像素进行一样的插值操作并给每个像素定义正确的纹理坐标，这些坐标都是插值的结果</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-采样器采样数据"
   class="article article-type-post"
   itemscope
@@ -1055,193 +1216,13 @@
 </article>
 
     
-    <article
-  id="post-着色器文件"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/05/%E7%9D%80%E8%89%B2%E5%99%A8%E6%96%87%E4%BB%B6/"
-    >着色器文件</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/05/%E7%9D%80%E8%89%B2%E5%99%A8%E6%96%87%E4%BB%B6/" class="article-date">
-  <time datetime="2022-12-05T08:15:48.000Z" itemprop="datePublished">2022-12-05</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="1-最基本的顶点着色器"><a href="#1-最基本的顶点着色器" class="headerlink" title="1.最基本的顶点着色器"></a>1.最基本的顶点着色器</h4><p>（1）attribute变量：是只能在顶点着色器中使用的变量，表示一些顶点的数据，cpp传值获取。</p>
-<p>（2）uniform变量：是外部程序传递给顶点&#x2F;片段的变量，函数glUniform**（）函数赋值。相当于常量，不可改。如果uniform变量在顶点和片段两者之间声明方式完全一样，则它可以在vertex和fragment共享使用。一般用来表示变换矩阵，材质，光照参数和颜色等信息。</p>
-<p>（3）“<code>vertexPosition_modelspace</code>”变量名：可以任取，其中保存的是顶点位置，顶点着色器每次运行时都会用到。</p>
-<p>（4）gl_Position：内置变量之一，必须赋值。</p>
-<p>（5）“<code>layout(location = 0)</code>“：指向存储<code>vertexPosition_modelspace</code>属性的缓冲。每个顶点有多种属性，因此我们必须将<code>glvertexAttribPointer</code>函数的第一个参数值赋给<code>layout</code>，以此告知OpenGL每个缓冲对应的是哪种属性数据。第二个参数“0”并不重要，也可以换成12（但是不能超过<code>glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &amp;v)）</code>，关键是C++和GLSL两边数值必须保持一致。</p>
-<p>或使用GLuint vertexPosition_modelspaceID &#x3D; glGetAttribLocation(programID, “vertexPosition_modelspace”);将<code>glvertexAttribPointer</code>函数的第一个参数值设置为vertexPosition_modelspaceID </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">attribute vec3 vertexPosition_modelspace;</span><br><span class="line"><span class="comment">//layout(location=*0) in vec3 vertexPosition_modelspace;</span></span><br><span class="line">uniform mat4 MVP;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//MVP变换顶点</span></span><br><span class="line">	gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="2-最基本的片段着色器"><a href="#2-最基本的片段着色器" class="headerlink" title="2.最基本的片段着色器"></a>2.最基本的片段着色器</h4><p>直接在着色器用vec4向量给内置变量gl_FragColor赋值</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 120</span></span><br><span class="line"><span class="comment">//out vec3 color;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//color = vec3(1,0,0);</span></span><br><span class="line">	gl_FragColor = <span class="built_in">vec4</span>(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-加入颜色数组"><a href="#3-加入颜色数组" class="headerlink" title="3.加入颜色数组"></a>3.加入颜色数组</h4><p>varying变量是顶点和片段之间做数据传递用的。一般顶点修改varying变量的值，然后片段使用该varying变量的值。因此varying变量在二者之间的声明必须是一致的。cpp中不能使用该变量。</p>
-<p>顶点着色器声明添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//in vec3 vertexColor;</span></span><br><span class="line"><span class="comment">//out vec3 fragmentColor;</span></span><br><span class="line">varying vec3 fragmentColor;</span><br><span class="line">attribute vec3 vertexColor;</span><br></pre></td></tr></table></figure>
-
-<p>顶点着色器主函数添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fragmentColor = vertexColor;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器声明添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//in vec3 fragmentColor;</span></span><br><span class="line"><span class="comment">//out vec3 color;</span></span><br><span class="line">varying vec3 fragmentColor;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器主函数添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//color = fragmentColor;</span></span><br><span class="line">gl_FragColor = <span class="built_in">vec4</span>(fragmentColor, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<p>如果要使用透明效果，片段着色器单独设置内置变量gl_FragColor的a值（或传值）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gl_FragColor.a = <span class="number">0.3</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="4-UV坐标纹理渲染"><a href="#4-UV坐标纹理渲染" class="headerlink" title="4.UV坐标纹理渲染"></a>4.UV坐标纹理渲染</h4><p>顶点着色器声明添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//UV坐标</span></span><br><span class="line">varying vec2 UV;</span><br><span class="line">attribute vec2 vertexUV;</span><br></pre></td></tr></table></figure>
-
-<p>顶点着色器主函数添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UV = vertexUV;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器声明添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//采样器</span></span><br><span class="line">uniform sampler2D myTextureSampler;</span><br><span class="line">varying vec2 UV;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器主函数添加如下</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//采样器根据UV坐标插值采样渲染图像</span></span><br><span class="line">gl_FragColor = <span class="built_in">texture2D</span>( myTextureSampler, UV );</span><br></pre></td></tr></table></figure>
-
-<h4 id="5-光照"><a href="#5-光照" class="headerlink" title="5.光照"></a>5.光照</h4><p>顶点着色器</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">attribute vec3 vertexPosition_modelspace;</span><br><span class="line">attribute vec2 vertexUV;</span><br><span class="line">attribute vec3 vertexNormal_modelspace;<span class="comment">//法线数组</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform mat4 MVP;</span><br><span class="line">uniform mat4 V;</span><br><span class="line">uniform mat4 M;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//计算世界空间下的物体矩阵（便于等下计算世界空间下光与表面的距离）</span></span><br><span class="line">	Position_worldspace = (M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的物体矩阵</span></span><br><span class="line">	vec3 vertexPosition_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">    </span><br><span class="line">	EyeDirection_cameraspace = <span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>) - vertexPosition_cameraspace;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//观察空间下光的位置</span></span><br><span class="line">	vec3 LightPosition_cameraspace = ( V * <span class="built_in">vec4</span>(LightPosition_worldspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//观察空间下表面到光源的向量</span></span><br><span class="line">    LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的法线数组</span></span><br><span class="line">	Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexNormal_modelspace,<span class="number">0</span>)).xyz; </span><br><span class="line"></span><br><span class="line">	UV = vertexUV;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>片段着色器</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 120</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform sampler2D myTextureSampler;</span><br><span class="line">uniform mat4 MV;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//光照颜色和强度</span></span><br><span class="line">	vec3 LightColor = <span class="built_in">vec3</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">	<span class="type">float</span> LightPower = <span class="number">50.0f</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//材质本身的颜色也影响最终颜色</span></span><br><span class="line">    <span class="comment">//漫反射分量</span></span><br><span class="line">	vec3 MaterialDiffuseColor = <span class="built_in">texture2D</span>( myTextureSampler, UV ).rgb;</span><br><span class="line">    <span class="comment">//环境光分量</span></span><br><span class="line">	vec3 MaterialAmbientColor = <span class="built_in">vec3</span>(<span class="number">0.1</span>,<span class="number">0.1</span>,<span class="number">0.1</span>) * MaterialDiffuseColor;</span><br><span class="line">    <span class="comment">//镜面光分量</span></span><br><span class="line">	vec3 MaterialSpecularColor = <span class="built_in">vec3</span>(<span class="number">0.3</span>,<span class="number">0.3</span>,<span class="number">0.3</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//计算光与表面的距离：光通量与距离的平方成反比</span></span><br><span class="line">	<span class="type">float</span> distance = <span class="built_in">length</span>( LightPosition_worldspace - Position_worldspace );</span><br><span class="line"></span><br><span class="line">	<span class="comment">//归一化n和l（观察空间下计算（可以是任意空间））</span></span><br><span class="line">	vec3 n = <span class="built_in">normalize</span>( Normal_cameraspace );</span><br><span class="line">	vec3 l = <span class="built_in">normalize</span>( LightDirection_cameraspace );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//n：表面法线，l表面到光源的单位向量（与光相反，简化计算），二者叉乘</span></span><br><span class="line">    <span class="comment">//如果光源在三角形后面，n和l方向相反，那么n.l是负值。这意味着colour将是一个负值，没有意义。因此这种情况下必须用clamp()将cosTheta截取为0：</span></span><br><span class="line">	<span class="type">float</span> cosTheta = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( n,l ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//镜面光处理</span></span><br><span class="line">	vec3 E = <span class="built_in">normalize</span>(EyeDirection_cameraspace);</span><br><span class="line">	vec3 R = <span class="built_in">reflect</span>(-l,n);</span><br><span class="line">	<span class="type">float</span> cosAlpha = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( E,R ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//最终颜色计算</span></span><br><span class="line">	gl_FragColor.rgb = </span><br><span class="line">		MaterialAmbientColor +</span><br><span class="line">		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">        <span class="comment">//pow(cosAlpha,5)用来控制镜面反射的波瓣</span></span><br><span class="line">		MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="6-2D文本"><a href="#6-2D文本" class="headerlink" title="6.2D文本"></a>6.2D文本</h4><p>为了让代码在640*480和1080p分辨率下都能正常工作，x和y的范围分别设为[0-800]和[0-600]。顶点着色器将根据实际屏幕大小做对它做调整到[-1,1]之间。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec2 vertexPosition_homoneneousspace = vertexPosition_screenspace - <span class="built_in">vec2</span>(<span class="number">400</span>,<span class="number">300</span>); <span class="comment">// [0..800][0..600] -&gt; [-400..400][-300..300]</span></span><br><span class="line">vertexPosition_homoneneousspace /= <span class="built_in">vec2</span>(<span class="number">400</span>,<span class="number">300</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="7-法线贴图"><a href="#7-法线贴图" class="headerlink" title="7.法线贴图"></a>7.法线贴图</h4><p>顶点着色器</p>
-<p>对比光照的顶点着色器，先不计算观察空间下的法线数组，替换成如下代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// model to camera = ModelView</span></span><br><span class="line">vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;</span><br><span class="line">vec3 vertexBitangent_cameraspace = MV3x3 * vertexBitangent_modelspace;</span><br><span class="line">vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;</span><br><span class="line"></span><br><span class="line">mat3 TBN = <span class="built_in">transpose</span>(<span class="built_in">mat3</span>(</span><br><span class="line">	vertexTangent_cameraspace,</span><br><span class="line">	vertexBitangent_cameraspace,</span><br><span class="line">	vertexNormal_cameraspace	</span><br><span class="line">)); <span class="comment">// You can use dot products instead of building this matrix and transposing it. See References for details.</span></span><br><span class="line"></span><br><span class="line">LightDirection_tangentspace = TBN * LightDirection_cameraspace;</span><br><span class="line">EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器</p>
-<p>不直接使用观察空间下计算的法线数组，改成如下代码</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 130</span></span><br><span class="line">uniform sampler2D DiffuseTextureSampler;</span><br><span class="line">uniform sampler2D NormalTextureSampler;</span><br><span class="line">uniform sampler2D SpecularTextureSampler;</span><br><span class="line">uniform mat3 MV3x3;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">	vec3 MaterialDiffuseColor = <span class="built_in">texture2D</span>( DiffuseTextureSampler, UV ).rgb;</span><br><span class="line">	vec3 MaterialAmbientColor = <span class="built_in">vec3</span>(<span class="number">0.1</span>,<span class="number">0.1</span>,<span class="number">0.1</span>) * MaterialDiffuseColor;</span><br><span class="line">	vec3 MaterialSpecularColor = <span class="built_in">texture2D</span>( SpecularTextureSampler, UV ).rgb * <span class="number">0.3</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Local normal, in tangent space. V tex coordinate is inverted because normal map is in TGA (not in DDS) for better quality</span></span><br><span class="line">	vec3 TextureNormal_tangentspace = <span class="built_in">normalize</span>(<span class="built_in">texture2D</span>( NormalTextureSampler, <span class="built_in">vec2</span>(UV.x,-UV.y) ).rgb*<span class="number">2.0</span> - <span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-渲染管线-项目创建"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/"
-    >渲染管线&amp;项目创建</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/" class="article-date">
-  <time datetime="2022-12-01T05:55:34.000Z" itemprop="datePublished">2022-12-01</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="一、渲染管线知识"><a href="#一、渲染管线知识" class="headerlink" title="一、渲染管线知识"></a>一、渲染管线知识</h3><h4 id="1、OpenGL渲染过程介绍"><a href="#1、OpenGL渲染过程介绍" class="headerlink" title="1、OpenGL渲染过程介绍"></a>1、OpenGL渲染过程介绍</h4><p>渲染过程、定点输入、顶点着色器、编译着色器、片元着色器、着色器程序、链接顶点属性、顶点数组对象、索引缓冲对象：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45782925/article/details/124822990">https://blog.csdn.net/weixin_45782925/article/details/124822990</a></p>
-<h4 id="2、渲染管线流程"><a href="#2、渲染管线流程" class="headerlink" title="2、渲染管线流程"></a>2、渲染管线流程</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aoxuestudy/article/details/124444112">https://blog.csdn.net/aoxuestudy/article/details/124444112</a></p>
-<h4 id="3、图元、片元，渲染架构"><a href="#3、图元、片元，渲染架构" class="headerlink" title="3、图元、片元，渲染架构"></a>3、图元、片元，渲染架构</h4><p>[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/549136586">https://zhuanlan.zhihu.com/p/549136586</a>]</p>
-<h3 id="二、创建项目"><a href="#二、创建项目" class="headerlink" title="二、创建项目"></a>二、创建项目</h3><p>1.在vs工程项目目录下创建空项目</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011544776.png" alt="QQ图片20221201153051"></p>
-<p>2.在vs源文件文件夹下创建.cpp文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011545850.png" alt="QQ图片20221201153056"></p>
-<p>3.在新建项目目录下导入着色器文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011546352.png" alt="QQ图片20221201153059"></p>
-<p>4.修改CMakeLists.txt文件，在相关位置添加如下</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550858.png" alt="QQ图片20221201153113"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550578.png" alt="QQ图片20221201153115"></p>
-<p>5.依次点击</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011548991.png" alt="QQ图片20221201153103"></p>
-<p>6.vs新建项目目录下自动导入相关文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011549736.png" alt="QQ图片20221201153106"></p>
-<p>7.新建项目目录下会生成exe可执行文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550991.png" alt="QQ图片20221201153109"></p>
-<h3 id="三、CMakeLists-txt"><a href="#三、CMakeLists-txt" class="headerlink" title="三、CMakeLists.txt"></a>三、CMakeLists.txt</h3><p>cmake指令详解：<a target="_blank" rel="noopener" href="http://t.zoukankan.com/lidabo-p-7359217.html">http://t.zoukankan.com/lidabo-p-7359217.html</a></p>
-<p>变量解释：<a target="_blank" rel="noopener" href="http://www.360doc.com/content/19/1204/17/6959565_877409038.shtml">http://www.360doc.com/content/19/1204/17/6959565_877409038.shtml</a></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">#设置cmake的最小版本</span><br><span class="line">cmake_minimum_required (VERSION 2.6)</span><br><span class="line"></span><br><span class="line">#设置项目名称</span><br><span class="line">project (Tutorials)</span><br><span class="line"></span><br><span class="line">#设置构架类型，用debug模式编译</span><br><span class="line">set(CMAKE_BUILD_TYPE &quot;Debug&quot;)</span><br><span class="line"></span><br><span class="line">#mesa是Linux下的OpenGL实现，如下代码包含mesa</span><br><span class="line">find_package(OpenGL REQUIRED)</span><br><span class="line"></span><br><span class="line">#关于目录的报错提醒</span><br><span class="line">if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )</span><br><span class="line">    message( FATAL_ERROR &quot;Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_SOURCE_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_BINARY_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">#编译子文件夹，外部依赖项</span><br><span class="line">add_subdirectory (external)</span><br><span class="line"></span><br><span class="line"># 在Visual 2005及更高版本上，此模块可以设置调试工作目录</span><br><span class="line">#管理cmake策略设置</span><br><span class="line">cmake_policy(SET CMP0026 OLD)</span><br><span class="line">list(APPEND CMAKE_MODULE_PATH &quot;$&#123;CMAKE_SOURCE_DIR&#125;/external/rpavlik-cmake-modules-fe2273&quot;)</span><br><span class="line">include(CreateLaunchers)</span><br><span class="line">include(MSVCMultipleProcessCompile) # /MP</span><br><span class="line"></span><br><span class="line">#添加子目录</span><br><span class="line">if(INCLUDE_DISTRIB)</span><br><span class="line">  add_subdirectory(distrib)</span><br><span class="line">endif(INCLUDE_DISTRIB)</span><br><span class="line"></span><br><span class="line">#向工程添加多个特定的头文件搜索路径</span><br><span class="line">include_directories(</span><br><span class="line">  external/AntTweakBar-1.16/include/</span><br><span class="line">  external/glfw-3.1.2/include/GLFW/</span><br><span class="line">  external/glm-0.9.7.1/</span><br><span class="line">  external/glew-1.13.0/include/</span><br><span class="line">  external/assimp-3.0.1270/include/</span><br><span class="line">  external/bullet-2.81-rev2613/src/</span><br><span class="line">  .</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#将要链接的库名统一叫ALL_LIBS</span><br><span class="line">set(ALL_LIBS</span><br><span class="line">  $&#123;OPENGL_LIBRARY&#125;</span><br><span class="line">  glfw</span><br><span class="line">  GLEW_1130</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#宏定义</span><br><span class="line">add_definitions(</span><br><span class="line">  -DTW_STATIC</span><br><span class="line">  -DTW_NO_LIB_PRAGMA</span><br><span class="line">  -DTW_NO_DIRECT3D</span><br><span class="line">  -DGLEW_STATIC</span><br><span class="line">  -D_CRT_SECURE_NO_WARNINGS</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># Tutorial 1</span><br><span class="line"></span><br><span class="line">#添加一个可执行文件目标</span><br><span class="line">#第一行：可执行文件</span><br><span class="line">#第二行之后：由source列出的源文件（cpp/hpp/着色器文件）构建而来（源文件路径）</span><br><span class="line">add_executable(tutorial01_first_window</span><br><span class="line">  tutorial01_first_window/tutorial01.cpp</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标要连接库文件的名称</span><br><span class="line">target_link_libraries(tutorial01_first_window</span><br><span class="line">  $&#123;ALL_LIBS&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标属性</span><br><span class="line"># set_target_properties（目标 PROPERTIES 属性1 值1 属性2 值2）</span><br><span class="line">#设置XCODE属性配置生成目录</span><br><span class="line">set_target_properties(tutorial01_first_window PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line">#设置工作目录</span><br><span class="line">#create_default_target_launcher设置默认工作目录</span><br><span class="line">create_target_launcher(tutorial01_first_window WORKING_DIRECTORY &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line"></span><br><span class="line">#划分目录结构</span><br><span class="line">#将common目录下面的文件全部分组为common</span><br><span class="line">SOURCE_GROUP(common REGULAR_EXPRESSION &quot;.*/common/.*&quot; )</span><br><span class="line">SOURCE_GROUP(shaders REGULAR_EXPRESSION &quot;.*/.*(shader|vert|frag)$&quot; )</span><br><span class="line"></span><br><span class="line">#CMake针对不同平台支持本地构建工具列表。同时支持命令行工具和集成开发环境(IDE)工具。</span><br><span class="line">#如果生成器不为Xcode工具</span><br><span class="line">if (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">#命令执行</span><br><span class="line">#TARGET 目标 POST_BUILD命令将会在目标构建完后执行</span><br><span class="line">#复制文件  当前正在被处理的二进制目录路径/与构建配置相对应的输出子路径/目标 本平台上可执行文件后缀 正在被处理的源码目录路径</span><br><span class="line">add_custom_command(</span><br><span class="line">   TARGET tutorial01_first_window POST_BUILD</span><br><span class="line">   COMMAND $&#123;CMAKE_COMMAND&#125; -E copy &quot;$&#123;CMAKE_CURRENT_BINARY_DIR&#125;/$&#123;CMAKE_CFG_INTDIR&#125;/tutorial01_first_window$&#123;CMAKE_EXECUTABLE_SUFFIX&#125;&quot; &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">elseif ($&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">endif (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br></pre></td></tr></table></figure>
-
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
   </nav>
   
 </section>
