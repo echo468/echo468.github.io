@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    step_by_step实例学习 |  Hexo
+    阴影贴图 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-step-by-step实例学习"
+  id="post-阴影贴图"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  step_by_step实例学习
+  阴影贴图
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time datetime="2023-01-06T00:52:54.000Z" itemprop="datePublished">2023-01-06</time>
+      <a href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/" class="article-date">
+  <time datetime="2023-01-18T08:24:53.000Z" itemprop="datePublished">2023-01-18</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">857</span>
+            <span class="post-count">1.1k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">4 min</span>
         </span>
     </span>
 </div>
@@ -109,32 +109,39 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h3 id="矩阵变换"><a href="#矩阵变换" class="headerlink" title="矩阵变换"></a>矩阵变换</h3><h4 id="平移"><a href="#平移" class="headerlink" title="平移"></a>平移</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060903912.png" alt="image-20230106090323761" style="zoom: 67%;" />
+  <h4 id="将深度信息渲染到纹理"><a href="#将深度信息渲染到纹理" class="headerlink" title="将深度信息渲染到纹理"></a>将深度信息渲染到纹理</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061632501.png" alt="image-20230106163202431" style="zoom:67%;" />
 
-<p>​	因为所有的位移值都要乘以向量的w行，所以位移值会加到向量的原始值上。这样使用一个4维向量表示一个3维向量叫做齐次坐标。通常对于表示点的矩阵会让w&#x3D;1，而对于表示向量的矩阵会让w&#x3D;0，因为点可以被做变换而向量不可以，可以改变一个向量的长度和方向，但是长度和方向一样的所有向量都是相等的，不管他们的起点在哪里，所以可以把所有的向量起点放到原点来看。对于向量设置w&#x3D;0然后乘以变换矩阵会得到和自身一样的向量。</p>
-<h4 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060933717.png" alt="image-20230106093340662" style="zoom:50%;" />
+<p>​		首先从光源的角度来看，光源是位于左上角并且指向立方体。看图中A，B，C这3个点。当B被渲染时，它的深度值进入深度缓冲区，因为在B和光源之间没有任何东西，默认它是那条线上离光源最近的点。然而当A和C被渲染的时候，它们在深度缓冲区的同一个点上“竞争”。两个点都在同一条来自光源的直线上，所以在透视投影后，光栅器发现这两个点需要去往屏幕上的同一个像素，则C点的深度值被写入了深度缓存中。</p>
+<p>step1:创建纹理作为阴影图</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;depthTexture);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="comment">//GL_DEPTH_COMPONENT：每个纹素放一个单精度浮点数用于存放已经标准化后的深度值 0：暂时不提供数据</span></span><br><span class="line"><span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_DEPTH_COMPONENT16, <span class="number">1024</span>, <span class="number">1024</span>, <span class="number">0</span>, GL_DEPTH_COMPONENT, GL_FLOAT, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//过滤</span></span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);</span><br></pre></td></tr></table></figure>
 
-<p>旋转后的坐标变换</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093352086.png" alt="image-20230106093352086" style="zoom:50%;" />
+<p>step2:创建配置帧缓冲</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glGenFramebuffers</span>(<span class="number">1</span>, &amp;FramebufferName);</span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//GL_DEPTH_ATTACHMENT:附着在上面的纹理收到深度测试的结果,0：一个层级</span></span><br><span class="line"><span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>step3：相关设置</p>
+<p>​	禁止向颜色缓存中写入，只输出深度，默认情况下，颜色缓存会被绑定在GL_COLOR_ATTACHMENT0上，此使的帧缓冲不包含纹理缓冲区，最后确认帧缓冲的状态完整。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawBuffer</span>(GL_NONE);</span><br><span class="line"><span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">GLuint error = <span class="built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER);</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+<p>step4：在缓冲绘制图像</p>
+<p>本次绘制不要片段着色器，但一定要开启深度测试</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将图像绘制进帧缓冲而不是显示在屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//从光源的角度观察，计算mvp</span></span><br><span class="line">glm::vec3 lightInvDir = glm::<span class="built_in">vec3</span>(<span class="number">0.5f</span>, <span class="number">2</span>, <span class="number">-2</span>);</span><br><span class="line"><span class="function">glm::vec3 <span class="title">lightPos</span><span class="params">(<span class="number">5</span>, <span class="number">20</span>, <span class="number">20</span>)</span></span>;</span><br><span class="line">glm::mat4 depthP = glm::<span class="built_in">perspective</span>&lt;<span class="type">float</span>&gt;(<span class="number">45.0f</span>, <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">50.0f</span>);</span><br><span class="line">glm::mat4 depthV = glm::<span class="built_in">lookAt</span>(lightPos, lightPos-lightInvDir, glm::<span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>));</span><br><span class="line">glm::mat4 depthM = glm::<span class="built_in">mat4</span>(<span class="number">1.0</span>);</span><br><span class="line">glm::mat4 depthMVP = depthP * depthV * depthM;</span><br><span class="line"><span class="comment">//正常绘制图像</span></span><br><span class="line"><span class="comment">//回到默认帧缓冲，渲染到屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093404574.png" alt="image-20230106093404574" style="zoom:50%;" />
+<p>step5：在屏幕绘制图像</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将帧缓冲纹理作为正常纹理渲染</span></span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//便于从齐次坐标[-1,1]变换到纹理坐标[0,1]</span></span><br><span class="line"><span class="function">glm::mat4 <span class="title">biasMatrix</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">             <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">1.0</span>)</span></span>;</span><br><span class="line"><span class="comment">//除了传入相机视角的MVP矩阵，还要传入光源视角的MVP矩阵</span></span><br><span class="line">glm::mat4 depthBiasMVP = biasMatrix * depthMVP;</span><br></pre></td></tr></table></figure>
+<p>step6：着色器文件（与上一次绘制不同的着色器）</p>
+<p>​	其次，从摄像机的角度于每一个像素，从深度缓冲区中取出相应的深度值，同时也计算这个像素到光源的距离。如果这两个深度值不同，意味着从光源看这个像素时有其他像素遮挡了它，这种情况下在颜色计算中要增加阴影因子来模仿阴影效果。</p>
+<p>(1)顶点着色器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ShadowCoord = DepthBiasMVP * <span class="built_in">vec4</span>(position,<span class="number">1</span>);<span class="comment">//光源视角</span></span><br><span class="line">gl_Position =  MVP * <span class="built_in">vec4</span>(position,<span class="number">1</span>);<span class="comment">//相机视角</span></span><br></pre></td></tr></table></figure>
 
-<p>旋转矩阵</p>
-<p>绕z轴</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093419847.png" alt="image-20230106093419847" style="zoom:50%;" />
-
-<p>绕y轴</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093429878.png" alt="image-20230106093429878" style="zoom:50%;" />
-
-<p>绕z轴</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060934083.png" alt="image-20230106093440038" style="zoom:50%;" />
-
-<p>更好的方法是四元组</p>
-<h4 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h4><p>进行缩放变换其实很简单。我们从最开始的原变换矩阵来看，回忆平移变换矩阵的样子，我们保持结果矩阵中V1,V2和V3保持原样的办法是让变换矩阵主对角线上的值都为’1’，这样原向量一次都<strong>和1相乘</strong>之后依然保持不变，各分量之间互不影响。所以，这里的缩放变换，只要把那些‘1’换成我们想缩放的值，原向量各分量分别乘以这些值之后就会在相应坐标轴上进行相应的缩放了，值大于1则放大，值小于1则缩小。</p>
-<p>如果片断着色器没有显式地请求那个变量（你可以使用同一个顶点着色器混合并匹配多个片断着色器）那么一般的驱动优化会丢弃顶点着色器vs中只是影响该变量的操作（特定的shader程序是针对vs和fs的配对组合）。但如果片断着色器fs确实使用到了那个变量，光栅器会在光栅化阶段对其进行插值，并且每一次片断着色器fs的调用都会提供一个匹配特定位置的插值后的值，这意味着相邻的两个像素的值都略有不同（虽然随着三角形离摄像头越来越远那样会越来越不合适）。</p>
-<p>***经常情况下依赖插值的两个变量是三角形的法向量和纹理坐标***。顶点的法向量通常是计算包含这个顶点的所有三角形法向量的平均值而得。如果物体不是平坦的话那么每个三角形的三个顶点的法向量会各不相同，那样我们可以通过插值来计算每个像素的法向量，那些向量会用于光线的计算，从而产生更逼真可信的光照效果。插值对于纹理坐标的应用也类似，这些坐标作为模型的一部分定义在每个顶点上。为了用贴图覆盖三角形你必须对每个像素进行一样的插值操作并给每个像素定义正确的纹理坐标，这些坐标都是插值的结果</p>
-<p>复合变换</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 Rotation_tree2 = <span class="built_in">eulerAngleYXZ</span>(gOrientation1.y, gOrientation1.x, gOrientation2.z);</span><br><span class="line">glm::mat4 Transla_tree2 = <span class="built_in">translate</span>(<span class="built_in">mat4</span>(), gPosition2);</span><br><span class="line">glm::mat4 Scaling_tree2 = <span class="built_in">scale</span>(<span class="built_in">mat4</span>(), <span class="built_in">vec3</span>(<span class="number">0.3f</span>, <span class="number">0.3f</span>, <span class="number">0.3f</span>));</span><br><span class="line">glm::mat4 Model_tree2 = Transla_tree2 * Rotation_tree2 * Scaling_tree2;</span><br></pre></td></tr></table></figure>
+<p>​	由于片段着色器将接收到的裁剪空间下的坐标看做一个标准的顶点属性，光栅化程序不会对其进行透视分割（只有传到gl_position变量中的顶点才会自动执行透视分割）。将这个向量除以其W分量手动透视分割；</p>
+<p>(2)片段着色器</p>
+<p>   从阴影贴图中获取深度数据的，将上面阴影贴图的深度值和当前像素的深度值进行比较，如果阴影贴图的深度值小，也就是阴影离相机近，那么就返回0.2作为阴影参数，反之就返回1.0表示没有阴影。bias是修复参数，仅用这一个参数还是会出现粗糙的阴影，还需要更多参数调整。<a target="_blank" rel="noopener" href="https://blog.csdn.net/linjf520/article/details/105380551/">https://blog.csdn.net/linjf520/article/details/105380551/</a></p>
+<pre><code>float bias = 0.005;
+float visibility=1.0;
+if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.z-bias)/ShadowCoord.w )&#123;
+    visibility=0.2;
+&#125;
+</code></pre>
+<p>将阴影参数传进来并调整漫射光和镜面反射光的颜色值。环境光就不受阴影影响。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gl_FragColor.rgb = </span><br><span class="line">	 MaterialAmbientColor +</span><br><span class="line">	 visibility* MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">	 visibility*MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br></pre></td></tr></table></figure>
  
       <!-- reward -->
       
@@ -201,7 +208,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -212,19 +219,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-nav-link">
+      <a href="/2023/01/25/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            光照详解
+            天空盒
           
         </div>
       </a>
     
     
-      <a href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/" class="article-nav-link">
+      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">采样器采样数据</div>
+        <div class="article-nav-title">光照详解</div>
       </a>
     
   </nav>

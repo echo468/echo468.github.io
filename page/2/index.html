@@ -118,6 +118,421 @@
     
     
     <article
+  id="post-git版本管理命令使用"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/08/git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/"
+    >git版本管理命令使用</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/08/git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2022-12-08T03:02:16.000Z" itemprop="datePublished">2022-12-08</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="权限问题"><a href="#权限问题" class="headerlink" title="权限问题"></a>权限问题</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_50790981/article/details/124991911">https://blog.csdn.net/qq_50790981&#x2F;article&#x2F;details&#x2F;124991911</a></p>
+<h4 id="创建版本库及版本管理命令"><a href="#创建版本库及版本管理命令" class="headerlink" title="创建版本库及版本管理命令"></a>创建版本库及版本管理命令</h4><p>1.创建工程目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir project(任取)</span><br></pre></td></tr></table></figure>
+
+<p>2.进入工程目录下，新建版本仓库（或者合并成git init project）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br></pre></td></tr></table></figure>
+
+<p>3.利用ls命令查看隐藏目录.git（版本库，最终要的是暂存区、分支及分支头指针）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -ah</span><br></pre></td></tr></table></figure>
+
+<p>4.工作目录或其子目录下编写或修改文件，如在project文件夹中新建一个readme.txt的文本文件</p>
+<p>（1）将readme.txt 单个文件添加到版本库的暂存区（一般不直接从工作区到分支）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git add readme.txt</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git add .</td>
+<td>将当前目录的所有文件添加到暂存区</td>
+<td>版本库管理工程</td>
+</tr>
+<tr>
+<td>$ git add all</td>
+<td>相当于$ git add .</td>
+<td>版本库管理工程</td>
+</tr>
+<tr>
+<td>$ git add folder</td>
+<td>将指定目录folder及其子目录添加到暂存区</td>
+<td>版本库管理一个目录</td>
+</tr>
+</tbody></table>
+<p>5.将暂存区的文件提交到仓库分支，并对本次提交进行说明</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit readme.txt -m &quot;文件说明&quot;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git commit –v</td>
+<td>提交时显示diff信息</td>
+</tr>
+<tr>
+<td>$ git commit –amend –m “我写了一个很好的文档”</td>
+<td>用本次提交代替上一次提交；若文件没有变化，则改写提交信息</td>
+</tr>
+<tr>
+<td>$ git commit –amend</td>
+<td>重做一次commit</td>
+</tr>
+<tr>
+<td>$ git commit –a</td>
+<td>将自上次提交后的工作区的变化直接提交到仓库</td>
+</tr>
+</tbody></table>
+<p>6.提交前可以先进行确认和检查</p>
+<p>查看工作区的文件又没有改动等信息,modified后为改动过的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git status</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081145022.png" alt="image-20221208114505983" style="zoom:67%;" />
+
+<p>查看文件进行了哪些修改，即暂存区和工作区的差异</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git diff</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081146143.png" alt="image-20221208114623103" style="zoom:67%;" />
+
+<p>如果运行git add readme.txt后，则暂存区和工作区无差异</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081157286.png" alt="image-20221208115714252" style="zoom:67%;" />
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git diff –cached</td>
+<td>显示暂存区和上一个commit的差异</td>
+</tr>
+<tr>
+<td>$ git diff HEAD</td>
+<td>显示工作区与当前分支下的最新commit之间的差异</td>
+</tr>
+<tr>
+<td>$ git diff [branch1] [branch2]</td>
+<td>显示两次提交之间的差异</td>
+</tr>
+</tbody></table>
+<p>7.提交后查看当前仓库中的所有提交的历史记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081147363.png" alt="image-20221208114756299" style="zoom:67%;" />
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git log –pretty&#x3D;oneline</td>
+<td>显示提交历史的简要信息</td>
+</tr>
+<tr>
+<td>$ git reflog</td>
+<td>显示当前分支最近几次操作</td>
+</tr>
+</tbody></table>
+<p>8.版本回退</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git reset –hard HEAD^</td>
+<td>将版本库、暂存区、工作区都回退到上一个版本</td>
+</tr>
+<tr>
+<td>$ git reset –soft HEAD^</td>
+<td>只回退版本库</td>
+</tr>
+<tr>
+<td>$ git reset –mixed HEAD^</td>
+<td>回退版本库和暂存区</td>
+</tr>
+<tr>
+<td>$ git reset –hard commit_id</td>
+<td>回退到commit_id表示的版本，可以是当前版本之前或之后的版本</td>
+</tr>
+</tbody></table>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081609072.png" alt="QQ图片20221208160912"></p>
+<p>9.恢复</p>
+<p>用暂存区（版本库）的内容覆盖工作区的内容（如果工作区的内容删除了也可以用这种方式恢复）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout --文件名</span><br></pre></td></tr></table></figure>
+
+<p>10.删除</p>
+<p>将文件删除并提交到暂存区（需要先从工作区删除，再使用本条命令，之后还要commit）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm 文件名</span><br></pre></td></tr></table></figure>
+
+<p>只从stage中删除，保留物理文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm --cached 文件名</span><br></pre></td></tr></table></figure>
+
+<p>11.分支</p>
+<p>建立一个副本，在副本上修改，主分支master的内容不变</p>
+<p>（1）创建分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git branch</td>
+<td>列出所有本地分支</td>
+</tr>
+<tr>
+<td>$ git branch -r</td>
+<td>列出所有远程分支</td>
+</tr>
+<tr>
+<td>$ git branch -a</td>
+<td>列出所有本地和远程分支</td>
+</tr>
+<tr>
+<td>$ git branch dev</td>
+<td>新建一个分支dev，但不切换到此分支</td>
+</tr>
+<tr>
+<td>$ git branch dev commit_id</td>
+<td>新建一个分支，并指向某个commit</td>
+</tr>
+<tr>
+<td>$ git branch –d dev</td>
+<td>删除本地分支dev</td>
+</tr>
+<tr>
+<td>$ git branch –dr</td>
+<td>删除远程分支</td>
+</tr>
+</tbody></table>
+<p>在dev2上不存在第一个修改的记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928778.png" alt="QQ图片20221209092742" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928402.png" alt="QQ图片20221209092738" style="zoom:67%;" />
+
+<p>（2）切换分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git checkout –b dev</td>
+<td>新建一个分支dev，并切换到此分支</td>
+</tr>
+<tr>
+<td>$ git checkout  dev</td>
+<td>切换到分支dev，并更新工作区</td>
+</tr>
+</tbody></table>
+<p>（3）分支合并</p>
+<p>将分支dev合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git merge dev</span><br></pre></td></tr></table></figure>
+
+<p>选择一个commit，合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry --pick commit_id</span><br></pre></td></tr></table></figure>
+
+<p>（4）解决冲突</p>
+<p>如果同一个文件在合并分支时都被修改了则会引起冲突</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091109742.png" alt="QQ图片20221209110831" style="zoom: 80%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091110869.png" alt="QQ图片20221209110835" style="zoom:80%;" />
+
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt;，&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;，&gt;&gt;&gt;&gt;&gt;&gt;&gt;标记出不同分支的内容，其中&lt;&lt;&lt;HEAD是指主分支修改的内容，&gt;&gt;&gt;&gt;&gt;dev6 是指dev6上修改的内容</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091114906.png" alt="QQ图片20221209110838"></p>
+<p>解决的办法是可以修改冲突文件后重新提交。master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作，工作一般情况下在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上。用<em>git log –graph</em>命令可以看到分支合并图。</p>
+<p>（5）删除本地分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d [branch-name] -D（大写）强制删除</span><br></pre></td></tr></table></figure>
+
+<p>12.为不好记的commit_id打标签</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git tag</td>
+<td>查看所有标签</td>
+</tr>
+<tr>
+<td>$git tag V1.0</td>
+<td>为当前分支打上标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag -d v1.0</td>
+<td>删除当前分支的标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag V1.0 commit_id</td>
+<td>为指定的某次提交打上标签</td>
+</tr>
+<tr>
+<td>$git tag -a V1.0 -m “version1.0 released”</td>
+<td>为当前分支创建带说明性文字的标签号</td>
+</tr>
+<tr>
+<td>$git show V1.0</td>
+<td>查看标签为V1.0的信息</td>
+</tr>
+</tbody></table>
+<p>远程相关、忽略文件相关</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-git基本知识"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/07/git%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86/"
+    >git基本知识</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/07/git%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86/" class="article-date">
+  <time datetime="2022-12-07T02:15:41.000Z" itemprop="datePublished">2022-12-07</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><p>Linus为了管理Linux代码库编写的一个开源的分布式版本控制系统，可以有效、高速地实现从很小到非常大的项目的版本管理。</p>
+<p>版本控制:是一种在开发的过程中用于管理我们对文件、目录或工程等内容的修改历史，方便查看更改历史记录，备份以便恢复以前的版本的软件工程技术。</p>
+<p>优点：分支管理能力更强；运行更快；更安全，系统内任何一台机器出故障都不影响整体项目</p>
+<h4 id="Git的本地系统结构"><a href="#Git的本地系统结构" class="headerlink" title="Git的本地系统结构"></a>Git的本地系统结构</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081034180.png" alt="图片1" style="zoom: 67%;" />
+
+<p>Git将一个工作目录分为工作区和版本库。工作在工作区完成；所谓版本库是一个名为.git的隐藏文件夹，包括很多内容，其中最重要的是stage（暂存区）和第一条分支master，以及指向当前分支的指针HEAD。所有文件都可以从工作区流向分支，也可以从分支流向工作区，这些工作都有相应的命令完成。</p>
+<h4 id="Git的分支管理原理"><a href="#Git的分支管理原理" class="headerlink" title="Git的分支管理原理"></a>Git的分支管理原理</h4><p>一开始的时候，master分支是一条线，Git用master指向最新的一次提交（最近的一次commit），再用HEAD指向master，就能确定当前分支，以及当前分支的提交点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081035606.png" alt="image-20221208103538577"></p>
+<p>每次提交，master分支都会向前移动一步，这样，随着你不断提交，master分支的线也越来越长。</p>
+<p>当我们创建新的分支，例如dev时，Git新建了一个指针叫dev，指向master相同的提交，再把HEAD指向dev，就表示当前分支在dev上：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081039659.png" alt="image-20221208103935618" style="zoom:80%;" />
+
+<p>除了增加一个dev指针，改改HEAD的指向，工作区的文件都没有任何变化。从现在开始，对工作区的修改和提交就是针对dev分支了，比如新提交一次后，dev指针往前移动一步，而master指针不变</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081040024.png" alt="image-20221208104024986" style="zoom: 67%;" />
+
+<p>假如我们在dev上的工作完成了，就可以把dev合并到master上。把master指向dev的当前提交，就完成了合并</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081041268.png" alt="image-20221208104130235" style="zoom:80%;" />
+
+<p>合并完分支后，可以删除dev分支。删除dev分支就是把dev指针给删掉，删掉后就剩下了一条master分支</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081042956.png" alt="image-20221208104241927" style="zoom:80%;" />
+
+<p>现在，master分支和feature1分支各自都分别有新的提交，变成了这样：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081043389.png" alt="image-20221208104314358" style="zoom:80%;" />
+
+<p>这种情况下，Git无法执行“快速合并”，只能试图把各自的修改合并起来，但这种合并就可能会有冲突（比如两次提交的某个文件的某一句被都被修改了，且修改不一样），如果冲突了Git会告诉我们，哪个文件存在冲突，必须手动解决冲突后再提交。再次提交后，master分支和feature1分支变成了下图所示：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081043705.png" alt="image-20221208104338669" style="zoom: 67%;" />
+
+<p>在实际开发中，我们应该按照几个基本原则进行分支管理：</p>
+<p>首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；</p>
+<p>干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本；每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。</p>
+<p>所以，团队合作的分支看起来就像这样：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081044566.png" alt="image-20221208104403529" style="zoom: 67%;" />
+
+<p>软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，每个bug都可以通过一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。</p>
+<h4 id="Git下多人开发的工作模式"><a href="#Git下多人开发的工作模式" class="headerlink" title="Git下多人开发的工作模式"></a>Git下多人开发的工作模式</h4><p>多人协作的工作模式通常是这样：</p>
+<ol>
+<li><p>首先，可以试图用git push origin <branch-name>推送自己的修改；</p>
+</li>
+<li><p>如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；</p>
+</li>
+<li><p>如果合并有冲突，则解决冲突，并在本地提交；</p>
+</li>
+<li><p>没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！</p>
+</li>
+</ol>
+<p>如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch –set-upstream-to <branch-name> origin&#x2F;<branch-name>。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-着色器文件"
   class="article article-type-post"
   itemscope
@@ -1238,469 +1653,6 @@
 </tbody></table>
 <p>狠狠羡慕了，在那一瞬间终于理解了某个明知道软院缺陷却执意想来浙大的同学了。走的时候是11点，回头一看突然发现校门熄灯了！就在那一刻真的真的觉得这一趟跑过来太幸运太值得了，为了看5分钟跑了快一个小时的路，然而但凡晚到5分钟，哭都哭不出来。至今都觉得这5分钟有一种惊鸿一撇的感觉。</p>
 <p>下面问题来了，怎么回去？？？11点了，地铁关了，公交冒得，打车太危险估计也没人接单，貌似只有骑车回去。骑车…一个半小时….emmm，要不骑车试试…..事实证明，我他妈骑了两个小时啊啊啊啊啊！路过无数个红绿灯，无数个插口，无数条街道，1点了还在杭州的街上骑行，宽敞的马路通明的路灯高大的梧桐树就剩两辆自行车雷厉风行，街边零散的几家店到有些许温暖的感觉。路过了杭州电子科技大学，杭州市人民政府，杭州市监督总局等等一些学校和总部，用生命感受这座城市，属于健康大学生的新式浪漫。从剩余10公里开始，每骑一公里，就要问一句还剩多远，红灯是唯一的休息时间（要是遇到绿灯就倒霉），10 9 8 7 6 5 4 3 2 1，铁打的身体和钢铁的意志，坚持就是胜利！下车的时候腿已经软了，谢谢罗森的关东煮救了一命。到了民宿用吊着的最后一口气洗了澡，之后就短暂离开人世了…..ps：杭州的小红车太丝滑好骑了，1小时内免费，所以只要在快到一小时的时候换辆车，就可以两小时免费了嘻嘻。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY4"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/13/%E6%9D%AD%E5%B7%9E-DAY4/"
-    >乌镇-DAY4</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/13/%E6%9D%AD%E5%B7%9E-DAY4/" class="article-date">
-  <time datetime="2022-10-13T07:38:49.000Z" itemprop="datePublished">2022-10-13</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p><strong>一些说明：</strong></p>
-<p>乌镇的门票分成东栅（本地人读“诈”）110和西栅150，联票190。学生票半价但只能用一次并且不可以用在联票上。看某书或者民宿老板都表示西栅更好，东栅可以不用去。进去了千万不要出景区，否则需要重新购票。某书或者民宿老板都表示西栅一定要留到晚上看夜景。本人试了一下觉得对于爱拍照和体验的人来说西栅足够玩一整天了，比起联票还不如用一天好好玩一个地方。夜景确实很美，建议晚上坐船体验。ps:大家可能觉得景区吃饭玩耍可能会坑人，但是大部分都是正常价格，可以放心消费。</p>
-<p><strong>一些科普（可以跳过）：</strong></p>
-<p>乌镇镇，隶属于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B5%99%E6%B1%9F%E7%9C%81/190275?fromModule=lemma_inlink">浙江省</a><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%98%89%E5%85%B4%E5%B8%82?fromModule=lemma_inlink">嘉兴市</a><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%A1%90%E4%B9%A1%E5%B8%82/2155562?fromModule=lemma_inlink">桐乡市</a>，。乌镇境内水系属<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%A4%AA%E6%B9%96%E6%B5%81%E5%9F%9F/7431148?fromModule=lemma_inlink">太湖流域</a>，河流纵横交织，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%BA%AC%E6%9D%AD%E5%A4%A7%E8%BF%90%E6%B2%B3?fromModule=lemma_inlink">京杭大运河</a>依镇而过。乌镇镇是中国历史文化名镇、中国十大魅力名镇、全国环境优美乡镇、<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%9B%BD%E5%AE%B65A%E7%BA%A7%E6%97%85%E6%B8%B8%E6%99%AF%E5%8C%BA/9434223?fromModule=lemma_inlink">国家5A级旅游景区</a>，素有“中国最后的枕水人家”之誉，拥有7000多年文明史和1300年建镇史，是典型的中国江南水乡古镇，有“鱼米之乡、丝绸之府”之称，有六千年历史，是全国二十个黄金周预报景点及江南六大古镇之一。1991年被评为浙江省历史文化名镇；2013年起，举办乌镇戏剧节；2014年11月19日成为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%96%E7%95%8C%E4%BA%92%E8%81%94%E7%BD%91%E5%A4%A7%E4%BC%9A/15947338?fromModule=lemma_inlink">世界互联网大会</a>永久会址。2020年7月29日，入选2019年重新确认国家卫生乡镇（县城）名单。2019年10月20日至22日，由国家互联网信息办公室和浙江省人民政府共同举办的第六届世界互联网大会在浙江乌镇镇召开。</p>
-<h4 id="STATION1-乌镇大剧院"><a href="#STATION1-乌镇大剧院" class="headerlink" title="STATION1:乌镇大剧院"></a>STATION1:乌镇大剧院</h4><p>早餐是民宿旁边貌似唯一一家餐馆，雪菜黑🐟面真的很好吃（之后才发现江浙上海那边才有，看来短时间吃不到了）。之后民宿老板非常热心的把我们送到景区大门，还告诉我们门口就做核酸的9点结束，还说啥晚上玩完了就给他打电话他来接（真的人好好啊呜呜）。大门(p1p2)进去后穿过服务大厅，就是水上的木头路（p5p6），走几步就到了乌镇大剧院（p3p4），不过因为疫情里面暂时没有表演也没有开放。顺便一提，听到路过的导游说乌镇的水是京杭大运河的支流，不过之后我也确实走到了京杭大运河旁边。导游好像还说什么大剧院的木头是京杭大运河湖底的沉船木。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061136698.jpg" alt="QQ图片20221105201522"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061136640.jpg" alt="QQ图片20221105201531"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141044.jpg" alt="QQ图片20221105201508"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141374.jpg" alt="QQ图片20221105201511"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141870.jpg" alt="QQ图片20221105201515"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141265.jpg" alt="QQ图片20221105201519"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION2-木心美术馆"><a href="#STATION2-木心美术馆" class="headerlink" title="STATION2-木心美术馆"></a>STATION2-木心美术馆</h4><p>民宿老板的妈妈很推荐的地方，很有设计感的水上美术馆。门票20r，学生票半价。因为里面很多是作者的手稿所以不允许拍照。很安静并且灯光昏暗，展出的主要是作者的绘画作品、文学作品以及生前使用的物件，以及某个电影的剧照。p3p4是快到出口的时候有一面墙贴满了俳句，以及展示了一些卡片，是一些有文化的游客自己写的俳句。只能说对于了解或者喜爱该作者的人来说这确实是一个很好的地方，但对于我这种没有文化的人来说，就是充满期待进去，一脸懵逼出来。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061157944.jpg" alt="QQ图片20221106115721"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061157787.jpg" alt="QQ图片20221106115732"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061157076.jpg" alt="QQ图片20221106115725"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061158881.jpg" alt="QQ图片20221106115728"></td>
-</tr>
-</tbody></table>
-<p>准备去下一站时路过的风景。别看黑瓦白墙的房屋和石板路特别老旧，水还是绿色的，其实都特别干净，而且房间里面都很新很干净。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209335.jpg" alt="QQ图片20221106120907"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209138.jpg" alt="QQ图片20221106120905"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209180.jpg" alt="QQ图片20221106120859"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209031.jpg" alt="QQ图片20221106120901"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION3-草木本色染坊"><a href="#STATION3-草木本色染坊" class="headerlink" title="STATION3-草木本色染坊"></a>STATION3-草木本色染坊</h4><p>很期待的一个景点，因为在网上看见别人出片真的巨好看，现场确实有汉服小姐姐拍照。然而去的时候因为没有很大的风把将布条吹开，所以拍照效果会差一点（或许需要一个会抓拍且会取景的摄影师）。除了高杆以外，旁边还有木制阶梯式晒布架，可以走楼梯上在高处看看。那里还有染色体验处，好像没开。很喜欢p7，当然布条是被我手动扒开的。p9蓝染旁边还有红黄布条，大家好像不感兴趣。p8是染布商品店，我记得蓝染印花的书包很好看（200多orz）。</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246865.jpg" alt="QQ图片20221106124257"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246084.jpg" alt="QQ图片20221106124407"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246897.jpg" alt="QQ图片20221106124415"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246206.jpg" alt="QQ图片20221106124412"></td>
-</tr>
-<tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061856398.jpg" alt="QQ图片20221106185600"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246088.jpg" alt="QQ图片20221106124409"></td>
-</tr>
-<tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246901.jpg" alt="QQ图片20221106124418"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061247068.jpg" alt="QQ图片20221106124303"></td>
-</tr>
-<tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061247655.jpg" alt="QQ图片20221106124404"></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="STATION4-水上集市"><a href="#STATION4-水上集市" class="headerlink" title="STATION4-水上集市"></a>STATION4-水上集市</h4><p>沿途的风景（ps：千万不要看房子很旧，拍照很好看而且房子里面都很新很舒服），沿途的房子一般都是小店，食店茶店比较多。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904686.jpg" alt="QQ图片20221106190331"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904077.jpg" alt="QQ图片20221106190327"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904633.jpg" alt="QQ图片20221106190323"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904929.jpg" alt="QQ图片20221106190318"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904120.jpg" alt="QQ图片20221106190302"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904889.jpg" alt="QQ图片20221106190306"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904867.jpg" alt="QQ图片20221106190310"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904576.jpg" alt="QQ图片20221106190313"></td>
-</tr>
-</tbody></table>
-<p>网上是这样形容水上集市的：“一大清早，小船载着新鲜的蔬菜和家养禽畜，来到四通八达的河道枢纽出售，顺便也可喝个早茶。临河的居民只要吆喝一声，船就会摇到水阁边，不出门也可以买到新鲜的蔬菜，很受居民喜欢。”不过可能是因为快到中午了或者现在大家都去开店了，所以并没有看到，坐船的也都是游客。不过听说如果住在乌镇景区内部可以免费预订7-9店的早茶。最后加上两张水上集市的夜景来对比（我的手机尽力了，其实没那么绿，偏橙黄）。（喜欢p4p5）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937129.jpg" alt="QQ图片20221106193511"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937608.jpg" alt="QQ图片20221106193514"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937400.jpg" alt="QQ图片20221106193517"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061939102.jpg" alt="QQ图片20221106193524"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937623.jpg" alt="QQ图片20221106193520"></td>
-<td></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061939356.jpg" alt="QQ图片20221106193825"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061939100.jpg" alt="QQ图片20221106193828"></td>
-</tr>
-</tbody></table>
-<p>穿过亭子找到了某书推荐的p4茅老太臭豆腐10r，酱很香，豆腐皮不是龙翔的炸面包口感，是正常的炸豆腐，但我觉得龙翔的更好吃。木制店真的很好看p1p2(可以脑部一下梦华录那种类型的)，进门边是集市——石板路和其他小店p3，窗边是河——能看见对面的店和路过的船p5。店里还有一个门，出去是通向河水的几节楼梯p6p7（难道是为了洗衣服之类的吗，看到很多店都是这样的）.外面太阳很暖和，凉风吹进来正好。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061948306.jpg" alt="QQ图片20221106194817"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061948521.jpg" alt="QQ图片20221106194821"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061949089.jpg" alt="QQ图片20221106194824"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061950396.jpg" alt="QQ图片20221106194833"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061950526.jpg" alt="QQ图片20221106194836"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061951342.jpg" alt="QQ图片20221106194827"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061951890.jpg" alt="QQ图片20221106194830"></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="STATION5-天下第一锅"><a href="#STATION5-天下第一锅" class="headerlink" title="STATION5-天下第一锅"></a>STATION5-天下第一锅</h4><p>一进去从门口就能看到天下第一锅（好像破了吉尼斯记录？），确实超级大。这里是曾经的冶炼坊，据说曾经每年可以生产30000+个锅，里面展示了冶炼的工具，冶炼的方法以及该冶炼坊的历史发展。门口还有卖锅的，只能说铁做的锅我单手提不动….</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061957607.jpg" alt="QQ图片20221106195712"></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211062012129.jpg" alt="QQ图片20221106201158" style="zoom: 50%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211062011912.jpg" alt="QQ图片20221106201127"></td>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211062011137.jpg" alt="QQ图片20221106201130"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION6-水上戏台"><a href="#STATION6-水上戏台" class="headerlink" title="STATION6-水上戏台"></a>STATION6-水上戏台</h4><p>戏台是一家茶店的，很小的戏台，得过桥去对面的一个木制平台看（但不知为啥冒得座位）。因为人很少，所以就一个戏子象征性营业（感觉好凄惨….）</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY3"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/12/%E6%9D%AD%E5%B7%9E-DAY3/"
-    >杭州-DAY3</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/12/%E6%9D%AD%E5%B7%9E-DAY3/" class="article-date">
-  <time datetime="2022-10-12T03:09:18.000Z" itemprop="datePublished">2022-10-12</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>极其悲惨的一天。也正是这一天，对于我这种每次恨不得期末考试考完最后一门的下午就逃离南昌大学回家的人，第一次产生了好想回南昌大学的想法。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301625212.png" alt="QQ图片20221030162525" style="zoom: 50%;" />
-
-<p>我们原来的计划：飞来峰-灵隐寺-新白鹿-知味观买点心-浙江省博物馆-六点火车去乌镇</p>
-<p>飞来峰-灵隐寺的计划：北高峰索道上山-慢慢下山-去参观山脚下的灵隐寺</p>
-<p>因为12点退房不能放东西了，就<del>拖家带口</del>准备去离民宿最近的行李寄存处。到后发现是酒店内部的寄存处，非住户不能存东西……搜了下决定打车去杭州东站存，存完再打车去灵隐寺。就这样比预定时间晚了两个小时到达，到了景区，发现景区门口右侧大写着行李寄存处，心情如下👇</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301631230.jpg" alt="1667118698(1)"></p>
-<p>ps：此处说一下这部分景区的价格是这样的，索道30r，寺庙在山里面，所以先花45r买山钱，再花30r买寺庙钱。（但是除了索道学生半价嘻嘻）<del>所以有人把寺庙从山里搬出来吗？</del></p>
-<h4 id="STATION1-北高峰"><a href="#STATION1-北高峰" class="headerlink" title="STATION1-北高峰"></a>STATION1-北高峰</h4><p>按照计划先去北高峰索道，北高峰就是双峰插云的两峰之一。索道上面可以看到茶园：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301709018.jpg" alt="QQ图片20221030170912" style="zoom: 33%;" />
-
-<p>山顶有一个小小的观景台，也可以看到西湖（一长条是苏堤），当然这山也不是特别高。山上有还有财神庙、撞钟啥的，没有看太多，下山准备看其它的。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301642337.jpg" alt="QQ图片20221030164102"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301642915.jpg" alt="QQ图片20221030164104"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301642354.jpg" alt="QQ图片20221030164106"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301645819.jpg" alt="QQ图片20221030164505"></td>
-</tr>
-</tbody></table>
-<p>下面是我们原计划路线：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301646907.jpg" alt="QQ图片20221030164636" style="zoom:33%;" />
-
-<p>正好下山的时候确实只找到了一条山路，就信誓旦旦下山了。楼梯特别陡，看的脑袋都晕，休息平台基本都有算命的。<del>为了赚（骗）点钱年纪大了还爬那么高的山真的辛苦了。</del>下了好久都山，看到了一个叫法华寺的寺庙，结合上图我们一度以为是不是韬光寺或者永福寺改名字了。（后来觉得自己跟傻逼一样）下面是寺庙牌坊：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301724196.jpg" alt="QQ图片20221030172405"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301710734.jpg" alt="QQ图片20221030171004"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>继续下山碰到连续两个岔口，凭感觉+导航选择了最错误的路，走了很久很久走到了居民区。</p>
-<p>……..居民区？</p>
-<p>导航一下发现距离灵隐寺1h。</p>
-<p>……1个小时？？</p>
-<p>导航说最近的路是原路返回。</p>
-<p>…..原路返回？？？</p>
-<p>行吧凭借稀碎的身体和钢铁般的意志走了好久返回到刚刚的第一个岔口，问了路过的人，路人告诉我们不用返回啊，下面走过居民区就到大路了。又看了一眼导航，导航让我们去北高峰山顶。</p>
-<p>…..你是说让我爬上去？？？？</p>
-<p>最后发现事情的真相是有两条下山的路，只有一条可以到灵隐寺，这条路景点也比较多，另一条通到了好远的地方。可是我确实只看到了一条下山路啊！某书那么多人去就没有一个人走错吗？？？现在最优解是穿过居民区去大路打车。所以这么长的破路来来回回走了tm三遍是吧？？？</p>
-<p>总之就是又又浪费两小时去灵隐寺，结合上山就是折腾了3小时到最初的门口。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301714595.jpg" alt="QQ图片20221030171450" style="zoom: 25%;" />
-
-<h4 id="STATION2-灵隐寺"><a href="#STATION2-灵隐寺" class="headerlink" title="STATION2-灵隐寺"></a>STATION2-灵隐寺</h4><p>时间比较紧，而且已经浪费4小时了，所以进去后我们就一直往上爬逛了中间一路五个主殿，其他偏殿没看。其实我觉得寺庙墙的那种黄色很好看，也看到有姐姐拍照，应该很出片，但觉拍寺庙大不敬此处就门口一些图。ps：进去会送三根香，不用单独破费。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722523.jpg" alt="QQ图片20221030172224"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722425.jpg" alt="QQ图片20221030172218"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722023.jpg" alt="QQ图片20221030172221"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722278.jpg" alt="QQ图片20221030172226"></td>
-</tr>
-</tbody></table>
-<p>寺庙很漂亮，来点网图：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302151515.jpg" alt="QQ图片20221030172722" style="zoom:25%;" />
-
-<h4 id="STATION3-知味观"><a href="#STATION3-知味观" class="headerlink" title="STATION3-知味观"></a>STATION3-知味观</h4><p>打车去的路上，在车里看到了晴天下的绝美西湖，特别羡慕图4那俩人啊呜呜。p2还是断桥。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310912435.png" alt="QQ图片20221030232513"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310912859.jpg" alt="QQ图片20221030232449"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310912207.jpg" alt="QQ图片20221030232457"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310913137.png" alt="QQ图片20221030232935"></td>
-</tr>
-</tbody></table>
-<p>其实来这里是为了象征性买点纪念食物。知味观在杭州的地位大概跟北京稻香村那样，也是传统老字号。湖滨那里是总店，主要是一家杭州传统小吃馆，顺便卖了糕点和卤味。而且到了那里才发现其实卤味更多人排队……</p>
-<p>p1下面盘子右边是特别好看的荷花酥，上面第一块牌子左下角那个是绿马定胜糕，吃了一口感觉是平平无奇绿豆糕</p>
-<p>p2 条头糕，糯叽叽的里面是红豆沙（像条状版五芳斋糯米团子）</p>
-<p>p3 榨菜鲜肉月饼，很香，正好买到最后一个。不过现在这种咸月饼蛮常见的。</p>
-<p>其他的寄出去了回家尝尝（桃花酥、云片糕、桂花麻薯啥的，当然根据我多年经验老字号糕点一般都一般般）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302154114.jpg" alt="QQ图片20221030215429"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302153770.jpg" alt="QQ图片20221030213953"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302159594.jpg" alt="QQ图片20221030215938"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302157420.png" alt="QQ图片20221030215612"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION4-大摆烂行程"><a href="#STATION4-大摆烂行程" class="headerlink" title="STATION4-大摆烂行程"></a>STATION4-大摆烂行程</h4><p>然后灾难了。</p>
-<p>准备按照计划去湖滨的新白鹿吃饭的，结果进商场一扫黄码了……</p>
-<p>后来醒悟了虽然火车站播报48小时核酸，但是外地人需要天天核检。</p>
-<p>加一天住宿（×）</p>
-<p>坐火车（×）</p>
-<p>打车（×）</p>
-<p>逛商场（×）</p>
-<p>找到核酸点了，4-6个小时出结果，当时三点半左右吧，乌镇的火车6点多。</p>
-<p>寄！</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102436.gif" alt="QQ图片20221101210156"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102040.gif" alt="QQ图片20221101210156"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102681.gif" alt="QQ图片20221101210156"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102132.gif" alt="QQ图片20221101210156"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102436.gif" alt="QQ图片20221101210156"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102073.gif" alt="QQ图片20221101210156"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102504.gif" alt="QQ图片20221101210156"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102195.gif" alt="QQ图片20221101210156"></td>
-</tr>
-</tbody></table>
-<p>突然时间一点都不赶了，那天天空是蔚蓝色，窗外有千纸鹤….原本根本不打算逛的湖滨银泰突然就很有时间逛了….为了耗时间，就去买做核酸看到的一家排长队的包子和吴山烤禽。</p>
-<p>来看下这个包子排了多长的队（后来我在地铁上的广告看到这家包子是知味观下的，而且有很多别的口味），烤禽差不多也这么长吧：</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012121091.jpg" alt="QQ图片20221101211608"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012121548.jpg" alt="QQ图片20221101211622"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012122197.jpg" alt="QQ图片20221101211626" style="zoom:33%;" /></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012122040.jpg" alt="QQ图片20221101211618"></td>
-</tr>
-</tbody></table>
-<p>后两幅图，第一幅是p1的南方油包-&gt;豆沙包。刚蒸出来豆沙还有点流心效果，还加了西瓜子，陈皮和八宝饭上面那种红色绿色的糖丝。对我来说太甜了，或许对于江浙一带偏甜的来说刚刚好吧。肉包就是普通肉包，大了些。反正我不知道为什么排这么长队，可能跟我们一样闲的。我也不知道为什么有人买了十几个，可能家里人多吧p4那个是吴山烤禽，鸡肚子里塞了葱和一些料，更香了。味道还行，但还是配饭吃好些。</p>
-<p><strong>ps:真想吃好吃的烤鸡烤鸭去fxy家的菜场。</strong></p>
-<p>后来在某书看到了，也算是误打误撞得到一点意外收获（心理安慰）吧。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012133629.jpg" alt="QQ图片20221101213248" style="zoom:25%;" />
-
-<p>吃完了还有很多时间，游荡到西湖旁边决定摆烂坐船，师傅手划船。问了下价格200多。好！坐他妈的！正好最后一班了，师傅可能是为了200块也也可能是看我们面善放我们两个黄码上船了，之后又吓得要死说留个联系方式变绿了告诉他一声。傍晚的西湖比起白天又是一番景色，风吹的有点冷，湖水很凉，周围只有师傅划船的声音，躺着看太阳一点点落山，时不时师傅也会介绍下周围的景点（上一篇一些就是这个师傅说的）。比如说本地人都会去宝石山，因为有的时候火烧云山那一片全红之类的。有时晚上曲园荷风的湖上会亮很大一片灯为晚上的演出彩排（上一篇介绍过)。中秋时手划船上就会去掉顶棚挂上一个大灯当作月亮，船上摆上桌子和食物，据说每次都能订满，价格和年份相同，每年长一块。也听到隔壁船在放新白娘子传奇。</p>
-<p>p2很像出海的船，p12是过桥被惊艳了抓拍的。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012154901.jpg" alt="QQ图片20221101211632"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012155172.jpg" alt="QQ图片20221101211645"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012157033.jpg" alt="QQ图片20221101215650"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012157292.jpg" alt="QQ图片20221101215653"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012159215.jpg" alt="QQ图片20221101215656"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158211.jpg" alt="QQ图片20221101215702"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158756.jpg" alt="QQ图片20221101215706"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158463.jpg" alt="QQ图片20221101215709"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158375.jpg" alt="QQ图片20221101215711"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158165.jpg" alt="QQ图片20221101215713"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012200526.jpg" alt="QQ图片20221101215658"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012200770.jpg" alt="QQ图片20221101215716"></td>
-</tr>
-</tbody></table>
-<p>下船的时候已经天黑了..七点多了核酸还没出来，人又恢复到了绝望状态。准备先去寄东西，拎着包步行了好久好久，坐在街边的长椅休息上还会收到路人同情（bushi）的眼光。在寄存处附近路过了一个看起来很有气势的门，太黑了看不清，我还心想这是什么政府机关啊这么高的大门。到了寄存处，寄存处告诉我们明天早上才能寄。</p>
-<p>……</p>
-<p>突然看见旁边小区门口有一个丰巢柜塞进去就行，本来想着黄码怎么进小区，但是保安很善良。中途还跟我们搭话，说你们看到旁边的浙大吗，那个大名鼎鼎的浙大。我才反应过来我们刚刚居然无意路过了浙大!不过当时我还并不知道为什么这个小区叫求是村。</p>
-<p>寄完东西，突然就绿码了，我是真的会哭：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012218043.jpg" alt="QQ图片20221101221753" style="zoom: 25%;" />
-
-<p>就准备打车去火车站。因为晚去乌镇的一班车是8：50的。但是过去实在太远了，即使打车，到那里也8：40了。本来冲一波是可以赶上的，问题是还要取寄存的东西。最后的最后，为了不耽误第二天早上的行程，决定打车去乌镇。</p>
-<p>就这样，晚上11点我们还在高速上。本来20分钟-30分钟 2*30元的车程，花了90分钟300多元。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012215661.png" alt="QQ图片20221101221502" style="zoom: 50%;" />
-
-<p>此处纪念一下晚上十点多高速做核酸，看到乌镇两个字恨不得泪如雨下的场景。（去他妈的疫情）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012219927.jpg" alt="QQ图片20221101221757"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012219410.jpg" alt="QQ图片20221101221759"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>在高速的时候就要联系房东嘛</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211021031333.png" alt="微信图片_20221102103040" style="zoom: 50%;" />
-
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211021031111.png" alt="微信图片_20221102103032" style="zoom: 67%;" />
-
-<p>emm我当时确实怀疑了一下对方的精神状态….还想着如果真的有问题要不要报警。</p>
-<p>最后到的时候房东乐呵呵跑出来接我们进去，贼热情，说什么看这里还有小兔子那边有小金鱼，这里这里那里那里….什么因为人少他妈妈给我们升级了更大的房间…房间里这个怎么用那个怎么用…反正就是热情到愧疚…那么晚了还说有事随便叫他，说明天早上叫他把我们送到景区。房间是木质的，因为他们家有孩子所以放了很多可爱的摆件，厕所窗户打开就可以看到下面的小花园，小桥池塘很多植物等等。也算是倒霉了一天最后有了好归宿吧。</p>
  
       <!-- reward -->
       
