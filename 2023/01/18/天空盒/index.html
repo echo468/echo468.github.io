@@ -73,15 +73,19 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/01/25/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-date">
-  <time datetime="2023-01-25T03:38:27.000Z" itemprop="datePublished">2023-01-25</time>
-</a>   
+      <a href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-date">
+  <time datetime="2023-01-18T03:38:27.000Z" itemprop="datePublished">2023-01-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+  
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">0</span>
+            <span class="post-count">1.1k</span>
         </span>
     </span>
 
@@ -90,20 +94,48 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
+            <span class="post-count">4 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-   
+  <p>​	天空盒子是一种让场景看上去更广阔无垠的一种视觉技术，用无缝对接的封闭纹理将摄像机的视口360度无死角的包裹起来。视角中除了真实模型的其他空余部分被封闭纹理所完全填充充当背景。</p>
+<p>​	天空盒子的一种实现方法是渲染一个巨大的正六面体封闭盒子纹理，并将相机置于中心，当摄像机移动的时候封闭纹理也跟着移动，所以看上去永远走不到场景中的视平线边缘。天空盒子技术除了用上面的立方体实现，还可以用球面来实现。</p>
+<p>​	这种纹理叫做立方体贴图(Cubemap)。为了从立方体贴图中采样，要采用3d纹理坐标而不是我们之前用的2d纹理坐标。纹理采样器将3d纹理坐标看做一个向量，找出该文素位于立方体的哪一个面上并从那个面上取出需要的文素。</p>
+<h4 id="创建纹理"><a href="#创建纹理" class="headerlink" title="创建纹理"></a>创建纹理</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> GLuint</span></span><br><span class="line"><span class="function"><span class="title">InitTextures</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    GLenum imgFormat;</span><br><span class="line">    GLuint texture;</span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;texture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, texture);</span><br><span class="line"></span><br><span class="line">	GLint imgWidth, imgHeight;</span><br><span class="line">	GLubyte* image = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	image = <span class="built_in">LoadRGBImage</span>(TexFiles[<span class="number">0</span>], &amp;imgWidth, &amp;imgHeight, &amp;imgFormat);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, <span class="number">0</span>,</span><br><span class="line">        GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_X, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">free</span>(image);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> texture;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​	开始先创建一个纹理对象来加载cubemap纹理，这个对象绑定到了一个特殊的GL_TEXTURE_CUBE_MAP目标对象上。设置cubemap的六个面枚举：</p>
+<p>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_X<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_X<br>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_Y<br>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_Z</p>
+<p>​	通过glTexImage2D()函数将资源数据传给OpenGL。cubemap加载解析结束后，设置过滤。（这里简化只加载了一张图片）</p>
+<h4 id="着色器文件"><a href="#着色器文件" class="headerlink" title="着色器文件"></a>着色器文件</h4><p>顶点着色器</p>
+<p>1.顶点着色器之后，光栅器将获得gl_Position向量，并进行透视分割以完成投影变换(将各分量除以W分量)。将Z分量设置成W分量的值可以保证透视分割后位置向量最终的Z分量值为1.0。Z分量为1意味着永远处于Z轴最远处，在深度测试中相对于其他物体模型天空盒子将永远处于劣势，因此天空盒子就总是作为其他物体的背景了，而其他物体会一直渲染在背景前面。</p>
+<p>2.使用天空盒子自身坐标系中顶点的原始坐标来作为3D纹理坐标。因为对cubemap纹理采样时是从中心发射一个向量到立方体盒子或者球面上的，因此盒子表面上点的坐标恰好就是纹理坐标。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v_Position=vertexPosition_modelspace;</span><br><span class="line">gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">gl_Position=gl_Position.xyww;</span><br></pre></td></tr></table></figure>
+<p>片段着色器</p>
+<p>使用’samplerCube’而不是’sampler2D’以获取cubemap的纹理。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uniform samplerCube myTextureSampler;</span><br><span class="line">gl_FragColor=<span class="built_in">textureCube</span>(myTextureSampler, v_Position);</span><br></pre></td></tr></table></figure>
+
+<h4 id="应用纹理"><a href="#应用纹理" class="headerlink" title="应用纹理"></a>应用纹理</h4><p>1.第一个要改变的是表面剔除模式。通常，会剔除掉背向相机看不到的三角形图元，而对于天空盒子来说，相机是置于盒子内部的，所以想看到盒子的内部而不是外部。用相反的OpenGL剔除模式,就要告诉OpenGL剔除去正面的三角形。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glEnable</span>(GL_CULL_FACE);<span class="comment">//开启表面剔除(默认背面剔除)</span></span><br><span class="line"><span class="built_in">glCullFace</span>(GL_FRONT);<span class="comment">//剔除正面实现</span></span><br></pre></td></tr></table></figure>
+<p>2.第二个要改变的是深度测试函数模式。默认是告诉OpenGL，输入的片元如果比存储的片元Z值小就认为赢得深度测试而被渲染，但是对于天空盒子，Z值总是最远的边界，如果深度测试函数模式设置为‘小于’，天空盒子会被裁剪掉，为了让盒子成为场景的一部分要将深度测试函数模式改为‘小于等于’。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDepthFunc</span>(GL_LEQUAL);</span><br></pre></td></tr></table></figure>
+
+<p>3.计算WVP矩阵。对于天空盒子来说，世界坐标系的中心位于相机处，从而保证相机始终在天空盒子中心。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 V = glm::<span class="built_in">mat4</span>(glm::<span class="built_in">mat3</span>(<span class="built_in">getViewMatrix</span>()));<span class="comment">//天空盒v矩阵</span></span><br><span class="line">glm::mat4 V1 = <span class="built_in">getViewMatrix</span>();<span class="comment">//其他物体v矩阵</span></span><br></pre></td></tr></table></figure>
+<p>cubemap的纹理贴图绑定到纹理单元0号上,设置为GL_TEXTURE_CUBE_MAP</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, Texture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>最后还原原本的剔除模式和深度测试函数还原</p>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -169,7 +201,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/25/%E5%A4%A9%E7%A9%BA%E7%9B%92/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -180,10 +212,19 @@
    
   <nav class="article-nav">
     
-    
       <a href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            阴影贴图
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">阴影贴图</div>
+        <div class="article-nav-title">光照详解</div>
       </a>
     
   </nav>

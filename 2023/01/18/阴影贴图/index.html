@@ -124,7 +124,7 @@
 <p>本次绘制不要片段着色器，但一定要开启深度测试（此处以点光源的mvp为例）</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将图像绘制进帧缓冲而不是显示在屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//从光源的角度观察，计算mvp</span></span><br><span class="line">glm::vec3 lightInvDir = glm::<span class="built_in">vec3</span>(<span class="number">0.5f</span>, <span class="number">2</span>, <span class="number">-2</span>);</span><br><span class="line"><span class="function">glm::vec3 <span class="title">lightPos</span><span class="params">(<span class="number">5</span>, <span class="number">20</span>, <span class="number">20</span>)</span></span>;</span><br><span class="line">glm::mat4 depthP = glm::<span class="built_in">perspective</span>&lt;<span class="type">float</span>&gt;(<span class="number">45.0f</span>, <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">50.0f</span>);</span><br><span class="line">glm::mat4 depthV = glm::<span class="built_in">lookAt</span>(lightPos, lightPos-lightInvDir, glm::<span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>));</span><br><span class="line">glm::mat4 depthM = glm::<span class="built_in">mat4</span>(<span class="number">1.0</span>);</span><br><span class="line">glm::mat4 depthMVP = depthP * depthV * depthM;</span><br><span class="line"><span class="comment">//正常绘制图像</span></span><br><span class="line"><span class="comment">//回到默认帧缓冲，渲染到屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
-<p>step5：在屏幕绘制图像</p>
+<h4 id="绘制物体"><a href="#绘制物体" class="headerlink" title="绘制物体"></a>绘制物体</h4><p>step5：在屏幕绘制图像</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将帧缓冲纹理作为正常纹理渲染</span></span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//便于从齐次坐标[-1,1]变换到纹理坐标[0,1]</span></span><br><span class="line"><span class="function">glm::mat4 <span class="title">biasMatrix</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">             <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">1.0</span>)</span></span>;</span><br><span class="line"><span class="comment">//除了传入相机视角的MVP矩阵，还要传入光源视角的MVP矩阵</span></span><br><span class="line">glm::mat4 depthBiasMVP = biasMatrix * depthMVP;</span><br></pre></td></tr></table></figure>
 <p>step6：着色器文件（与上一次绘制不同的着色器）</p>
 <p>​	其次，从摄像机的角度于每一个像素，从深度缓冲区中取出相应的深度值，同时也计算这个像素到光源的距离。如果这两个深度值不同，意味着从光源看这个像素时有其他像素遮挡了它，这种情况下在颜色计算中要增加阴影因子来模仿阴影效果。</p>
@@ -220,19 +220,19 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
    
   <nav class="article-nav">
     
-      <a href="/2023/01/25/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-nav-link">
+      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            天空盒
+            法线贴图
           
         </div>
       </a>
     
     
-      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-nav-link">
+      <a href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">光照详解</div>
+        <div class="article-nav-title">天空盒</div>
       </a>
     
   </nav>
