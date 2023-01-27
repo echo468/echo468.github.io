@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    法线贴图 |  Hexo
+    实例渲染 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-法线贴图"
+  id="post-实例渲染"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  法线贴图
+  实例渲染
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-date">
-  <time datetime="2023-01-25T09:16:14.000Z" itemprop="datePublished">2023-01-25</time>
+      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-date">
+  <time datetime="2023-01-26T07:52:06.000Z" itemprop="datePublished">2023-01-26</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">994</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -107,47 +107,39 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>表面光滑的法线：在三角形的三个顶点法向量之间进行平滑插值来得到三角形上每个点的法向量。</p>
-<p>法线贴图：从‘法线贴图’上进行采样得到对应的法线方向，表面上的所有法向量都是可以被计算并且存储在法线贴图中。在片段着色器阶段进行光照计算的时候，每个像素的特定法线也是根据纹理坐标采样来获取使用。</p>
-<p>切线空间：坐标系需要三个正交单位向量。物体表面确定了原法线后会有多个切线X和副切线Y，由于新法线是2D纹理的的一部分，而2D纹理有两个正交单位向量U和V，因此通常做法是将X分量对应到U轴（Tangent），而Y分量对应到V轴在（Bitangent），将切线方向与纹理空间对齐。由原法线、与纹理空间对齐的切线和副切线组成的矩阵是TBN矩阵，该矩阵向量定义的坐标系是切线空间。</p>
-<p>法线纹理：对于新法线，即使是在非常凹凸不平的表面，仍然认为法线的方向是从纹理朝外的。在切线空间定义法向量，并存储在纹理的RGB文素中。Z分量主导的一个分量，X和Y分量只能起到让其略微倾斜的作用。将XYZ向量存储在RGB文素中会使得法线纹理偏蓝色。但是法线坐标[-1,1]需要变成rgb文素[0,1]。</p>
-<p>切线和副切线的计算：</p>
-<img src="https://pic4.zhimg.com/80/v2-f89f1ddfc04a94294520b57a43dbaf33_720w.webp" alt="img" style="zoom: 50%;" />
+  <p>假设想渲染一个有一支庞大军队经过的场景，要用一个士兵的模型渲出成千上万的士兵大军。一种方法是每次绘制一个士兵都调用一次draw call，并更新当前士兵相关的一致变量（位置、尺寸等）。例如，每个士兵都处于不同的位置，每个士兵都可以更高或者更矮尺寸不一等。因此，每次draw call都要更新当前士兵模型的WVP矩阵，这样开销会很大。</p>
+<p>实例渲染：一个实例就是要渲染的模型在场景的一次实际出现，这里例子中就是一个士兵。实例化渲染意味着可以在一次draw call中渲染多个实例，并为每个实例提供其特有的属性。</p>
+<p>方法1：在一个单独的顶点缓冲VB中定义实例的属性（例如：WVP矩阵）。通常顶点处理器会逐顶点每次处理一个顶点数据，有了存放实例数据的顶点缓冲VB后，定点处理器在每次处理一个顶点时要等所有顶点都已经被绘制，存有实例数据的VB提供的属性数据是针对所有顶点公共的。(第一种是将实例数据作为顶点属性传递)</p>
+<p>方法2：使用一个内置的叫做gl_InstanceID的shader变量，它是用来告诉当前的实例索引index的。我们可以根据这个索引值来定位一致变量数组中对应的实例数据来进行相应的渲染操作。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271615735.png" alt="image-20230127161506622" style="zoom:50%;" />
 
-<p>找到物体本地空间下的向量T（表示tangent）和B（表示bitangent），可以看到两个三角形边E1和E2可以写成T和B的线性组合：</p>
-<img src="https://pic1.zhimg.com/80/v2-ff93301c5fa92878ab35e0cea8eaa7e8_720w.webp" alt="img" style="zoom: 67%;" />
+<p>这里有一个包含100个顶点的模型，每个顶点都有位置、法线、纹理坐标属性，三个属性中每个属性都有他们自己的顶点缓冲。另外，还有第四个顶点缓冲buffer存放着三个WVP矩阵。先使用第一个WVP矩阵应用到100个顶点pos位置的绘制上，然后再使用第二个WVP矩阵绘制一遍，然后再使用第三个绘制，并且这个过程是在一个draw call中实现的，而不是三个。WVP矩阵会作为输入参数传送到顶点处理器中，但由于第四个VB被标记为存有实例数据，所以WVP矩阵在所有顶点绘制完之前是不会变化的。</p>
+<p>cpp文件：</p>
+<p>​	由于WVP矩阵是一个4x4矩阵，不能仅为其启用一个顶点属性，因为顶点属性最多只能包含4个浮点或整数。因此需要启用和配置4个连续顶点属性的循环。每个属性将包含矩阵中的一个向量（第一个属性1包含三个MVP矩阵的第一个向量，第二个属性2包含三个MVP矩阵的第二个向量……）。四个属性中的每一个都由四个浮点组成，一个矩阵中的属性与下一个矩阵之间的距离是4x4矩阵的大小，因此一共占了1、2、3、4顶点属性。</p>
+<p>​	glVertexAttribDivisitor（）函数使其成为实例数据而不是顶点数据。它采用两个参数：第一个是顶点数组属性，第二个参数告诉OpenGL在实例化渲染过程中属性前进的速度。默认情况下，除数为零。如果除数是10，这意味着前10个实例将使用缓冲区中的第一条数据，接下来的10个实例会使用第二条数据。此处希望每个实例都有一个专用的WVP矩阵，因此使用1的除数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建存储了3个MPV矩阵的顶点属性数组，glm::mat4类型</span></span><br><span class="line"><span class="type">static</span> glm::mat4 WVPMats[] = &#123;MVP1,MVP2,MVP3&#125;;</span><br><span class="line"><span class="comment">//创建并绑定缓冲区</span></span><br><span class="line">GLuint MVPbuffer;</span><br><span class="line"><span class="built_in">glGenBuffers</span>(<span class="number">1</span>, &amp;MVPbuffer);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, MVPbuffer);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(glm::mat4)* <span class="number">3</span>, WVPMats, GL_DYNAMIC_DRAW);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">	<span class="built_in">glEnableVertexAttribArray</span>(<span class="number">1</span> + i);</span><br><span class="line">	<span class="built_in">glVertexAttribPointer</span>(<span class="number">1</span> + i, <span class="number">4</span>, GL_FLOAT, GL_FALSE, <span class="built_in">sizeof</span>(glm::mat4),</span><br><span class="line">		(<span class="type">const</span> GLvoid*)(<span class="built_in">sizeof</span>(GLfloat) * i * <span class="number">4</span>));</span><br><span class="line">	<span class="built_in">glVertexAttribDivisor</span>(<span class="number">1</span> + i, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数的唯一变化是将实例数作为第四个参数。</p>
+<p>对于（i&#x3D;0；i&lt;NumInstance；i++）</p>
+<p>如果（i mod除数&#x3D;&#x3D;0）</p>
+<p>从带有实例数据的VBs中获取属性i&#x2F;除数</p>
+<p>对于（j&#x3D;0；j&lt;NumVertices；j++）</p>
+<p>从带有顶点数据的VBs获取属性j</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawArraysInstanced</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
 
-<p>也可以写成下面的形式：</p>
-<img src="https://pic2.zhimg.com/80/v2-6b58b632273e1268377495c13ff15731_720w.webp" alt="img" style="zoom:67%;" />
+<p>顶点着色器中：</p>
+<p>不再将WVP和世界矩阵作为统一变量，而是将它们作为顶点属性。VS不关心它们的值只会在每个实例中更新一次，而不会在每个顶点中更新。WVP矩阵占据位置1-4。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in mat4 MVP;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = MVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>现在可以很容易的转换成矩阵公式的形式：</p>
-<img src="https://pic2.zhimg.com/80/v2-480cb4f3bff672a721db1c83b27e5241_720w.webp" alt="img" style="zoom:67%;" />
+<p>如果使用第二种方法</p>
+<p>顶点着色器</p>
+<p>​	gl_InstanceID是一个内置变量，仅在VS中可用。由于计划在FS中使用它，因此必须在此处访问它，并在常规输出变量中传递它。gl_InstanceID的类型是整数，因此使用相同类型的输出变量。由于光栅化器无法对整数进行插值，必须将输出变量标记为“flat”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flat out int InstanceID;</span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  InstanceID = gl_InstanceID;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>现在想把矩阵转换到等式的右边，为此可以两边乘以上面标红的矩阵的逆矩阵：</p>
-<img src="https://pic3.zhimg.com/80/v2-78d0b4ac1486170ab44a968782960566_720w.webp" alt="img" style="zoom:67%;" />
+<p>片段着色器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#version 330</span><br><span class="line">flat in int InstanceID;</span><br><span class="line">out vec4 FragColor;</span><br><span class="line">vec4 gColor[4] = &#123;</span><br><span class="line">	vec4(0.5, 0.0, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.5, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.5,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.0,0.0)</span><br><span class="line">&#125;;</span><br><span class="line"> void main()</span><br><span class="line"> &#123;  </span><br><span class="line"> FragColor = gColor [InstanceID % 4];</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
 
-<p>计算如下:</p>
-<img src="https://pic4.zhimg.com/80/v2-a217ef03cf87b58dc57e1fd857db5243_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>算出逆矩阵的值得到：</p>
-<img src="https://pic4.zhimg.com/80/v2-410d78592022a7307711cd67634974d7_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>​	对每一个三角形执行上述过程，可以为每个三角形通过三角形的边和UV坐标计算出tangent向量和bitangent向量（对三角形的三个顶点来说这两个向量都是一样的）。通常的做法是为每一个顶点都保存一个tangent&#x2F;bitangent值，每个顶点的tangent&#x2F;bitangent值由共享这个顶点的所有三角面的平均tangent&#x2F;bitangent值确定（这与顶点法线是一样的）。这样做的原因是使整个三角面的效果比较平滑，防止相邻三角面之间的不平滑过渡。这个坐标系空间的第三个分量——法线分量，是tangent和bitangent的叉乘积。</p>
-<p>向着色器中将法线数组、切线数组和副切线数组作为顶点属性传入着色器，同时用GLuint类型变量加载法线纹理。</p>
-<p>在顶点着色器中新增代码：</p>
-<p>计算都摄像机空间中做，因为在这一空间中更容易获取片段坐标。使用3*3的模型视图矩阵乘T、B、N向量：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;</span><br><span class="line">vec3 vertexBitangent_cameraspace = MV3x3 * vertexBitangent_modelspace;</span><br><span class="line">vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;</span><br></pre></td></tr></table></figure>
-
-<p>这三个向量确定了TBN矩阵，此矩阵是从世界空间到MV下的切线空间的变换：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mat3 TBN = <span class="built_in">transpose</span>(<span class="built_in">mat3</span>(</span><br><span class="line">	vertexTangent_cameraspace,</span><br><span class="line">	vertexBitangent_cameraspace,</span><br><span class="line">	vertexNormal_cameraspace ));</span><br></pre></td></tr></table></figure>
-
-<p>利用它计算切线空间中的光线方向和视线方向：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LightDirection_tangentspace = TBN * LightDirection_cameraspace;</span><br><span class="line">EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;</span><br></pre></td></tr></table></figure>
-<p>在片段着色器中添加如下代码：</p>
-<p>先获取法线数据，从rgb的[0,1]变换到齐次坐标的[-1,1]，再进行归一化作为计算光照的n向量。由于该n向量是在切线空间计算的，因此为了保证计算都在同一个空间进行，需要在顶点着色器中相关参数TBN矩阵：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 TextureNormal_tangentspace = normalize(texture( NormalTextureSampler, UV ).rgb*2.0 - 1.0);</span><br></pre></td></tr></table></figure>
-
- 
+<p>效果如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271722256.png" alt="image-20230127172248210" style="zoom:50%;" /> 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -213,7 +205,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -224,19 +216,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            实例渲染
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/" class="article-nav-link">
+      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">阴影贴图</div>
+        <div class="article-nav-title">法线贴图</div>
       </a>
     
   </nav>
