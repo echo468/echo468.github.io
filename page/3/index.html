@@ -118,6 +118,90 @@
     
     
     <article
+  id="post-Linux-cmake"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/11/29/Linux-cmake/"
+    >Linux&amp;cmake</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/11/29/Linux-cmake/" class="article-date">
+  <time datetime="2022-11-29T04:33:35.000Z" itemprop="datePublished">2022-11-29</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="1、虚拟机安装Ubuntu"><a href="#1、虚拟机安装Ubuntu" class="headerlink" title="1、虚拟机安装Ubuntu"></a>1、虚拟机安装Ubuntu</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39132095/article/details/109580423">https://blog.csdn.net/qq_39132095&#x2F;article&#x2F;details&#x2F;109580423</a></p>
+<h4 id="2、ubuntu装好vmware-tools却无法拖拽复制文件"><a href="#2、ubuntu装好vmware-tools却无法拖拽复制文件" class="headerlink" title="2、ubuntu装好vmware tools却无法拖拽复制文件"></a>2、ubuntu装好vmware tools却无法拖拽复制文件</h4><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/534068370">https://www.zhihu.com/question/534068370</a></p>
+<h4 id="3、安装cmake"><a href="#3、安装cmake" class="headerlink" title="3、安装cmake"></a>3、安装cmake</h4><p>（1）修改密码并且进入root权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo passwd root</span><br><span class="line"></span><br><span class="line">~$ su</span><br></pre></td></tr></table></figure>
+
+<p>（2）安装gcc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo apt install gcc</span><br></pre></td></tr></table></figure>
+
+<p>（3）查看gcc版本确保安装成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># gcc --version</span><br></pre></td></tr></table></figure>
+
+<p>（4）安装make</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo apt install make</span><br></pre></td></tr></table></figure>
+
+<p>（5）安装cmake</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo apt install cmake</span><br></pre></td></tr></table></figure>
+
+<p>（6）查看cmake版本确保安装成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># cmake --version</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、运行项目"><a href="#4、运行项目" class="headerlink" title="4、运行项目"></a>4、运行项目</h4><p>（1）导入项目到目录</p>
+<p>（2）在项目工程目录下,先建立输出目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~$ mkdir build</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ cd build</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ cmake ..</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ make</span><br></pre></td></tr></table></figure>
+
+<p>cmake和make时会出现需要配置环境的问题，百度都可以找到，sudo apt install相关配置即可。</p>
+<p>（3)在源文件的文件夹下会出现可执行文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ ./可执行文件名</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-杭州-DAY6"
   class="article article-type-post"
   itemscope

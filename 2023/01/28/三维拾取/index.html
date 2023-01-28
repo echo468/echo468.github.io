@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    实例渲染 |  Hexo
+    三维拾取 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-实例渲染"
+  id="post-三维拾取"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  实例渲染
+  三维拾取
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-date">
-  <time datetime="2023-01-26T07:52:06.000Z" itemprop="datePublished">2023-01-26</time>
+      <a href="/2023/01/28/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-date">
+  <time datetime="2023-01-28T14:56:03.000Z" itemprop="datePublished">2023-01-28</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">1.5k</span>
         </span>
     </span>
 
@@ -101,45 +101,42 @@
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>假设想渲染一个有一支庞大军队经过的场景，要用一个士兵的模型渲出成千上万的士兵大军。一种方法是每次绘制一个士兵都调用一次draw call，并更新当前士兵相关的一致变量（位置、尺寸等）。例如，每个士兵都处于不同的位置，每个士兵都可以更高或者更矮尺寸不一等。因此，每次draw call都要更新当前士兵模型的WVP矩阵，这样开销会很大。</p>
-<p>实例渲染：一个实例就是要渲染的模型在场景的一次实际出现，这里例子中就是一个士兵。实例化渲染意味着可以在一次draw call中渲染多个实例，并为每个实例提供其特有的属性。</p>
-<p>方法1：在一个单独的顶点缓冲VB中定义实例的属性（例如：WVP矩阵）。通常顶点处理器会逐顶点每次处理一个顶点数据，有了存放实例数据的顶点缓冲VB后，定点处理器在每次处理一个顶点时要等所有顶点都已经被绘制，存有实例数据的VB提供的属性数据是针对所有顶点公共的。(第一种是将实例数据作为顶点属性传递)</p>
-<p>方法2：使用一个内置的叫做gl_InstanceID的shader变量，它是用来告诉当前的实例索引index的。我们可以根据这个索引值来定位一致变量数组中对应的实例数据来进行相应的渲染操作。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271615735.png" alt="image-20230127161506622" style="zoom:50%;" />
+  <h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>​	让每一个像素都有自己独特的索引，当鼠标点击时获取鼠标点击处的像素和像素索引（一般glReadPixels函数是获取鼠标点击处的指定的数据，比如说3d拾取就选择获取rgb颜色数据 ，但是此处并不是真正的获取颜色数据，而是在颜色纹理中填充的是三元索引，所以从颜色纹理中获取的是三元索引），就可知道点击的像素属于哪个对象 ，就可以知道点击到了哪个对象。</p>
+<p>​	通过创建帧缓冲， 将三元索引代替每个顶点像素的颜色rgb存储进入帧缓冲的颜色缓冲，从而使像素位置和索引相对应。这样在点击的时候就可以知道点击到了哪个索引。</p>
+<p>三元索引：</p>
+<ol>
+<li>第一级是像素所在物体的索引值，场景中的每一个物体都会得到一个唯一的索引；</li>
+<li>物体的draw call的索引，这个索引会在开始渲染新物体时重置；</li>
+<li>每个draw call中图元的索引值，每次新的draw call开始时该索引会重置；</li>
+</ol>
+<h4 id="拾取阶段"><a href="#拾取阶段" class="headerlink" title="拾取阶段"></a>拾取阶段</h4><p>把模型相应数据传进拾取着色器，绘制一遍模型，把相应的顶点和索引绘制进帧缓冲。</p>
+<h5 id="step1-创建帧缓冲，绑定颜色和深度纹理"><a href="#step1-创建帧缓冲，绑定颜色和深度纹理" class="headerlink" title="step1:创建帧缓冲，绑定颜色和深度纹理"></a>step1:创建帧缓冲，绑定颜色和深度纹理</h5><p>把模型的各个顶点放入帧缓冲的深度纹理，把模型的对象索引，绘制索引，原始索引放入帧缓冲的颜色纹理。下面只显示了基于阴影贴图init代码（只用了深度纹理）后添加的部分：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//注意颜色纹理的参数设置GL_RGB32F、GL_RGB</span></span><br><span class="line">    <span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;pickingTexture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, pickingTexture);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB32F, <span class="number">1024</span>, <span class="number">1024</span>,<span class="number">0</span>, GL_RGB, GL_FLOAT, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//将此纹理附加到FBO的GL_COLOR_ATTACHMENT0目标，这将使其成为片段着色器输出的目标。</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,pickingTexture, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glDrawBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//重置读取缓冲区和帧缓冲区</span></span><br><span class="line">    <span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>这里有一个包含100个顶点的模型，每个顶点都有位置、法线、纹理坐标属性，三个属性中每个属性都有他们自己的顶点缓冲。另外，还有第四个顶点缓冲buffer存放着三个WVP矩阵。先使用第一个WVP矩阵应用到100个顶点pos位置的绘制上，然后再使用第二个WVP矩阵绘制一遍，然后再使用第三个绘制，并且这个过程是在一个draw call中实现的，而不是三个。WVP矩阵会作为输入参数传送到顶点处理器中，但由于第四个VB被标记为存有实例数据，所以WVP矩阵在所有顶点绘制完之前是不会变化的。</p>
-<p>cpp文件：</p>
-<p>​	由于WVP矩阵是一个4x4矩阵，不能仅为其启用一个顶点属性，因为顶点属性最多只能包含4个浮点或整数。因此需要启用和配置4个连续顶点属性的循环。每个属性将包含矩阵中的一个向量（第一个属性1包含三个MVP矩阵的第一个向量，第二个属性2包含三个MVP矩阵的第二个向量……）。四个属性中的每一个都由四个浮点组成，一个矩阵中的属性与下一个矩阵之间的距离是4x4矩阵的大小，因此一共占了1、2、3、4顶点属性。</p>
-<p>​	glVertexAttribDivisitor（）函数使其成为实例数据而不是顶点数据。它采用两个参数：第一个是顶点数组属性，第二个参数告诉OpenGL在实例化渲染过程中属性前进的速度。默认情况下，除数为零。如果除数是10，这意味着前10个实例将使用缓冲区中的第一条数据，接下来的10个实例会使用第二条数据。此处希望每个实例都有一个专用的WVP矩阵，因此使用1的除数。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建存储了3个MPV矩阵的顶点属性数组，glm::mat4类型</span></span><br><span class="line"><span class="type">static</span> glm::mat4 WVPMats[] = &#123;MVP1,MVP2,MVP3&#125;;</span><br><span class="line"><span class="comment">//创建并绑定缓冲区</span></span><br><span class="line">GLuint MVPbuffer;</span><br><span class="line"><span class="built_in">glGenBuffers</span>(<span class="number">1</span>, &amp;MVPbuffer);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, MVPbuffer);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(glm::mat4)* <span class="number">3</span>, WVPMats, GL_DYNAMIC_DRAW);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">	<span class="built_in">glEnableVertexAttribArray</span>(<span class="number">1</span> + i);</span><br><span class="line">	<span class="built_in">glVertexAttribPointer</span>(<span class="number">1</span> + i, <span class="number">4</span>, GL_FLOAT, GL_FALSE, <span class="built_in">sizeof</span>(glm::mat4),</span><br><span class="line">		(<span class="type">const</span> GLvoid*)(<span class="built_in">sizeof</span>(GLfloat) * i * <span class="number">4</span>));</span><br><span class="line">	<span class="built_in">glVertexAttribDivisor</span>(<span class="number">1</span> + i, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>该函数的唯一变化是将实例数作为第四个参数。</p>
-<p>对于（i&#x3D;0；i&lt;NumInstance；i++）</p>
-<p>如果（i mod除数&#x3D;&#x3D;0）</p>
-<p>从带有实例数据的VBs中获取属性i&#x2F;除数</p>
-<p>对于（j&#x3D;0；j&lt;NumVertices；j++）</p>
-<p>从带有顶点数据的VBs获取属性j</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawArraysInstanced</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="step2-拾取着色器"><a href="#step2-拾取着色器" class="headerlink" title="step2:拾取着色器"></a>step2:拾取着色器</h5><p>顶点着色器进行正常的MVP变换，片段着色器代码如下：</p>
+<p>​	在同一次绘图调用中对象索引和绘图索引对于所有像素都是相同的，因此它们来自统一的变量。为了获得原始索引，使用内置变量gl_PimitiveID。这是系统自动维护的原语的运行索引。系统在绘图开始时将gl_PimitiveID重置为零。这使得很难区分“背景”像素和实际被对象覆盖的像素。为了克服这个问题，在将索引写入输出之前先将其递增一。这意味着可以识别背景像素，因为它们的图元ID为零，而对象覆盖的像素具有1…n作为图元ID。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line">uniform uint gDrawIndex;</span><br><span class="line">uniform uint gObjectIndex;</span><br><span class="line">out vec3 FragColor;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FragColor = <span class="built_in">vec3</span>(<span class="built_in">float</span>(gObjectIndex), <span class="built_in">float</span>(gDrawIndex),<span class="built_in">float</span>(gl_PrimitiveID + <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>顶点着色器中：</p>
-<p>不再将WVP和世界矩阵作为统一变量，而是将它们作为顶点属性。VS不关心它们的值只会在每个实例中更新一次，而不会在每个顶点中更新。WVP矩阵占据位置1-4。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in mat4 MVP;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = MVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="step3-写入帧缓冲"><a href="#step3-写入帧缓冲" class="headerlink" title="step3:写入帧缓冲"></a>step3:写入帧缓冲</h5><p>主循环中：开启拾取帧缓冲-开启拾取着色器-把模型相应数据传进拾取着色器-绘制一遍模型-恢复默认缓冲</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_DRAW_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="comment">/*绘制图形*/</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="绘制阶段"><a href="#绘制阶段" class="headerlink" title="绘制阶段"></a>绘制阶段</h4><p>如果左键点击了，获取鼠标点击处的像素的三元索引（此处将点击处改成了光标位置处）<br>如果该像素不是背景，通过得到的该像素的绘制索引和原始索引绘制出相应片段（此处将绘制出相应片段改成了设置不同的颜色）</p>
+<h5 id="step1-从点击的像素中获取三元索引"><a href="#step1-从点击的像素中获取三元索引" class="headerlink" title="step1:从点击的像素中获取三元索引"></a>step1:从点击的像素中获取三元索引</h5><p>​	函数参数为鼠标点击的屏幕上的xy坐标。要读取FBO，必须将其绑定到GL_read_FRAMEBUFFER目标。然后需要使用函数glReadBuffer（）指定从哪个颜色缓冲区读取，原因是FBO可以包含多个颜色缓冲区。函数glReadPixels执行实际读取，它使用左下角（第一对参数）和宽度&#x2F;高度（第二对参数）指定的矩形，并将结果读入最后一个参数给出的地址，此处矩形的大小是一个纹素。因为需要原始数据，因此使用GL_RGB作为格式，使用GL_FLOAT作为类型。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">PixelInfo</span> &#123;</span><br><span class="line">	<span class="type">float</span> ObjectID;<span class="type">float</span> DrawID;<span class="type">float</span> PrimID;</span><br><span class="line">	<span class="built_in">PixelInfo</span>() &#123;ObjectID = <span class="number">0.0f</span>;DrawID = <span class="number">0.0f</span>;PrimID = <span class="number">0.0f</span>;&#125;&#125;;</span><br><span class="line"><span class="function">PixelInfo <span class="title">ReadPixel</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> x, <span class="type">unsigned</span> <span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, fbo);</span><br><span class="line">	<span class="built_in">glReadBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	PixelInfo Pixel;</span><br><span class="line">	<span class="built_in">glReadPixels</span>(x, y, <span class="number">1</span>, <span class="number">1</span>, GL_RGB, GL_FLOAT, &amp;Pixel);</span><br><span class="line">    <span class="comment">//必须重置读取缓冲区和帧缓冲区</span></span><br><span class="line">	<span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">return</span> Pixel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>如果使用第二种方法</p>
-<p>顶点着色器</p>
-<p>​	gl_InstanceID是一个内置变量，仅在VS中可用。由于计划在FS中使用它，因此必须在此处访问它，并在常规输出变量中传递它。gl_InstanceID的类型是整数，因此使用相同类型的输出变量。由于光栅化器无法对整数进行插值，必须将输出变量标记为“flat”。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flat out int InstanceID;</span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  InstanceID = gl_InstanceID;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#version 330</span><br><span class="line">flat in int InstanceID;</span><br><span class="line">out vec4 FragColor;</span><br><span class="line">vec4 gColor[4] = &#123;</span><br><span class="line">	vec4(0.5, 0.0, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.5, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.5,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.0,0.0)</span><br><span class="line">&#125;;</span><br><span class="line"> void main()</span><br><span class="line"> &#123;  </span><br><span class="line"> FragColor = gColor [InstanceID % 4];</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>效果如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271722256.png" alt="image-20230127172248210" style="zoom:50%;" /> 
+<h5 id="step2-绘制"><a href="#step2-绘制" class="headerlink" title="step2:绘制"></a>step2:绘制</h5><p>​	此处绘制一个物体正方体，但是利用不同的MVP矩阵将其draw两次。两次的gObjectIndex都为0，第一次draw的DrawIndex是0，第二次draw的DrawIndex是1。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glUniform1ui</span>(gObjectIndexID, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glUniform1ui</span>(gDrawIndexID, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>glfwGetCursorPos获取窗口上光标的位置，存入xy中。注意y轴的计算方式：height-int(y)+1(屏幕y轴与世界空间的y轴相反)。通过如下代码：如果光标在第一个物体的第一个三角形，则为红色；第一个物体的第二个三角形，则为墨绿色；如果光标在第二个物体的第一个三角形，则为蓝色；第二个物体的第二个三角形，则为灰色；光标不在物体上则为绿色。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">glfwGetCursorPos</span>(window,&amp;x,&amp;y);</span><br><span class="line">PixelInfo Pixel = <span class="built_in">ReadPixel</span>(<span class="built_in">int</span>(x), <span class="number">768</span>-<span class="built_in">int</span>(y)+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (Pixel.PrimID != <span class="number">0</span>) &#123;</span><br><span class="line">	glm::uint a = (uint)Pixel.DrawID;</span><br><span class="line">	glm::uint b = (uint)Pixel.PrimID;</span><br><span class="line">	<span class="keyword">if</span> (a == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(b == <span class="number">1</span>)&#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (a == <span class="number">1</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">1</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="真正绘制阶段"><a href="#真正绘制阶段" class="headerlink" title="真正绘制阶段"></a>真正绘制阶段</h4><p>主循环中正常绘制，使物体显示在屏幕。</p>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -205,7 +202,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/28/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -216,19 +213,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/01/28/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            三维拾取
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-nav-link">
+      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">法线贴图</div>
+        <div class="article-nav-title">实例渲染</div>
       </a>
     
   </nav>
