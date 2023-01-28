@@ -118,6 +118,64 @@
     
     
     <article
+  id="post-延迟渲染"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/"
+    >延迟渲染</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/" class="article-date">
+  <time datetime="2023-01-28T10:58:22.000Z" itemprop="datePublished">2023-01-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="前向渲染"><a href="#前向渲染" class="headerlink" title="前向渲染"></a>前向渲染</h4><p>在VS中对每个物体的顶点做一系列的变换（主要是将顶点位置和法线变换到裁剪空间），然后在FS中对每个像素进行光照计算。由于每个物体上的每个像素只会调用一次FS，因此对于每个FS要传入所有的光源数据并计算每个光源的效果。</p>
+<p>弊端：</p>
+<p>（1）当一个场景非常复杂会有大量的物体以及复杂的深度，每个像素可能被多个物体重叠覆盖，这样会有大量的无效的GPU迭代计算。例如，如果某个像素深度复杂度为4，那么就会有3个像素计算是无效的，因为最后只有最顶部的像素会显示。</p>
+<p>（2）在多光源情景下，例如大量点光源，光源很小照亮的区域也很小，只会照亮场景中的部分物体，但是FS还是会计算每个光源对每个像素的光照影响，即使光源离该像素很远。</p>
+<h4 id="延迟渲染"><a href="#延迟渲染" class="headerlink" title="延迟渲染"></a>延迟渲染</h4><p>（1）第一个阶段：正常执行VS但并不是将处理后的属性变量数据继续传递给FS进行光照计算，而是将结果保存到G buffer中。G buffer是一组按照设计格式存储的一组2D贴图，保存着顶点每个属性的数据，normal、depth、alpha、specular等等。将数据分离并一次性写入到不同的贴图中，保存这些贴图的地方是借助于OpenGL的MRT（Multiple Render Targets）特性支持。由于是在FS中写入属性值进行片段计算，因此G buffer中最终的值是光栅化器对顶点属性执行插值的结果。这个阶段称为几何pass。在此过程中将处理所有的对象。由于进行了深度测试，因此当几何pass阶段完成时，G缓冲区中的贴图最终保存的将是离相机最近的像素的插值属性值。也就是说，所有在深度测试中失败的那些相关的像素都会被抛弃掉，而最后留在G buffer中的像素都是之后必须要进行光照计算的。</p>
+<p>（2）第二个阶段Lighting Pass：会依次遍历G buffer中的每个像素，从不同的贴图中读取每个像素对应的属性值然后进行光照计算。由于在创建G buffer的时候，经过深度测试除了离相机最近的像素其他的全部被抛弃了，所以现在每个像素对应只会进行一次光照计算。</p>
+<p>在延迟渲染中对于点光源可以计算围绕光源的球体的尺寸（对于spot light聚光灯光源我们则计算光锥体的尺寸）。那个球体表示的是点光源影响的区域，而在球体之外的则会忽视这个光源的影响不进行该光源的光照计算。可以使用一个有少量多边形的粗糙的球体模型，并以光源为中心来进行渲染。VS阶段只需要将position数据变换到裁剪空间而不用干别的。FS阶段只在受光源影响的的相关像素上执行并进行光照计算。</p>
+<h4 id="G-buffer实现"><a href="#G-buffer实现" class="headerlink" title="G buffer实现"></a>G buffer实现</h4><p>用MRT填充G buffer，并把G buffer贴图绘制到屏幕上保证结果正确</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-三维拾取"
   class="article article-type-post"
   itemscope
@@ -129,7 +187,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/01/28/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/"
+  <a class="article-title" href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/"
     >三维拾取</a> 
 </h2>
  
@@ -137,8 +195,8 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/01/28/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-date">
-  <time datetime="2023-01-28T14:56:03.000Z" itemprop="datePublished">2023-01-28</time>
+      <a href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-date">
+  <time datetime="2023-01-27T14:56:03.000Z" itemprop="datePublished">2023-01-27</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -161,7 +219,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//注意颜色纹理的参数设置GL_RGB32F、GL_RGB</span></span><br><span class="line">    <span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;pickingTexture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, pickingTexture);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB32F, <span class="number">1024</span>, <span class="number">1024</span>,<span class="number">0</span>, GL_RGB, GL_FLOAT, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//将此纹理附加到FBO的GL_COLOR_ATTACHMENT0目标，这将使其成为片段着色器输出的目标。</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,pickingTexture, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glDrawBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//重置读取缓冲区和帧缓冲区</span></span><br><span class="line">    <span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h5 id="step2-拾取着色器"><a href="#step2-拾取着色器" class="headerlink" title="step2:拾取着色器"></a>step2:拾取着色器</h5><p>顶点着色器进行正常的MVP变换，片段着色器代码如下：</p>
-<p>​	在同一次绘图调用中对象索引和绘图索引对于所有像素都是相同的，因此它们来自统一的变量。为了获得原始索引，使用内置变量gl_PimitiveID。这是系统自动维护的原语的运行索引。系统在绘图开始时将gl_PimitiveID重置为零。这使得很难区分“背景”像素和实际被对象覆盖的像素。为了克服这个问题，在将索引写入输出之前先将其递增一。这意味着可以识别背景像素，因为它们的图元ID为零，而对象覆盖的像素具有1…n作为图元ID。</p>
+<p>​	在同一次绘图调用中对象索引和绘图索引对于所有像素都是相同的，因此它们来自统一的变量。为了获得原始索引，使用内置变量gl_PimitiveID（渲染过程中的图元数量）。这是系统自动维护的原语的运行索引。系统在绘图开始时将gl_PimitiveID重置为零。这使得很难区分“背景”像素和实际被对象覆盖的像素。为了克服这个问题，在将索引写入输出之前先将其递增一。这意味着可以识别背景像素，因为它们的图元ID为零，而对象覆盖的像素具有1…n作为图元ID。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line">uniform uint gDrawIndex;</span><br><span class="line">uniform uint gObjectIndex;</span><br><span class="line">out vec3 FragColor;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FragColor = <span class="built_in">vec3</span>(<span class="built_in">float</span>(gObjectIndex), <span class="built_in">float</span>(gDrawIndex),<span class="built_in">float</span>(gl_PrimitiveID + <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h5 id="step3-写入帧缓冲"><a href="#step3-写入帧缓冲" class="headerlink" title="step3:写入帧缓冲"></a>step3:写入帧缓冲</h5><p>主循环中：开启拾取帧缓冲-开启拾取着色器-把模型相应数据传进拾取着色器-绘制一遍模型-恢复默认缓冲</p>
@@ -175,6 +233,23 @@
 <p>glfwGetCursorPos获取窗口上光标的位置，存入xy中。注意y轴的计算方式：height-int(y)+1(屏幕y轴与世界空间的y轴相反)。通过如下代码：如果光标在第一个物体的第一个三角形，则为红色；第一个物体的第二个三角形，则为墨绿色；如果光标在第二个物体的第一个三角形，则为蓝色；第二个物体的第二个三角形，则为灰色；光标不在物体上则为绿色。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">glfwGetCursorPos</span>(window,&amp;x,&amp;y);</span><br><span class="line">PixelInfo Pixel = <span class="built_in">ReadPixel</span>(<span class="built_in">int</span>(x), <span class="number">768</span>-<span class="built_in">int</span>(y)+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (Pixel.PrimID != <span class="number">0</span>) &#123;</span><br><span class="line">	glm::uint a = (uint)Pixel.DrawID;</span><br><span class="line">	glm::uint b = (uint)Pixel.PrimID;</span><br><span class="line">	<span class="keyword">if</span> (a == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(b == <span class="number">1</span>)&#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (a == <span class="number">1</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">1</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="真正绘制阶段"><a href="#真正绘制阶段" class="headerlink" title="真正绘制阶段"></a>真正绘制阶段</h4><p>主循环中正常绘制，使物体显示在屏幕。</p>
+<p>效果：</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281856762.png" alt="img"></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857280.png" alt="image-20230128185721248"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857475.png" alt="image-20230128185707432"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857155.png" alt="image-20230128185729121"></td>
+</tr>
+<tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857598.png" alt="image-20230128185734563"></td>
+<td></td>
+</tr>
+</tbody></table>
  
       <!-- reward -->
       
@@ -872,92 +947,6 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301031655703.png" alt="image-20230103165513744"></p>
 <p>不使用多级纹理</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301041134459.png" alt="QQ图片20230104113400"></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-TransformFeedback"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/30/TransformFeedback/"
-    >TransformFeedback</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/30/TransformFeedback/" class="article-date">
-  <time datetime="2022-12-30T07:42:14.000Z" itemprop="datePublished">2022-12-30</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="变换反馈"><a href="#变换反馈" class="headerlink" title="变换反馈"></a>变换反馈</h3><p>将顶点数据发给着色器，变换后从着色器获取数据作为新的顶点数据进行绘制，可以用于绘制粒子及动画效果</p>
-<h4 id="一、shader-cpp文件"><a href="#一、shader-cpp文件" class="headerlink" title="一、shader.cpp文件"></a>一、shader.cpp文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> GLchar* feedbackVaryings[] = &#123; <span class="string">&quot;outposition&quot;</span>,<span class="string">&quot;fragcolor&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">glTransformFeedbackVaryings</span>(ProgramID, <span class="number">2</span>, feedbackVaryings, GL_SEPARATE_ATTRIBS);</span><br></pre></td></tr></table></figure>
-
-<p>这两行代码需要放在glLinkProgram(ProgramID);之前。第一个数组说明了捕获到一个缓冲区中的输出属性（与顶点着色器中需要捕获的out的名字相同）。第二个函数的第一个参数是着色器程序；第二个参数和第三个参数指定了输出名称数组和数组本身的长度，最后一个参数指定了应该如何写入数据。以下两种格式可供选择:</p>
-<p>1.–GL_INTERLEAVED_ATTRIBS:将所有属性写入一个缓冲区对象。</p>
-<p>2.–GL_SEPARATE_ATTRIBS: 将属性写入多个缓冲区对象，或将不同的偏移量写入缓冲区。</p>
-<p>比如一个程序有颜色和顶点两个缓冲区，使用第一个参数只能绑定一个缓冲区，此时想变换颜色和顶点需要把这两组数据写在同一个数组并设置读取的偏移量：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
-
-<p>使用第二个参数就可以将颜色数据和顶点数据分开，将两个缓冲区绑定到trasnformfeedback上：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbuffera);</span><br></pre></td></tr></table></figure>
-
-<p>其中第二个参数就是缓冲区索引，绑定两个的话，第一个缓冲区索引是0，第二个是1，可以区分缓冲区。</p>
-<h4 id="二、顶点着色器文件"><a href="#二、顶点着色器文件" class="headerlink" title="二、顶点着色器文件"></a>二、顶点着色器文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">in vec4 inposition;</span><br><span class="line">in vec4 color;</span><br><span class="line">out vec4 outposition;</span><br><span class="line">out vec4 fragcolor;<span class="comment">//与feedbackVaryings[]同名</span></span><br><span class="line"><span class="comment">/*在main函数中对inposition和color进行变换*/</span></span><br><span class="line">gl_Position=MVP * inposition;</span><br></pre></td></tr></table></figure>
-
-<p>输入的顶点属性数据inposition经过MVP变换后作为最终的gl_Position数据用来绘制图形；将inposition数据变换后存入outposition写入tf缓冲。（color同理）</p>
-<h4 id="三、应用程序文件"><a href="#三、应用程序文件" class="headerlink" title="三、应用程序文件"></a>三、应用程序文件</h4><p>以GL_INTERLEAVED_ATTRIBS参数为例：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//tf缓冲区只用创建一个</span></span><br><span class="line">GLuint tfbuffera;</span><br><span class="line"><span class="built_in">glGenTransformFeedbacks</span>(<span class="number">1</span>, &amp;tfbuffera);</span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="comment">//给tf缓冲绑定相应的缓冲对象（databuffer用GL_ARRAY_BUFFER类型创建）</span></span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
-
-<p>相同的缓存不能同时作为输入和输出，所以如果想产生连续变换，需要两个缓冲区交换数据。所以需要两个databuffer。第一个buffer绑定data数据用于绘制第一个图形，第二个传递了一个nullptr，以创建一个足够大的缓冲区。（比如粒子系统生成的定点数会越来越多，此处不需要考虑该问题）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), data, GL_DYNAMIC_DRAW);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), <span class="literal">nullptr</span>, GL_DYNAMIC_DRAW);</span><br></pre></td></tr></table></figure>
-
-<p>主要代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffer[flag]);<span class="comment">//将变换后数据写入databufferb</span></span><br><span class="line"><span class="built_in">glEnable</span>(GL_RASTERIZER_DISCARD);<span class="comment">//此次绘制写入tf缓冲因此不进行绘制，禁用光栅化</span></span><br><span class="line"><span class="built_in">glBeginTransformFeedback</span>(GL_TRIANGLES);<span class="comment">//开启tf缓冲，设置绘制模式与draw相同</span></span><br><span class="line"><span class="comment">//用databuffera也就是最初的数据传入顶点着色器，数据进行第一次变换，但此时不显示，而是写入tf缓冲的databufferb</span></span><br><span class="line"><span class="built_in">glEnableVertexAttribArray</span>(positionID);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[!flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"><span class="comment">//结束转换反馈模式</span></span><br><span class="line"><span class="built_in">glEndTransformFeedback</span>();</span><br><span class="line"><span class="comment">//使用光栅化，绘制图形</span></span><br><span class="line"><span class="built_in">glDisable</span>(GL_RASTERIZER_DISCARD);</span><br><span class="line"><span class="comment">//使用databufferb第一次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲</span></span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">flag = !flag;<span class="comment">//进行第二次循环</span></span><br></pre></td></tr></table></figure>
-<p>第二次循环将变换后的数据写入databuffera，将databufferb第一次变换的数据传入顶点着色器，数据进行第二次变换，但此时不显示，而是写入tf缓冲的databuffera。使用databuffera第二次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲。</p>
-<p>原始数据：-0.1f,0.1f, 0.1f,1.0f,0.1f,0.1f, 0.1f,1.0f</p>
-<p>如下是经过两次循环后tf缓冲中的数据：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021755919.png" alt="image-20230102175536791"></p>
-<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>如下数据每行前四个是顶点坐标数据，后四个是顶点颜色数据：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021804938.png" alt="image-20230102180412855"></p>
-<p>第五个参数：步长(Stride)，在连续的顶点属性组之间的间隔。上图一行8个数是一个顶点属性，所以步长为8*4&#x3D;32</p>
-<p>第六个参数：使用VBO时是缓冲对象数据存储区的字节偏移量（不使用VBO时是顶点数组指针）</p>
-<p>颜色数据从第五个数据读起，前面有四个顶点坐标数据，因此偏移量为4*4&#x3D;16</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br></pre></td></tr></table></figure>
-
-<p>参考链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/niu2212035673/article/details/79041437">https://blog.csdn.net/niu2212035673/article/details/79041437</a></p>
  
       <!-- reward -->
       
