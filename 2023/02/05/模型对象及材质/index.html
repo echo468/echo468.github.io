@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2k</span>
+            <span class="post-count">2.1k</span>
         </span>
     </span>
 
@@ -127,7 +127,7 @@
 <p><code>.scale</code>表示模型对象的xyz三个方向上的缩放比例，<code>.scale</code>的属性值是一个三维向量对象<code>Vector3</code>,默认值是<code>THREE.Vector3(1.0,1.0,1.0)</code>。</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//x轴方向放大2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="property">x</span> = <span class="number">2.0</span>;</span><br><span class="line"><span class="comment">//网格模型xyz方向分别缩放0.5,1.5,2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="title function_">set</span>(<span class="number">0.5</span>, <span class="number">1.5</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 
-<p>如下图通过旋转使得局部坐标系的y轴与世界坐标系的z轴平行，使用<code>geometry.scale(1,2,1);</code>函数后图形沿着局部坐标系的y轴放大至原来的2倍。即在世界坐标系中沿z轴前后放大而不是沿y轴上下放大。</p>
+<p>如下图通过旋转使得局部坐标系的y轴与世界坐标系的z轴平行，使用<code>geometry.scale(1,2,1);</code>函数后图形沿着局部坐标系的y轴放大至原来的2倍。即在世界坐标系中沿z轴前后放大而不是沿y轴上下放大。但是如果是<code>mesh.scale</code>会按照局部坐标系的轴将坐标系和物体一起放大进行放大。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052323314.png" alt="image-20230205232310262"></p>
 <h4 id="欧拉Euler与角度属性-rotation"><a href="#欧拉Euler与角度属性-rotation" class="headerlink" title="欧拉Euler与角度属性.rotation"></a>欧拉Euler与角度属性.rotation</h4><p>模型的角度属性<code>.rotation</code>和四元数属性<code>.quaternion</code>都是表示模型的角度状态，只是表示方法不同，<code>.rotation</code>属性值是欧拉对象,<code>.quaternion</code>属性值是四元数对象。</p>
 <p>&#x2F;&#x2F; 创建一个欧拉对象，表示绕着xyz轴分别旋转45度，0度，90度。</p>
@@ -148,6 +148,7 @@
 <p>如果是绕某个轴旋转，如下是网格模型绕<code>(0,1,0)</code>向量表示的轴旋转<code>π/8</code>。</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//向量axis</span></span><br><span class="line">mesh.<span class="title function_">rotateOnAxis</span>(axis,<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">8</span>);<span class="comment">//绕axis轴旋转π/8</span></span><br></pre></td></tr></table></figure>
 
+<p>注意如果是mesh下的rotate函数就会将局部坐标系按照局部坐标系的轴带动物体整个旋转，如果是geometry下的rotate函数只将物体按照局部坐标系的轴旋转。</p>
 <h4 id="模型材质颜色-Color对象"><a href="#模型材质颜色-Color对象" class="headerlink" title="模型材质颜色(Color对象)"></a>模型材质颜色(Color对象)</h4><p>浏览器控制台查看材质颜色属性的属性值。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.color&#x27;</span>,material.<span class="property">color</span>);</span><br></pre></td></tr></table></figure>
 
@@ -287,6 +288,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            层级模型
+          
+        </div>
+      </a>
     
     
       <a href="/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/" class="article-nav-link">

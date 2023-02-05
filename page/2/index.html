@@ -118,6 +118,82 @@
     
     
     <article
+  id="post-step-by-step实例学习"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/"
+    >step_by_step实例学习</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2023-01-06T00:52:54.000Z" itemprop="datePublished">2023-01-06</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="矩阵变换"><a href="#矩阵变换" class="headerlink" title="矩阵变换"></a>矩阵变换</h3><h4 id="平移"><a href="#平移" class="headerlink" title="平移"></a>平移</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060903912.png" alt="image-20230106090323761" style="zoom: 67%;" />
+
+<p>​	因为所有的位移值都要乘以向量的w行，所以位移值会加到向量的原始值上。这样使用一个4维向量表示一个3维向量叫做齐次坐标。通常对于表示点的矩阵会让w&#x3D;1，而对于表示向量的矩阵会让w&#x3D;0，因为点可以被做变换而向量不可以，可以改变一个向量的长度和方向，但是长度和方向一样的所有向量都是相等的，不管他们的起点在哪里，所以可以把所有的向量起点放到原点来看。对于向量设置w&#x3D;0然后乘以变换矩阵会得到和自身一样的向量。</p>
+<h4 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060933717.png" alt="image-20230106093340662" style="zoom:50%;" />
+
+<p>旋转后的坐标变换</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093352086.png" alt="image-20230106093352086" style="zoom:50%;" />
+
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093404574.png" alt="image-20230106093404574" style="zoom:50%;" />
+
+<p>旋转矩阵</p>
+<p>绕z轴</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093419847.png" alt="image-20230106093419847" style="zoom:50%;" />
+
+<p>绕y轴</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093429878.png" alt="image-20230106093429878" style="zoom:50%;" />
+
+<p>绕z轴</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060934083.png" alt="image-20230106093440038" style="zoom:50%;" />
+
+<p>更好的方法是四元组</p>
+<h4 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h4><p>进行缩放变换其实很简单。我们从最开始的原变换矩阵来看，回忆平移变换矩阵的样子，我们保持结果矩阵中V1,V2和V3保持原样的办法是让变换矩阵主对角线上的值都为’1’，这样原向量一次都<strong>和1相乘</strong>之后依然保持不变，各分量之间互不影响。所以，这里的缩放变换，只要把那些‘1’换成我们想缩放的值，原向量各分量分别乘以这些值之后就会在相应坐标轴上进行相应的缩放了，值大于1则放大，值小于1则缩小。</p>
+<p>如果片断着色器没有显式地请求那个变量（你可以使用同一个顶点着色器混合并匹配多个片断着色器）那么一般的驱动优化会丢弃顶点着色器vs中只是影响该变量的操作（特定的shader程序是针对vs和fs的配对组合）。但如果片断着色器fs确实使用到了那个变量，光栅器会在光栅化阶段对其进行插值，并且每一次片断着色器fs的调用都会提供一个匹配特定位置的插值后的值，这意味着相邻的两个像素的值都略有不同（虽然随着三角形离摄像头越来越远那样会越来越不合适）。</p>
+<p>***经常情况下依赖插值的两个变量是三角形的法向量和纹理坐标***。顶点的法向量通常是计算包含这个顶点的所有三角形法向量的平均值而得。如果物体不是平坦的话那么每个三角形的三个顶点的法向量会各不相同，那样我们可以通过插值来计算每个像素的法向量，那些向量会用于光线的计算，从而产生更逼真可信的光照效果。插值对于纹理坐标的应用也类似，这些坐标作为模型的一部分定义在每个顶点上。为了用贴图覆盖三角形你必须对每个像素进行一样的插值操作并给每个像素定义正确的纹理坐标，这些坐标都是插值的结果</p>
+<p>复合变换</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 Rotation_tree2 = <span class="built_in">eulerAngleYXZ</span>(gOrientation1.y, gOrientation1.x, gOrientation2.z);</span><br><span class="line">glm::mat4 Transla_tree2 = <span class="built_in">translate</span>(<span class="built_in">mat4</span>(), gPosition2);</span><br><span class="line">glm::mat4 Scaling_tree2 = <span class="built_in">scale</span>(<span class="built_in">mat4</span>(), <span class="built_in">vec3</span>(<span class="number">0.3f</span>, <span class="number">0.3f</span>, <span class="number">0.3f</span>));</span><br><span class="line">glm::mat4 Model_tree2 = Transla_tree2 * Rotation_tree2 * Scaling_tree2;</span><br></pre></td></tr></table></figure>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-采样器采样数据"
   class="article article-type-post"
   itemscope
@@ -1242,87 +1318,13 @@
 </article>
 
     
-    <article
-  id="post-渲染管线-项目创建"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/"
-    >渲染管线&amp;项目创建</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/" class="article-date">
-  <time datetime="2022-12-01T05:55:34.000Z" itemprop="datePublished">2022-12-01</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="一、渲染管线知识"><a href="#一、渲染管线知识" class="headerlink" title="一、渲染管线知识"></a>一、渲染管线知识</h3><h4 id="1、OpenGL渲染过程介绍"><a href="#1、OpenGL渲染过程介绍" class="headerlink" title="1、OpenGL渲染过程介绍"></a>1、OpenGL渲染过程介绍</h4><p>渲染过程、定点输入、顶点着色器、编译着色器、片元着色器、着色器程序、链接顶点属性、顶点数组对象、索引缓冲对象：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45782925/article/details/124822990">https://blog.csdn.net/weixin_45782925/article/details/124822990</a></p>
-<h4 id="2、渲染管线流程"><a href="#2、渲染管线流程" class="headerlink" title="2、渲染管线流程"></a>2、渲染管线流程</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aoxuestudy/article/details/124444112">https://blog.csdn.net/aoxuestudy/article/details/124444112</a></p>
-<h4 id="3、图元、片元，渲染架构"><a href="#3、图元、片元，渲染架构" class="headerlink" title="3、图元、片元，渲染架构"></a>3、图元、片元，渲染架构</h4><p>[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/549136586">https://zhuanlan.zhihu.com/p/549136586</a>]</p>
-<h3 id="二、创建项目"><a href="#二、创建项目" class="headerlink" title="二、创建项目"></a>二、创建项目</h3><p>1.在vs工程项目目录下创建空项目</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011544776.png" alt="QQ图片20221201153051"></p>
-<p>2.在vs源文件文件夹下创建.cpp文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011545850.png" alt="QQ图片20221201153056"></p>
-<p>3.在新建项目目录下导入着色器文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011546352.png" alt="QQ图片20221201153059"></p>
-<p>4.修改CMakeLists.txt文件，在相关位置添加如下</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550858.png" alt="QQ图片20221201153113"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550578.png" alt="QQ图片20221201153115"></p>
-<p>5.依次点击</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011548991.png" alt="QQ图片20221201153103"></p>
-<p>6.vs新建项目目录下自动导入相关文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011549736.png" alt="QQ图片20221201153106"></p>
-<p>7.新建项目目录下会生成exe可执行文件</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550991.png" alt="QQ图片20221201153109"></p>
-<h3 id="三、CMakeLists-txt"><a href="#三、CMakeLists-txt" class="headerlink" title="三、CMakeLists.txt"></a>三、CMakeLists.txt</h3><p>cmake指令详解：<a target="_blank" rel="noopener" href="http://t.zoukankan.com/lidabo-p-7359217.html">http://t.zoukankan.com/lidabo-p-7359217.html</a></p>
-<p>变量解释：<a target="_blank" rel="noopener" href="http://www.360doc.com/content/19/1204/17/6959565_877409038.shtml">http://www.360doc.com/content/19/1204/17/6959565_877409038.shtml</a></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">#设置cmake的最小版本</span><br><span class="line">cmake_minimum_required (VERSION 2.6)</span><br><span class="line"></span><br><span class="line">#设置项目名称</span><br><span class="line">project (Tutorials)</span><br><span class="line"></span><br><span class="line">#设置构架类型，用debug模式编译</span><br><span class="line">set(CMAKE_BUILD_TYPE &quot;Debug&quot;)</span><br><span class="line"></span><br><span class="line">#mesa是Linux下的OpenGL实现，如下代码包含mesa</span><br><span class="line">find_package(OpenGL REQUIRED)</span><br><span class="line"></span><br><span class="line">#关于目录的报错提醒</span><br><span class="line">if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )</span><br><span class="line">    message( FATAL_ERROR &quot;Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_SOURCE_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_BINARY_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">#编译子文件夹，外部依赖项</span><br><span class="line">add_subdirectory (external)</span><br><span class="line"></span><br><span class="line"># 在Visual 2005及更高版本上，此模块可以设置调试工作目录</span><br><span class="line">#管理cmake策略设置</span><br><span class="line">cmake_policy(SET CMP0026 OLD)</span><br><span class="line">list(APPEND CMAKE_MODULE_PATH &quot;$&#123;CMAKE_SOURCE_DIR&#125;/external/rpavlik-cmake-modules-fe2273&quot;)</span><br><span class="line">include(CreateLaunchers)</span><br><span class="line">include(MSVCMultipleProcessCompile) # /MP</span><br><span class="line"></span><br><span class="line">#添加子目录</span><br><span class="line">if(INCLUDE_DISTRIB)</span><br><span class="line">  add_subdirectory(distrib)</span><br><span class="line">endif(INCLUDE_DISTRIB)</span><br><span class="line"></span><br><span class="line">#向工程添加多个特定的头文件搜索路径</span><br><span class="line">include_directories(</span><br><span class="line">  external/AntTweakBar-1.16/include/</span><br><span class="line">  external/glfw-3.1.2/include/GLFW/</span><br><span class="line">  external/glm-0.9.7.1/</span><br><span class="line">  external/glew-1.13.0/include/</span><br><span class="line">  external/assimp-3.0.1270/include/</span><br><span class="line">  external/bullet-2.81-rev2613/src/</span><br><span class="line">  .</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#将要链接的库名统一叫ALL_LIBS</span><br><span class="line">set(ALL_LIBS</span><br><span class="line">  $&#123;OPENGL_LIBRARY&#125;</span><br><span class="line">  glfw</span><br><span class="line">  GLEW_1130</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#宏定义</span><br><span class="line">add_definitions(</span><br><span class="line">  -DTW_STATIC</span><br><span class="line">  -DTW_NO_LIB_PRAGMA</span><br><span class="line">  -DTW_NO_DIRECT3D</span><br><span class="line">  -DGLEW_STATIC</span><br><span class="line">  -D_CRT_SECURE_NO_WARNINGS</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># Tutorial 1</span><br><span class="line"></span><br><span class="line">#添加一个可执行文件目标</span><br><span class="line">#第一行：可执行文件</span><br><span class="line">#第二行之后：由source列出的源文件（cpp/hpp/着色器文件）构建而来（源文件路径）</span><br><span class="line">add_executable(tutorial01_first_window</span><br><span class="line">  tutorial01_first_window/tutorial01.cpp</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标要连接库文件的名称</span><br><span class="line">target_link_libraries(tutorial01_first_window</span><br><span class="line">  $&#123;ALL_LIBS&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标属性</span><br><span class="line"># set_target_properties（目标 PROPERTIES 属性1 值1 属性2 值2）</span><br><span class="line">#设置XCODE属性配置生成目录</span><br><span class="line">set_target_properties(tutorial01_first_window PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line">#设置工作目录</span><br><span class="line">#create_default_target_launcher设置默认工作目录</span><br><span class="line">create_target_launcher(tutorial01_first_window WORKING_DIRECTORY &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line"></span><br><span class="line">#划分目录结构</span><br><span class="line">#将common目录下面的文件全部分组为common</span><br><span class="line">SOURCE_GROUP(common REGULAR_EXPRESSION &quot;.*/common/.*&quot; )</span><br><span class="line">SOURCE_GROUP(shaders REGULAR_EXPRESSION &quot;.*/.*(shader|vert|frag)$&quot; )</span><br><span class="line"></span><br><span class="line">#CMake针对不同平台支持本地构建工具列表。同时支持命令行工具和集成开发环境(IDE)工具。</span><br><span class="line">#如果生成器不为Xcode工具</span><br><span class="line">if (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">#命令执行</span><br><span class="line">#TARGET 目标 POST_BUILD命令将会在目标构建完后执行</span><br><span class="line">#复制文件  当前正在被处理的二进制目录路径/与构建配置相对应的输出子路径/目标 本平台上可执行文件后缀 正在被处理的源码目录路径</span><br><span class="line">add_custom_command(</span><br><span class="line">   TARGET tutorial01_first_window POST_BUILD</span><br><span class="line">   COMMAND $&#123;CMAKE_COMMAND&#125; -E copy &quot;$&#123;CMAKE_CURRENT_BINARY_DIR&#125;/$&#123;CMAKE_CFG_INTDIR&#125;/tutorial01_first_window$&#123;CMAKE_EXECUTABLE_SUFFIX&#125;&quot; &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">elseif ($&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">endif (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br></pre></td></tr></table></figure>
-
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
   </nav>
   
 </section>
