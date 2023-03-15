@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.1k</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -113,11 +113,10 @@
 
 <p>binding与之后glBindImageTexture的第一个参数相同，通过ID绑定对应的tbo，而tbo绑定对应的buffer。相当于通过绑定知道从哪个buffer读取数据，从哪个buffer写入数据。因为此处是读取buffer所以使用imageBuffer，如果是数组的话可能使用image2D。es需要指定精度，所以添加mediump。同时因为需要读取的是rgba而不是r（如果只设置r，value就无法读取y值），所以需要指定readonly和writeonly。但是在opengl4.3中不需要指定精度，并且读写可以在一个buffer中进行。</p>
 <p>imageLoad从buffer的指定位置读取数据，imageStore将值写入buffer的指定位置。</p>
-<p>计算着色器任务以组为单位进行执行，称为工作组。拥有邻居的工作组被称为本地工作组（局部）, 这些组可以组成更大的组，称为全局工作组，而全局工作组通常作为执行命令的一个单位。计算着色器会被全局工作组中每一个本地工作组中的每一个单元调用一次，工作组的每一个单元称为工作项，每一次调用称为一次执行。执行的单元之间可以通过变量和显存进行通信（不同工作组不能通信），且可执行同步操作保持一致性（单个工作组内可以并行）。</p>
-<p>local_size是本地工作组的大小，有xyz三个维度，不设置默认为1。</p>
-<p>gl_LocalInvocationID.x × local_size_y+gl_LocalInvocationID.y+local_size_x×local_size_y×gl_WorkGroupID</p>
-<p>gl_WorkGroupID本地工作组在全局工作组的索引（从0开始），local_size_x×local_size_y本地工作组的大小（该大小尽量与硬件匹配），gl_LocalInvocationID工作项在本地工作组的坐标（从0开始）。gl_GlobalInvocationID：在全局工作组中，当前工作项所在位置。（在es中imageLoad后的pos只能使用int，所以可以设置本地工作组和全局工作组yz均为1，这样可以只使用gl_GlobalInvocationID.x确定位置，否则可以通过上述公式计算。）</p>
-<p>本地工作组的大小×全局工作组的大小-&gt;所有需要遍历的数据</p>
+<p>计算着色器任务以组为单位进行执行，称为工作组。拥有邻居的工作组被称为本地工作组（局部）, 这些组可以组成更大的组，称为全局工作组，而全局工作组通常作为执行命令的一个单位。计算着色器会被全局工作组中每一个本地工作组中的每一个单元调用一次，工作组的每一个单元称为工作项，每一次调用称为一次执行。执行的单元之间可以u通过变量和显存进行通信（不同工作组不能通信），且可执行同步操作保持一致性（单个工作组内可以并行）。</p>
+<p>如下例子假设全局工作组yz轴都为1 ，局部工作组只有xy：</p>
+<p>gl_LocalInvocationID.x × local_size_y+gl_LocalInvocationID.y+local_size_x×local_size_y×gl_WorkGroupID.x&#x3D;gl_GlobalInvocationID.x×local_size_y×y轴的工作组个数+gl_GlobalInvocationID.y</p>
+<p>local_size是本地工作组的大小，有xyz三个维度，不设置默认为1。gl_WorkGroupID本地工作组在全局工作组的索引（从0开始），local_size_x×local_size_y本地工作组的大小（该大小尽量与硬件匹配），gl_LocalInvocationID工作项在本地工作组的坐标（从0开始）。gl_GlobalInvocationID：在全局工作组中，当前工作项所在位置。（在es中imageLoad后的pos只能使用int，所以可以设置本地工作组和全局工作组yz均为1，这样可以只使用gl_GlobalInvocationID.x就可以遍历到所有数据，否则可以通过上述公式计算。）本地工作组的大小×全局工作组的大小-&gt;所有需要遍历的数据</p>
 <p>与普通着色器一样正常链接</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">computeShader = LoadShader(GL_COMPUTE_SHADER, cShaderStr);</span><br><span class="line">compute_prog = glCreateProgram();</span><br><span class="line"><span class="keyword">if</span> (compute_prog == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">glAttachShader(compute_prog, computeShader);</span><br><span class="line">glLinkProgram(compute_prog);</span><br></pre></td></tr></table></figure>
 <p> 将顶点数据arraybuffer与texbuffer绑定</p>
