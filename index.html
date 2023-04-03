@@ -118,7 +118,7 @@
     
     
     <article
-  id="post-X11窗口"
+  id="post-X11窗口绘制"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -129,16 +129,16 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/04/03/X11%E7%AA%97%E5%8F%A3/"
-    >X11窗口</a> 
+  <a class="article-title" href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/"
+    >X11窗口绘制</a> 
 </h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3/" class="article-date">
-  <time datetime="2023-04-02T23:52:03.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
+  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -176,21 +176,20 @@
 <p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<pre><code>   关闭窗口事件（若窗口关闭则打印信息）
-   
-    //while循环外
-    Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
-    XSetWMProtocols(display, win, &amp;deleteAtom, 1);
-    //while循环内
-     case ClientMessage:&#123;
-           if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-               printf(&quot;X WINDOW DELETED\n&quot;);
-               return 0;
-           &#125;
-       &#125;
-      窗口改变事件
+<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
+<pre><code> //while循环外
+ Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
+ XSetWMProtocols(display, win, &amp;deleteAtom, 1);
+ //while循环内
+  case ClientMessage:&#123;
+        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
+            printf(&quot;X WINDOW DELETED\n&quot;);
+            return 0;
+        &#125;
+    &#125;
 </code></pre>
-<p>​        如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
+<p>​		窗口改变事件</p>
+<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
 <pre><code>const unsigned int mask = CWWidth | CWHeight;
 XWindowChanges changes;
 int newWidth = 128, newHeight = 128;
@@ -205,10 +204,10 @@ XConfigureWindow(display, win, mask, &amp;changes);
 &#125;
 </code></pre>
 <p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	   退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
+<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
 
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_/article/details/7640584</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
  
       <!-- reward -->
