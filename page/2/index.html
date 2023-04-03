@@ -118,90 +118,6 @@
     
     
     <article
-  id="post-阴影贴图"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/"
-    >阴影贴图</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/" class="article-date">
-  <time datetime="2023-01-18T08:24:53.000Z" itemprop="datePublished">2023-01-18</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="将深度信息渲染到纹理"><a href="#将深度信息渲染到纹理" class="headerlink" title="将深度信息渲染到纹理"></a>将深度信息渲染到纹理</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061632501.png" alt="image-20230106163202431" style="zoom:67%;" />
-
-<p>​		首先从光源的角度来看，光源是位于左上角并且指向立方体。看图中A，B，C这3个点。当B被渲染时，它的深度值进入深度缓冲区，因为在B和光源之间没有任何东西，默认它是那条线上离光源最近的点。然而当A和C被渲染的时候，它们在深度缓冲区的同一个点上“竞争”。两个点都在同一条来自光源的直线上，所以在透视投影后，光栅器发现这两个点需要去往屏幕上的同一个像素，则C点的深度值被写入了深度缓存中。</p>
-<p>step1:创建纹理作为阴影图</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;depthTexture);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="comment">//GL_DEPTH_COMPONENT：每个纹素放一个单精度浮点数用于存放已经标准化后的深度值 0：暂时不提供数据</span></span><br><span class="line"><span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_DEPTH_COMPONENT16, <span class="number">1024</span>, <span class="number">1024</span>, <span class="number">0</span>, GL_DEPTH_COMPONENT, GL_FLOAT, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//过滤</span></span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);</span><br></pre></td></tr></table></figure>
-
-<p>step2:创建配置帧缓冲</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glGenFramebuffers</span>(<span class="number">1</span>, &amp;FramebufferName);</span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//GL_DEPTH_ATTACHMENT:附着在上面的纹理收到深度测试的结果,0：一个层级</span></span><br><span class="line"><span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>step3：相关设置</p>
-<p>​	禁止向颜色缓存中写入，只输出深度，默认情况下，颜色缓存会被绑定在GL_COLOR_ATTACHMENT0上，此使的帧缓冲不包含纹理缓冲区，最后确认帧缓冲的状态完整。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawBuffer</span>(GL_NONE);</span><br><span class="line"><span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">GLuint error = <span class="built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER);</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
-<p>step4：在缓冲绘制图像</p>
-<p>本次绘制不要片段着色器，但一定要开启深度测试（此处以点光源的mvp为例）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将图像绘制进帧缓冲而不是显示在屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//从光源的角度观察，计算mvp</span></span><br><span class="line">glm::vec3 lightInvDir = glm::<span class="built_in">vec3</span>(<span class="number">0.5f</span>, <span class="number">2</span>, <span class="number">-2</span>);</span><br><span class="line"><span class="function">glm::vec3 <span class="title">lightPos</span><span class="params">(<span class="number">5</span>, <span class="number">20</span>, <span class="number">20</span>)</span></span>;</span><br><span class="line">glm::mat4 depthP = glm::<span class="built_in">perspective</span>&lt;<span class="type">float</span>&gt;(<span class="number">45.0f</span>, <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">50.0f</span>);</span><br><span class="line">glm::mat4 depthV = glm::<span class="built_in">lookAt</span>(lightPos, lightPos-lightInvDir, glm::<span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>));</span><br><span class="line">glm::mat4 depthM = glm::<span class="built_in">mat4</span>(<span class="number">1.0</span>);</span><br><span class="line">glm::mat4 depthMVP = depthP * depthV * depthM;</span><br><span class="line"><span class="comment">//正常绘制图像</span></span><br><span class="line"><span class="comment">//回到默认帧缓冲，渲染到屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="绘制物体"><a href="#绘制物体" class="headerlink" title="绘制物体"></a>绘制物体</h4><p>step5：在屏幕绘制图像</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将帧缓冲纹理作为正常纹理渲染</span></span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//便于从齐次坐标[-1,1]变换到纹理坐标[0,1]</span></span><br><span class="line"><span class="function">glm::mat4 <span class="title">biasMatrix</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">             <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">1.0</span>)</span></span>;</span><br><span class="line"><span class="comment">//除了传入相机视角的MVP矩阵，还要传入光源视角的MVP矩阵</span></span><br><span class="line">glm::mat4 depthBiasMVP = biasMatrix * depthMVP;</span><br></pre></td></tr></table></figure>
-<p>step6：着色器文件（与上一次绘制不同的着色器）</p>
-<p>​	其次，从摄像机的角度于每一个像素，从深度缓冲区中取出相应的深度值，同时也计算这个像素到光源的距离。如果这两个深度值不同，意味着从光源看这个像素时有其他像素遮挡了它，这种情况下在颜色计算中要增加阴影因子来模仿阴影效果。</p>
-<p>(1)顶点着色器</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ShadowCoord = DepthBiasMVP * <span class="built_in">vec4</span>(position,<span class="number">1</span>);<span class="comment">//光源视角</span></span><br><span class="line">gl_Position =  MVP * <span class="built_in">vec4</span>(position,<span class="number">1</span>);<span class="comment">//相机视角</span></span><br></pre></td></tr></table></figure>
-
-<p>​	由于片段着色器将接收到的裁剪空间下的坐标看做一个标准的顶点属性，光栅化程序不会对其进行透视分割（只有传到gl_position变量中的顶点才会自动执行透视分割）。将这个向量除以其W分量手动透视分割；</p>
-<p>(2)片段着色器</p>
-<p>   从阴影贴图中获取深度数据的，将上面阴影贴图的深度值和当前像素的深度值进行比较，如果阴影贴图的深度值小，也就是阴影离相机近，那么就返回0.2作为阴影参数，反之就返回1.0表示没有阴影。bias是修复参数，仅用这一个参数还是会出现粗糙的阴影，还需要更多参数调整。<a target="_blank" rel="noopener" href="https://blog.csdn.net/linjf520/article/details/105380551/">https://blog.csdn.net/linjf520/article/details/105380551/</a></p>
-<pre><code>float bias = 0.005;
-float visibility=1.0;
-if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.z-bias)/ShadowCoord.w )&#123;
-    visibility=0.2;
-&#125;
-</code></pre>
-<p>将阴影参数传进来并调整漫射光和镜面反射光的颜色值，环境光就不受阴影影响。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gl_FragColor.rgb = </span><br><span class="line">	 MaterialAmbientColor +</span><br><span class="line">	 visibility* MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">	 visibility*MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301251330627.png" alt="image-20230125133010521"></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
   id="post-天空盒"
   class="article article-type-post"
   itemscope
@@ -1031,6 +947,325 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 <p>该方法生成的纹理数据作为一张静态图由采样器根据UV采样访问，渲染在其他地方。</p>
 <img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221227143718485.png" alt="image-20221227143718485" style="zoom:50%;" />
 
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-git版本管理命令使用"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/08/git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/"
+    >git版本管理命令使用</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/08/git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2022-12-08T03:02:16.000Z" itemprop="datePublished">2022-12-08</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="权限问题"><a href="#权限问题" class="headerlink" title="权限问题"></a>权限问题</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_50790981/article/details/124991911">https://blog.csdn.net/qq_50790981&#x2F;article&#x2F;details&#x2F;124991911</a></p>
+<h4 id="创建版本库及版本管理命令"><a href="#创建版本库及版本管理命令" class="headerlink" title="创建版本库及版本管理命令"></a>创建版本库及版本管理命令</h4><p>1.创建工程目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir project(任取)</span><br></pre></td></tr></table></figure>
+
+<p>2.进入工程目录下，新建版本仓库（或者合并成git init project）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br></pre></td></tr></table></figure>
+
+<p>3.利用ls命令查看隐藏目录.git（版本库，最终要的是暂存区、分支及分支头指针）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -ah</span><br></pre></td></tr></table></figure>
+
+<p>4.工作目录或其子目录下编写或修改文件，如在project文件夹中新建一个readme.txt的文本文件</p>
+<p>（1）将readme.txt 单个文件添加到版本库的暂存区（一般不直接从工作区到分支）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git add readme.txt</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git add .</td>
+<td>将当前目录的所有文件添加到暂存区</td>
+<td>版本库管理工程</td>
+</tr>
+<tr>
+<td>$ git add all</td>
+<td>相当于$ git add .</td>
+<td>版本库管理工程</td>
+</tr>
+<tr>
+<td>$ git add folder</td>
+<td>将指定目录folder及其子目录添加到暂存区</td>
+<td>版本库管理一个目录</td>
+</tr>
+</tbody></table>
+<p>5.将暂存区的文件提交到仓库分支，并对本次提交进行说明</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit readme.txt -m &quot;文件说明&quot;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git commit –v</td>
+<td>提交时显示diff信息</td>
+</tr>
+<tr>
+<td>$ git commit –amend –m “我写了一个很好的文档”</td>
+<td>用本次提交代替上一次提交；若文件没有变化，则改写提交信息</td>
+</tr>
+<tr>
+<td>$ git commit –amend</td>
+<td>重做一次commit</td>
+</tr>
+<tr>
+<td>$ git commit –a</td>
+<td>将自上次提交后的工作区的变化直接提交到仓库</td>
+</tr>
+</tbody></table>
+<p>6.提交前可以先进行确认和检查</p>
+<p>查看工作区的文件又没有改动等信息,modified后为改动过的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git status</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081145022.png" alt="image-20221208114505983" style="zoom:67%;" />
+
+<p>查看文件进行了哪些修改，即暂存区和工作区的差异</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git diff</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081146143.png" alt="image-20221208114623103" style="zoom:67%;" />
+
+<p>如果运行git add readme.txt后，则暂存区和工作区无差异</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081157286.png" alt="image-20221208115714252" style="zoom:67%;" />
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git diff –cached</td>
+<td>显示暂存区和上一个commit的差异</td>
+</tr>
+<tr>
+<td>$ git diff HEAD</td>
+<td>显示工作区与当前分支下的最新commit之间的差异</td>
+</tr>
+<tr>
+<td>$ git diff [branch1] [branch2]</td>
+<td>显示两次提交之间的差异</td>
+</tr>
+</tbody></table>
+<p>7.提交后查看当前仓库中的所有提交的历史记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081147363.png" alt="image-20221208114756299" style="zoom:67%;" />
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git log –pretty&#x3D;oneline</td>
+<td>显示提交历史的简要信息</td>
+</tr>
+<tr>
+<td>$ git reflog</td>
+<td>显示当前分支最近几次操作</td>
+</tr>
+</tbody></table>
+<p>8.版本回退</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git reset –hard HEAD^</td>
+<td>将版本库、暂存区、工作区都回退到上一个版本</td>
+</tr>
+<tr>
+<td>$ git reset –soft HEAD^</td>
+<td>只回退版本库</td>
+</tr>
+<tr>
+<td>$ git reset –mixed HEAD^</td>
+<td>回退版本库和暂存区</td>
+</tr>
+<tr>
+<td>$ git reset –hard commit_id</td>
+<td>回退到commit_id表示的版本，可以是当前版本之前或之后的版本</td>
+</tr>
+</tbody></table>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081609072.png" alt="QQ图片20221208160912"></p>
+<p>9.恢复</p>
+<p>用暂存区（版本库）的内容覆盖工作区的内容（如果工作区的内容删除了也可以用这种方式恢复）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout --文件名</span><br></pre></td></tr></table></figure>
+
+<p>10.删除</p>
+<p>将文件删除并提交到暂存区（需要先从工作区删除，再使用本条命令，之后还要commit）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm 文件名</span><br></pre></td></tr></table></figure>
+
+<p>只从stage中删除，保留物理文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm --cached 文件名</span><br></pre></td></tr></table></figure>
+
+<p>11.分支</p>
+<p>建立一个副本，在副本上修改，主分支master的内容不变</p>
+<p>（1）创建分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git branch</td>
+<td>列出所有本地分支</td>
+</tr>
+<tr>
+<td>$ git branch -r</td>
+<td>列出所有远程分支</td>
+</tr>
+<tr>
+<td>$ git branch -a</td>
+<td>列出所有本地和远程分支</td>
+</tr>
+<tr>
+<td>$ git branch dev</td>
+<td>新建一个分支dev，但不切换到此分支</td>
+</tr>
+<tr>
+<td>$ git branch dev commit_id</td>
+<td>新建一个分支，并指向某个commit</td>
+</tr>
+<tr>
+<td>$ git branch –d dev</td>
+<td>删除本地分支dev</td>
+</tr>
+<tr>
+<td>$ git branch –dr</td>
+<td>删除远程分支</td>
+</tr>
+</tbody></table>
+<p>在dev2上不存在第一个修改的记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928778.png" alt="QQ图片20221209092742" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928402.png" alt="QQ图片20221209092738" style="zoom:67%;" />
+
+<p>（2）切换分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git checkout –b dev</td>
+<td>新建一个分支dev，并切换到此分支</td>
+</tr>
+<tr>
+<td>$ git checkout  dev</td>
+<td>切换到分支dev，并更新工作区</td>
+</tr>
+</tbody></table>
+<p>（3）分支合并</p>
+<p>将分支dev合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git merge dev</span><br></pre></td></tr></table></figure>
+
+<p>选择一个commit，合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry --pick commit_id</span><br></pre></td></tr></table></figure>
+
+<p>（4）解决冲突</p>
+<p>如果同一个文件在合并分支时都被修改了则会引起冲突</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091109742.png" alt="QQ图片20221209110831" style="zoom: 80%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091110869.png" alt="QQ图片20221209110835" style="zoom:80%;" />
+
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt;，&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;，&gt;&gt;&gt;&gt;&gt;&gt;&gt;标记出不同分支的内容，其中&lt;&lt;&lt;HEAD是指主分支修改的内容，&gt;&gt;&gt;&gt;&gt;dev6 是指dev6上修改的内容</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091114906.png" alt="QQ图片20221209110838"></p>
+<p>解决的办法是可以修改冲突文件后重新提交。master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作，工作一般情况下在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上。用<em>git log –graph</em>命令可以看到分支合并图。</p>
+<p>（5）删除本地分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d [branch-name] -D（大写）强制删除</span><br></pre></td></tr></table></figure>
+
+<p>12.为不好记的commit_id打标签</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git tag</td>
+<td>查看所有标签</td>
+</tr>
+<tr>
+<td>$git tag V1.0</td>
+<td>为当前分支打上标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag -d v1.0</td>
+<td>删除当前分支的标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag V1.0 commit_id</td>
+<td>为指定的某次提交打上标签</td>
+</tr>
+<tr>
+<td>$git tag -a V1.0 -m “version1.0 released”</td>
+<td>为当前分支创建带说明性文字的标签号</td>
+</tr>
+<tr>
+<td>$git show V1.0</td>
+<td>查看标签为V1.0的信息</td>
+</tr>
+</tbody></table>
+<p>远程相关、忽略文件相关</p>
  
       <!-- reward -->
       
