@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    TransformFeedback |  Hexo
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-TransformFeedback"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  TransformFeedback
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/30/TransformFeedback/" class="article-date">
+  <time datetime="2022-12-30T07:42:14.000Z" itemprop="datePublished">2022-12-30</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">4 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="变换反馈"><a href="#变换反馈" class="headerlink" title="变换反馈"></a>变换反馈</h3><p>将顶点数据发给着色器，变换后从着色器获取数据作为新的顶点数据进行绘制，可以用于绘制粒子及动画效果</p>
+<h4 id="一、shader-cpp文件"><a href="#一、shader-cpp文件" class="headerlink" title="一、shader.cpp文件"></a>一、shader.cpp文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> GLchar* feedbackVaryings[] = &#123; <span class="string">&quot;outposition&quot;</span>,<span class="string">&quot;fragcolor&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">glTransformFeedbackVaryings</span>(ProgramID, <span class="number">2</span>, feedbackVaryings, GL_SEPARATE_ATTRIBS);</span><br></pre></td></tr></table></figure>
+
+<p>这两行代码需要放在glLinkProgram(ProgramID);之前。第一个数组说明了捕获到一个缓冲区中的输出属性（与顶点着色器中需要捕获的out的名字相同）。第二个函数的第一个参数是着色器程序；第二个参数和第三个参数指定了输出名称数组和数组本身的长度，最后一个参数指定了应该如何写入数据。以下两种格式可供选择:</p>
+<p>1.–GL_INTERLEAVED_ATTRIBS:将所有属性写入一个缓冲区对象。</p>
+<p>2.–GL_SEPARATE_ATTRIBS: 将属性写入多个缓冲区对象，或将不同的偏移量写入缓冲区。</p>
+<p>比如一个程序有颜色和顶点两个缓冲区，使用第一个参数只能绑定一个缓冲区，此时想变换颜色和顶点需要把这两组数据写在同一个数组并设置读取的偏移量：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
+
+<p>使用第二个参数就可以将颜色数据和顶点数据分开，将两个缓冲区绑定到trasnformfeedback上：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbuffera);</span><br></pre></td></tr></table></figure>
+
+<p>其中第二个参数就是缓冲区索引，绑定两个的话，第一个缓冲区索引是0，第二个是1，可以区分缓冲区。</p>
+<h4 id="二、顶点着色器文件"><a href="#二、顶点着色器文件" class="headerlink" title="二、顶点着色器文件"></a>二、顶点着色器文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">in vec4 inposition;</span><br><span class="line">in vec4 color;</span><br><span class="line">out vec4 outposition;</span><br><span class="line">out vec4 fragcolor;<span class="comment">//与feedbackVaryings[]同名</span></span><br><span class="line"><span class="comment">/*在main函数中对inposition和color进行变换*/</span></span><br><span class="line">gl_Position=MVP * inposition;</span><br></pre></td></tr></table></figure>
+
+<p>输入的顶点属性数据inposition经过MVP变换后作为最终的gl_Position数据用来绘制图形；将inposition数据变换后存入outposition写入tf缓冲。（color同理）</p>
+<h4 id="三、应用程序文件"><a href="#三、应用程序文件" class="headerlink" title="三、应用程序文件"></a>三、应用程序文件</h4><p>以GL_INTERLEAVED_ATTRIBS参数为例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//tf缓冲区只用创建一个</span></span><br><span class="line">GLuint tfbuffera;</span><br><span class="line"><span class="built_in">glGenTransformFeedbacks</span>(<span class="number">1</span>, &amp;tfbuffera);</span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="comment">//给tf缓冲绑定相应的缓冲对象（databuffer用GL_ARRAY_BUFFER类型创建）</span></span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
+
+<p>相同的缓存不能同时作为输入和输出，所以如果想产生连续变换，需要两个缓冲区交换数据。所以需要两个databuffer。第一个buffer绑定data数据用于绘制第一个图形，第二个传递了一个nullptr，以创建一个足够大的缓冲区。（比如粒子系统生成的定点数会越来越多，此处不需要考虑该问题）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), data, GL_DYNAMIC_DRAW);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), <span class="literal">nullptr</span>, GL_DYNAMIC_DRAW);</span><br></pre></td></tr></table></figure>
+
+<p>主要代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffer[flag]);<span class="comment">//将变换后数据写入databufferb</span></span><br><span class="line"><span class="built_in">glEnable</span>(GL_RASTERIZER_DISCARD);<span class="comment">//此次绘制写入tf缓冲因此不进行绘制，禁用光栅化</span></span><br><span class="line"><span class="built_in">glBeginTransformFeedback</span>(GL_TRIANGLES);<span class="comment">//开启tf缓冲，设置绘制模式与draw相同</span></span><br><span class="line"><span class="comment">//用databuffera也就是最初的数据传入顶点着色器，数据进行第一次变换，但此时不显示，而是写入tf缓冲的databufferb</span></span><br><span class="line"><span class="built_in">glEnableVertexAttribArray</span>(positionID);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[!flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"><span class="comment">//结束转换反馈模式</span></span><br><span class="line"><span class="built_in">glEndTransformFeedback</span>();</span><br><span class="line"><span class="comment">//使用光栅化，绘制图形</span></span><br><span class="line"><span class="built_in">glDisable</span>(GL_RASTERIZER_DISCARD);</span><br><span class="line"><span class="comment">//使用databufferb第一次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲</span></span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">flag = !flag;<span class="comment">//进行第二次循环</span></span><br></pre></td></tr></table></figure>
+<p>第二次循环将变换后的数据写入databuffera，将databufferb第一次变换的数据传入顶点着色器，数据进行第二次变换，但此时不显示，而是写入tf缓冲的databuffera。使用databuffera第二次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲。</p>
+<p>原始数据：-0.1f,0.1f, 0.1f,1.0f,0.1f,0.1f, 0.1f,1.0f</p>
+<p>如下是经过两次循环后tf缓冲中的数据：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021755919.png" alt="image-20230102175536791"></p>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>如下数据每行前四个是顶点坐标数据，后四个是顶点颜色数据：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021804938.png" alt="image-20230102180412855"></p>
+<p>第五个参数：步长(Stride)，在连续的顶点属性组之间的间隔。上图一行8个数是一个顶点属性，所以步长为8*4&#x3D;32</p>
+<p>第六个参数：使用VBO时是缓冲对象数据存储区的字节偏移量（不使用VBO时是顶点数组指针）</p>
+<p>颜色数据从第五个数据读起，前面有四个顶点坐标数据，因此偏移量为4*4&#x3D;16</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br></pre></td></tr></table></figure>
+
+<p>参考链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/niu2212035673/article/details/79041437">https://blog.csdn.net/niu2212035673/article/details/79041437</a></p>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/12/30/TransformFeedback/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/01/03/%E5%A4%9A%E7%BA%A7%E7%BA%B9%E7%90%86/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            多级纹理
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">几何着色器&amp;公告牌</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2023
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+        <li>
+          <a href="http://www.beian.miit.gov.cn/" target="_black">赣ICP备2021001676号</a>
+        </li>
+        
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="Hexo"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friend">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/journal">日志</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1441758494&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

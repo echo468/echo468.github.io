@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    模型对象及材质 |  Hexo
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-模型对象及材质"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  模型对象及材质
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/" class="article-date">
+  <time datetime="2023-02-05T09:18:27.000Z" itemprop="datePublished">2023-02-05</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/three-js/">three.js</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">8 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="三维向量Vector3与模型位置"><a href="#三维向量Vector3与模型位置" class="headerlink" title="三维向量Vector3与模型位置"></a>三维向量Vector3与模型位置</h4><p>点模型<code>Points</code>、线模型<code>Line</code>、网格网格模型<code>Mesh</code>等模型对象的父类都是Object3D。</p>
+<p>三维向量<code>Vector3</code>有xyz三个分量，Three.js中会用三维向量<code>Vector3</code>表示很多种数据。<code>Vector3</code>对象具有属性<code>.x</code>、<code>.y</code>、<code>.z</code>，<code>Vector3</code>对象还具有<code>.set()</code>等方法。位置属性<code>.position</code>使用Three.js三维向量对象<code>Vector3</code>表示，因此具有<code>Vector3</code>所有的属性和方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v3 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v3&#x27;</span>, v3);</span><br><span class="line">v3.<span class="title function_">set</span>(<span class="number">10</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">v3.<span class="property">x</span> = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过模型位置属性<code>.position</code>可以设置模型在场景<code>Scene</code>中的位置。模型位置<code>.position</code>的默认值是<code>THREE.Vector3(0.0,0.0,0.0)</code>，表示坐标原点。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置网格模型y坐标</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="property">y</span> = <span class="number">80</span>;</span><br><span class="line"><span class="comment">//设置模型xyz坐标</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">80</span>,<span class="number">2</span>,<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>.translateX()</code>、<code>.translateY()</code>、<code>.translateZ()</code>等方法本质上改变的都是模型的位置属性<code>.position</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 等价于mesh.position.x = mesh.position.x + 100;</span></span><br><span class="line"><span class="comment">//而不是mesh.position.x = 100;</span></span><br><span class="line">mesh.<span class="title function_">translateX</span>(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果调用两次<code>mesh.translateX(100);</code>，第二次是在第一次的基础上进行累计变换。注意这些平移以及缩放函数与<code>BufferGeometry</code>平移以及缩放函数的区别。如下图<code>mesh.position.set(50,50,0);mesh.translateZ(100);</code>函数将局部坐标系的原点设置在世界坐标系x&#x3D;50,y&#x3D;50处，接着将局部坐标系的原点沿着世界坐标系的z轴平移100。<code>geometry.rotateX(Math.PI/2);geometry.translate(50,0,0);</code>函数将物体的中心点绕局部坐标系的x轴旋转90°并且平移50。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052253053.png" alt="image-20230205225318979" style="zoom: 50%;" />
+
+<p>沿着自定义的方向移动。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//向量Vector3对象表示方向</span></span><br><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">axis.<span class="title function_">normalize</span>(); <span class="comment">//向量归一化</span></span><br><span class="line"><span class="comment">//沿着axis轴表示方向平移100</span></span><br><span class="line">mesh.<span class="title function_">translateOnAxis</span>(axis, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>.scale</code>表示模型对象的xyz三个方向上的缩放比例，<code>.scale</code>的属性值是一个三维向量对象<code>Vector3</code>,默认值是<code>THREE.Vector3(1.0,1.0,1.0)</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//x轴方向放大2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="property">x</span> = <span class="number">2.0</span>;</span><br><span class="line"><span class="comment">//网格模型xyz方向分别缩放0.5,1.5,2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="title function_">set</span>(<span class="number">0.5</span>, <span class="number">1.5</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如下图通过旋转使得局部坐标系的y轴与世界坐标系的z轴平行，使用<code>geometry.scale(1,2,1);</code>函数后图形沿着局部坐标系的y轴放大至原来的2倍。即在世界坐标系中沿z轴前后放大而不是沿y轴上下放大。但是如果是<code>mesh.scale</code>会将局部坐标系和物体按照局部坐标系的轴一起缩放。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052323314.png" alt="image-20230205232310262" style="zoom:67%;" />
+
+<h4 id="欧拉Euler与角度属性-rotation"><a href="#欧拉Euler与角度属性-rotation" class="headerlink" title="欧拉Euler与角度属性.rotation"></a>欧拉Euler与角度属性.rotation</h4><p>模型的角度属性<code>.rotation</code>和四元数属性<code>.quaternion</code>都是表示模型的角度状态，只是表示方法不同，<code>.rotation</code>属性值是欧拉对象,<code>.quaternion</code>属性值是四元数对象。</p>
+<p> 创建一个欧拉对象，表示绕着xyz轴分别旋转45度，0度，90度。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Euler</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Euler</span>( <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>,<span class="number">0</span>, <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>通过属性设置欧拉对象的三个分量值。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Euler</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Euler</span>();</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">x</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>;</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">y</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>;</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">z</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+
+<p>角度属性<code>.rotation</code>的值是欧拉对象<code>Euler</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绕y轴的角度设置为60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br><span class="line"><span class="comment">//绕y轴的角度增加60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> += <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br><span class="line"><span class="comment">//绕y轴的角度减去60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> -= <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<p>模型执行<code>.rotateX()</code>、<code>.rotateY()</code>等旋转方法，会发现改变了模型的角度属性<code>.rotation</code>。如下函数是对<code>model.rotation.y</code>的累计变化。注意如果是mesh下的rotate函数就会将局部坐标系和物体按照局部坐标系的轴一起旋转，如果是geometry下的rotate函数只将物体按照局部坐标系的轴旋转。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="title function_">rotateX</span>(<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>);</span><br><span class="line">mesh.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>旋转动画。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    model.<span class="property">rotation</span>.<span class="property">y</span>+=<span class="number">0.01</span>;</span><br><span class="line">    <span class="comment">//等价与model.rotateY(0.01);</span></span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    model.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是绕某个轴旋转，如下是网格模型绕<code>(0,1,0)</code>向量表示的轴旋转<code>π/8</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//向量axis</span></span><br><span class="line">mesh.<span class="title function_">rotateOnAxis</span>(axis,<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">8</span>);<span class="comment">//绕axis轴旋转π/8</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="模型材质颜色-Color对象"><a href="#模型材质颜色-Color对象" class="headerlink" title="模型材质颜色(Color对象)"></a>模型材质颜色(Color对象)</h4><p>浏览器控制台查看材质颜色属性的属性值。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.color&#x27;</span>,material.<span class="property">color</span>);</span><br></pre></td></tr></table></figure>
+
+<p>颜色对象有三个属性，分别为<code>.r</code>、<code>.g</code>、<code>.b</code>，表示颜色RGB的三个分量。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个颜色对象</span></span><br><span class="line"><span class="keyword">const</span> color = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>();<span class="comment">//默认是纯白色0xffffff。</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看颜色对象结构&#x27;</span>,color);<span class="comment">//可以查看rgb的值</span></span><br><span class="line"><span class="comment">// 查看Color对象设置0x00ff00对应的的.r、.g、.b值</span></span><br><span class="line"><span class="keyword">const</span> color = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>(<span class="number">0x00ff00</span>);</span><br><span class="line"><span class="comment">//通过.r、.g、.b属性改变颜色值</span></span><br><span class="line">color.<span class="property">r</span> = <span class="number">0.0</span>;</span><br><span class="line">color.<span class="property">b</span> = <span class="number">0.0</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>Color</code>提供了<code>.setHex()</code>、<code>.setRGB()</code>、<code>.setStyle()</code>、<code>.set()</code>等修改颜色值的方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">color.<span class="title function_">setRGB</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//RGB方式设置颜色</span></span><br><span class="line">color.<span class="title function_">setHex</span>(<span class="number">0x00ff00</span>);<span class="comment">//十六进制方式设置颜色</span></span><br><span class="line">color.<span class="title function_">setStyle</span>(<span class="string">&#x27;#00ff00&#x27;</span>);<span class="comment">//前端CSS颜色值设置颜色</span></span><br></pre></td></tr></table></figure>
+
+<p><code>.setHex()</code>、<code>.setStyle()</code>风格的颜色值都可以作为<code>.set()</code>的参数。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">color.<span class="title function_">set</span>(<span class="number">0x00ff00</span>);<span class="comment">//十六进制方式设置颜色</span></span><br><span class="line">color.<span class="title function_">set</span>(<span class="string">&#x27;#00ff00&#x27;</span>);<span class="comment">//前端CSS颜色值设置颜色</span></span><br></pre></td></tr></table></figure>
+
+<p>重置模型材质颜色。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0x00ffff</span>);</span><br><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="string">&#x27;#00ff00&#x27;</span>);</span><br><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="string">&#x27;rgb(0,255,0)&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型材质父类Material"><a href="#模型材质父类Material" class="headerlink" title="模型材质父类Material"></a>模型材质父类Material</h4><p>基础网格材质<code>MeshBasicMaterial</code>、漫反射网格材质<code>MeshLambertMaterial</code>、高光网格材质<code>MeshPhongMaterial</code>等网格材质都有一个共同的父类<code>Material</code>。</p>
+<p>材质半透明设置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">transparent</span> = <span class="literal">true</span>;<span class="comment">//开启透明</span></span><br><span class="line">material.<span class="property">opacity</span> = <span class="number">0.5</span>;<span class="comment">//设置透明度</span></span><br></pre></td></tr></table></figure>
+
+<p>材质面属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">BackSide</span>;<span class="comment">//背面可以看到</span></span><br><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">FrontSide</span>;<span class="comment">//正面面可以看到</span></span><br><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">DoubleSide</span>;<span class="comment">//双面可见</span></span><br></pre></td></tr></table></figure>
+
+<p><code>THREE.FrontSide</code>、<code>THREE.BackSide</code>、<code>THREE.DoubleSide</code>其实在theeejs内部都表示一个数字,可以通过浏览器控制打印查看验证。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.side&#x27;</span>,material.<span class="property">side</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型材质和几何体属性"><a href="#模型材质和几何体属性" class="headerlink" title="模型材质和几何体属性"></a>模型材质和几何体属性</h4><p>浏览器控制打印模型对象mesh，可以展开对象，查看对象的几何体<code>.geometry</code>和材质属性<code>.material</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh&#x27;</span>,mesh);</span><br></pre></td></tr></table></figure>
+
+<p>浏览器控制台打印模型的几何体属性<code>.geometry</code>和材质属性<code>.material</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh.geometry&#x27;</span>,mesh.<span class="property">geometry</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh.material&#x27;</span>,mesh.<span class="property">material</span>);</span><br></pre></td></tr></table></figure>
+
+<p>访问改变模型材质属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 访问模型材质,并设置材质的颜色属性</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br></pre></td></tr></table></figure>
+
+<p>访问改变模型几何体属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 访问模型几何体,并平移几何体顶点数据</span></span><br><span class="line">mesh.<span class="property">geometry</span>.<span class="title function_">translate</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>材质或几何体共享。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> mesh1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line">mesh1.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>,<span class="number">50</span>,<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 两个mesh共享一个材质，改变一个mesh的颜色，另一个mesh2的颜色也会跟着改变</span></span><br><span class="line"><span class="comment">// 三者等价：mesh.material、mesh2.material、material</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br><span class="line"><span class="comment">// 三者等价：mesh.geometry、mesh2.geometry、geometry</span></span><br><span class="line">mesh.<span class="property">geometry</span>.<span class="title function_">translate</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052331753.png" alt="image-20230205233114699" style="zoom:50%;" />
+
+<h4 id="克隆-clone-和复制-copy"><a href="#克隆-clone-和复制-copy" class="headerlink" title="克隆.clone()和复制.copy()"></a>克隆.clone()和复制.copy()</h4><p>克隆<code>.clone()</code>、复制<code>.copy()</code>是Three.js很多对象都具有的方法，比如三维向量对象<code>Vector3</code>、网格模型、几何体、材质。</p>
+<p>克隆<code>.clone()</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v1&#x27;</span>,v1);</span><br><span class="line"><span class="comment">//v2是一个新的Vector3对象，和v1的.x、.y、.z属性值一样</span></span><br><span class="line"><span class="keyword">const</span> v2 = v1.<span class="title function_">clone</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v2&#x27;</span>,v2);</span><br></pre></td></tr></table></figure>
+
+<p>复制<code>.copy()</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="keyword">const</span> v3 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>);</span><br><span class="line"><span class="comment">//读取v1.x、v1.y、v1.z的赋值给v3.x、v3.y、v3.z</span></span><br><span class="line">v3.<span class="title function_">copy</span>(v1);</span><br></pre></td></tr></table></figure>
+
+<p>通过mesh克隆<code>.clone()</code>一个和mesh一样的新模型对象mesh2。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh2 = mesh.<span class="title function_">clone</span>();</span><br><span class="line">mesh2.<span class="property">position</span>.<span class="property">x</span> = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过克隆<code>.clone()</code>获得的新模型和原来的模型共享材质和几何体。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 改变材质颜色，或者说改变mesh2颜色，mesh和mesh2颜色都会改变</span></span><br><span class="line"><span class="comment">//material.color.set(0xffff00);</span></span><br><span class="line">mesh2.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052334395.png" alt="image-20230205233443346"></p>
+<p>几何体和材质克隆<code>.clone()</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh2 = mesh.<span class="title function_">clone</span>();</span><br><span class="line"><span class="comment">// 克隆几何体和材质，重新设置mesh2的材质和几何体属性</span></span><br><span class="line">mesh2.<span class="property">geometry</span> = mesh.<span class="property">geometry</span>.<span class="title function_">clone</span>();</span><br><span class="line">mesh2.<span class="property">material</span> = mesh.<span class="property">material</span>.<span class="title function_">clone</span>();</span><br><span class="line"><span class="comment">// 改变mesh2颜色，不会改变mesh的颜色</span></span><br><span class="line">mesh2.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff0000</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052335397.png" alt="image-20230205233522340" style="zoom:67%;" />
+
+<p>改变mesh的位置，使之位于mesh2的正上方(y)，距离100。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">position</span>.<span class="title function_">copy</span>(mesh2.<span class="property">position</span>);<span class="comment">//1. 第1步位置重合</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="property">y</span> += <span class="number">100</span>;<span class="comment">//1. 第2步mesh在原来y的基础上增加100</span></span><br></pre></td></tr></table></figure>
+
+<p>两个模型的姿态角度始终保持一样。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    mesh.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);<span class="comment">// mesh旋转动画</span></span><br><span class="line">    <span class="comment">// 同步mesh2和mesh的姿态角度一样，不管mesh姿态角度怎么变化，mesh2始终保持同步</span></span><br><span class="line">    mesh2.<span class="property">rotation</span>.<span class="title function_">copy</span>(mesh.<span class="property">rotation</span>);</span><br><span class="line">    renderer.<span class="title function_">render</span>(scene, camera);</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">render</span>();</span><br></pre></td></tr></table></figure> 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            层级模型
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">几何体BufferGeometry</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2023
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+        <li>
+          <a href="http://www.beian.miit.gov.cn/" target="_black">赣ICP备2021001676号</a>
+        </li>
+        
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="Hexo"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friend">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/journal">日志</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1441758494&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    categories |  Hexo
+    step_by_step实例学习 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -54,12 +54,233 @@
       
     <main class="content on">
       <section class="outer">
+  <article
+  id="post-step-by-step实例学习"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  step_by_step实例学习
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2023-01-06T00:52:54.000Z" itemprop="datePublished">2023-01-06</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
   
-    <h1 class="page-type-title">Categories</h1>
-    <div class="categories-box">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Webgl/">Webgl</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/three-js/">three.js</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a><span class="category-list-count">6</span></li></ul>
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">857</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">3 min</span>
+        </span>
+    </span>
+</div>
+ 
     </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
   
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="矩阵变换"><a href="#矩阵变换" class="headerlink" title="矩阵变换"></a>矩阵变换</h3><h4 id="平移"><a href="#平移" class="headerlink" title="平移"></a>平移</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060903912.png" alt="image-20230106090323761" style="zoom: 67%;" />
+
+<p>​	因为所有的位移值都要乘以向量的w行，所以位移值会加到向量的原始值上。这样使用一个4维向量表示一个3维向量叫做齐次坐标。通常对于表示点的矩阵会让w&#x3D;1，而对于表示向量的矩阵会让w&#x3D;0，因为点可以被做变换而向量不可以，可以改变一个向量的长度和方向，但是长度和方向一样的所有向量都是相等的，不管他们的起点在哪里，所以可以把所有的向量起点放到原点来看。对于向量设置w&#x3D;0然后乘以变换矩阵会得到和自身一样的向量。</p>
+<h4 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060933717.png" alt="image-20230106093340662" style="zoom:50%;" />
+
+<p>旋转后的坐标变换</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093352086.png" alt="image-20230106093352086" style="zoom:50%;" />
+
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093404574.png" alt="image-20230106093404574" style="zoom:50%;" />
+
+<p>旋转矩阵</p>
+<p>绕z轴</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093419847.png" alt="image-20230106093419847" style="zoom:50%;" />
+
+<p>绕y轴</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093429878.png" alt="image-20230106093429878" style="zoom:50%;" />
+
+<p>绕z轴</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060934083.png" alt="image-20230106093440038" style="zoom:50%;" />
+
+<p>更好的方法是四元组</p>
+<h4 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h4><p>进行缩放变换其实很简单。我们从最开始的原变换矩阵来看，回忆平移变换矩阵的样子，我们保持结果矩阵中V1,V2和V3保持原样的办法是让变换矩阵主对角线上的值都为’1’，这样原向量一次都<strong>和1相乘</strong>之后依然保持不变，各分量之间互不影响。所以，这里的缩放变换，只要把那些‘1’换成我们想缩放的值，原向量各分量分别乘以这些值之后就会在相应坐标轴上进行相应的缩放了，值大于1则放大，值小于1则缩小。</p>
+<p>如果片断着色器没有显式地请求那个变量（你可以使用同一个顶点着色器混合并匹配多个片断着色器）那么一般的驱动优化会丢弃顶点着色器vs中只是影响该变量的操作（特定的shader程序是针对vs和fs的配对组合）。但如果片断着色器fs确实使用到了那个变量，光栅器会在光栅化阶段对其进行插值，并且每一次片断着色器fs的调用都会提供一个匹配特定位置的插值后的值，这意味着相邻的两个像素的值都略有不同（虽然随着三角形离摄像头越来越远那样会越来越不合适）。</p>
+<p>***经常情况下依赖插值的两个变量是三角形的法向量和纹理坐标***。顶点的法向量通常是计算包含这个顶点的所有三角形法向量的平均值而得。如果物体不是平坦的话那么每个三角形的三个顶点的法向量会各不相同，那样我们可以通过插值来计算每个像素的法向量，那些向量会用于光线的计算，从而产生更逼真可信的光照效果。插值对于纹理坐标的应用也类似，这些坐标作为模型的一部分定义在每个顶点上。为了用贴图覆盖三角形你必须对每个像素进行一样的插值操作并给每个像素定义正确的纹理坐标，这些坐标都是插值的结果</p>
+<p>复合变换</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 Rotation_tree2 = <span class="built_in">eulerAngleYXZ</span>(gOrientation1.y, gOrientation1.x, gOrientation2.z);</span><br><span class="line">glm::mat4 Transla_tree2 = <span class="built_in">translate</span>(<span class="built_in">mat4</span>(), gPosition2);</span><br><span class="line">glm::mat4 Scaling_tree2 = <span class="built_in">scale</span>(<span class="built_in">mat4</span>(), <span class="built_in">vec3</span>(<span class="number">0.3f</span>, <span class="number">0.3f</span>, <span class="number">0.3f</span>));</span><br><span class="line">glm::mat4 Model_tree2 = Transla_tree2 * Rotation_tree2 * Scaling_tree2;</span><br></pre></td></tr></table></figure>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            光照详解
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">采样器采样数据</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
 </section>
       <footer class="footer">
   <div class="outer">
@@ -218,6 +439,23 @@
 <script src="/js/lazyload.min.js"></script>
 
 <!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
