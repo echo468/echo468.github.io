@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    光照详解 |  Hexo
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-光照详解"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  光照详解
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time datetime="2023-01-06T06:40:50.000Z" itemprop="datePublished">2023-01-06</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">9 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="基于平行光的环境光"><a href="#基于平行光的环境光" class="headerlink" title="基于平行光的环境光"></a>基于平行光的环境光</h4><p>​	环境光是平行光，平行光有特定的方向但是没有特定的光源，所有的光都互相平行，计算时完全忽略光的方向，整个场景被均匀照亮。平行光的另外一个重要性质是不管它离物体多远亮度是不变的。</p>
+<p>​	光源的颜色定义为一个包含三个浮点数的三元组，浮点数介于[0,1]之间。光源的颜色和物体表面的颜色相乘得到反射回来的颜色。同时，加入强度，可以定义为一个[0，1]之间的一个单一的浮点数，然后和之前的相乘，从而得到最终的颜色值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061119134.png" alt="image-20230106111932045" style="zoom: 33%;" />
+
+<p>​	一般只是添加少量的环境光来避免出现物体一面被照亮而另一面完全是黑色的现象。例如希望物体的背后有一点亮光，因为在现实生活中灯泡会照亮它背后的墙，而墙会反过来（微弱地）照亮物体的背后，但计算这种光照的代价过大，因此通常可以简单地以假的光源代替这种计算。</p>
+<h4 id="基于点光源的漫反射光"><a href="#基于点光源的漫反射光" class="headerlink" title="基于点光源的漫反射光"></a>基于点光源的漫反射光</h4><p>​	漫射光的特性依赖光线的方向，漫射光使物体朝向它的那一面比其他背向光的面要更亮，亮度取决于光线和物体表面的角度。光线如果要对物体表面的亮度产生影响，那么光线和法线的角度要在0-90度之间但不包含90度。这种影响通过光向量l和法线向量n的点积计算。基于点光源的漫反射，表面收到的光通量依赖于表面到光源的距离：越远光越少，与距离的平方成反比。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061444894.png" style="zoom:50%;" />
+
+<p>​	顶点和法线都定义在本地坐标系空间，MVP变化后到裁剪空间。然而光照在世界空间中定义，所以在计算之前首先要将法线向量变换到世界坐标系空间。</p>
+<p>​	一个多边形面上分布的任意法向量都是一样的，足以用其中一个代表来计算顶点着色器中的漫射光。但有时一个顶点的多个面法线不同。需要使用到一个概念叫做‘顶点法线’，顶点法线是共用一个顶点的所有三角形法线的平均值。将顶点法线作为一个成员属性传给片段着色器。光栅器会得到三个不同的法向量并对其之间进行插值运算。片段着色器将会对每个像素计算其特定的插值法向量对应的颜色值，对漫射光的计算可以达到像素级别。效果是光照效果在每个相邻三角形面之间会平滑的变化。</p>
+<h4 id="基于点光源的镜面反射光"><a href="#基于点光源的镜面反射光" class="headerlink" title="基于点光源的镜面反射光"></a>基于点光源的镜面反射光</h4><p>​	基于点光源的镜面反射，比起漫反射还包含了观察者的位置。镜面反射时光以一定角度照射到物体表面，同时会在法线的另一侧对称的角度上反射出去，如果观察者刚好在反射光线的路径上那么就会看到格外强烈的光线。镜面反射最终的结果是物体在从某个角度看上去会十分明亮，而移动开后这个光亮又会消失。镜面反射光的存在更取决于反射物体的材料性质而不是光源本身。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061445748.png" alt="image-20230106144515706" style="zoom:50%;" />
+
+<p>​	亮度取决于观察者和反射光的夹角，随着角度增大反射光衰弱。这种影响通过R和V的点积计算。随着夹角’α’增大余弦值慢慢减小，直到夹角达到90°时无镜面反射的效果，夹角大于90°时余弦值为负，也没有任何反射效果，也就是观察者不在反射光的路径范围内。</p>
+<p>反射光线’R’使用’I’向量来计算，如下图：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061445499.png" alt="image-20230106144537465" style="zoom:80%;" />
+
+<p>​	向量没有起点的概念，所有方向相同且长度相同的向量都是同一个向量。因此，图中将入射光向量’I’复制到表面下面位置向量本身是不变的。根据向量的加法，’R’等于’I’+’V’，’I’已知求’V’。法线’N’的反向向量为’-N’，计算’I’和’-N’的点积可以得到’I’在’-N’上的投影，这是’V’的模长度的一半。另外’V’和’N’的方向是相同的，所以只要用计算的那个投影长度乘以单位向量’N’再乘以2就是向量’V’了。用公式简单表示如下，通过’reflect’内部函数计算：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446642.png" alt="image-20230106144604599" style="zoom: 67%;" />
+
+<p>​	计算镜面反射的最终公式：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446532.png" alt="image-20230106144620480" style="zoom:67%;" />
+
+<p>​	开始先是将光的颜色和物体表面的颜色相乘，这个和在计算环境光以及漫反射光时一样。得到的结果再和材料的镜面反射强度参数（’M’）相乘。如果材料没有反射性能，比如木头，那么镜面反射参数就为0，而像金属这种发光材料镜面反射能力就会很强。之后再乘以光线和观察者视线夹角的余弦值，即镜面参数’或者叫做‘发光参数’，用来增强加剧反射光区域边缘的强度。</p>
+<h4 id="聚光灯光源"><a href="#聚光灯光源" class="headerlink" title="聚光灯光源"></a>聚光灯光源</h4><p>​	聚光灯光源也会随着距离衰减，相当于取点光源的一个锥形的一小部分，聚光灯光源呈锥形，离光源越远，照亮的圆形区域会越大（光源位于锥形体的尖端）。如下图：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446864.png" alt="image-20230106144647823" style="zoom:67%;" />
+
+<p>​	图中L是光源方向，实现让光源只照亮两条红线夹角之间的区域。可以定义光锥为光线方向L和红线之间的夹角（两条红线之间夹角的一半）。点积计算夹角的余弦值‘C’以及L和V夹角的余弦，其中V指的是光源到某个像素的向量，如果后者的值大于余弦值‘C’，说明L和V之间的夹角偏小，该像素就位于被照亮的区域内。反之，像素位于区域外就不会被该光源照亮。</p>
+<p>​	如果仅按照上面说的在照亮区域内就点亮像素，否则就不点亮，照亮区域和未照亮区域之间的边界边缘会非常明显。一个真实的聚光灯光源会从照亮区域的中心向圆形边缘慢慢衰减。可以利用上面计算得到的那些点积作为一个衰减的参数。但是用余弦来做衰减参数会有问题，因为聚光灯光源的夹角不能太大，否则范围太广就失去了聚光灯的效果，但是在夹角从0到一个比较小的角度范围内，cos值得变化是很缓慢的，导致衰减不明显。要想衰减效果明显这个参数范围应该是[0,1]。解决方法是将这个参数的小范围映射到[0,1]的范围。</p>
+<p>​	聚光灯光源需要光源的方向向量和截断光源照亮范围的一个阈值。阈值代表的是光源方向向量和光源到可照亮像素之间的最大夹角。比这个阈值夹角大的像素是不会被该光源照亮的。</p>
+<p>​	首先得到光源到某个像素的向量，将向量单位化方便点积运算，然后和单位化了的光源方向向量进行点积运算得到他们之间夹角的余弦值。将得到的余弦值和光源的阈值（定义光源范围的最大夹角的余弦值）进行比较，如果余弦值比阈值小，说明夹角太大像素在照亮圆区域的外面，这样像素就不会被该光源点亮。反之如果像素在照亮区域内，我们就先像点光源那样计算光源的基础颜色。然后将计算的余弦值插值到0到1的范围，最后和点光源颜色相乘计算得到最终的聚光灯颜色值。</p>
+<h4 id="基于点光源的着色器文件编写"><a href="#基于点光源的着色器文件编写" class="headerlink" title="基于点光源的着色器文件编写"></a>基于点光源的着色器文件编写</h4><p>顶点着色器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">attribute vec3 vertexPosition_modelspace;</span><br><span class="line">attribute vec2 vertexUV;</span><br><span class="line">attribute vec3 vertexNormal_modelspace;<span class="comment">//法线数组</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform mat4 MVP;</span><br><span class="line">uniform mat4 V;</span><br><span class="line">uniform mat4 M;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//计算世界空间下的物体矩阵（便于等下计算世界空间下光与表面的距离）</span></span><br><span class="line">	Position_worldspace = (M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的物体矩阵</span></span><br><span class="line">	vec3 vertexPosition_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">    </span><br><span class="line">	EyeDirection_cameraspace = <span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>) - vertexPosition_cameraspace;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//观察空间下光的位置</span></span><br><span class="line">	vec3 LightPosition_cameraspace = ( V * <span class="built_in">vec4</span>(LightPosition_worldspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//观察空间下表面到点光源的向量</span></span><br><span class="line">    <span class="comment">//如果是基于平行光的漫反射此处直接归一化光的方向</span></span><br><span class="line">    LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的法线数组</span></span><br><span class="line">	Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexNormal_modelspace,<span class="number">0</span>)).xyz; </span><br><span class="line"></span><br><span class="line">	UV = vertexUV;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>片段着色器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 120</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform sampler2D myTextureSampler;</span><br><span class="line">uniform mat4 MV;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//光照颜色和强度</span></span><br><span class="line">	vec3 LightColor = <span class="built_in">vec3</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">	<span class="type">float</span> LightPower = <span class="number">50.0f</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//材质本身的颜色也影响最终颜色</span></span><br><span class="line">    <span class="comment">//漫反射分量</span></span><br><span class="line">	vec3 MaterialDiffuseColor = <span class="built_in">texture2D</span>( myTextureSampler, UV ).rgb;</span><br><span class="line">    <span class="comment">//环境光分量</span></span><br><span class="line">	vec3 MaterialAmbientColor = <span class="built_in">vec3</span>(<span class="number">0.1</span>,<span class="number">0.1</span>,<span class="number">0.1</span>) * MaterialDiffuseColor;</span><br><span class="line">    <span class="comment">//镜面光分量</span></span><br><span class="line">	vec3 MaterialSpecularColor = <span class="built_in">vec3</span>(<span class="number">0.3</span>,<span class="number">0.3</span>,<span class="number">0.3</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//计算光与表面的距离：光通量与距离的平方成反比（世界空间下）</span></span><br><span class="line">	<span class="type">float</span> distance = <span class="built_in">length</span>( LightPosition_worldspace - Position_worldspace );</span><br><span class="line"></span><br><span class="line">	<span class="comment">//归一化n和l（观察空间下计算（可以是任意空间））</span></span><br><span class="line">	vec3 n = <span class="built_in">normalize</span>( Normal_cameraspace );</span><br><span class="line">	vec3 l = <span class="built_in">normalize</span>( LightDirection_cameraspace );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//n：表面法线，l表面到光源的单位向量（与光相反，简化计算），二者计算点积</span></span><br><span class="line">    <span class="comment">//如果光源在三角形后面，n和l方向相反，那么n.l是负值。这意味着colour将是一个负值，没有意义。因此这种情况下必须用clamp()将cosTheta截取为0：</span></span><br><span class="line">	<span class="type">float</span> cosTheta = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( n,l ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//E：观察者，R反射光，二者计算点积</span></span><br><span class="line">	vec3 E = <span class="built_in">normalize</span>(EyeDirection_cameraspace);</span><br><span class="line">	vec3 R = <span class="built_in">reflect</span>(-l,n);<span class="comment">//内置函数计算反射光</span></span><br><span class="line">	<span class="type">float</span> cosAlpha = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( E,R ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//最终颜色计算</span></span><br><span class="line">    <span class="comment">//聚光灯需要添加余弦参数</span></span><br><span class="line">	gl_FragColor.rgb = </span><br><span class="line">		MaterialAmbientColor +</span><br><span class="line">		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">        <span class="comment">//pow(cosAlpha,5)用来控制镜面反射的波瓣，镜面反射与材料本身有关</span></span><br><span class="line">		MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            天空盒
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">step_by_step实例学习</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2023
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+        <li>
+          <a href="http://www.beian.miit.gov.cn/" target="_black">赣ICP备2021001676号</a>
+        </li>
+        
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="Hexo"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friend">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/journal">日志</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1441758494&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

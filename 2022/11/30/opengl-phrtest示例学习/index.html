@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    X11窗口绘制 |  Hexo
+    opengl-phrtest-cpp示例学习 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-X11窗口绘制"
+  id="post-opengl-phrtest示例学习"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  X11窗口绘制
+  opengl-phrtest-cpp示例学习
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2022/11/30/opengl-phrtest%E7%A4%BA%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2022-11-30T15:26:35.000Z" itemprop="datePublished">2022-11-30</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">1.2k</span>
         </span>
     </span>
 
@@ -94,80 +94,71 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">5 min</span>
+            <span class="post-count">4 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <h4 id="示例一"><a href="#示例一" class="headerlink" title="示例一"></a>示例一</h4><p>内容：利用glMatrixMode函数操作矩阵，增加透视效果</p>
+<p>函数解释：<a target="_blank" rel="noopener" href="https://blog.csdn.net/caoshangpa/article/details/80266028">https://blog.csdn.net/caoshangpa/article/details/80266028</a></p>
+<h4 id="示例二"><a href="#示例二" class="headerlink" title="示例二"></a>示例二</h4><p>内容：利用顶点数组的方式绘制立方体（无VBO、句柄和定义属性）</p>
+<p>顶点数组&amp;顶点缓冲：<a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-24448954-id-3059555.html">http://blog.chinaunix.net/uid-24448954-id-3059555.html</a></p>
+<p>1、顶点数组：</p>
+<p>（1)OpenGL 1.1所提供的功能</p>
+<p>（2)明显的减少函数调用次数</p>
+<p>（3)通常所有的状态保存在服务端的，如是否启用了纹理。而指定顶点，实际上就是把顶点数据从客户端发送到服务端。是否启用顶点数组，只是控制发送顶点数据的方式而已。服务端只管接收顶点数据，而不必管顶点数据到底是用哪种方式指定的。所以，服务端不需要知道顶点数组是否开启。</p>
+<p>（4)为了表示服务端状态和客户端状态的区别，服务端的状态用glEnable&#x2F;glDisable，客户端的状态则用glEnableClientState&#x2F;glDisableClientState。</p>
+<p>（5)数据是存放在内存（客户端），可以随时修改。每次绘制的时候，需要把所有的顶点数据从客户端（内存）发送到服务端（显示设备）。对于显示列表，数据是放在显示列表（服务器端），无法取出修改，但不会重复的发送数据。</p>
+<p>（6)顶点数据和索引数据可以混合</p>
+<p><u>可以不需要着色器</u></p>
+<p>2、顶点缓冲区对象：</p>
+<p>（1）OpenGL 1.5所提供的功能</p>
+<p>（2）数据存放在服务端，同时允许客户端修改</p>
+<p>（3）顶点数据和索引数据在两个缓冲区</p>
+<p>（4）数不再从指针所指的位置取数据。函数会先把指针转化为整数，假设转化后结果为k，则会从当前缓冲区的第k个字节开始取数据。</p>
+<p>使用缓冲，从缓冲读数据到现存而不是从内存中读取数据，所以运行速度会快很多。</p>
+<p>测速代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> lastTime = <span class="built_in">glfwGetTime</span>();</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line"><span class="comment">//计算1秒内的帧数从而计算一帧需要的毫秒数</span></span><br><span class="line"><span class="type">double</span> current = <span class="built_in">glfwGetTime</span>();</span><br><span class="line">nbFrames++;</span><br><span class="line"><span class="keyword">if</span> (current - lastTime &gt;= <span class="number">1.0</span>) &#123; </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%f ms/frame\n&quot;</span>, <span class="number">1000.0</span> / <span class="built_in">double</span>(nbFrames));</span><br><span class="line">	nbFrames = <span class="number">0</span>;</span><br><span class="line">	lastTime += <span class="number">1.0</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
+<p>顶点缓冲：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212260850812.png" alt="image-20221226085052532" style="zoom:67%;" />
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
+<p>显示列表顶点数组：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212260850847.png" alt="image-20221226085030449" style="zoom:67%;" />
 
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
-
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
-
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//创建窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
-
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code> //while循环外
- Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
- XSetWMProtocols(display, win, &amp;deleteAtom, 1);
- //while循环内
-  case ClientMessage:&#123;
-        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-            printf(&quot;X WINDOW DELETED\n&quot;);
-            return 0;
-        &#125;
-    &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
+<h4 id="示例三"><a href="#示例三" class="headerlink" title="示例三"></a>示例三</h4><p>内容：自己绘制纹理，使用纹理数组选择要渲染的对象，绘制时利用封装的函数</p>
+<h4 id="示例四"><a href="#示例四" class="headerlink" title="示例四"></a>示例四</h4><p>内容：利用显示列表进行颜色渲染</p>
+<p> glFrontFace函数：[<a target="_blank" rel="noopener" href="https://blog.csdn.net/zhongjling/article/details/7528091">https://blog.csdn.net/zhongjling/article/details/7528091</a>]</p>
+<h4 id="示例四-1"><a href="#示例四-1" class="headerlink" title="示例四-1"></a>示例四-1</h4><p>内容：利用索引和显示列表绘制立方体（定义面的法线，省略法线数组）</p>
+<h4 id="示例五、六、七"><a href="#示例五、六、七" class="headerlink" title="示例五、六、七"></a>示例五、六、七</h4><p>内容：噪声绘制动态纹理</p>
+<h4 id="示例八"><a href="#示例八" class="headerlink" title="示例八"></a>示例八</h4><p>内容：着色器定义随时间变化的内容</p>
+<h4 id="示例九"><a href="#示例九" class="headerlink" title="示例九"></a>示例九</h4><p>内容：读取两张纹理图片绘制，通过纹理数组和纹理混和绘制重叠的背景图。</p>
+<h4 id="示例十"><a href="#示例十" class="headerlink" title="示例十"></a>示例十</h4><p>内容：创建着色器程序，利用帧缓冲分层渲染纹理</p>
+<h4 id="示例十一"><a href="#示例十一" class="headerlink" title="示例十一"></a>示例十一</h4><p>内容：绘制点</p>
+<p>1.glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION,pointpara);</p>
+<p>2.glEnable(GL_POINT_SMOOTH);</p>
+<p>函数解释：<a target="_blank" rel="noopener" href="https://www.codetd.com/article/1755475">https://www.codetd.com/article/1755475</a></p>
+<p>启动抗锯齿：<a target="_blank" rel="noopener" href="https://blog.csdn.net/tiankefeng19850520/article/details/18601709">https://blog.csdn.net/tiankefeng19850520/article/details/18601709</a></p>
+<h4 id="示例十二"><a href="#示例十二" class="headerlink" title="示例十二"></a>示例十二</h4><p>内容：设置深度使图形有层次</p>
+<h4 id="示例十三"><a href="#示例十三" class="headerlink" title="示例十三"></a>示例十三</h4><p>内容：循环绘制堆叠图形</p>
+<h4 id="示例十四"><a href="#示例十四" class="headerlink" title="示例十四"></a>示例十四</h4><p>内容：用同一组顶点，通过定义视口画出不同位置的两个图形</p>
+<h4 id="示例十五"><a href="#示例十五" class="headerlink" title="示例十五"></a>示例十五</h4><p>内容：用纹理属性而非纹理数组绘制背景</p>
+<h4 id="示例十六"><a href="#示例十六" class="headerlink" title="示例十六"></a>示例十六</h4><p>内容：用uniform给着色器发送颜色数据，能够覆盖着色器定义的颜色</p>
+<p>uniforms(统一数据)：可以传递给顶点着色器和片元着色器，传递的数据是不易更改的比较统一的数据，比如发生旋转的变换矩阵，进行颜色渲染的渲染矩阵。一般用于对同一组顶点组成的单个3D物体中所有顶点都相同的变量，如当前光源的位置。</p>
+<h4 id="示例十七"><a href="#示例十七" class="headerlink" title="示例十七"></a>示例十七</h4><p>内容：不设置光照，索引绘制球体</p>
+<h4 id="示例十七-1"><a href="#示例十七-1" class="headerlink" title="示例十七-1"></a>示例十七-1</h4><p>内容：绘制球体，设置环境光和漫反射光</p>
+<p>球体绘制原理：<a target="_blank" rel="noopener" href="https://www.jb51.net/article/254487.htm">https://www.jb51.net/article/254487.htm</a></p>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>glScissor( 0, 0, 800, 800)：剪裁测试用于限制绘制区域。我们可以指定一个矩形的剪裁窗口，当启用剪裁测试后，只有在这个窗口之内的像素才能被绘制，其它像素则会被丢弃。换句话说，无论怎么绘制，剪裁窗口以外的像素将不会被修改。</p>
  
       <!-- reward -->
       
@@ -234,7 +225,7 @@ XConfigureWindow(display, win, mask, &amp;changes);
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/11/30/opengl-phrtest%E7%A4%BA%E4%BE%8B%E5%AD%A6%E4%B9%A0/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -245,10 +236,19 @@ XConfigureWindow(display, win, mask, &amp;changes);
    
   <nav class="article-nav">
     
+      <a href="/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            渲染管线&amp;项目创建
+          
+        </div>
+      </a>
     
-      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+    
+      <a href="/2022/11/30/opengl-tutorial%E7%A4%BA%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算着色器</div>
+        <div class="article-nav-title">opengl-tutorial-cpp示例学习</div>
       </a>
     
   </nav>

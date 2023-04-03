@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    X11窗口绘制 |  Hexo
+    渲染管线&amp;项目创建 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-X11窗口绘制"
+  id="post-渲染管线-项目创建"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  X11窗口绘制
+  渲染管线&amp;项目创建
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/" class="article-date">
+  <time datetime="2022-12-01T05:55:34.000Z" itemprop="datePublished">2022-12-01</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">867</span>
         </span>
     </span>
 
@@ -94,80 +94,45 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">5 min</span>
+            <span class="post-count">3 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <h3 id="一、渲染管线知识"><a href="#一、渲染管线知识" class="headerlink" title="一、渲染管线知识"></a>一、渲染管线知识</h3><h4 id="1、OpenGL渲染过程介绍"><a href="#1、OpenGL渲染过程介绍" class="headerlink" title="1、OpenGL渲染过程介绍"></a>1、OpenGL渲染过程介绍</h4><p>渲染过程、定点输入、顶点着色器、编译着色器、片元着色器、着色器程序、链接顶点属性、顶点数组对象、索引缓冲对象：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45782925/article/details/124822990">https://blog.csdn.net/weixin_45782925/article/details/124822990</a></p>
+<h4 id="2、渲染管线流程"><a href="#2、渲染管线流程" class="headerlink" title="2、渲染管线流程"></a>2、渲染管线流程</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aoxuestudy/article/details/124444112">https://blog.csdn.net/aoxuestudy/article/details/124444112</a></p>
+<h4 id="3、图元、片元，渲染架构"><a href="#3、图元、片元，渲染架构" class="headerlink" title="3、图元、片元，渲染架构"></a>3、图元、片元，渲染架构</h4><p>[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/549136586">https://zhuanlan.zhihu.com/p/549136586</a>]</p>
+<h3 id="二、创建项目"><a href="#二、创建项目" class="headerlink" title="二、创建项目"></a>二、创建项目</h3><p>1.在vs工程项目目录下创建空项目</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011544776.png" alt="QQ图片20221201153051"></p>
+<p>2.在vs源文件文件夹下创建.cpp文件</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011545850.png" alt="QQ图片20221201153056"></p>
+<p>3.在新建项目目录下导入着色器文件</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011546352.png" alt="QQ图片20221201153059"></p>
+<p>4.修改CMakeLists.txt文件，在相关位置添加如下</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550858.png" alt="QQ图片20221201153113"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550578.png" alt="QQ图片20221201153115"></p>
+<p>5.依次点击</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011548991.png" alt="QQ图片20221201153103"></p>
+<p>6.vs新建项目目录下自动导入相关文件</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011549736.png" alt="QQ图片20221201153106"></p>
+<p>7.新建项目目录下会生成exe可执行文件</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212011550991.png" alt="QQ图片20221201153109"></p>
+<h3 id="三、CMakeLists-txt"><a href="#三、CMakeLists-txt" class="headerlink" title="三、CMakeLists.txt"></a>三、CMakeLists.txt</h3><p>cmake指令详解：<a target="_blank" rel="noopener" href="http://t.zoukankan.com/lidabo-p-7359217.html">http://t.zoukankan.com/lidabo-p-7359217.html</a></p>
+<p>变量解释：<a target="_blank" rel="noopener" href="http://www.360doc.com/content/19/1204/17/6959565_877409038.shtml">http://www.360doc.com/content/19/1204/17/6959565_877409038.shtml</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">#设置cmake的最小版本</span><br><span class="line">cmake_minimum_required (VERSION 2.6)</span><br><span class="line"></span><br><span class="line">#设置项目名称</span><br><span class="line">project (Tutorials)</span><br><span class="line"></span><br><span class="line">#设置构架类型，用debug模式编译</span><br><span class="line">set(CMAKE_BUILD_TYPE &quot;Debug&quot;)</span><br><span class="line"></span><br><span class="line">#mesa是Linux下的OpenGL实现，如下代码包含mesa</span><br><span class="line">find_package(OpenGL REQUIRED)</span><br><span class="line"></span><br><span class="line">#关于目录的报错提醒</span><br><span class="line">if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )</span><br><span class="line">    message( FATAL_ERROR &quot;Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_SOURCE_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_BINARY_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">#编译子文件夹，外部依赖项</span><br><span class="line">add_subdirectory (external)</span><br><span class="line"></span><br><span class="line"># 在Visual 2005及更高版本上，此模块可以设置调试工作目录</span><br><span class="line">#管理cmake策略设置</span><br><span class="line">cmake_policy(SET CMP0026 OLD)</span><br><span class="line">list(APPEND CMAKE_MODULE_PATH &quot;$&#123;CMAKE_SOURCE_DIR&#125;/external/rpavlik-cmake-modules-fe2273&quot;)</span><br><span class="line">include(CreateLaunchers)</span><br><span class="line">include(MSVCMultipleProcessCompile) # /MP</span><br><span class="line"></span><br><span class="line">#添加子目录</span><br><span class="line">if(INCLUDE_DISTRIB)</span><br><span class="line">  add_subdirectory(distrib)</span><br><span class="line">endif(INCLUDE_DISTRIB)</span><br><span class="line"></span><br><span class="line">#向工程添加多个特定的头文件搜索路径</span><br><span class="line">include_directories(</span><br><span class="line">  external/AntTweakBar-1.16/include/</span><br><span class="line">  external/glfw-3.1.2/include/GLFW/</span><br><span class="line">  external/glm-0.9.7.1/</span><br><span class="line">  external/glew-1.13.0/include/</span><br><span class="line">  external/assimp-3.0.1270/include/</span><br><span class="line">  external/bullet-2.81-rev2613/src/</span><br><span class="line">  .</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#将要链接的库名统一叫ALL_LIBS</span><br><span class="line">set(ALL_LIBS</span><br><span class="line">  $&#123;OPENGL_LIBRARY&#125;</span><br><span class="line">  glfw</span><br><span class="line">  GLEW_1130</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#宏定义</span><br><span class="line">add_definitions(</span><br><span class="line">  -DTW_STATIC</span><br><span class="line">  -DTW_NO_LIB_PRAGMA</span><br><span class="line">  -DTW_NO_DIRECT3D</span><br><span class="line">  -DGLEW_STATIC</span><br><span class="line">  -D_CRT_SECURE_NO_WARNINGS</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># Tutorial 1</span><br><span class="line"></span><br><span class="line">#添加一个可执行文件目标</span><br><span class="line">#第一行：可执行文件</span><br><span class="line">#第二行之后：由source列出的源文件（cpp/hpp/着色器文件）构建而来（源文件路径）</span><br><span class="line">add_executable(tutorial01_first_window</span><br><span class="line">  tutorial01_first_window/tutorial01.cpp</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标要连接库文件的名称</span><br><span class="line">target_link_libraries(tutorial01_first_window</span><br><span class="line">  $&#123;ALL_LIBS&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标属性</span><br><span class="line"># set_target_properties（目标 PROPERTIES 属性1 值1 属性2 值2）</span><br><span class="line">#设置XCODE属性配置生成目录</span><br><span class="line">set_target_properties(tutorial01_first_window PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line">#设置工作目录</span><br><span class="line">#create_default_target_launcher设置默认工作目录</span><br><span class="line">create_target_launcher(tutorial01_first_window WORKING_DIRECTORY &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line"></span><br><span class="line">#划分目录结构</span><br><span class="line">#将common目录下面的文件全部分组为common</span><br><span class="line">SOURCE_GROUP(common REGULAR_EXPRESSION &quot;.*/common/.*&quot; )</span><br><span class="line">SOURCE_GROUP(shaders REGULAR_EXPRESSION &quot;.*/.*(shader|vert|frag)$&quot; )</span><br><span class="line"></span><br><span class="line">#CMake针对不同平台支持本地构建工具列表。同时支持命令行工具和集成开发环境(IDE)工具。</span><br><span class="line">#如果生成器不为Xcode工具</span><br><span class="line">if (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">#命令执行</span><br><span class="line">#TARGET 目标 POST_BUILD命令将会在目标构建完后执行</span><br><span class="line">#复制文件  当前正在被处理的二进制目录路径/与构建配置相对应的输出子路径/目标 本平台上可执行文件后缀 正在被处理的源码目录路径</span><br><span class="line">add_custom_command(</span><br><span class="line">   TARGET tutorial01_first_window POST_BUILD</span><br><span class="line">   COMMAND $&#123;CMAKE_COMMAND&#125; -E copy &quot;$&#123;CMAKE_CURRENT_BINARY_DIR&#125;/$&#123;CMAKE_CFG_INTDIR&#125;/tutorial01_first_window$&#123;CMAKE_EXECUTABLE_SUFFIX&#125;&quot; &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">elseif ($&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">endif (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br></pre></td></tr></table></figure>
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
-
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
-
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
-
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//创建窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
-
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code> //while循环外
- Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
- XSetWMProtocols(display, win, &amp;deleteAtom, 1);
- //while循环内
-  case ClientMessage:&#123;
-        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-            printf(&quot;X WINDOW DELETED\n&quot;);
-            return 0;
-        &#125;
-    &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
  
       <!-- reward -->
       
@@ -234,7 +199,7 @@ XConfigureWindow(display, win, mask, &amp;changes);
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/12/01/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF-%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -245,10 +210,19 @@ XConfigureWindow(display, win, mask, &amp;changes);
    
   <nav class="article-nav">
     
+      <a href="/2022/12/05/%E7%9D%80%E8%89%B2%E5%99%A8%E6%96%87%E4%BB%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            着色器文件
+          
+        </div>
+      </a>
     
-      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+    
+      <a href="/2022/11/30/opengl-phrtest%E7%A4%BA%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算着色器</div>
+        <div class="article-nav-title">opengl-phrtest-cpp示例学习</div>
       </a>
     
   </nav>

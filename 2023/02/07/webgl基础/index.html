@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    X11窗口绘制 |  Hexo
+    webgl基础 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-X11窗口绘制"
+  id="post-webgl基础"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,18 +66,18 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  X11窗口绘制
+  webgl基础
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2023/02/07/webgl%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2023-02-07T13:36:35.000Z" itemprop="datePublished">2023-02-07</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+    <a class="article-category-link" href="/categories/Webgl/">Webgl</a>
   </div>
   
 <div class="word_count">
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">589</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">5 min</span>
+            <span class="post-count">2 min</span>
         </span>
     </span>
 </div>
@@ -107,67 +107,31 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <p>1.导入相关文件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;../lib/webgl-utils.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;../lib/webgl-debug.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;../lib/cuon-utils.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
+<p>2.在html<body>元素中创建Canvas画布，并且对其css进行相关设置。该画布具有2D绘图和3D绘图的功能。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">&quot;webgl&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
+<p>3.通过JavaScript获取上面创建的Canvas元素返回一个Canvas对象。Canvas对象也可以不通过<canvas>标签创建，然后id方式获取，也可以通过DOM直接创建。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取</span></span><br><span class="line"><span class="keyword">var</span> canvas= <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;webgl&#x27;</span>)</span><br><span class="line"><span class="comment">//直接创建后添加</span></span><br><span class="line"><span class="keyword">var</span> canvas = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;canvas&#x27;</span>);</span><br><span class="line"><span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(canvas);</span><br></pre></td></tr></table></figure>
 
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
+<p>4.获取Canvas上下文，执行<code>canvas.getContext(&#39;2d&#39;)</code>返回对象具有一系列绘制二维图形的方法，比如绘制直线、圆弧等API。执行<code>canvas.getContext(&#39;webgl&#39;);</code>返回对象具有一系列绘制渲染三维场景的方法，也就是WebGL API。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c =canvas.<span class="title function_">getContext</span>(<span class="string">&#x27;2d&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> gl=canvas.<span class="title function_">getContext</span>(<span class="string">&#x27;webgl&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
+<p>5.编写着色器文件</p>
+<p>可以直接将着色器文件写成字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> vertexShaderSource = <span class="string">&#x27;&#x27;</span> +    </span><br><span class="line">    <span class="string">&#x27;void main()&#123;&#x27;</span> + </span><br><span class="line">    <span class="string">&#x27;   gl_PointSize=20.0;&#x27;</span> +   </span><br><span class="line">    <span class="string">&#x27;   gl_Position =vec4(0.0,0.0,0.0,1.0);&#x27;</span> +    </span><br><span class="line">    <span class="string">&#x27;&#125;&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//创建窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
+<p>或者将着色器文件写在<script>标签中并通过innerText获取，获取到的对象为字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script id=<span class="string">&quot;vertexShader&quot;</span> type=<span class="string">&quot;x-shader/x-vertex&quot;</span>&gt;</span><br><span class="line"><span class="keyword">var</span> vertexShaderSource = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;vertexShader&#x27;</span>).<span class="property">innerText</span>;</span><br></pre></td></tr></table></figure>
 
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>6.初始化着色器</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> program = <span class="title function_">initShader</span>(gl,vertex,frag);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">initShader</span>(<span class="params">gl,vertexShaderSource,fragmentShaderSource</span>)&#123;</span><br><span class="line"><span class="comment">//创建着色器对象</span></span><br><span class="line"><span class="keyword">var</span> vertexShader = gl.<span class="title function_">createShader</span>(gl.<span class="property">VERTEX_SHADER</span>);</span><br><span class="line"><span class="keyword">var</span> fragmentShader = gl.<span class="title function_">createShader</span>(gl.<span class="property">FRAGMENT_SHADER</span>);</span><br><span class="line"><span class="comment">//引入源代码</span></span><br><span class="line">gl.<span class="title function_">shaderSource</span>(vertexShader,vertexShaderSource); </span><br><span class="line">gl.<span class="title function_">shaderSource</span>(fragmentShader,fragmentShaderSource);</span><br><span class="line"><span class="comment">//编译着色器</span></span><br><span class="line">gl.<span class="title function_">compileShader</span>(vertexShader);</span><br><span class="line">gl.<span class="title function_">compileShader</span>(fragmentShader);</span><br><span class="line"><span class="comment">//创建着色器对象</span></span><br><span class="line"><span class="keyword">var</span> program = gl.<span class="title function_">createProgram</span>();</span><br><span class="line"><span class="comment">//附着着色器到program</span></span><br><span class="line">gl.<span class="title function_">attachShader</span>(program,vertexShader);</span><br><span class="line">gl.<span class="title function_">attachShader</span>(program,fragmentShader);</span><br><span class="line"><span class="comment">//链接program</span></span><br><span class="line">gl.<span class="title function_">linkProgram</span>(program);</span><br><span class="line"><span class="comment">//使用program</span></span><br><span class="line">gl.<span class="title function_">useProgram</span>(program);</span><br><span class="line"><span class="keyword">return</span> program;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
 
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code> //while循环外
- Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
- XSetWMProtocols(display, win, &amp;deleteAtom, 1);
- //while循环内
-  case ClientMessage:&#123;
-        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-            printf(&quot;X WINDOW DELETED\n&quot;);
-            return 0;
-        &#125;
-    &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
+<p>7.正常调用webgl函数，以绘制正方形为例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在着色器中的位置设置，与顶点着色器中的attribute同名</span></span><br><span class="line"><span class="keyword">var</span> apos = gl.<span class="title function_">getAttribLocation</span>(program,<span class="string">&#x27;apos&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//类型数组构造函数Float32Array创建顶点数组（-1~1之间）</span></span><br><span class="line"><span class="keyword">var</span> data = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([<span class="number">0.5</span>,<span class="number">0.5</span>,-<span class="number">0.5</span>,<span class="number">0.5</span>,-<span class="number">0.5</span>,-<span class="number">0.5</span>,<span class="number">0.5</span>,-<span class="number">0.5</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//缓冲区设置</span></span><br><span class="line"><span class="keyword">var</span> buffer=gl.<span class="title function_">createBuffer</span>();</span><br><span class="line">gl.<span class="title function_">bindBuffer</span>(gl.<span class="property">ARRAY_BUFFER</span>,buffer);</span><br><span class="line">gl.<span class="title function_">bufferData</span>(gl.<span class="property">ARRAY_BUFFER</span>,data,gl.<span class="property">STATIC_DRAW</span>);</span><br><span class="line">gl.<span class="title function_">vertexAttribPointer</span>(apos,<span class="number">2</span>,gl.<span class="property">FLOAT</span>,<span class="literal">false</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">gl.<span class="title function_">enableVertexAttribArray</span>(apos);</span><br><span class="line"></span><br><span class="line"><span class="comment">//开始绘制</span></span><br><span class="line">gl.<span class="title function_">drawArrays</span>(gl.<span class="property">LINE_LOOP</span>,<span class="number">0</span>,<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
 
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
  
       <!-- reward -->
       
@@ -234,7 +198,7 @@ XConfigureWindow(display, win, mask, &amp;changes);
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/02/07/webgl%E5%9F%BA%E7%A1%80/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -245,10 +209,19 @@ XConfigureWindow(display, win, mask, &amp;changes);
    
   <nav class="article-nav">
     
-    
       <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            计算着色器
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算着色器</div>
+        <div class="article-nav-title">层级模型</div>
       </a>
     
   </nav>

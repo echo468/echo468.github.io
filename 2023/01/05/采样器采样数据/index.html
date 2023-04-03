@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    X11窗口绘制 |  Hexo
+    采样器采样数据 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-X11窗口绘制"
+  id="post-采样器采样数据"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  X11窗口绘制
+  采样器采样数据
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/" class="article-date">
+  <time datetime="2023-01-05T00:44:47.000Z" itemprop="datePublished">2023-01-05</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">966</span>
         </span>
     </span>
 
@@ -94,80 +94,48 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">5 min</span>
+            <span class="post-count">3 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <h4 id="纹理"><a href="#纹理" class="headerlink" title="纹理"></a>纹理</h4><p>​	纹理是一个2D图片（甚至也有1D和3D的纹理），可以用来添加物体的细节。因此可以在一张图片上插入非常多的细节，这样就可以让物体非常精细而不用指定额外的顶点。<u>除了图像以外，纹理也可以被用来储存大量的数据，这些数据可以发送到着色器上。</u>纹理采样的本质是利用采样器读取数据，所读取的数据不一定是作为纹理渲染。</p>
+<h4 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h4><p>​	为了能够把纹理映射到三角形上，需要指定三角形的每个顶点各自对应纹理的哪个部分。这样每个顶点就会关联着一个纹理坐标(UV坐标)，用来标明该从纹理图像的哪个部分采样。之后在图形的其它片段上进行片段插值。纹理坐标在x和y轴上，范围为0到1之间（2D）。使用纹理坐标获取纹理颜色叫做采样。纹理坐标起始于(0, 0)，也就是纹理图片的左下角，终始于(1, 1)，即纹理图片的右上角。下面的图片展示了如何把纹理坐标映射到三角形上的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301050854550.png" alt="image-20230105085456442"></p>
+<h4 id="纹理单元"><a href="#纹理单元" class="headerlink" title="纹理单元"></a>纹理单元</h4><p>一个纹理的位置值通常称为一个纹理单元。一个纹理的默认纹理单元是0，它是默认的激活纹理单元。纹理单元的主要目的是让我们在着色器中可以使用多于一个的纹理。通过把纹理单元赋值给采样器，可以一次绑定多个纹理，只要我们首先激活对应的纹理单元。激活纹理单元之后，接下来绑定这个纹理到当前激活的纹理单元，纹理单元GL_TEXTURE0默认总是被激活。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, texture1);</span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE1);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, texture2);</span><br></pre></td></tr></table></figure>
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
+<p>定义哪个采样器对应哪个纹理单元，只需要设置一次即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glUniform1i</span>(Texture1ID, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glUniform1i</span>(Texture2ID, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
+<h4 id="作为其他数据采样"><a href="#作为其他数据采样" class="headerlink" title="作为其他数据采样"></a>作为其他数据采样</h4><p>先利用phrtest03的函数自定义一组纹理数据：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> cube1[<span class="number">4</span>] = &#123; <span class="number">1.0</span>, <span class="number">-1.0</span>,<span class="number">1.0</span>,<span class="number">0.8</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube2[<span class="number">4</span>] = &#123; <span class="number">0.7</span>, <span class="number">0.8</span>,<span class="number">1.0</span>,<span class="number">0.1</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube3[<span class="number">4</span>] = &#123; <span class="number">-1.0</span>, <span class="number">0.5</span>, <span class="number">1.0</span>,<span class="number">0.3</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube4[<span class="number">4</span>] = &#123; <span class="number">0.4</span>, <span class="number">0.8</span>,<span class="number">1.0</span>,<span class="number">0.6</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>该纹理在1：1的四边形上分成了四块</p>
+<p>纹理坐标：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat tex_data[] = &#123;</span><br><span class="line">        <span class="number">0.0f</span>,<span class="number">1.0f</span>,</span><br><span class="line">        <span class="number">1.0f</span>,<span class="number">1.0f</span>,</span><br><span class="line">        <span class="number">1.0f</span>,<span class="number">0.0f</span>,</span><br><span class="line">        <span class="number">0.0f</span>,<span class="number">0.0f</span></span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
 
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
+<p>画四个柱形，分别在四块进行采样，因此现在顶点着色器中对UV坐标进行变换（变换方式详见之前的分屏变换）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  UV = vertexUV;</span><br><span class="line">  <span class="keyword">if</span> (position.x&lt;=<span class="number">-0.2</span>) &#123;</span><br><span class="line">    UV.x = UV.x /<span class="number">2.0</span>;UV.y = UV.y /<span class="number">2.0</span><span class="number">-0.001</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (position.x&lt;<span class="number">0.1</span>)&#123;</span><br><span class="line">   UV.x = UV.x /<span class="number">2.0</span>+<span class="number">0.5</span>; UV.y = UV.y /<span class="number">2.0</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (position.x&lt;<span class="number">0.4</span>)&#123;</span><br><span class="line">       UV.x = UV.x /<span class="number">2.0</span>;UV.y = UV.y /<span class="number">2.0</span>+<span class="number">0.5</span>;</span><br><span class="line">   &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          UV.x = UV.x /<span class="number">2.0</span>+<span class="number">0.5</span>;UV.y = UV.y /<span class="number">2.0</span>+<span class="number">0.5</span>; &#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
 
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
+<p>在顶点着色器中设置采样器（如果只有一个纹理可以和片段着色器中的采样器同名），将纹理数据的第四个值作为y轴坐标，注意先声明uniform sampler2D sampler;</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> y=<span class="built_in">texture2D</span>(sampler, UV).a;</span><br><span class="line"><span class="keyword">if</span>(position.y&gt;<span class="number">0.0</span>)&#123;</span><br><span class="line">  gl_Position = <span class="built_in">vec4</span>(position.x,y,position.z,<span class="number">1</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">gl_Position = <span class="built_in">vec4</span>(position,<span class="number">1</span>);&#125;</span><br></pre></td></tr></table></figure>
 
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//创建窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
+<p>因为要设置光照，在片段着色器中将纹理数据的第四个值作为颜色，将前三个值作为法线数据</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> color=<span class="built_in">texture2D</span>( sampler, UV ).a;</span><br><span class="line">vec3 MaterialDiffuseColor=<span class="built_in">vec3</span>(color,<span class="number">0.0</span>,<span class="number">0.0</span>);</span><br><span class="line">vec3 normal = <span class="built_in">texture2D</span>( sampler, UV ).rgb;</span><br><span class="line">vec3 Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(normal,<span class="number">0</span>)).xyz;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301050944334.png" alt="image-20230105094422261" style="zoom: 50%;" />
 
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code> //while循环外
- Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
- XSetWMProtocols(display, win, &amp;deleteAtom, 1);
- //while循环内
-  case ClientMessage:&#123;
-        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-            printf(&quot;X WINDOW DELETED\n&quot;);
-            return 0;
-        &#125;
-    &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
+<p>因此纹理数据可以作为任意顶点数据使用，采样器在顶点着色器和片段着色器都可以使用。</p>
  
       <!-- reward -->
       
@@ -234,7 +202,7 @@ XConfigureWindow(display, win, mask, &amp;changes);
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -245,10 +213,19 @@ XConfigureWindow(display, win, mask, &amp;changes);
    
   <nav class="article-nav">
     
+      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            step_by_step实例学习
+          
+        </div>
+      </a>
     
-      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+    
+      <a href="/2023/01/03/%E5%A4%9A%E7%BA%A7%E7%BA%B9%E7%90%86/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算着色器</div>
+        <div class="article-nav-title">多级纹理</div>
       </a>
     
   </nav>

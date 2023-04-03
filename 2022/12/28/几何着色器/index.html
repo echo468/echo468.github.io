@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    X11窗口绘制 |  Hexo
+    几何着色器&amp;公告牌 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-X11窗口绘制"
+  id="post-几何着色器"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  X11窗口绘制
+  几何着色器&amp;公告牌
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2022-12-28T01:30:43.000Z" itemprop="datePublished">2022-12-28</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -101,73 +101,54 @@
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <h4 id="几何着色器"><a href="#几何着色器" class="headerlink" title="几何着色器"></a>几何着色器</h4><img src="C:\Users\华为\Desktop\QQ图片20221228095854.png" alt="QQ图片20221228095854" style="zoom:50%;" />
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
+<p>渲染管线：顶点着色器-细分着色器-几何着色器-片段着色器</p>
+<p>作用：由于几何着色器可以在顶点发送到下一着色阶段之前对他们随意变换，所以作用就是将一个图元变换为另一个完全不同的图元，或者修改图元的位置</p>
+<p>使用方法：</p>
+<ul>
+<li>在几何着色器的顶部，声明从顶点着色器输入的图元类型：layout (类型) in;</li>
+<li>可以输入的图元有5类：points，lines，lines_adjacency，triangles，triangles_adjacency</li>
+<li>指定几何着色器的输出图元类型：layout (primitive, max_vertices &#x3D; n) out;</li>
+<li>输出图元有三种选项：points，line_strip，triangle_strip</li>
+<li>几何着色器还要设置一个他的最大输出顶点数量，如果绘制时超过了这个值，OpenGL将不会绘制多出的顶点</li>
+</ul>
+<p>以一个简单的几何着色器为例（顶点和细分着色器都不用修改，但是要注意细分着色器的patch不能为四边形）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="meta">#extension GL_ARB_geometry_shader4:enable</span></span><br><span class="line"><span class="built_in">layout</span>( triangles ) in;</span><br><span class="line"><span class="comment">//layout( line_strip, max_vertices = 3 ) out;的话一个三角形三个顶点用2条线绘制，四边形不能封口</span></span><br><span class="line"><span class="built_in">layout</span>( line_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line">out vec4 color;<span class="comment">//将该输出的color传给片段着色器的gl_FragColor</span></span><br><span class="line">in vec4 fragmentColor[];<span class="comment">//几何着色器的输入为图元的一组顶点相关数据，必须设置为数组类型</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	color=fragmentColor[<span class="number">0</span>];<span class="comment">//颜色传入一组，选一个</span></span><br><span class="line">	<span class="type">int</span> i =<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//输入图元的一组顶点的个数</span></span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;gl_PositionIn.<span class="built_in">length</span>();i++)</span><br><span class="line">	&#123;</span><br><span class="line">	    gl_Position=gl_PositionIn[i];</span><br><span class="line">		color=fragmentColor[<span class="number">0</span>];</span><br><span class="line">	     <span class="built_in">EmitVertex</span>();<span class="comment">//输出一个顶点</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//四边形在[0]封口</span></span><br><span class="line">	gl_Position=gl_PositionIn[<span class="number">0</span>];</span><br><span class="line">	color=fragmentColor[<span class="number">0</span>];</span><br><span class="line">	<span class="built_in">EmitVertex</span>();</span><br><span class="line">	<span class="built_in">EndPrimitive</span>();<span class="comment">//结束一个图元的输出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
+<p>以上几何着色器代码实现的效果同理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br></pre></td></tr></table></figure>
 
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221228133913472.png" alt="image-20221228133913472" style="zoom:50%;" />
 
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
+<p>暂时不太会用几何着色器和细分着色器的情况下添加光照计算</p>
+<h4 id="几何着色器绘制公告牌"><a href="#几何着色器绘制公告牌" class="headerlink" title="几何着色器绘制公告牌"></a>几何着色器绘制公告牌</h4><p>​	公告板技术（billboarding）。公告板是一个始终朝向相机的四边形，当相机在场景中转动的时候，公告板也会随着相机转动保证相机方向向量始终垂直于公告板的正面。可以将怪物角色、树木等任何场景中重复性高、数量多的物体以纹理贴图的形式直接贴到四边形公告板上（而不需要复杂的计算和渲染实际的3d模型），始终朝向相机。公告板常常用来创建需要大量树木的森林效果，每一个公告板只需要4个顶点。</p>
+<p>让公告板始终朝向相机：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271142340.png" alt="image-20230127114208268"></p>
+<p>​	首先把公告板的四边形中心定义在世界中心center(0.0,0.0,0.0,0.0)。为了让四边形始终朝向相机，其四个顶点坐标与相机空间的u和s轴相同。（opengl使用右手坐标系）</p>
+<p>几何着色器中先求出 -f 向量，即摄像机朝向。先获取公告板中心坐标，用该坐标-相机位置坐标（也是定义在世界空间），最后将其标准化。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 Pos = gl_in[<span class="number">0</span>].gl_Position.xyz;</span><br><span class="line">vec3 toCamera = <span class="built_in">normalize</span>(Pos-gCameraPos);</span><br></pre></td></tr></table></figure>
+<p>在选取一个up向量，一般选取（0.0，1.0，0.0）,利用up向量和-f向量叉乘可以获得right向量，up向量和-f向量在一个平面，因此right一定垂直于-f。注意叉乘的顺序。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 up = <span class="built_in">vec3</span>(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>);</span><br><span class="line">vec3 right = <span class="built_in">normalize</span>(<span class="built_in">cross</span>(toCamera, up));</span><br></pre></td></tr></table></figure>
 
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//创建窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
+<p>最后用rihgt向量和-f向量叉乘得到u向量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 u = <span class="built_in">cross</span>(right, toCamera);</span><br></pre></td></tr></table></figure>
 
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code> //while循环外
- Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
- XSetWMProtocols(display, win, &amp;deleteAtom, 1);
- //while循环内
-  case ClientMessage:&#123;
-        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-            printf(&quot;X WINDOW DELETED\n&quot;);
-            return 0;
-        &#125;
-    &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
+<p>通过中心点，u向量和right向量计算公告板的四个顶点坐标，每计算出一个顶点就输出一次顶点，还根据顶点位置计算UV坐标。顶点着色器只传入一个中心点，几何着色器输入point，输出triangle_strip形成三角形带。但是要注意的是up向量不一定就是u向量，向量仅仅是用于计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">layout</span>( points ) in;</span><br><span class="line"><span class="built_in">layout</span>( triangle_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line"></span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos - right * <span class="number">0.5</span> - u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">0.0</span>, <span class="number">0.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos - right * <span class="number">0.5</span> + u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos + right * <span class="number">0.5</span> - u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">0.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos + right * <span class="number">0.5</span> + u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line"><span class="built_in">EndPrimitive</span>();</span><br></pre></td></tr></table></figure>
+<p>下图是view矩阵的结构，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271203336.png" alt="image-20230127120306288"></p>
+<p>glm库储存矩阵元素采用的是列优先的储存方式，因此除了在几何着色器中手动计算right，up向量，还可以通过如下代码直接获取right,up向量直接传入着色器，此时就不需要传入相机位置。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">computeMatricesFromInputs</span>();</span><br><span class="line">glm::mat4 ProjectionMatrix = <span class="built_in">getProjectionMatrix</span>();</span><br><span class="line">glm::mat4 ViewMatrix = <span class="built_in">getViewMatrix</span>();</span><br><span class="line"><span class="comment">//此处也可以使用glm::lookat函数计算ViewMatrix（参数：相机位置坐标，目标位置坐标，up向量）</span></span><br><span class="line"><span class="built_in">glUniform3f</span>(rightID, ViewMatrix[<span class="number">0</span>][<span class="number">0</span>], ViewMatrix[<span class="number">1</span>][<span class="number">0</span>], ViewMatrix[<span class="number">2</span>][<span class="number">0</span>]);</span><br><span class="line"><span class="built_in">glUniform3f</span>(upID, ViewMatrix[<span class="number">0</span>][<span class="number">1</span>], ViewMatrix[<span class="number">1</span>][<span class="number">1</span>], ViewMatrix[<span class="number">2</span>][<span class="number">1</span>]);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">glm::vec3 CameraPosition = glm::vec3(-ViewMatrix[0][2], -ViewMatrix[1][2], -ViewMatrix[2][2]);</span></span><br><span class="line"><span class="comment">glUniform3f(PosID, CameraPosition.x, CameraPosition.y, CameraPosition.z);</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
  
       <!-- reward -->
       
@@ -234,7 +215,7 @@ XConfigureWindow(display, win, mask, &amp;changes);
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -245,10 +226,19 @@ XConfigureWindow(display, win, mask, &amp;changes);
    
   <nav class="article-nav">
     
+      <a href="/2022/12/30/TransformFeedback/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            TransformFeedback
+          
+        </div>
+      </a>
     
-      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+    
+      <a href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算着色器</div>
+        <div class="article-nav-title">细分着色器</div>
       </a>
     
   </nav>

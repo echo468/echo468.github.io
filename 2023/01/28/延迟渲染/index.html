@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    X11窗口绘制 |  Hexo
+    延迟渲染 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-X11窗口绘制"
+  id="post-延迟渲染"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  X11窗口绘制
+  延迟渲染
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+      <a href="/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/" class="article-date">
+  <time datetime="2023-01-28T10:58:22.000Z" itemprop="datePublished">2023-01-28</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.3k</span>
+            <span class="post-count">1.6k</span>
         </span>
     </span>
 
@@ -101,74 +101,36 @@
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <h4 id="前向渲染"><a href="#前向渲染" class="headerlink" title="前向渲染"></a>前向渲染</h4><p>在VS中对每个物体的顶点做一系列的变换（主要是将顶点位置和法线变换到裁剪空间），然后在FS中对每个像素进行光照计算。由于每个物体上的每个像素只会调用一次FS，因此对于每个FS要传入所有的光源数据并计算每个光源的效果。</p>
+<p>弊端：</p>
+<p>（1）当一个场景非常复杂会有大量的物体以及复杂的深度，每个像素可能被多个物体重叠覆盖，这样会有大量的无效的GPU迭代计算。例如，如果某个像素深度复杂度为4，那么就会有3个像素计算是无效的，因为最后只有最顶部的像素会显示。</p>
+<p>（2）在多光源情景下，例如大量点光源，光源很小照亮的区域也很小，只会照亮场景中的部分物体，但是FS还是会计算每个光源对每个像素的光照影响，即使光源离该像素很远。</p>
+<h4 id="延迟渲染"><a href="#延迟渲染" class="headerlink" title="延迟渲染"></a>延迟渲染</h4><p>​	主要是解决大量光照渲染的方案，延迟渲染的实质是先不要迭代三角形做光照计算，而是先找出来能看到的所有像素，再去迭代光照。直接迭代三角形的话，由于大量三角形是看不到的，无疑是极大的浪费。</p>
+<p>（1）第一个阶段几何pass：正常执行VS但并不是将处理后的属性变量数据继续传递给FS进行光照计算，而是将结果保存到G buffer中。G buffer是一组按照设计格式存储的一组2D贴图，保存着顶点每个属性的数据。将数据分离并一次性写入到不同的贴图中，保存这些贴图的地方是借助于OpenGL的MRT特性支持。由于是在FS中写入属性值进行片段计算，因此G buffer中最终的值是光栅化器对顶点属性执行插值的结果。由于进行了深度测试，因此当几何pass阶段完成时，G缓冲区中的贴图最终保存的将是离相机最近的像素的插值属性值，留在G buffer中的像素都是之后必须要进行光照计算的。</p>
+<p>（2）第二个阶段Lighting Pass：会依次遍历G buffer中的每个像素，从不同的贴图中读取每个像素对应的属性值然后进行光照计算。由于在创建G buffer的时候，经过深度测试除了离相机最近的像素其他的全部被抛弃了，所以现在每个像素对应只会进行一次光照计算。</p>
+<p>在延迟渲染中对于点光源可以计算围绕光源的球体的尺寸（对于spot light聚光灯光源我们则计算光锥体的尺寸）。那个球体表示的是点光源影响的区域，而在球体之外的则会忽视这个光源的影响不进行该光源的光照计算。可以使用一个有少量多边形的粗糙的球体模型，并以光源为中心来进行渲染。VS阶段只需要将position数据变换到裁剪空间而不用干别的。FS阶段只在受光源影响的的相关像素上执行并进行光照计算。</p>
+<h3 id="几何pass"><a href="#几何pass" class="headerlink" title="几何pass"></a>几何pass</h3><h4 id="填充G-buffer"><a href="#填充G-buffer" class="headerlink" title="填充G buffer"></a>填充G buffer</h4><p>​	初始化G缓冲区。首先为顶点属性（位置和法线）和深度缓冲区创建FBO和纹理。然后在执行以下操作的循环中创建纹理的存储区域（不进行初始化），将纹理附加到FBO作为目标。为了进行MRT需要启用对所有两种纹理的写入。通过向glDrawBuffers（）函数提供一个附件位置数组来实现这一点。位置纹理写入GL_COLOR_ATTACHMENT0；法线纹理写入GL_COLOR_ATTACHMENT1。（下面只展示了纹理附件的定义过程）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">2</span>, textures);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; i++) &#123;</span><br><span class="line">		<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, textures[i]);</span><br><span class="line">		<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB32F, <span class="number">1024</span>, <span class="number">1024</span>, <span class="number">0</span>, GL_RGB, GL_FLOAT, <span class="literal">NULL</span>);</span><br><span class="line">		<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i], <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	GLenum DrawBuffers[] = &#123; GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1&#125;;</span><br><span class="line">	<span class="built_in">glDrawBuffers</span>(<span class="number">2</span>, DrawBuffers);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
+<h4 id="绘制物体"><a href="#绘制物体" class="headerlink" title="绘制物体"></a>绘制物体</h4><p>绘制完成时，G buffer区将包含最近像素的属性。使用函数glDepthMask（）允许写入深度缓冲区，几何 pass需要深度缓冲区，以便用最接近的像素填充G buffer，而光照pass没有可以写入深度缓冲区的。深度测试限制在几何pass上，在没有竞争的情况下，在光 pass上做深度测试毫无意义。禁用混合，在几何过程中，这是无关紧要的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_DRAW_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line"><span class="built_in">glDepthMask</span>(GL_TRUE);</span><br><span class="line"><span class="built_in">glEnable</span>(GL_DEPTH_TEST);</span><br><span class="line"><span class="built_in">glDisable</span>(GL_BLEND);</span><br><span class="line"><span class="comment">/*绘制物体*/</span></span><br><span class="line"><span class="built_in">glDepthMask</span>(GL_FALSE);</span><br><span class="line"><span class="built_in">glDisable</span>(GL_DEPTH_TEST);<span class="comment">//这两行顺序不能反</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="VS"><a href="#VS" class="headerlink" title="VS"></a>VS</h4><p>简单地执行通常的转换并将需要的结果传递给FS</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in vec3 Normal;</span><br><span class="line">uniform mat4 gWVP;uniform mat4 gWorld;</span><br><span class="line">out vec3 Normal0;out vec3 WorldPos0;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = gWVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">    Normal0 = (gWorld * <span class="built_in">vec4</span>(Normal, <span class="number">0.0</span>)).xyz;</span><br><span class="line">    WorldPos0 = (gWorld * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>)).xyz;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
+<h4 id="FS"><a href="#FS" class="headerlink" title="FS"></a>FS</h4><p>负责进行MRT，它不输出单个向量，而是输出多个向量。这些向量中的每一个都指向数组中先前由glDrawBuffers（）设置的相应索引。因此，在每次FS调用中，都会写入G缓冲区的两个纹理。location &#x3D; 0的WorldPosOut写入GL_COLOR_ATTACHMENT0；location &#x3D; 1的NormalOut写入GL_COLOR_ATTACHMENT1。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line">in vec3 Normal0;</span><br><span class="line">in vec3 WorldPos0;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) out vec3 WorldPosOut;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) out vec3 NormalOut;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    WorldPosOut = WorldPos0;</span><br><span class="line">    NormalOut = <span class="built_in">normalize</span>(Normal0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
-
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
-
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//创建窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
-
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code> //while循环外
- Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
- XSetWMProtocols(display, win, &amp;deleteAtom, 1);
- //while循环内
-  case ClientMessage:&#123;
-        if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-            printf(&quot;X WINDOW DELETED\n&quot;);
-            return 0;
-        &#125;
-    &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
- 
+<h3 id="光照pass"><a href="#光照pass" class="headerlink" title="光照pass"></a>光照pass</h3><h4 id="基本设置"><a href="#基本设置" class="headerlink" title="基本设置"></a>基本设置</h4><p>此处有点光源和平行光两种光源，混合这两种光源类型，因为每个光源都由自己的draw调用处理。在正向渲染中，我们积累了FS中所有光源的结果，但现在每个FS调用只处理一个光源。在我们的例子中，我们将混合方程设置为GL_FUNC_ADD。这意味着GPU只需添加源和目标。因为我们想要真正的加法，所以将源和目标的混合函数设置为gluOne。结果是：1<em>src+1</em>dst。哦，我们需要在做这件事之前启用混合。。。在处理好混合后，我们将G缓冲区设置为读取</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glEnable</span>(GL_BLEND);</span><br><span class="line"><span class="built_in">glBlendEquation</span>(GL_FUNC_ADD);</span><br><span class="line"><span class="built_in">glBlendFunc</span>(GL_ONE, GL_ONE);</span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br></pre></td></tr></table></figure>
+<h4 id="点光源"><a href="#点光源" class="headerlink" title="点光源"></a>点光源</h4> 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -234,7 +196,7 @@ XConfigureWindow(display, win, mask, &amp;changes);
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -245,10 +207,19 @@ XConfigureWindow(display, win, mask, &amp;changes);
    
   <nav class="article-nav">
     
+      <a href="/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            几何体BufferGeometry
+          
+        </div>
+      </a>
     
-      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-nav-link">
+    
+      <a href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算着色器</div>
+        <div class="article-nav-title">三维拾取</div>
       </a>
     
   </nav>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    几何体BufferGeometry |  Hexo
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      <canvas class="fireworks"></canvas>
+      <style>
+        .fireworks {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 99999;
+          pointer-events: none;
+        }
+      </style>
+      
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-几何体BufferGeometry"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  几何体BufferGeometry
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/" class="article-date">
+  <time datetime="2023-02-05T07:19:37.000Z" itemprop="datePublished">2023-02-05</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/three-js/">three.js</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">7 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="通过BufferGeometry自定义任何几何形状"><a href="#通过BufferGeometry自定义任何几何形状" class="headerlink" title="通过BufferGeometry自定义任何几何形状"></a>通过BufferGeometry自定义任何几何形状</h4><p>Three.js的长方体<code>BoxGeometry</code>、球体<code>SphereGeometry</code>等几何体都是基于<code>BufferGeometry</code>类构建的，<code>BufferGeometry</code>是一个没有任何形状的空几何体，你可以通过<code>BufferGeometry</code>自定义任何几何形状，具体一点说就是定义顶点数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferGeometry</span>(); </span><br></pre></td></tr></table></figure>
+
+<p>定义顶点坐标。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vertices = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">  <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">  <span class="number">0</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>, </span><br><span class="line">  <span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">50</span>, <span class="number">0</span>, <span class="number">10</span></span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+<p>属性缓冲区对象<code>BufferAttribute</code>表示Three.js几何体顶点数据（顶点坐标3个为一组）。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> attribue = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferAttribute</span>(vertices, <span class="number">3</span>); </span><br></pre></td></tr></table></figure>
+
+<p>设置几何体顶点位置属性的值。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geometry.<span class="property">attributes</span>.<span class="property">position</span> = attribue；</span><br></pre></td></tr></table></figure>
+
+<h4 id="点模型"><a href="#点模型" class="headerlink" title="点模型"></a>点模型</h4><p>设置点模型的材质。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PointsMaterial</span>(&#123;</span><br><span class="line">  <span class="attr">color</span>: <span class="number">0xffff00</span>,</span><br><span class="line">  <span class="attr">size</span>: <span class="number">10.0</span><span class="comment">//点对象像素尺寸</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>几何体geometry作为点模型<code>Points</code>参数，会把几何体渲染为点。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> points = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Points</span>(geometry, material);</span><br></pre></td></tr></table></figure>
+
+<h4 id="线模型"><a href="#线模型" class="headerlink" title="线模型"></a>线模型</h4><p>设置线模型的材质。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">LineBasicMaterial</span>(&#123;</span><br><span class="line">  <span class="attr">color</span>: <span class="number">0xffff00</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>几何体geometry作为线模型参数，会把几何体渲染为线。</p>
+<p>（1）渲染效果是从第一个点开始到最后一个点，依次连成线。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> line = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Line</span>(geometry, material);</span><br></pre></td></tr></table></figure>
+
+<p>（2）渲染效果是从第一个点开始到最后一个点，依次连成线；最后一个点再与第一个点连线使图形封口。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> line = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">LineLoop</span>(geometry, material);</span><br></pre></td></tr></table></figure>
+
+<p>（3）渲染效果是每两个点连接成一条线，已经连线的点不会再与其他点连线。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> line = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">LineSegments</span>(geometry, material);</span><br></pre></td></tr></table></figure>
+
+<h4 id="网格模型构建矩形平面"><a href="#网格模型构建矩形平面" class="headerlink" title="网格模型构建矩形平面"></a>网格模型构建矩形平面</h4><p>网格模型Mesh其实就一个一个三角形(面)拼接构成。使用使用网格模型Mesh渲染几何体geometry，就是几何体所有顶点坐标三个为一组，构成一个三角形，多组顶点构成多个三角形，就可以用来模拟表示物体的表面。</p>
+<ul>
+<li>正面：逆时针</li>
+<li>反面：顺时针</li>
+</ul>
+<p>空间中一个三角形有正反两面，相机对着三角形的一个面，如果三个顶点的顺序是逆时针方向，该面视为正面，如果三个顶点的顺序是顺时针方向，该面视为反面。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshLambertMaterial</span>(&#123;</span><br><span class="line">  <span class="attr">color</span>: <span class="number">0xffff00</span>,</span><br><span class="line">  <span class="attr">side</span>:<span class="variable constant_">THREE</span>.<span class="property">DoubleSide</span>,<span class="comment">//双面显示</span></span><br><span class="line">  <span class="comment">//side:THREE.FrontSide//显示正面</span></span><br><span class="line">  <span class="comment">//side:THREE.BackSide//显示反面</span></span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>一个矩形平面，可以至少通过两个三角形拼接而成。而且两个三角形有两个顶点的坐标是重合的。注意三角形的正反面问题：保证矩形平面两个三角形的正面是一样的，也就是从一个方向观察，两个三角形都是逆时针或顺时针。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vertices = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">  <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>, </span><br><span class="line">  <span class="number">80</span>, <span class="number">80</span>, <span class="number">0</span>,<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, </span><br><span class="line">  <span class="number">80</span>, <span class="number">80</span>, <span class="number">0</span>,<span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span></span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>THREE.MeshLambertMaterial</code>设置网格模型材质，最后使用<code>THREE.Mesh</code>将几何体渲染成网格模型面。</p>
+<h4 id="几何体顶点索引数据"><a href="#几何体顶点索引数据" class="headerlink" title="几何体顶点索引数据"></a>几何体顶点索引数据</h4><p>如果几何体有顶点索引<code>geometry.index</code>，那么可以三角形重复的顶点位置坐标删除。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vertices = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">    <span class="number">80</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span> </span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+<p>通过javascript类型化数组<code>Uint16Array</code>创建顶点索引数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> indexes = <span class="keyword">new</span> <span class="title class_">Uint16Array</span>([</span><br><span class="line">    <span class="comment">//索引值对应顶点位置数据中的顶点坐标</span></span><br><span class="line">    <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>,</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+<p>除了设置几何体顶点位置属性的值，还需要通过Three.js的属性缓冲区对象<code>BufferAttribute</code>表示几何体顶点索引数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geometry.<span class="property">index</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferAttribute</span>(indexes, <span class="number">1</span>); <span class="comment">//1个为一组</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="顶点法线数据"><a href="#顶点法线数据" class="headerlink" title="顶点法线数据"></a>顶点法线数据</h4><p>使用<code>MeshLambertMaterial</code>材质(受光照影响的材质），几何体<code>BufferGeometry</code>需要定义顶点法线数据。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 矩形平面，无索引，两个三角形，6个顶点(如果有索引可以定义四个法线顶点)</span></span><br><span class="line"><span class="comment">// 每个顶点的法线数据和顶点位置数据一一对应</span></span><br><span class="line"><span class="keyword">const</span> normals = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, </span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>,</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>，<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span></span><br><span class="line">]);</span><br><span class="line"><span class="comment">// 设置几何体的顶点法线属性</span></span><br><span class="line">geometry.<span class="property">attributes</span>.<span class="property">normal</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferAttribute</span>(normals, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看Threejs自带几何体顶点"><a href="#查看Threejs自带几何体顶点" class="headerlink" title="查看Threejs自带几何体顶点"></a>查看Threejs自带几何体顶点</h4><p>Three.js提供的矩形平面<code>PlaneGeometry</code>、长方体<code>BoxGeometry</code>、球体<code>SphereGeometry</code>等各种形状的几何体，他们都有一个共同的父类<code>BufferGeometry</code>。</p>
+<p>可以用顶点索引index数据构建几何体，也可以不用，three.js默认的大部分几何体都有三角形的顶点索引数据，具体可以通过浏览器控制台打印几何体数据查看。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>); <span class="comment">//矩形平面几何体</span></span><br><span class="line"><span class="comment">// const geometry = new THREE.BoxGeometry(50,50,50); //长方体</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;几何体&#x27;</span>,geometry);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;顶点位置数据&#x27;</span>,geometry.<span class="property">attributes</span>.<span class="property">position</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;顶点索引数据&#x27;</span>,geometry.<span class="property">index</span>);</span><br></pre></td></tr></table></figure>
+
+<p>线条模式渲染，查看几何体三角形结构。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshLambertMaterial</span>(&#123;</span><br><span class="line">    <span class="attr">color</span>: <span class="number">0x00ffff</span>, </span><br><span class="line">    <span class="attr">wireframe</span>:<span class="literal">true</span>,<span class="comment">//线条模式渲染mesh对应的三角形数据</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>Three.js很多几何体都提供了细分数相关的参数，这里以矩形平面几何体<code>PlaneGeometry</code>为例，矩形平面几何体至少需要两个三角形拼接而成。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//矩形几何体PlaneGeometry的参数3,4表示细分数，默认是1,1</span></span><br><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>把一个矩形分为2份，每个矩形2个三角形，总共就是4个三角形。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>,<span class="number">2</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>把一个矩形分为4份，每个矩形2个三角形，总共就是8个三角形。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>,<span class="number">2</span>,<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>球体<code>SphereGeometry</code>参数2、3分别代表宽、高度两个方向上的细分数，默认32,16。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">SphereGeometry</span>( <span class="number">50</span>, <span class="number">32</span>, <span class="number">16</span> );</span><br></pre></td></tr></table></figure>
+
+<p>如果球体细分数比较低，表面就不会那么光滑。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">SphereGeometry</span>( <span class="number">15</span>, <span class="number">8</span>, <span class="number">8</span> );</span><br></pre></td></tr></table></figure>
+
+<p>对于一个曲面而言，细分数越大，表面越光滑，但是三角形和顶点数量却越多。几何体三角形数量或者说顶点数量直接影响Three.js的渲染性能，在不影响渲染效果的情况下，一般尽量越少越好。</p>
+<h4 id="旋转、缩放、平移几何体"><a href="#旋转、缩放、平移几何体" class="headerlink" title="旋转、缩放、平移几何体"></a>旋转、缩放、平移几何体</h4><p><code>BufferGeometry</code>通过<code>.scale()</code>、<code>.translate()</code>、<code>.rotateX()</code>、<code>.rotateY()</code>、<code>.rotateZ()</code>等方法可以对几何体本身进行缩放、平移、旋转,这些方法本质上都是改变几何体的顶点数据。（与Object3D的函数区分，此处函数的任何变化都是在局部坐标系中进行的，而局部坐标系原点的位置是通过模型的position属性定义的，Object3D的相关函数本质改变的是position属性）。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//缩放</span></span><br><span class="line">geometry.<span class="title function_">scale</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line"><span class="comment">//平移</span></span><br><span class="line">geometry.<span class="title function_">translate</span>(<span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//旋转</span></span><br><span class="line">geometry.<span class="title function_">rotateX</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">4</span>);</span><br><span class="line">geometry.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">4</span>);</span><br><span class="line">geometry.<span class="title function_">rotateZ</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">4</span>);</span><br><span class="line"><span class="comment">// 居中：已经偏移的几何体居中，执行.center()，可以看到几何体重新与坐标原点重合</span></span><br><span class="line">geometry.<span class="title function_">center</span>();</span><br></pre></td></tr></table></figure>
+
+<p>如下图通过<code>mesh.position.set(50,50,0);</code>将局部坐标系的中心设置在了世界坐标系x&#x3D;50,y&#x3D;50的地方，接下来用<code>geometry.rotateX(Math.PI/2);geometry.translate(50,0,0);</code>将物体相对于局部坐标系向x轴平移50，并且绕x轴旋转90°。可以看到物体中心相对于局部坐标系原点发生了改变，但是局部坐标系原点相对于世界坐标的原点的位置并没有发生改变。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052237626.png" alt="image-20230205223715553"></p>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            模型对象及材质
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">延迟渲染</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020-2023
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+        <li>
+          <a href="http://www.beian.miit.gov.cn/" target="_black">赣ICP备2021001676号</a>
+        </li>
+        
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="Hexo"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friend">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/journal">日志</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script>
+
+<script src="/js/clickBoom1.js"></script>
+
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1441758494&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>
