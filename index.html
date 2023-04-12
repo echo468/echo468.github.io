@@ -118,6 +118,150 @@
     
     
     <article
+  id="post-链接"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/04/11/%E9%93%BE%E6%8E%A5/"
+    >链接</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/04/11/%E9%93%BE%E6%8E%A5/" class="article-date">
+  <time datetime="2023-04-11T08:59:57.000Z" itemprop="datePublished">2023-04-11</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="源文件-gt-可执行文件过程"><a href="#源文件-gt-可执行文件过程" class="headerlink" title="源文件-&gt;可执行文件过程"></a>源文件-&gt;可执行文件过程</h4><p>1.预处理：包括删除注释、宏扩展、#include文件包含等。预处理后生成.i文件。</p>
+<p>2.编译：由编译器完成，检查语法及语义，生成错误或警告。编译后生成汇编语言.s文件。</p>
+<p>3.汇编：将汇编文件翻译成机器码指令（二进制），将指令打包形成.o目标文件。</p>
+<p>4.链接：完成调用的各种函数、静态库和动态库的链接，从函数原型链接到函数实现。形成.exe文件。</p>
+<h4 id="Linux平台下cmake和make的区别"><a href="#Linux平台下cmake和make的区别" class="headerlink" title="Linux平台下cmake和make的区别"></a>Linux平台下cmake和make的区别</h4><p>Makefile编译规则文件。</p>
+<p>make通过Makefile文件自动化批量处理编译，将源文件变成最终的可执行文件（包含gcc的功能）。</p>
+<p>不同平台的Makefile文件不同，cmake作为跨平台编译工具可以将CMakeLists.txt文件转化为所需要的Makefile文件</p>
+<h4 id="Cmake"><a href="#Cmake" class="headerlink" title="Cmake"></a>Cmake</h4><p>window平台下利用Cmake软件代替Linux下的cmake命令，用编译器如vs代替Linux下的make命令。</p>
+<p>Cmake软件将make分为两步：</p>
+<p>1.Configure：配置，生成需要的文件夹及准备文件</p>
+<p>2.Generate：根据CMakeLists.txt生成工程文件。如果编译器选择vs，则生成vs工程文件，如果是Linux，则生成Makefile。生成vs工程文件，同Linux生成Makefile文件，都是规定了编译规则。</p>
+<p>最后由vs执行工程，即执行make。</p>
+<h4 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h4><p>1.区别</p>
+<p>使用封装好的库函数十分方便并且十分高效，库分为静态库和动态库。</p>
+<table>
+<thead>
+<tr>
+<th align="center">库类型</th>
+<th align="center">windows</th>
+<th align="center">linux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">静态库</td>
+<td align="center">.lib</td>
+<td align="center">.a</td>
+</tr>
+<tr>
+<td align="center">动态库</td>
+<td align="center">.dll</td>
+<td align="center">.so</td>
+</tr>
+</tbody></table>
+<p>​		 当程序与静态库链接时，静态库中所包含的所有函数方法都会被拷贝到最终的可执行文件中去。这就会导致最终生成的可执行代码量相对变多，相当于编译器将代码补充完整了。编译后的可执行程序不需要静态库，因为所有使用的函数都已经被编译进去了。这种方式会让程序运行起来相对快一些，不过也会有个缺点: 占用磁盘和内存空间，导致可执行程序过大。另外，静态库会被添加到和它链接的每个程序中去, 而且这些程序运行时, 都会被加载到内存中，无形中又多消耗了更多的内存空间。  与动态库链接的可执行文件只包含它需要的函数方法的引用表，而不是所有的函数代码，只有在程序执行时, 那些需要的函数代码才会被拷贝到内存中。这样就使可执行文件比较小, 节省磁盘空间，更进一步，操作系统使用虚拟内存，使得一份动态库驻留在内存中被多个程序使用，也同时节约了内存。不过由于运行时要去链接库会花费一定的时间，执行速度相对会慢一些。如果要修改的刚好是库函数的话，在接口不变的前提下，使用动态库的程序只需要将动态库重新编译就可以了，而使用静态库的程序则需要将静态库重新编译好后，将程序再重新编译一遍。</p>
+<p>2.两层链接</p>
+<p>现在源程序main.cpp链接库sub,sub链接库add</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*add.h */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ADD_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ADD_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*add.c*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;add\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*sub.h*/</span>v</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _SUB_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _SUB_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">-----------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*sub.c*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sub\n&quot;</span>);</span><br><span class="line">    <span class="built_in">add</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*main.c*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">sub</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c add.c</span><br><span class="line">gcc -c sub.c</span><br></pre></td></tr></table></figure>
+
+<p>首先生成的文件：sub.o ，add.o，无论是静态库文件还是动态库文件，都是由 .o 文件创建。使用-c不会链接、生成可执行文件，只会预处理、编译和汇编。</p>
+<p>（1）静态库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ar cr libadd.a add.o</span><br><span class="line">ar cr libsub.a sub.o </span><br></pre></td></tr></table></figure>
+
+<p>ar：静态函数库创建的命令</p>
+<p>-c :create创建</p>
+<p>库文件的命名规范是以lib开头（前缀），紧接着是静态库名，以 .a 为后缀名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
+
+<p>-L ：指定函数库查找的位置，’.’表示在当前目录下查找</p>
+<p>-l：指定函数库名，其中的lib和.a(.so)省略。</p>
+<p>-o:链接，生成可执行文件，指名生成的可执行文件名</p>
+<p>​	  使用静态库内部函数，只需要在使用到这些函数的源程序中包含这些函数的原型声明（头文件），然后在用gcc命令生成可执行文件时指明静态库名，gcc将会从静态库中将函数拷贝到可执行文件中。gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。在程序main.c中，包含了静态库的头文件sub.h，然后在主程序main中直接调用函数sub()即可。生成可执行文件后静态库可以不再需要。</p>
+<p>注意：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub </span><br><span class="line">gcc -o main main.c -L . –l add -L . –l sub</span><br></pre></td></tr></table></figure>
+
+<p>​		都会发生sub无法链接到add导致sub中的函数undefined reference to，因此链接顺序不能变，而且用main链接sub和add即可，不需要单独写一行sub链接add。</p>
+<p>（2）动态库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -o add.o -c add.c</span><br><span class="line">gcc  -fPIC  -o sub.o -c sub.c</span><br><span class="line">gcc -shared -o libadd.so add.o</span><br><span class="line">gcc -shared -o libsub.so sub.o</span><br></pre></td></tr></table></figure>
+
+<p> -fpic:产生代码位置无关代码,则产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。</p>
+<p>-shared ：生成共享库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
+
+<p>会发生如下报错：</p>
+<p> error while loading shared libraries:libmymath.so: cannot open shared object file: No such file or directory</p>
+<p>原因如下：</p>
+<p>gcc -o 链接器工作于链接阶段，工作时需要-l指定库名和-L指定库路径。如果在指定库路径没有找到库，会发生</p>
+<p>undefined reference to的报错，导致可执行文件无法生成。但是有时不会发生该报错，可以对make添加-WL -Z DEFS编译选项，在生成可执行文件前找到该错误。</p>
+<p>.&#x2F;运行可执行程序时还需要动态链接器，工作于程序运行阶段，工作时需要提供动态库所在目录位置。该目录与上述-L指定的路径不同，动态链接器去固定位置（通过环境变量）查找动态库，如果找不到就会报错，所以需要先将动态库的工作目录加入到环境变量中。一般会去默认的动态库搜索路径&#x2F;usr&#x2F;lib查找，可以将.so文件复制到&#x2F;usr&#x2F;lib中来解决上述报错。</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ldd exe 查看可执行程序运行时链接的动态库</span><br></pre></td></tr></table></figure>
+
+<p>如果在源文件的头文件中使用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>则之后会默认链接到&#x2F;usr&#x2F;lib下的系统库（库名&#x3D;&gt;目录）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120856844.png" alt="image-20230412085632785"></p>
+<p>在项目文件中添加一个新文件夹，使用自定义的glfw库文件。该glfw文件使用egl创建上下文，例如在使用glfwSwapBuffers时，会调用eglSwapBuffers。<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
+<p>​		头文件会链接到自己的库文件而不是系统的库文件。编译源文件时，需要将glfw文件一起编译，因此需要修改源文件的Cmakelist.txt文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_subdirectory(external) </span><br></pre></td></tr></table></figure>
+
+<p>cmake会通过源文件的Cmakelist.txt找到external目录下的Cmakelist.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include_directories（external/glfw-3.1.2/include/GLFW）</span><br></pre></td></tr></table></figure>
+
+<p>向工程添加多个特定的头文件搜索路径，添加该行后源文件的头文件部分可以改成</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<pre><code>     如果包含头文件后，没有找到external目录下的Cmakelist.txt，无法生成自己的库文件，最后还是会链接到系统库。如果glfw文件编译链接成功，最后就会链接到自己的库。在Cmakelist.txt或者其他文件中指明了动态链接库的搜索位置，因此不会去默认的路径/usr/lib。
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120915237.png" alt="image-20230412091529196"></p>
+<h4 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120919388.png" alt="image-20230412091902342"></p>
+<p>可以用如下方式调试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ gdb 可执行程序名</span><br><span class="line"></span><br><span class="line">(gdb) b 函数名 //设置断点，运行到该函数暂停</span><br><span class="line"></span><br><span class="line">(gdb) run //运行到第一个断点暂停</span><br><span class="line"></span><br><span class="line">(gdb) c	//继续运行到下一个断点暂停</span><br><span class="line"></span><br><span class="line">(gdb) quit //退出gdb环境</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-X11窗口绘制"
   class="article article-type-post"
   itemscope
@@ -149,14 +293,14 @@
     <div class="article-entry" itemprop="articleBody">
        
   <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和egl。</p>
+<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和创建上下文等，但是如果是链接系统库的glfw，不是用egl创建的上下文。</p>
 <p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
 
 <p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h。</p>
+<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h，包含该头文件可以使用gl,glu,glext,wgl,glx里的全部函数。glad.h与glew.h作用相同，可以看作其升级版。这两个头文件使用时要放在glfw3.h 或者glut.h文件之前。gl3w.h和glad.h作用类似。</p>
 <p>5、X11窗口创建的部分函数和窗口监听</p>
 <p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
@@ -990,96 +1134,6 @@ XConfigureWindow(display, win, mask, &amp;changes);
 
 <p>效果如下：</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271722256.png" alt="image-20230127172248210" style="zoom:50%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-法线贴图"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/"
-    >法线贴图</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-date">
-  <time datetime="2023-01-25T09:16:14.000Z" itemprop="datePublished">2023-01-25</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>表面光滑的法线：在三角形的三个顶点法向量之间进行平滑插值来得到三角形上每个点的法向量。</p>
-<p>法线贴图：从‘法线贴图’上进行采样得到对应的法线方向，表面上的所有法向量都是可以被计算并且存储在法线贴图中。在片段着色器阶段进行光照计算的时候，每个像素的特定法线也是根据纹理坐标采样来获取使用。</p>
-<p>切线空间：坐标系需要三个正交单位向量。物体表面确定了原法线后会有多个切线X和副切线Y，由于新法线是2D纹理的的一部分，而2D纹理有两个正交单位向量U和V，因此通常做法是将X分量对应到U轴（Tangent），而Y分量对应到V轴在（Bitangent），将切线方向与纹理空间对齐。由原法线、与纹理空间对齐的切线和副切线组成的矩阵是TBN矩阵，该矩阵向量定义的坐标系是切线空间。</p>
-<p>法线纹理：对于新法线，即使是在非常凹凸不平的表面，仍然认为法线的方向是从纹理朝外的。在切线空间定义法向量，并存储在纹理的RGB文素中。Z分量主导的一个分量，X和Y分量只能起到让其略微倾斜的作用。将XYZ向量存储在RGB文素中会使得法线纹理偏蓝色。但是法线坐标[-1,1]需要变成rgb文素[0,1]。</p>
-<p>切线和副切线的计算：</p>
-<img src="https://pic4.zhimg.com/80/v2-f89f1ddfc04a94294520b57a43dbaf33_720w.webp" alt="img" style="zoom: 50%;" />
-
-<p>找到物体本地空间下的向量T（表示tangent）和B（表示bitangent），可以看到两个三角形边E1和E2可以写成T和B的线性组合：</p>
-<img src="https://pic1.zhimg.com/80/v2-ff93301c5fa92878ab35e0cea8eaa7e8_720w.webp" alt="img" style="zoom: 67%;" />
-
-<p>也可以写成下面的形式：</p>
-<img src="https://pic2.zhimg.com/80/v2-6b58b632273e1268377495c13ff15731_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>现在可以很容易的转换成矩阵公式的形式：</p>
-<img src="https://pic2.zhimg.com/80/v2-480cb4f3bff672a721db1c83b27e5241_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>现在想把矩阵转换到等式的右边，为此可以两边乘以上面标红的矩阵的逆矩阵：</p>
-<img src="https://pic3.zhimg.com/80/v2-78d0b4ac1486170ab44a968782960566_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>计算如下:</p>
-<img src="https://pic4.zhimg.com/80/v2-a217ef03cf87b58dc57e1fd857db5243_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>算出逆矩阵的值得到：</p>
-<img src="https://pic4.zhimg.com/80/v2-410d78592022a7307711cd67634974d7_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>​	对每一个三角形执行上述过程，可以为每个三角形通过三角形的边和UV坐标计算出tangent向量和bitangent向量（对三角形的三个顶点来说这两个向量都是一样的）。通常的做法是为每一个顶点都保存一个tangent&#x2F;bitangent值，每个顶点的tangent&#x2F;bitangent值由共享这个顶点的所有三角面的平均tangent&#x2F;bitangent值确定（这与顶点法线是一样的）。这样做的原因是使整个三角面的效果比较平滑，防止相邻三角面之间的不平滑过渡。这个坐标系空间的第三个分量——法线分量，是tangent和bitangent的叉乘积。</p>
-<p>向着色器中将法线数组、切线数组和副切线数组作为顶点属性传入着色器，同时用GLuint类型变量加载法线纹理。</p>
-<p>在顶点着色器中新增代码：</p>
-<p>计算都摄像机空间中做，因为在这一空间中更容易获取片段坐标。使用3*3的模型视图矩阵乘T、B、N向量：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;</span><br><span class="line">vec3 vertexBitangent_cameraspace = MV3x3 * vertexBitangent_modelspace;</span><br><span class="line">vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;</span><br></pre></td></tr></table></figure>
-
-<p>这三个向量确定了TBN矩阵，此矩阵是从世界空间到MV下的切线空间的变换：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mat3 TBN = <span class="built_in">transpose</span>(<span class="built_in">mat3</span>(</span><br><span class="line">	vertexTangent_cameraspace,</span><br><span class="line">	vertexBitangent_cameraspace,</span><br><span class="line">	vertexNormal_cameraspace ));</span><br></pre></td></tr></table></figure>
-
-<p>利用它计算切线空间中的光线方向和视线方向：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LightDirection_tangentspace = TBN * LightDirection_cameraspace;</span><br><span class="line">EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;</span><br></pre></td></tr></table></figure>
-<p>在片段着色器中添加如下代码：</p>
-<p>先获取法线数据，从rgb的[0,1]变换到齐次坐标的[-1,1]，再进行归一化作为计算光照的n向量。由于该n向量是在切线空间计算的，因此为了保证计算都在同一个空间进行，需要在顶点着色器中相关参数TBN矩阵：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 TextureNormal_tangentspace = normalize(texture( NormalTextureSampler, UV ).rgb*2.0 - 1.0);</span><br></pre></td></tr></table></figure>
-
- 
       <!-- reward -->
       
     </div>

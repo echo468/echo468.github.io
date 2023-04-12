@@ -118,6 +118,96 @@
     
     
     <article
+  id="post-法线贴图"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/"
+    >法线贴图</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-date">
+  <time datetime="2023-01-25T09:16:14.000Z" itemprop="datePublished">2023-01-25</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>表面光滑的法线：在三角形的三个顶点法向量之间进行平滑插值来得到三角形上每个点的法向量。</p>
+<p>法线贴图：从‘法线贴图’上进行采样得到对应的法线方向，表面上的所有法向量都是可以被计算并且存储在法线贴图中。在片段着色器阶段进行光照计算的时候，每个像素的特定法线也是根据纹理坐标采样来获取使用。</p>
+<p>切线空间：坐标系需要三个正交单位向量。物体表面确定了原法线后会有多个切线X和副切线Y，由于新法线是2D纹理的的一部分，而2D纹理有两个正交单位向量U和V，因此通常做法是将X分量对应到U轴（Tangent），而Y分量对应到V轴在（Bitangent），将切线方向与纹理空间对齐。由原法线、与纹理空间对齐的切线和副切线组成的矩阵是TBN矩阵，该矩阵向量定义的坐标系是切线空间。</p>
+<p>法线纹理：对于新法线，即使是在非常凹凸不平的表面，仍然认为法线的方向是从纹理朝外的。在切线空间定义法向量，并存储在纹理的RGB文素中。Z分量主导的一个分量，X和Y分量只能起到让其略微倾斜的作用。将XYZ向量存储在RGB文素中会使得法线纹理偏蓝色。但是法线坐标[-1,1]需要变成rgb文素[0,1]。</p>
+<p>切线和副切线的计算：</p>
+<img src="https://pic4.zhimg.com/80/v2-f89f1ddfc04a94294520b57a43dbaf33_720w.webp" alt="img" style="zoom: 50%;" />
+
+<p>找到物体本地空间下的向量T（表示tangent）和B（表示bitangent），可以看到两个三角形边E1和E2可以写成T和B的线性组合：</p>
+<img src="https://pic1.zhimg.com/80/v2-ff93301c5fa92878ab35e0cea8eaa7e8_720w.webp" alt="img" style="zoom: 67%;" />
+
+<p>也可以写成下面的形式：</p>
+<img src="https://pic2.zhimg.com/80/v2-6b58b632273e1268377495c13ff15731_720w.webp" alt="img" style="zoom:67%;" />
+
+<p>现在可以很容易的转换成矩阵公式的形式：</p>
+<img src="https://pic2.zhimg.com/80/v2-480cb4f3bff672a721db1c83b27e5241_720w.webp" alt="img" style="zoom:67%;" />
+
+<p>现在想把矩阵转换到等式的右边，为此可以两边乘以上面标红的矩阵的逆矩阵：</p>
+<img src="https://pic3.zhimg.com/80/v2-78d0b4ac1486170ab44a968782960566_720w.webp" alt="img" style="zoom:67%;" />
+
+<p>计算如下:</p>
+<img src="https://pic4.zhimg.com/80/v2-a217ef03cf87b58dc57e1fd857db5243_720w.webp" alt="img" style="zoom:67%;" />
+
+<p>算出逆矩阵的值得到：</p>
+<img src="https://pic4.zhimg.com/80/v2-410d78592022a7307711cd67634974d7_720w.webp" alt="img" style="zoom:67%;" />
+
+<p>​	对每一个三角形执行上述过程，可以为每个三角形通过三角形的边和UV坐标计算出tangent向量和bitangent向量（对三角形的三个顶点来说这两个向量都是一样的）。通常的做法是为每一个顶点都保存一个tangent&#x2F;bitangent值，每个顶点的tangent&#x2F;bitangent值由共享这个顶点的所有三角面的平均tangent&#x2F;bitangent值确定（这与顶点法线是一样的）。这样做的原因是使整个三角面的效果比较平滑，防止相邻三角面之间的不平滑过渡。这个坐标系空间的第三个分量——法线分量，是tangent和bitangent的叉乘积。</p>
+<p>向着色器中将法线数组、切线数组和副切线数组作为顶点属性传入着色器，同时用GLuint类型变量加载法线纹理。</p>
+<p>在顶点着色器中新增代码：</p>
+<p>计算都摄像机空间中做，因为在这一空间中更容易获取片段坐标。使用3*3的模型视图矩阵乘T、B、N向量：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;</span><br><span class="line">vec3 vertexBitangent_cameraspace = MV3x3 * vertexBitangent_modelspace;</span><br><span class="line">vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;</span><br></pre></td></tr></table></figure>
+
+<p>这三个向量确定了TBN矩阵，此矩阵是从世界空间到MV下的切线空间的变换：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mat3 TBN = <span class="built_in">transpose</span>(<span class="built_in">mat3</span>(</span><br><span class="line">	vertexTangent_cameraspace,</span><br><span class="line">	vertexBitangent_cameraspace,</span><br><span class="line">	vertexNormal_cameraspace ));</span><br></pre></td></tr></table></figure>
+
+<p>利用它计算切线空间中的光线方向和视线方向：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LightDirection_tangentspace = TBN * LightDirection_cameraspace;</span><br><span class="line">EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;</span><br></pre></td></tr></table></figure>
+<p>在片段着色器中添加如下代码：</p>
+<p>先获取法线数据，从rgb的[0,1]变换到齐次坐标的[-1,1]，再进行归一化作为计算光照的n向量。由于该n向量是在切线空间计算的，因此为了保证计算都在同一个空间进行，需要在顶点着色器中相关参数TBN矩阵：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 TextureNormal_tangentspace = normalize(texture( NormalTextureSampler, UV ).rgb*2.0 - 1.0);</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-阴影贴图"
   class="article article-type-post"
   itemscope
@@ -959,79 +1049,6 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 
 <p>效果如下：</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212261544205.png" alt="QQ图片20221226154044" style="zoom:50%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-封装纹理贴图"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/12/%E5%B0%81%E8%A3%85%E7%BA%B9%E7%90%86%E8%B4%B4%E5%9B%BE/"
-    >封装纹理贴图</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/12/%E5%B0%81%E8%A3%85%E7%BA%B9%E7%90%86%E8%B4%B4%E5%9B%BE/" class="article-date">
-  <time datetime="2022-12-12T04:05:18.000Z" itemprop="datePublished">2022-12-12</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>原理：将要绘制的图案利用帧缓冲作为纹理渲染在四边形上，在将四边形绘制在需要的位置。</p>
-<p>重点代码：</p>
-<p>1.初始化帧缓冲（同理tutorial示例14，phrtest示例07）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">initRTT</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//生成一个纹理（如果四边形上要绘制多个纹理，就修改数字1）</span></span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">1</span>, renderTextureID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//纹理数组（空数组，仅分配了内存）</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span>* voxels;</span><br><span class="line">	voxels =</span><br><span class="line">		(<span class="type">unsigned</span> <span class="type">char</span>*)</span><br><span class="line">		<span class="built_in">malloc</span>((<span class="type">size_t</span>)(<span class="number">4</span> * <span class="number">1200</span> * <span class="number">800</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">        for (GLint i = 0; i &lt; 4; i++)</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        glBindTexture(GL_TEXTURE_2D, renderTextureID[i]);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span></span><br><span class="line"><span class="comment">        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fboWidth, fboHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, voxels);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//绑定纹理为2D渲染纹理</span></span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, renderTextureID[<span class="number">0</span>]);</span><br><span class="line">    <span class="comment">//纹理过滤</span></span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">    <span class="comment">//定义纹理，用空数组为纹理填充空图像</span></span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGBA, <span class="number">1200</span>, <span class="number">800</span>, <span class="number">0</span>, GL_RGBA, GL_UNSIGNED_BYTE, voxels);</span><br><span class="line">	<span class="built_in">free</span>(voxels);</span><br><span class="line">    </span><br><span class="line">     <span class="comment">//生成并绑定一个帧缓冲（至少一个颜色附件）</span></span><br><span class="line">	<span class="built_in">glGenFramebuffers</span>(<span class="number">1</span>, &amp;framebufferID);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//渲染一个3D模型，要进行深度测试，生成并绑定一个深度渲染缓冲区</span></span><br><span class="line">	<span class="built_in">glGenRenderbuffers</span>(<span class="number">1</span>, &amp;renderbufferID);</span><br><span class="line">	<span class="built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER, renderbufferID);</span><br><span class="line">    <span class="comment">//指定深度渲染缓冲区的数据格式和大小</span></span><br><span class="line">	<span class="built_in">glRenderbufferStorage</span>(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, <span class="number">1200</span>, <span class="number">800</span>);</span><br><span class="line">    <span class="comment">//深度渲染缓冲绑定为帧缓冲的深度附件</span></span><br><span class="line">	<span class="built_in">glFramebufferRenderbuffer</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferID);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//纹理绑定为帧缓冲的颜色附件（颜色附件可以有多个）</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     for (int i = 0; i &lt; 4; i++)</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, renderTextureID[i], 0);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTextureID[<span class="number">0</span>], <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//默认渲染到窗口</span></span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<p>2.主循环重点代码</p>
-<p>第二行设置的是四边形的背景颜色，不过一般需要剔除所以可以不用刻意设置，不设置的话四边形的背景颜色就是整个窗口的背景颜色。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一次清屏</span></span><br><span class="line">   <span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line">   <span class="built_in">glClearColor</span>(<span class="number">1.0f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,<span class="number">1.0f</span>);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//把渲染目标绑定到我们定义的帧缓冲</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//第二次清屏</span></span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line"><span class="built_in">glViewport</span>(<span class="number">0</span>, <span class="number">50</span>, <span class="number">1200</span>, <span class="number">800</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定接下来渲染时需要渲染到哪些颜色附件（此处仅一个颜色附件）</span></span><br><span class="line">GLenum buf[<span class="number">1</span>] = &#123; GL_COLOR_ATTACHMENT0 &#125;;</span><br><span class="line"><span class="built_in">glDrawBuffers</span>(<span class="number">1</span>, buf);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">绘制图案的代码（全部绘制在帧缓冲,不会显示在屏幕，用于接下来渲染四边形）</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">//渲染目标绑定到默认帧缓冲，显示在屏幕</span></span><br><span class="line">   <span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">绘制四边形的代码</span></span><br><span class="line"><span class="comment">（注意n个颜色附件就需要使用n个采样器，绑定n次纹理）</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<p>3.着色器文件</p>
-<p>（1）四边形顶点着色器文件主函数示例</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// wall.vert: simple quad (-1.-1)--(1,1) map texture2D(0.0)--(1,1)</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">	gl_Position = MVP * <span class="built_in">vec4</span>(position_wall,<span class="number">1</span>);</span><br><span class="line">	UV = (position_wall.xy+ <span class="built_in">vec2</span>(<span class="number">1.0</span>,<span class="number">1.0</span>))/<span class="number">2.0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>（2）四分屏的四边形片段着色器文件主函数</p>
-<p>分屏代码计算：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1b1d9fd8ba17">https://www.jianshu.com/p/1b1d9fd8ba17</a></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span> <span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(UV.x &lt; <span class="number">0.5</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(UV.y&lt;<span class="number">0.5</span>)</span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, UV*<span class="number">2.0</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, <span class="number">2.0</span>*<span class="built_in">vec2</span>(UV.x,UV.y<span class="number">-0.5</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(UV.y&lt;<span class="number">0.5</span>)</span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, <span class="number">2.0</span>*<span class="built_in">vec2</span>(UV.x<span class="number">-0.5</span>,UV.y));</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, <span class="number">2.0</span>*<span class="built_in">vec2</span>(UV.x<span class="number">-0.5</span>,UV.y<span class="number">-0.5</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>（3）不分屏的四边形片段着色器文件主函数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span> <span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    vec4 color=<span class="built_in">texture2D</span>(samplerRTT1, UV);</span><br><span class="line">    gl_FragColor = color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>该方法生成的纹理数据作为一张静态图由采样器根据UV采样访问，渲染在其他地方。</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221227143718485.png" alt="image-20221227143718485" style="zoom:50%;" />
-
- 
       <!-- reward -->
       
     </div>
