@@ -118,6 +118,185 @@
     
     
     <article
+  id="post-gl函数流程图"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/"
+    >gl函数流程图</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/" class="article-date">
+  <time datetime="2023-04-17T01:33:58.000Z" itemprop="datePublished">2023-04-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>1.清除</p>
+<p>首先设置清除颜色缓冲区、深度缓冲区和模板缓冲区的值，这一步只是设置而并非真正的清除，每一个缓冲区的清除值都有默认值。之后调用glClear函数，通过设置参数，用上述设置的清除值清除指定的缓冲区。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934402.jpg" alt="img"> </p>
+<p>2.纹理贴图</p>
+<p>首先使用sgpugl_glGenTextures创建纹理对象，纹理对象的名称空间是无符号整数，纹理对象的名称仅限于在sgpugl_glGenTextures使用。sgpugl_glActiveTexture指定需要激活的纹理单元，之后的操作都在该纹理单元下进行（如果仅一个纹理单元默认为GL_TEXTURE0，可以指定多个纹理单元）。sgpugl_glBindTexture将纹理对象绑定在纹理目标上。如纹理对象texture1绑定在纹理单元GL_TEXTURE0下的纹理目标GL_TEXTURE_2D上。接下来的操作都是针对该纹理目标进行（一个纹理单元下可以有多个纹理目标）。sgpugl_glTexImage(12)D为该纹理目标指定纹理图片，生成纹理。sgpugl_glTexParameteri设置纹理参数，如环绕方式、过滤方式等。</p>
+<p>在绘制前需要指定激活的纹理单元。采样器的类型识别纹理单元上的纹理目标。例如，采样器类型为的sampler2D，则采样器会在先前指定的纹理单元上选择纹理目标TEXTURE_2D，进而对纹理进行采样。</p>
+<p>如下图是将三个纹理对象绑定在两个纹理单元下的三个纹理目标上，用其中一个纹理进行绘制的流程图。假如Draw前指定激活的纹理单元为GL_TEXTURE0，定位到红色区。假如着色器中采样器类型为的sampler2D，则定位到蓝色区域，找到对应纹理进行采样。</p>
+<p>其中绿色区域的函数可以用指定的数据修改纹理目标指定区域的内容。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934497.jpg" alt="img"> </p>
+<p>3.深度测试，多边形深度偏移</p>
+<p>用1中的方法清除深度缓冲区，此处以默认值为例。在进行深度测试前必须先用sgpugl_glEnable启用深度测试功能。顶点X,Y坐标会从标准化设备坐标经过视口变换变成窗口坐标。z值根据sgpugl_glDepthRange(f)设置的范围也会从标准化设备坐标映射到窗口坐标，两个范围参数都限制在[0,1]。光栅化之后深度测试之前，如果较多片元的深度相差非常小，例如在相同的深度上绘制两个重叠的三角形，会发生z-Fighting。因此需要使用sgpugl_glEnable启用偏移，再通过sgpugl_glPolygonOffset对绘制的片元的深度值（由顶点插值得到）进行整体偏移。深度测试时通过sgpugl_glDepthFunc设置深度缓冲比较函数，默认为GL_LESS,即当前绘制的片元深度如果小于深度缓冲对应位置的深度值，则将颜色值写入颜色缓冲（之后可能被覆盖或者混合），否则丢弃。保留片元的深度值是否更到深度缓冲，通过glDepthMask设置。最后根据情况关闭深度测试和偏移。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934544.jpg" alt="img"> </p>
+<p>4.颜色混合，Alpha测试</p>
+<p>如果要绘制完全透明的物体，可以将全透明物体的Alpha值设置为0，将不透明物体的Alpha值设置为1。利用sgpugl_glEnable启用透明测试，透明测试在模板测试之前。sgpugl_glAlphaFunc可以指定透明度测试函数，此处以CL_GREATER，预设值为0.1为例。如果当前绘制的片元的Alpha为0，小于预设值，片元被丢弃。如果当前绘制的片元的Alpha为1，大于预设值，则保留片元。通过保留和丢弃片元来实现完全透明的效果。最后根据情况关闭透明测试。透明测试还常用于去除纹理图白色背景。</p>
+<p>如果要绘制半透明物体，需要使用颜色混合（不透明物体直接颜色覆盖），该步骤在所有测试之后。绘制时要先绘制不透明物体（开启深度测试并允许深度写入）之后关闭深度写入，最后按照从远到近的顺序绘制半透明物体，不然可能会出现绘制错误。</p>
+<p>情况1：半透明物体A在不透明物体B后</p>
+<p>情况2：半透明物体A在不透明物体B前</p>
+<p>情况3：半透明物体A在半透明物体B前</p>
+<p>在情况1下，先绘制B再绘制A，且A不开启深度测试，不管A是否允许深度写入，A被遮挡的部分都会绘制出来。因此需要开启深度测试。在情况3下，先绘制A再绘制B，且A不禁止深度写入，B被遮挡的部分会被直接丢弃。因此需要禁止深度写入。在情况2下，假设先绘制A再绘制B，由于A禁止深度写入，B被遮挡的部分会绘制并覆盖A。因此需要先绘制不透明物体。在情况3下，先绘制A再绘制B，绘制B时，A为目标色B为源色；先绘制B再绘制A，绘制A时，B为目标色A为源色；根据混合算法的设置，这两次的结算结果可能不同。因此需要按照顺序绘制。</p>
+<p>利用sgpugl_glEnable启用颜色混合，sgpugl_glBlendFunc可以指定颜色混合方式，即如何将深度测试保留的片元颜色值与颜色缓冲区对应的已存在的颜色值进行计算得到新的颜色值。最后根据情况关闭颜色混合或再次开启深度写入。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934584.jpg" alt="img"> </p>
+<p>5.颜色填充</p>
+<p>可以使用sgpugl_glColorPointer或者sgpugl_glColor设置顶点颜色数据，在使用sgpugl_glColorPointer前需先开启顶点颜色属性。但是sgpugl_glColorPointer优先级高于sgpugl_glColor，当使用sgpugl_glColorPointer时，不管sgpugl_glColor使用在sgpugl_glolorPointer前还是后，最后绘制出的颜色为顶点颜色数组定义的颜色。sgpugl_glColor可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的颜色，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的颜色。sgpugl_glColorMask允许或禁⽌帧缓冲区某种通道的写⼊颜色缓冲。如果不允许R通道写入颜色缓冲，如果设置颜色为(1,0,1)紫色，最后绘制出来的会是(0,0,1)蓝色。注意如果着色模式不是平滑模式，则片元的颜色由图元的单个顶点得到。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934652.jpg" alt="img"> </p>
+<p>6.模板测试</p>
+<p>模板测试在深度测试之前。需要先清空模板缓冲区（清除值默认为0，每个值都为8位二进制，即有256种取值方式），并用sgpugl_glEnable启用模板测试。sgpugl_glStencilFunc设置模板测试的规则，如默认的“GL_ALWAYS，0, 0xFF”表示总是通过模板测试;下图中的“GL_NOTEQUAL，1，0xFF”表示如果片元对应模板缓冲的值不等于1，则通过模板测试。但是在比较之前，需要将模板缓冲的值和1分别与第三个参数0xFF进行与运算。sgpugl_glStencilOp设置如何更新模板缓冲，三个参数分别表示：模板测试失败时、模板测试通过但深度测试失败时及模板测试和深度测试都通过时采取的行为。如默认“GL_KEEP,GL_KEEP,GL_KEEP”表示无论测试结果如何，模板缓冲内的值都保持不变；下图中的“GL_KEEP,GL_KEEP,GL_REPLACE”表示当深度测试通过后，片元对应模板缓冲的值用sgpugl_glStencilFunc的第二个参数值代替。sgpugl_glStencilMask设置是否允许写入模板缓冲。如默认“0xFF”表示在写入模板缓冲之前，将写入的数和0xFF进行与运算（最后数保持原状，即允许写入）。如过设置“0x00”，写入的数会变成全0，即禁止写入，相当于sgpugl_glDepthMask（GL_FALSE）。也可以根据情况设置其他8位掩码。最后根据情况关闭模板测试。模板测试可用于绘制边框。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934268.jpg" alt="img"> </p>
+<p>7.多边形正面判断，正背面剔除</p>
+<p>在裁剪阶段，背面剔除用于绘制观察者所看到的面，不绘制看不到的面。这使得渲染的性能上可提高超过50%。gl按照如下方式区分图元的正面和背面： </p>
+<p>正面：顶点连接顺序按照逆时针</p>
+<p>背面：顶点连接顺序按照顺时针</p>
+<p>Sgpugl_glFrontFace可以修改上述规则。注意顶点连接的顺序是相对于观察者而言的。因此图元是否需要剔除，是顶点连接顺序和观察者位置共同决定的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934549.jpg" alt="img"> </p>
+<p>8.渲染上下文的创建和管理</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934751.jpg" alt="img"> </p>
+<p>9.裁剪测试</p>
+<p>裁剪测试在透明测试之前。先用sgpugl_glEnable启用裁剪测试，再用sgpugl_glScissor设置裁剪框，类似sgpugl_glViewport在窗口框出一块区域。但是sgpugl_glScissor是在裁剪框内的才进行绘制。sgpugl_glViewport相当于变相重置本次绘制的窗口，将所有需要绘制的物体映射在视口区域内。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934152.jpg" alt="img"> </p>
+<p>10.顶点数据、矩阵变换、裁剪和视口</p>
+<p>可以使用sgpugl_glVertexPointer或者在sgpugl_glBegin和sgpugl_glEnd中用sgpugl_glVertex设置顶点坐标数据，在使用sgpugl_glColorPointer前需先开启顶点坐标属性。</p>
+<p>顶点首先经过世界变换（M）从模型空间变到世界空间，再经过观察变换（V）从世界空间变到观察空间，之后经过投影变换（P）从观察空间变到齐次裁剪空间。其中投影变换有正交投影和透视投影（近大远小）。上述变换需要对顶点坐标进行矩阵变换，在此之前需要先设置矩阵MV矩阵和P矩阵。可以用sgpugl_glLoadMatrixf自定义当前矩阵，也可以先通过sgpugl_glLoadIdentity将当前矩阵变成单位矩阵，再通过平移、旋转、缩放或者乘以其他矩阵得到最终需要的矩阵。但是调用draw前需要切换到MV空间下。</p>
+<p>图元组装后进行裁剪，除了视锥体裁剪和背面剔除外，还可以通过sgpugl_glClipPlane设置裁剪平面进行图元裁剪，但是要先用sgpugl_glEnable启用裁剪平面。裁剪后对顶点坐标进行齐次除法即除以w使其变到NDC空间。最后通过视口变换将顶点坐标从NDC空间映射到视口区域的屏幕空间。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934683.jpg" alt="img"> </p>
+<p>11.光照模型</p>
+<p>使用光照模型需要提供顶点法线数据。物体的法线向量决定了它相对于光源的方向，从而计算顶点从光源接收的光线数量。可以使用sgpugl_glNormalPointer或者sgpugl_glNormal设置顶点法线数据，在使用sgpugl_glNormalPointer前需先开启顶点法线属性。sgpugl_glNormal可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的法线，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的法线。</p>
+<p>下一步开始使用光照模型。先用sgpugl_glEnable(GL_LIGHTING)开启整体光照效果。使用sgpugl_glLightfv设置光源，即设置入射光。光源最多设置8个，从GL_LIGHT0到GL_LIGHT7，每个光源可以设置的参数如下图。其中光源位置分为方向性光源（平行光）和位置性光源（点光源），聚光灯光源方向到光源的常数衰减因子这6个属性都是针对位置性光源。用sgpugl_glEnable开启光源，如sgpugl_glEnable（GL_LIGHT0）。接下来使用sgpugl_glMaterialfv设置光照模型的材质参数，即设置出射光。由于物体有两面，材质可能不同，因此要先确定为哪一面设置材质，可以设置的材质参数如下图。最后用sgpugl_glLightModelfv设置光照模型，便于进行光照计算。光照模型的概念由下图所示4个部分组成。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934799.jpg" alt="img"> </p>
+<p>12.像素操作和帧缓冲区</p>
+<p>（1）sgpugl_glCopyPixels进行像素的复制操作，从帧缓冲区复制到帧缓冲区，不涉及内存，因此避免了显存与内存间格式转换的问题，并且加快了运算速度。该函数前四个参数表示复制像素来源的矩形的左下角坐标、宽度和高度，可以当作是在窗口确认了一块矩形区域，第五个参数用于确认复制的内容，通常使用GL_COLOR，表示复制像素的颜色，但也可以是GL_DEPTH（深度缓冲数据）或GL_STENCIL（模板缓冲数据）。通过sgpugl_glRasterPos2f设置像素绘制的起始位置，系统会将该起始位置转换成窗口坐标，之后将会从起始位置绘制出刚刚窗口上指定的矩形中的内容。</p>
+<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
+<p>（3）sgpugl_glBitmap用于将位图数据绘制在屏幕，位图数据可以理解为0、1矩阵，为1则在屏幕的对应像素绘制、为0不绘制。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170938068.png" alt="image-20230417093822003"></p>
+<p>13.图元绘制</p>
+<p>首先确定绘制的图元类型，注意gpugl_glDrawArrays和sgpugl_glBegin的图元参数不同。</p>
+<table>
+<thead>
+<tr>
+<th>图元类型</th>
+<th>gpugl_glDrawArrays是否有该参数</th>
+<th>sgpugl_glBegin是否有该参数</th>
+<th>流程图中对应类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GL_POINTS</td>
+<td>√</td>
+<td>√</td>
+<td>点</td>
+</tr>
+<tr>
+<td>GL_LINES</td>
+<td>√</td>
+<td>√</td>
+<td>线一类</td>
+</tr>
+<tr>
+<td>GL_LINE_LOOP</td>
+<td>√</td>
+<td>√</td>
+<td>线一类</td>
+</tr>
+<tr>
+<td>GL_LINE_STRIP</td>
+<td>√</td>
+<td>√</td>
+<td>线一类</td>
+</tr>
+<tr>
+<td>GL_TRIANGLES</td>
+<td>√</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_TRIANGLE_STRIP</td>
+<td>√</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_TRIANGLE_FAN</td>
+<td>√</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_POLYGON</td>
+<td>×</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_QUADS</td>
+<td>×</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_QUAD_STRIP</td>
+<td>×</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+</tbody></table>
+<p>如果是绘制点可以用sgpugl_glPointSize(f)设置光栅化时一个点的直径，默认为1。如果绘制线，可以用sgpugl_glLineWidth设置直线宽度，默认为1。</p>
+<p>直线可以用点画模式进行绘制。首先通过sgpugl_glEnable开启点画模式。sgpugl_glLineStipple设置点画的方式，其参数是由0、1组成的16位模式序列和重复因子，从模式低位开始，如果模式中的位是1，直线中对应像素就被绘制，否则就不绘制（如果直线长度大于16位则不断重复上述规则）。重复因子用来扩展模式，如模式中如果出现3个1会被扩展成个6个1。如果没有启用点画线功能，模式默认为OxFFFF、重复因子为1。多边形也可以用点画模式进行绘制。首先通过sgpugl_glEnable开启点画模式。sgpugl_glPolygonStipple设置点画的方式，其参数是一个指向32<em>32的位图指针，可以理解为32</em>32的0、1矩阵，通过GLubyte数组自定义（128个2位16进制序列）。从每个序列低位开始，模式中的位是1，多边形中对应像素就被绘制，否则就不绘制（如果多边形像素大于32*32则不断重复上述规则）。</p>
+<p>sgpugl_glShadeModel用于设置平滑着色或者恒定着色。注意除了GL_POLYGON以外，恒定着色图元中片元的颜色为图元最后一个顶点的颜色，而GL_POLYGON下图元中片元的颜色为图元第一个顶点的颜色。</p>
+<p>设置完上述所有后即可调用绘制函数，注意sgpugl_glDrawElements除了需要顶点数据以外，还需要索引数据。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934468.jpg" alt="img"> </p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-链接"
   class="article article-type-post"
   itemscope
@@ -225,7 +404,8 @@
 
 <p>则之后会默认链接到&#x2F;usr&#x2F;lib下的系统库（库名&#x3D;&gt;目录）</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120856844.png" alt="image-20230412085632785"></p>
-<p>在项目文件中添加一个新文件夹，使用自定义的glfw库文件。该glfw文件使用egl创建上下文，例如在使用glfwSwapBuffers时，会调用eglSwapBuffers。<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
+<p>在项目文件中添加一个新文件夹，使用自定义的glfw库文件。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
 <p>​		头文件会链接到自己的库文件而不是系统的库文件。编译源文件时，需要将glfw文件一起编译，因此需要修改源文件的Cmakelist.txt文件。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_subdirectory(external) </span><br></pre></td></tr></table></figure>
 
@@ -238,6 +418,9 @@
 <pre><code>     如果包含头文件后，没有找到external目录下的Cmakelist.txt，无法生成自己的库文件，最后还是会链接到系统库。如果glfw文件编译链接成功，最后就会链接到自己的库。在Cmakelist.txt或者其他文件中指明了动态链接库的搜索位置，因此不会去默认的路径/usr/lib。
 </code></pre>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120915237.png" alt="image-20230412091529196"></p>
+<p>该glfw文件与系统库glfw的区别：</p>
+<p>​		glfw可以用elg和glx创建上下文，egl可以支持gl和es，glx支持gl扩展支持es。系统glfw版本更高为3.3.2，可以在应用程序源文件中使用glfwWindowHint（window.c）进行参数设置，CLFW_CLIENT_API可以设置源文件使用opengl还是opengl es，CLFW_CONTEXT_CREATION_API可以设置创建上下文使用的API,如egl、glx等。但是在上述低版本的glfw文件，不能在源文件设置，而是通过Cmakelists.txt设置，如下，通过ON和OFF设置是否使用egl创建上下文：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304121622378.png" alt="image-20230412162211136"></p>
 <h4 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120919388.png" alt="image-20230412091902342"></p>
 <p>可以用如下方式调试：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ gdb 可执行程序名</span><br><span class="line"></span><br><span class="line">(gdb) b 函数名 //设置断点，运行到该函数暂停</span><br><span class="line"></span><br><span class="line">(gdb) run //运行到第一个断点暂停</span><br><span class="line"></span><br><span class="line">(gdb) c	//继续运行到下一个断点暂停</span><br><span class="line"></span><br><span class="line">(gdb) quit //退出gdb环境</span><br></pre></td></tr></table></figure>
@@ -1052,88 +1235,6 @@ XConfigureWindow(display, win, mask, &amp;changes);
 </tr>
 </tbody></table>
  
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-实例渲染"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/"
-    >实例渲染</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-date">
-  <time datetime="2023-01-26T07:52:06.000Z" itemprop="datePublished">2023-01-26</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>假设想渲染一个有一支庞大军队经过的场景，要用一个士兵的模型渲出成千上万的士兵大军。一种方法是每次绘制一个士兵都调用一次draw call，并更新当前士兵相关的一致变量（位置、尺寸等）。例如，每个士兵都处于不同的位置，每个士兵都可以更高或者更矮尺寸不一等。因此，每次draw call都要更新当前士兵模型的WVP矩阵，这样开销会很大。</p>
-<p>实例渲染：一个实例就是要渲染的模型在场景的一次实际出现，这里例子中就是一个士兵。实例化渲染意味着可以在一次draw call中渲染多个实例，并为每个实例提供其特有的属性。</p>
-<p>方法1：在一个单独的顶点缓冲VB中定义实例的属性（例如：WVP矩阵）。通常顶点处理器会逐顶点每次处理一个顶点数据，有了存放实例数据的顶点缓冲VB后，定点处理器在每次处理一个顶点时要等所有顶点都已经被绘制，存有实例数据的VB提供的属性数据是针对所有顶点公共的。(第一种是将实例数据作为顶点属性传递)</p>
-<p>方法2：使用一个内置的叫做gl_InstanceID的shader变量，它是用来告诉当前的实例索引index的。我们可以根据这个索引值来定位一致变量数组中对应的实例数据来进行相应的渲染操作。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271615735.png" alt="image-20230127161506622" style="zoom:50%;" />
-
-<p>这里有一个包含100个顶点的模型，每个顶点都有位置、法线、纹理坐标属性，三个属性中每个属性都有他们自己的顶点缓冲。另外，还有第四个顶点缓冲buffer存放着三个WVP矩阵。先使用第一个WVP矩阵应用到100个顶点pos位置的绘制上，然后再使用第二个WVP矩阵绘制一遍，然后再使用第三个绘制，并且这个过程是在一个draw call中实现的，而不是三个。WVP矩阵会作为输入参数传送到顶点处理器中，但由于第四个VB被标记为存有实例数据，所以WVP矩阵在所有顶点绘制完之前是不会变化的。</p>
-<p>cpp文件：</p>
-<p>​	由于WVP矩阵是一个4x4矩阵，不能仅为其启用一个顶点属性，因为顶点属性最多只能包含4个浮点或整数。因此需要启用和配置4个连续顶点属性的循环。每个属性将包含矩阵中的一个向量（第一个属性1包含三个MVP矩阵的第一个向量，第二个属性2包含三个MVP矩阵的第二个向量……）。四个属性中的每一个都由四个浮点组成，一个矩阵中的属性与下一个矩阵之间的距离是4x4矩阵的大小，因此一共占了1、2、3、4顶点属性。</p>
-<p>​	glVertexAttribDivisitor（）函数使其成为实例数据而不是顶点数据。它采用两个参数：第一个是顶点数组属性，第二个参数告诉OpenGL在实例化渲染过程中属性前进的速度。默认情况下，除数为零。如果除数是10，这意味着前10个实例将使用缓冲区中的第一条数据，接下来的10个实例会使用第二条数据。此处希望每个实例都有一个专用的WVP矩阵，因此使用1的除数。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建存储了3个MPV矩阵的顶点属性数组，glm::mat4类型</span></span><br><span class="line"><span class="type">static</span> glm::mat4 WVPMats[] = &#123;MVP1,MVP2,MVP3&#125;;</span><br><span class="line"><span class="comment">//创建并绑定缓冲区</span></span><br><span class="line">GLuint MVPbuffer;</span><br><span class="line"><span class="built_in">glGenBuffers</span>(<span class="number">1</span>, &amp;MVPbuffer);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, MVPbuffer);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(glm::mat4)* <span class="number">3</span>, WVPMats, GL_DYNAMIC_DRAW);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">	<span class="built_in">glEnableVertexAttribArray</span>(<span class="number">1</span> + i);</span><br><span class="line">	<span class="built_in">glVertexAttribPointer</span>(<span class="number">1</span> + i, <span class="number">4</span>, GL_FLOAT, GL_FALSE, <span class="built_in">sizeof</span>(glm::mat4),</span><br><span class="line">		(<span class="type">const</span> GLvoid*)(<span class="built_in">sizeof</span>(GLfloat) * i * <span class="number">4</span>));</span><br><span class="line">	<span class="built_in">glVertexAttribDivisor</span>(<span class="number">1</span> + i, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>该函数的唯一变化是将实例数作为第四个参数。</p>
-<p>对于（i&#x3D;0；i&lt;NumInstance；i++）</p>
-<p>如果（i mod除数&#x3D;&#x3D;0）</p>
-<p>从带有实例数据的VBs中获取属性i&#x2F;除数</p>
-<p>对于（j&#x3D;0；j&lt;NumVertices；j++）</p>
-<p>从带有顶点数据的VBs获取属性j</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawArraysInstanced</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
-
-<p>顶点着色器中：</p>
-<p>不再将WVP和世界矩阵作为统一变量，而是将它们作为顶点属性。VS不关心它们的值只会在每个实例中更新一次，而不会在每个顶点中更新。WVP矩阵占据位置1-4。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in mat4 MVP;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = MVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用第二种方法</p>
-<p>顶点着色器</p>
-<p>​	gl_InstanceID是一个内置变量，仅在VS中可用。由于计划在FS中使用它，因此必须在此处访问它，并在常规输出变量中传递它。gl_InstanceID的类型是整数，因此使用相同类型的输出变量。由于光栅化器无法对整数进行插值，必须将输出变量标记为“flat”。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flat out int InstanceID;</span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  InstanceID = gl_InstanceID;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#version 330</span><br><span class="line">flat in int InstanceID;</span><br><span class="line">out vec4 FragColor;</span><br><span class="line">vec4 gColor[4] = &#123;</span><br><span class="line">	vec4(0.5, 0.0, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.5, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.5,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.0,0.0)</span><br><span class="line">&#125;;</span><br><span class="line"> void main()</span><br><span class="line"> &#123;  </span><br><span class="line"> FragColor = gColor [InstanceID % 4];</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>效果如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271722256.png" alt="image-20230127172248210" style="zoom:50%;" /> 
       <!-- reward -->
       
     </div>
