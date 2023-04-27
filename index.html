@@ -197,7 +197,7 @@
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934799.jpg" alt="img"> </p>
 <p>12.像素操作和帧缓冲区</p>
 <p>（1）sgpugl_glCopyPixels进行像素的复制操作，从帧缓冲区复制到帧缓冲区，不涉及内存，因此避免了显存与内存间格式转换的问题，并且加快了运算速度。该函数前四个参数表示复制像素来源的矩形的左下角坐标、宽度和高度，可以当作是在窗口确认了一块矩形区域，第五个参数用于确认复制的内容，通常使用GL_COLOR，表示复制像素的颜色，但也可以是GL_DEPTH（深度缓冲数据）或GL_STENCIL（模板缓冲数据）。通过sgpugl_glRasterPos2f设置像素绘制的起始位置，系统会将该起始位置转换成窗口坐标，之后将会从起始位置绘制出刚刚窗口上指定的矩形中的内容。</p>
-<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
+<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
 <p>（3）sgpugl_glBitmap用于将位图数据绘制在屏幕，位图数据可以理解为0、1矩阵，为1则在屏幕的对应像素绘制、为0不绘制。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170938068.png" alt="image-20230417093822003"></p>
 <p>13.图元绘制</p>
@@ -297,7 +297,7 @@
 
     
     <article
-  id="post-链接"
+  id="post-X11窗口_glfw_链接"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -308,163 +308,15 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/04/11/%E9%93%BE%E6%8E%A5/"
-    >链接</a> 
+  <a class="article-title" href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/"
+    >X11窗口、glfw和链接</a> 
 </h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/04/11/%E9%93%BE%E6%8E%A5/" class="article-date">
-  <time datetime="2023-04-11T08:59:57.000Z" itemprop="datePublished">2023-04-11</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="源文件-gt-可执行文件过程"><a href="#源文件-gt-可执行文件过程" class="headerlink" title="源文件-&gt;可执行文件过程"></a>源文件-&gt;可执行文件过程</h4><p>1.预处理：包括删除注释、宏扩展、#include文件包含等。预处理后生成.i文件。</p>
-<p>2.编译：由编译器完成，检查语法及语义，生成错误或警告。编译后生成汇编语言.s文件。</p>
-<p>3.汇编：将汇编文件翻译成机器码指令（二进制），将指令打包形成.o目标文件。</p>
-<p>4.链接：完成调用的各种函数、静态库和动态库的链接，从函数原型链接到函数实现。形成.exe文件。</p>
-<h4 id="Linux平台下cmake和make的区别"><a href="#Linux平台下cmake和make的区别" class="headerlink" title="Linux平台下cmake和make的区别"></a>Linux平台下cmake和make的区别</h4><p>Makefile编译规则文件。</p>
-<p>make通过Makefile文件自动化批量处理编译，将源文件变成最终的可执行文件（包含gcc的功能）。</p>
-<p>不同平台的Makefile文件不同，cmake作为跨平台编译工具可以将CMakeLists.txt文件转化为所需要的Makefile文件</p>
-<h4 id="Cmake"><a href="#Cmake" class="headerlink" title="Cmake"></a>Cmake</h4><p>window平台下利用Cmake软件代替Linux下的cmake命令，用编译器如vs代替Linux下的make命令。</p>
-<p>Cmake软件将make分为两步：</p>
-<p>1.Configure：配置，生成需要的文件夹及准备文件</p>
-<p>2.Generate：根据CMakeLists.txt生成工程文件。如果编译器选择vs，则生成vs工程文件，如果是Linux，则生成Makefile。生成vs工程文件，同Linux生成Makefile文件，都是规定了编译规则。</p>
-<p>最后由vs执行工程，即执行make。</p>
-<h4 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h4><p>1.区别</p>
-<p>使用封装好的库函数十分方便并且十分高效，库分为静态库和动态库。</p>
-<table>
-<thead>
-<tr>
-<th align="center">库类型</th>
-<th align="center">windows</th>
-<th align="center">linux</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">静态库</td>
-<td align="center">.lib</td>
-<td align="center">.a</td>
-</tr>
-<tr>
-<td align="center">动态库</td>
-<td align="center">.dll</td>
-<td align="center">.so</td>
-</tr>
-</tbody></table>
-<p>​		 当程序与静态库链接时，静态库中所包含的所有函数方法都会被拷贝到最终的可执行文件中去。这就会导致最终生成的可执行代码量相对变多，相当于编译器将代码补充完整了。编译后的可执行程序不需要静态库，因为所有使用的函数都已经被编译进去了。这种方式会让程序运行起来相对快一些，不过也会有个缺点: 占用磁盘和内存空间，导致可执行程序过大。另外，静态库会被添加到和它链接的每个程序中去, 而且这些程序运行时, 都会被加载到内存中，无形中又多消耗了更多的内存空间。  与动态库链接的可执行文件只包含它需要的函数方法的引用表，而不是所有的函数代码，只有在程序执行时, 那些需要的函数代码才会被拷贝到内存中。这样就使可执行文件比较小, 节省磁盘空间，更进一步，操作系统使用虚拟内存，使得一份动态库驻留在内存中被多个程序使用，也同时节约了内存。不过由于运行时要去链接库会花费一定的时间，执行速度相对会慢一些。如果要修改的刚好是库函数的话，在接口不变的前提下，使用动态库的程序只需要将动态库重新编译就可以了，而使用静态库的程序则需要将静态库重新编译好后，将程序再重新编译一遍。</p>
-<p>2.两层链接</p>
-<p>现在源程序main.cpp链接库sub,sub链接库add</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*add.h */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ADD_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ADD_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*add.c*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;add\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*sub.h*/</span>v</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _SUB_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _SUB_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">-----------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*sub.c*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sub\n&quot;</span>);</span><br><span class="line">    <span class="built_in">add</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">/*main.c*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">sub</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c add.c</span><br><span class="line">gcc -c sub.c</span><br></pre></td></tr></table></figure>
-
-<p>首先生成的文件：sub.o ，add.o，无论是静态库文件还是动态库文件，都是由 .o 文件创建。使用-c不会链接、生成可执行文件，只会预处理、编译和汇编。</p>
-<p>（1）静态库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ar cr libadd.a add.o</span><br><span class="line">ar cr libsub.a sub.o </span><br></pre></td></tr></table></figure>
-
-<p>ar：静态函数库创建的命令</p>
-<p>-c :create创建</p>
-<p>库文件的命名规范是以lib开头（前缀），紧接着是静态库名，以 .a 为后缀名。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
-
-<p>-L ：指定函数库查找的位置，’.’表示在当前目录下查找</p>
-<p>-l：指定函数库名，其中的lib和.a(.so)省略。</p>
-<p>-o:链接，生成可执行文件，指名生成的可执行文件名</p>
-<p>​	  使用静态库内部函数，只需要在使用到这些函数的源程序中包含这些函数的原型声明（头文件），然后在用gcc命令生成可执行文件时指明静态库名，gcc将会从静态库中将函数拷贝到可执行文件中。gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。在程序main.c中，包含了静态库的头文件sub.h，然后在主程序main中直接调用函数sub()即可。生成可执行文件后静态库可以不再需要。</p>
-<p>注意：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub </span><br><span class="line">gcc -o main main.c -L . –l add -L . –l sub</span><br></pre></td></tr></table></figure>
-
-<p>​		都会发生sub无法链接到add导致sub中的函数undefined reference to，因此链接顺序不能变，而且用main链接sub和add即可，不需要单独写一行sub链接add。</p>
-<p>（2）动态库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -o add.o -c add.c</span><br><span class="line">gcc  -fPIC  -o sub.o -c sub.c</span><br><span class="line">gcc -shared -o libadd.so add.o</span><br><span class="line">gcc -shared -o libsub.so sub.o</span><br></pre></td></tr></table></figure>
-
-<p> -fpic:产生代码位置无关代码,则产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。</p>
-<p>-shared ：生成共享库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
-
-<p>会发生如下报错：</p>
-<p> error while loading shared libraries:libmymath.so: cannot open shared object file: No such file or directory</p>
-<p>原因如下：</p>
-<p>gcc -o 链接器工作于链接阶段，工作时需要-l指定库名和-L指定库路径。如果在指定库路径没有找到库，会发生</p>
-<p>undefined reference to的报错，导致可执行文件无法生成。但是有时不会发生该报错，可以对make添加-WL -Z DEFS编译选项，在生成可执行文件前找到该错误。</p>
-<p>.&#x2F;运行可执行程序时还需要动态链接器，工作于程序运行阶段，工作时需要提供动态库所在目录位置。该目录与上述-L指定的路径不同，动态链接器去固定位置（通过环境变量）查找动态库，如果找不到就会报错，所以需要先将动态库的工作目录加入到环境变量中。一般会去默认的动态库搜索路径&#x2F;usr&#x2F;lib查找，可以将.so文件复制到&#x2F;usr&#x2F;lib中来解决上述报错。</p>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ldd exe 查看可执行程序运行时链接的动态库</span><br></pre></td></tr></table></figure>
-
-<p>如果在源文件的头文件中使用</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<p>则之后会默认链接到&#x2F;usr&#x2F;lib下的系统库（库名&#x3D;&gt;目录）</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120856844.png" alt="image-20230412085632785"></p>
-<p>在项目文件中添加一个新文件夹，使用自定义的glfw库文件。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
-<p>​		头文件会链接到自己的库文件而不是系统的库文件。编译源文件时，需要将glfw文件一起编译，因此需要修改源文件的Cmakelist.txt文件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_subdirectory(external) </span><br></pre></td></tr></table></figure>
-
-<p>cmake会通过源文件的Cmakelist.txt找到external目录下的Cmakelist.txt</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include_directories（external/glfw-3.1.2/include/GLFW）</span><br></pre></td></tr></table></figure>
-
-<p>向工程添加多个特定的头文件搜索路径，添加该行后源文件的头文件部分可以改成</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<pre><code>     如果包含头文件后，没有找到external目录下的Cmakelist.txt，无法生成自己的库文件，最后还是会链接到系统库。如果glfw文件编译链接成功，最后就会链接到自己的库。在Cmakelist.txt或者其他文件中指明了动态链接库的搜索位置，因此不会去默认的路径/usr/lib。
-</code></pre>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120915237.png" alt="image-20230412091529196"></p>
-<p>该glfw文件与系统库glfw的区别：</p>
-<p>​		glfw可以用elg和glx创建上下文，egl可以支持gl和es，glx支持gl扩展支持es。系统glfw版本更高为3.3.2，可以在应用程序源文件中使用glfwWindowHint（window.c）进行参数设置，CLFW_CLIENT_API可以设置源文件使用opengl还是opengl es，CLFW_CONTEXT_CREATION_API可以设置创建上下文使用的API,如egl、glx等。但是在上述低版本的glfw文件，不能在源文件设置，而是通过Cmakelists.txt设置，如下，通过ON和OFF设置是否使用egl创建上下文：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304121622378.png" alt="image-20230412162211136"></p>
-<h4 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120919388.png" alt="image-20230412091902342"></p>
-<p>可以用如下方式调试：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ gdb 可执行程序名</span><br><span class="line"></span><br><span class="line">(gdb) b 函数名 //设置断点，运行到该函数暂停</span><br><span class="line"></span><br><span class="line">(gdb) run //运行到第一个断点暂停</span><br><span class="line"></span><br><span class="line">(gdb) c	//继续运行到下一个断点暂停</span><br><span class="line"></span><br><span class="line">(gdb) quit //退出gdb环境</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-X11窗口绘制"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/"
-    >X11窗口绘制</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3%E7%BB%98%E5%88%B6/" class="article-date">
+      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/" class="article-date">
   <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
 </a> 
   <div class="article-category">
@@ -475,16 +327,22 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和创建上下文等，但是如果是链接系统库的glfw，不是用egl创建的上下文。</p>
-<p>3、egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eglBindAPI(EGL_OPENGL_ES_API);//绑定ES的API</span><br><span class="line">eglBindAPI(EGL_OPENGL_API);//绑定GL的API</span><br></pre></td></tr></table></figure>
+  <h4 id="文件区分"><a href="#文件区分" class="headerlink" title="文件区分"></a>文件区分</h4><p>​		glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和创建上下文等。  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h，包含该头文件可以使用gl,glu,glext,wgl,glx里的全部函数。glad.h与glew.h作用相同，可以看作其升级版。这两个头文件使用时要放在glfw3.h 或者glut.h文件之前。gl3w.h和glad.h作用类似。</p>
+<h4 id="glfw和上下文"><a href="#glfw和上下文" class="headerlink" title="glfw和上下文"></a>glfw和上下文</h4><p>​		除了窗口创建，glfw还封装了上下文创建。glfw可以用elg和glx创建上下文，egl可以支持gl、es和vukan，glx支持gl扩展支持es。glfw系统库为高版本3.3.2，可以在应用程序中对glfw进行配置。如下代码希望在运行gl程序使用glx的上下文，在运行es程序使用egl的上下文。其实在glfwinit的时候已经默认使用glx的上下文，支持gl和es了，所以在if(casetype&#x3D;&#x3D;”gl”)后不需要显示指定，也可以保证在运行gl程序使用glx的上下文，并且支持es。不过为了使得运行es程序使用egl的上下文，需要设置GLFW_CONTEXT_CREATION_API和GLFW_CLIENT_API，注释如下。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( !<span class="built_in">glfwInit</span>() )</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">fprintf</span>( stderr, <span class="string">&quot;Failed to initialize GLFW\n&quot;</span> );</span><br><span class="line">	<span class="built_in">getchar</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(casetype==<span class="string">&quot;gl&quot;</span>)&#123;</span><br><span class="line">    <span class="comment">//采样</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_SAMPLES, <span class="number">4</span>);</span><br><span class="line">    <span class="comment">//版本</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">2</span>);</span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MINOR, <span class="number">1</span>);</span><br><span class="line">    <span class="comment">//opengl模式</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_OPENGL_PROFILE, 			GLFW_OPENGL_COMPAT_PROFILE);</span><br><span class="line">    <span class="comment">//用户不能调节窗口大小</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_RESIZABLE, GL_FALSE);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_SAMPLES, <span class="number">16</span>);</span><br><span class="line">    <span class="comment">//上下文指定egl</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_CREATION_API, 	GLFW_EGL_CONTEXT_API);</span><br><span class="line">    <span class="comment">//API使用opengl es</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">3</span>);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MINOR, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_RESIZABLE, GL_FALSE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​		GLFW_OPENGL_PROFILE用于指定opengl模式，opengl es无该模式。opengl模式有COMPAT和COREl两种，CORE抛弃了部分用法，如果想兼容，使用COMPAT会少很多问题。</p>
+<p>​	在如上代码中，如果程序以gl-es-gl的顺序运行，在运行到es时，进入else使用egl创建上下文，调用es的API；之后运行最后一个gl时，进入if，由于if中没有显示指定上下文和调用的API，因此还是会使用egl创建上下文，调用es的API。</p>
+<p>​		在低版本的glfw文件中，链接的不是系统库而是用户自己指定的库，不能在应用程序设置，而是通过Cmakelists.txt设置，如下，通过ON和OFF设置是否使用egl创建上下文。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304121622378.png" alt="image-20230412162211136" style="zoom:67%;" />
 
-<p>4、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
+<p>​		egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eglBindAPI</span>(EGL_OPENGL_ES_API);<span class="comment">//绑定ES的API</span></span><br><span class="line"><span class="built_in">eglBindAPI</span>(EGL_OPENGL_API);<span class="comment">//绑定GL的API</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="X11窗口"><a href="#X11窗口" class="headerlink" title="X11窗口"></a>X11窗口</h4><p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
+<p>2、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
 
-<p>​	  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h，包含该头文件可以使用gl,glu,glext,wgl,glx里的全部函数。glad.h与glew.h作用相同，可以看作其升级版。这两个头文件使用时要放在glfw3.h 或者glut.h文件之前。gl3w.h和glad.h作用类似。</p>
-<p>5、X11窗口创建的部分函数和窗口监听</p>
+<p>3、X11窗口创建的部分函数和窗口监听</p>
 <p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
 
@@ -497,10 +355,10 @@
 <p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//设置窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
 
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>清空颜色缓存和深度缓存，再利用函数</p>
-<p>eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口。</p>
+<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，无法执行之后的步骤。因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
+<p>​		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
+<p>​		用上述指定颜色初始化颜色缓存，使用默认值初始化深度缓存，再利用函数</p>
+<p>​		eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口（此处以egl配置上下文为例）。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
@@ -524,7 +382,7 @@ changes.width = newWidth;
 changes.height = newHeight;
 XConfigureWindow(display, win, mask, &amp;changes);
 </code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化。</p>
+<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化，在外部事件发生时才存在ConfigureNotify事件。</p>
 <pre><code>case ConfigureNotify:&#123;
     reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
     break;
@@ -537,6 +395,102 @@ XConfigureWindow(display, win, mask, &amp;changes);
 <p>参考链接：</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
+<h4 id="源文件-gt-可执行文件过程"><a href="#源文件-gt-可执行文件过程" class="headerlink" title="源文件-&gt;可执行文件过程"></a>源文件-&gt;可执行文件过程</h4><p>1.预处理：包括删除注释、宏扩展、#include文件包含等。预处理后生成.i文件。</p>
+<p>2.编译：由编译器完成，检查语法及语义，生成错误或警告。编译后生成汇编语言.s文件。</p>
+<p>3.汇编：将汇编文件翻译成机器码指令（二进制），将指令打包形成.o目标文件。</p>
+<p>4.链接：完成调用的各种函数、静态库和动态库的链接，从函数原型链接到函数实现。形成.exe文件。</p>
+<h4 id="Linux平台下cmake和make的区别"><a href="#Linux平台下cmake和make的区别" class="headerlink" title="Linux平台下cmake和make的区别"></a>Linux平台下cmake和make的区别</h4><p>Makefile编译规则文件。</p>
+<p>make通过Makefile文件自动化批量处理编译，将源文件变成最终的可执行文件（包含gcc的功能）。</p>
+<p>不同平台的Makefile文件不同，cmake作为跨平台编译工具可以将CMakeLists.txt文件转化为所需要的Makefile文件</p>
+<h4 id="Cmake"><a href="#Cmake" class="headerlink" title="Cmake"></a>Cmake</h4><p>window平台下利用Cmake软件代替Linux下的cmake命令，用编译器如vs代替Linux下的make命令。</p>
+<p>Cmake软件将cmake分为两步：</p>
+<p>1.Configure：配置，生成需要的文件夹及准备文件</p>
+<p>2.Generate：根据CMakeLists.txt生成工程文件。如果编译器选择vs，则生成vs工程文件，如果是Linux，则生成Makefile。生成vs工程文件，同Linux生成Makefile文件，都是规定了编译规则。</p>
+<p>最后由vs执行工程，即执行make。</p>
+<h4 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h4><p>1.区别</p>
+<p>​		使用封装好的库函数十分方便并且十分高效，库分为静态库和动态库。</p>
+<table>
+<thead>
+<tr>
+<th align="center">库类型</th>
+<th align="center">windows</th>
+<th align="center">linux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">静态库</td>
+<td align="center">.lib</td>
+<td align="center">.a</td>
+</tr>
+<tr>
+<td align="center">动态库</td>
+<td align="center">.dll</td>
+<td align="center">.so</td>
+</tr>
+</tbody></table>
+<p>​		当程序与静态库链接时，静态库中所包含的所有函数方法都会被拷贝到最终的可执行文件中去。这就会导致最终生成的可执行代码量相对变多，相当于编译器将代码补充完整了。编译后的可执行程序不需要静态库，因为所有使用的函数都已经被编译进去了。这种方式会让程序运行起来相对快一些，不过也会有个缺点: 占用磁盘和内存空间，导致可执行程序过大。另外，静态库会被添加到和它链接的每个程序中去, 而且这些程序运行时, 都会被加载到内存中，无形中又多消耗了更多的内存空间。  与动态库链接的可执行文件只包含它需要的函数方法的引用表，而不是所有的函数代码，只有在程序执行时, 那些需要的函数代码才会被拷贝到内存中。这样就使可执行文件比较小, 节省磁盘空间，更进一步，操作系统使用虚拟内存，使得一份动态库驻留在内存中被多个程序使用，也同时节约了内存。不过由于运行时要去链接库会花费一定的时间，执行速度相对会慢一些。如果要修改的刚好是库函数的话，在接口不变的前提下，使用动态库的程序只需要将动态库重新编译就可以了，而使用静态库的程序则需要将静态库重新编译好后，将程序再重新编译一遍。</p>
+<p>2.两种链接</p>
+<p>​		现在源程序main.cpp链接库sub,sub链接库add</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*add.h */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ADD_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ADD_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*add.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;add\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*sub.h*/</span>v</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _SUB_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _SUB_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">----------------------------------------------------------</span><br><span class="line"><span class="comment">/*sub.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sub\n&quot;</span>);</span><br><span class="line">    <span class="built_in">add</span>();</span><br><span class="line">&#125;</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*main.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">sub</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c add.c</span><br><span class="line">gcc -c sub.c</span><br></pre></td></tr></table></figure>
+
+<p>​		首先生成的文件：sub.o ，add.o，无论是静态库文件还是动态库文件，都是由 .o 文件创建。使用-c不会链接、生成可执行文件，只会预处理、编译和汇编。</p>
+<p>（1）静态库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ar cr libadd.a add.o</span><br><span class="line">ar cr libsub.a sub.o </span><br></pre></td></tr></table></figure>
+
+<p>​		ar：静态函数库创建的命令</p>
+<p>​		-c :create创建</p>
+<p>​		库文件的命名规范是以lib开头（前缀），紧接着是静态库名，以 .a 为后缀名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
+
+<p>​		-L ：指定函数库查找的位置，’.’表示在当前目录下查找</p>
+<p>​		-l：指定函数库名，其中的lib和.a(.so)省略。</p>
+<p>​		-o:链接，生成可执行文件，指名生成的可执行文件名</p>
+<p>​	  使用静态库内部函数，只需要在使用到这些函数的源程序中包含这些函数的原型声明（头文件），然后在用gcc命令生成可执行文件时指明静态库名，gcc将会从静态库中将函数拷贝到可执行文件中。gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。在程序main.c中，包含了静态库的头文件sub.h，然后在主程序main中直接调用函数sub()即可。生成可执行文件后静态库可以不再需要。</p>
+<p>​		注意：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub </span><br><span class="line">gcc -o main main.c -L . –l add -L . –l sub</span><br></pre></td></tr></table></figure>
+
+<p>​		都会发生sub无法链接到add导致sub中的函数undefined reference to，因此链接顺序不能变，而且用main链接sub和add即可，不需要单独写一行sub链接add。</p>
+<p>（2）动态库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -o add.o -c add.c</span><br><span class="line">gcc  -fPIC  -o sub.o -c sub.c</span><br><span class="line">gcc -shared -o libadd.so add.o</span><br><span class="line">gcc -shared -o libsub.so sub.o</span><br></pre></td></tr></table></figure>
+
+<pre><code>     -fpic:产生代码位置无关代码,则产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。
+</code></pre>
+<p>​		-shared ：生成共享库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
+
+<p>​		.&#x2F;执行时会发生如下报错：</p>
+<pre><code>     error while loading shared libraries:libmymath.so: cannot open shared object file: No such file or directory
+</code></pre>
+<p>​		原因如下：</p>
+<p>​		gcc -o 链接器工作于链接阶段，工作时需要-l指定库名和-L指定库路径。如果在指定库路径没有找到库，会发生</p>
+<p>undefined reference to的报错，导致可执行文件无法生成。但是有时不会发生该报错，可以对make添加-WL -Z DEFS编译选项，在生成可执行文件前找到该错误。</p>
+<p>​		.&#x2F;运行可执行程序时还需要动态链接器，工作于程序运行阶段，工作时需要提供动态库所在目录位置。该目录与上述-L指定的路径不同，动态链接器去固定位置（通过环境变量）查找动态库，如果找不到就会报错，所以需要先将动态库的工作目录加入到环境变量中。一般会去默认的动态库搜索路径&#x2F;usr&#x2F;lib查找，可以将.so文件复制到&#x2F;usr&#x2F;lib中来解决上述报错。</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ldd exe 查看可执行程序运行时链接的动态库</span><br></pre></td></tr></table></figure>
+
+<p>​		如果在源文件的头文件中使用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​		则之后会默认链接到&#x2F;usr&#x2F;lib下的系统库（库名&#x3D;&gt;目录）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120856844.png" alt="image-20230412085632785"></p>
+<p>​		在项目文件中添加一个新文件夹，使用自定义的glfw库文件。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
+<p>​		头文件会链接到自己的库文件而不是系统的库文件。编译源文件时，需要将glfw文件一起编译，因此需要修改源文件的Cmakelist.txt文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_subdirectory(external) </span><br></pre></td></tr></table></figure>
+
+<p>​		cmake会通过源文件的Cmakelist.txt找到external目录下的Cmakelist.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include_directories（external/glfw-3.1.2/include/GLFW）</span><br></pre></td></tr></table></figure>
+
+<p>​		向工程添加多个特定的头文件搜索路径，添加该行后源文件的头文件部分可以改成</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​		如果包含头文件后，没有找到external目录下的Cmakelist.txt，无法生成自己的库文件，最后还是会链接到系统库。如果glfw文件编译链接成功，最后就会链接到自己的库。在Cmakelist.txt或者其他文件中指明了动态链接库的搜索位置，因此不会去默认的路径&#x2F;usr&#x2F;lib。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120915237.png" alt="image-20230412091529196"></p>
+<h4 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120919388.png" alt="image-20230412091902342"></p>
+<p>​		可以用如下方式调试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ gdb 可执行程序名</span><br><span class="line">(gdb) b 函数名 //设置断点，运行到该函数暂停</span><br><span class="line">(gdb) run //运行到第一个断点暂停</span><br><span class="line">(gdb) c	//继续运行到下一个断点暂停</span><br><span class="line">(gdb) quit //退出gdb环境</span><br></pre></td></tr></table></figure>
+
  
       <!-- reward -->
       
@@ -1235,6 +1189,88 @@ XConfigureWindow(display, win, mask, &amp;changes);
 </tr>
 </tbody></table>
  
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-实例渲染"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/"
+    >实例渲染</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-date">
+  <time datetime="2023-01-26T07:52:06.000Z" itemprop="datePublished">2023-01-26</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>假设想渲染一个有一支庞大军队经过的场景，要用一个士兵的模型渲出成千上万的士兵大军。一种方法是每次绘制一个士兵都调用一次draw call，并更新当前士兵相关的一致变量（位置、尺寸等）。例如，每个士兵都处于不同的位置，每个士兵都可以更高或者更矮尺寸不一等。因此，每次draw call都要更新当前士兵模型的WVP矩阵，这样开销会很大。</p>
+<p>实例渲染：一个实例就是要渲染的模型在场景的一次实际出现，这里例子中就是一个士兵。实例化渲染意味着可以在一次draw call中渲染多个实例，并为每个实例提供其特有的属性。</p>
+<p>方法1：在一个单独的顶点缓冲VB中定义实例的属性（例如：WVP矩阵）。通常顶点处理器会逐顶点每次处理一个顶点数据，有了存放实例数据的顶点缓冲VB后，定点处理器在每次处理一个顶点时要等所有顶点都已经被绘制，存有实例数据的VB提供的属性数据是针对所有顶点公共的。(第一种是将实例数据作为顶点属性传递)</p>
+<p>方法2：使用一个内置的叫做gl_InstanceID的shader变量，它是用来告诉当前的实例索引index的。我们可以根据这个索引值来定位一致变量数组中对应的实例数据来进行相应的渲染操作。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271615735.png" alt="image-20230127161506622" style="zoom:50%;" />
+
+<p>这里有一个包含100个顶点的模型，每个顶点都有位置、法线、纹理坐标属性，三个属性中每个属性都有他们自己的顶点缓冲。另外，还有第四个顶点缓冲buffer存放着三个WVP矩阵。先使用第一个WVP矩阵应用到100个顶点pos位置的绘制上，然后再使用第二个WVP矩阵绘制一遍，然后再使用第三个绘制，并且这个过程是在一个draw call中实现的，而不是三个。WVP矩阵会作为输入参数传送到顶点处理器中，但由于第四个VB被标记为存有实例数据，所以WVP矩阵在所有顶点绘制完之前是不会变化的。</p>
+<p>cpp文件：</p>
+<p>​	由于WVP矩阵是一个4x4矩阵，不能仅为其启用一个顶点属性，因为顶点属性最多只能包含4个浮点或整数。因此需要启用和配置4个连续顶点属性的循环。每个属性将包含矩阵中的一个向量（第一个属性1包含三个MVP矩阵的第一个向量，第二个属性2包含三个MVP矩阵的第二个向量……）。四个属性中的每一个都由四个浮点组成，一个矩阵中的属性与下一个矩阵之间的距离是4x4矩阵的大小，因此一共占了1、2、3、4顶点属性。</p>
+<p>​	glVertexAttribDivisitor（）函数使其成为实例数据而不是顶点数据。它采用两个参数：第一个是顶点数组属性，第二个参数告诉OpenGL在实例化渲染过程中属性前进的速度。默认情况下，除数为零。如果除数是10，这意味着前10个实例将使用缓冲区中的第一条数据，接下来的10个实例会使用第二条数据。此处希望每个实例都有一个专用的WVP矩阵，因此使用1的除数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建存储了3个MPV矩阵的顶点属性数组，glm::mat4类型</span></span><br><span class="line"><span class="type">static</span> glm::mat4 WVPMats[] = &#123;MVP1,MVP2,MVP3&#125;;</span><br><span class="line"><span class="comment">//创建并绑定缓冲区</span></span><br><span class="line">GLuint MVPbuffer;</span><br><span class="line"><span class="built_in">glGenBuffers</span>(<span class="number">1</span>, &amp;MVPbuffer);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, MVPbuffer);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(glm::mat4)* <span class="number">3</span>, WVPMats, GL_DYNAMIC_DRAW);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">	<span class="built_in">glEnableVertexAttribArray</span>(<span class="number">1</span> + i);</span><br><span class="line">	<span class="built_in">glVertexAttribPointer</span>(<span class="number">1</span> + i, <span class="number">4</span>, GL_FLOAT, GL_FALSE, <span class="built_in">sizeof</span>(glm::mat4),</span><br><span class="line">		(<span class="type">const</span> GLvoid*)(<span class="built_in">sizeof</span>(GLfloat) * i * <span class="number">4</span>));</span><br><span class="line">	<span class="built_in">glVertexAttribDivisor</span>(<span class="number">1</span> + i, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数的唯一变化是将实例数作为第四个参数。</p>
+<p>对于（i&#x3D;0；i&lt;NumInstance；i++）</p>
+<p>如果（i mod除数&#x3D;&#x3D;0）</p>
+<p>从带有实例数据的VBs中获取属性i&#x2F;除数</p>
+<p>对于（j&#x3D;0；j&lt;NumVertices；j++）</p>
+<p>从带有顶点数据的VBs获取属性j</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawArraysInstanced</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<p>顶点着色器中：</p>
+<p>不再将WVP和世界矩阵作为统一变量，而是将它们作为顶点属性。VS不关心它们的值只会在每个实例中更新一次，而不会在每个顶点中更新。WVP矩阵占据位置1-4。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in mat4 MVP;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = MVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用第二种方法</p>
+<p>顶点着色器</p>
+<p>​	gl_InstanceID是一个内置变量，仅在VS中可用。由于计划在FS中使用它，因此必须在此处访问它，并在常规输出变量中传递它。gl_InstanceID的类型是整数，因此使用相同类型的输出变量。由于光栅化器无法对整数进行插值，必须将输出变量标记为“flat”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flat out int InstanceID;</span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  InstanceID = gl_InstanceID;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>片段着色器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#version 330</span><br><span class="line">flat in int InstanceID;</span><br><span class="line">out vec4 FragColor;</span><br><span class="line">vec4 gColor[4] = &#123;</span><br><span class="line">	vec4(0.5, 0.0, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.5, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.5,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.0,0.0)</span><br><span class="line">&#125;;</span><br><span class="line"> void main()</span><br><span class="line"> &#123;  </span><br><span class="line"> FragColor = gColor [InstanceID % 4];</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271722256.png" alt="image-20230127172248210" style="zoom:50%;" /> 
       <!-- reward -->
       
     </div>

@@ -156,7 +156,7 @@
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934799.jpg" alt="img"> </p>
 <p>12.像素操作和帧缓冲区</p>
 <p>（1）sgpugl_glCopyPixels进行像素的复制操作，从帧缓冲区复制到帧缓冲区，不涉及内存，因此避免了显存与内存间格式转换的问题，并且加快了运算速度。该函数前四个参数表示复制像素来源的矩形的左下角坐标、宽度和高度，可以当作是在窗口确认了一块矩形区域，第五个参数用于确认复制的内容，通常使用GL_COLOR，表示复制像素的颜色，但也可以是GL_DEPTH（深度缓冲数据）或GL_STENCIL（模板缓冲数据）。通过sgpugl_glRasterPos2f设置像素绘制的起始位置，系统会将该起始位置转换成窗口坐标，之后将会从起始位置绘制出刚刚窗口上指定的矩形中的内容。</p>
-<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
+<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
 <p>（3）sgpugl_glBitmap用于将位图数据绘制在屏幕，位图数据可以理解为0、1矩阵，为1则在屏幕的对应像素绘制、为0不绘制。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170938068.png" alt="image-20230417093822003"></p>
 <p>13.图元绘制</p>
@@ -314,9 +314,9 @@
   <nav class="article-nav">
     
     
-      <a href="/2023/04/11/%E9%93%BE%E6%8E%A5/" class="article-nav-link">
+      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">链接</div>
+        <div class="article-nav-title">X11窗口、glfw和链接</div>
       </a>
     
   </nav>
