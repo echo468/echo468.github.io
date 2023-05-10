@@ -118,6 +118,186 @@
     
     
     <article
+  id="post-细分着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >细分着色器</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2022-12-20T07:47:36.000Z" itemprop="datePublished">2022-12-20</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="细分着色器"><a href="#细分着色器" class="headerlink" title="细分着色器"></a>细分着色器</h4><p>​	导入低精度的模型，自动将图元细分。同一个模型，在远处时希望用一个低精度的模型来代替展示，以省下更多的计算资源用于处理靠近镜头的物体，使得细节更加清晰。要增加细节就需要在原基础上细分更多的顶点，组成更多的三角形。细分也可用于将平面变成曲面。</p>
+<p>​	顶点着色器-曲面细分控制着色（TCS）-图源生成（PG，固定功能阶段，硬件完成）-曲面细分评估着色（TES）-几何着色器-片段着色器</p>
+<p>​     顶点着色器定义输入patch几个顶点组成–（输入patch一组顶点[]）–TCS定义输出patch几个顶点组成、细分区域、细分等级–硬件生成新顶点信息（根据TES设置的layout类型决定传输重心坐标还是uv）–输出新patch一组顶点[]和顶点信息–TES计算顶点坐标及属性、生成图元类型</p>
+<h5 id="1-平面区域细分顶点"><a href="#1-平面区域细分顶点" class="headerlink" title="1.平面区域细分顶点"></a>1.平面区域细分顶点</h5><p>​	     细分过程并不对OpenGL典型的几何图元（点、线和三角形）进行操作，而是使用一个新的图元，称为patch。patch是传入到OpenGL的一系列顶点列表。当对patch进行渲染时，使用glDrawArrays()渲染命令，函数参数为GL_PATCHES，并从绑定的顶点缓冲对象（VBO）读出的顶点数据，然后为该绘制调用进行处理。当使用一个patch时，需要告诉OpenGL要使用多少个顶点来组成一个patch。同一个绘制调用所处理的patch，每个patch的顶点个数是相同的。输入控制点的最大数量由驱动程序定义的GL_MAX_PATCH_VERTICES决定，但是至少需要大于等于3。</p>
+<p>（1）应用程序文件</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置线框绘制,更容易看见使用细分着色器后的变化</span></span><br><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br><span class="line"><span class="comment">//告诉OpenGL顶点数组中要使用多少个控制点作为顶点组来组成一个patch</span></span><br><span class="line"><span class="built_in">glPatchParameteri</span>(GL_PATCH_VERTICES, <span class="number">3</span>);</span><br><span class="line"><span class="comment">/*顶点/颜色缓冲区相关设置*/</span></span><br><span class="line"><span class="comment">//绘制patch，比如正方体需要12个3个顶点的patch，参数设置为36</span></span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_PATCHES, <span class="number">0</span>, <span class="number">3</span>*<span class="number">12</span>);</span><br></pre></td></tr></table></figure>
+
+<p>​		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)的设置可能会影响后续其他图形的绘制，所以之后需要用glPolygonMode(GL_FRONT, GL_FILL)设置填充绘制。</p>
+<p>（2）顶点着色器</p>
+<p>​		顶点缓冲中的所有顶点都会执行顶点着色器。使用细分着色器时，因为需要生成更多的顶点，而这些顶点都需要矩阵变换，因此没必要在顶点着色器进行MVP矩阵变换，推迟到TES将新顶点生成后再进行变换。此处简单的将顶点数据原样传给TCS。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_vert;</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> position_tcs;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    position_tcs = position_vert;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）曲面细分控制着色文件TCS</p>
+<p>​		TCS着色器以顶点着色器处理之后的数据作为输入并生成和输出新的patch，新的patch与输入的patch可以不同，控制点数可以不同。除此之外它还负责控制细分发生的区域，并通过任意算法计算细分等级TLs；OpenGL有三种细分区域：四边形、三角形、等值线集合。</p>
+<p>​		内侧细分层级：设置的是细分区域的内部划分方式，保存在gl_TessLevelInner中，内侧细分层级的值设置了区域内水平和垂直方向上各自划分多少区域。</p>
+<p>​		外侧细分层级：负责控制细分区域的周长划分成几段，保存在gl_TessLevelOuter数组中，外侧细分层级的值与周长上每条边细分的段数是对应的。</p>
+<p>​		在三角形域的情况下，只能使用gl_TessLevelOuter的前三个成员和gl_TessLevelInner的第一个成员,四边形域可以使用gl_TessLevelOuter的四个成员和gl_TessLevelInner的两个成员。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251631262.png" alt="image-20221225163139088" style="zoom:50%;" />
+
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">2.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">3.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = <span class="number">2.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">3</span>] = <span class="number">4.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="number">3.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelInner</span>[<span class="number">1</span>] = <span class="number">4.0</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251632158.png" alt="image-20221225163207047" style="zoom:50%;" />
+
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//6条等值线，每条等值线划分承8段</span></span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">6</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251632243.png" alt="image-20221225163235088" style="zoom:50%;" />
+
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">6</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">5</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = <span class="number">8</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​		以细分三角形为例：</p>
+<p>​		layout设置输出的控制点个数，与glPatchParameteri的设置可以不同，也就是输入控制点数量不一定要等与输出控制点数量(即输入patch与输出patch不一定相同)。每有一个控制点输出，就会运行一次TCS，在如下代码中，TCS会在该patch上运行3次。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">vertices</span> = <span class="number">3</span>) <span class="keyword">out</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​		细分着色器是处理patch，顶点着色器输入patch包含的一组顶点给TCS，TCS输入新patch包含的一组顶点给TES，因此使用数组修饰符[]定义每个属性。in的数组大小是glPatchParameteri设置的，out的数据大小是layout (vertices&#x3D;？) out；设置的。此处没有显示指明数组的大小，opengl会自动为其分配大小。也可以显示指明in vec3 position_tcs[3];</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> gEyeWorldPos;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_tcs[];</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> position_tes[];</span><br></pre></td></tr></table></figure>
+
+<p>​		此处基于摄像机和顶点之间的世界空间距离计算TL，距离越近划分越细。</p>
+<p>​		 gl_InvocationID是OpenGL自带的变量，是控制点的索引值，类似于gl_VertexID。当TCS运行在第一个控制点时，gl_InvocationID值为0，当运行在第二个控制点时，gl_InvocationID值为1…以此类推。输出的控制点数量决定了TCS要运行多少次，所以gl_InvocationID也会与之对应。</p>
+<p>​		此处输入的控制点数量（通过glPatchParameteri设置）等于输出的控制点数量（通过layout (vertices&#x3D;？) out;设置的），用gl_InvocationID作为索引值，将TCS的数据原样传递给TES。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> GetTessLevel(<span class="type">float</span> Distance0, <span class="type">float</span> Distance1)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> AvgDistance = (Distance0 + Distance1) / <span class="number">2.0</span>;</span><br><span class="line">    <span class="keyword">if</span> (AvgDistance &lt;= <span class="number">2.0</span>) &#123;<span class="keyword">return</span> <span class="number">10.0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (AvgDistance &lt;= <span class="number">5.0</span>) &#123;<span class="keyword">return</span> <span class="number">7.0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;<span class="keyword">return</span> <span class="number">3.0</span>;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//或者使用内置变量gl_out[gl_InvocationID].gl_Positon=gl_in[gl_InvocationID].gl_Positon</span></span><br><span class="line">    position_tes[<span class="built_in">gl_InvocationID</span>] = position_tcs[<span class="built_in">gl_InvocationID</span>];</span><br><span class="line">    <span class="type">float</span> EyeToVertexDistance0 = <span class="built_in">distance</span>(gEyeWorldPos, WorldPos_ES_in[<span class="number">0</span>]);</span><br><span class="line">    <span class="type">float</span> EyeToVertexDistance1 = <span class="built_in">distance</span>(gEyeWorldPos, WorldPos_ES_in[<span class="number">1</span>]);</span><br><span class="line">    <span class="type">float</span> EyeToVertexDistance2 = <span class="built_in">distance</span>(gEyeWorldPos, WorldPos_ES_in[<span class="number">2</span>]);</span><br><span class="line">    <span class="comment">//仅在第一次执行（第一个顶点）时控制细分程度） </span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">gl_InvocationID</span> == <span class="number">0</span>)                                        </span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = GetTessLevel(EyeToVertexDistance1，EyeToVertexDistance2);</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = GetTessLevel(EyeToVertexDistance2, EyeToVertexDistance0);</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = GetTessLevel(EyeToVertexDistance0, EyeToVertexDistance1);</span><br><span class="line">    <span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		TCS后由硬件生成图元，图元生成是一个固定功能阶段。此阶段仅当一个TES在当前程序或程序流水线中活动时才会执行。图元生成受TCS中设置的曲面细分程度和TES中设置的layout影响。图元生成不受TCS中定义的输出patch大小影响。图元生成对实际的顶点坐标与其它patch数据是不可见的。图元生成的目的是确定要生成多少个顶点，用哪个次序来生成它们，以及用哪种图元来构造它们。实际为这些顶点的每个顶点的数据，诸如位置、颜色等等，是通过细分曲面计算着色器来生成的，基于图元生成所提供的信息。</p>
+<p>（4）曲面细分求值着色文件TES</p>
+<p>​		以细分三角形为例：</p>
+<p>​		layout参数：</p>
+<p>​		1.图元生成域，其他两个选项是四边形和等值线（即与TCS细分等级对应的细分区域，也是传入几何着色器的图元类型）</p>
+<p>​	  （1）quads——单位正方形中的一个矩形域；域坐标：带有范围在[0, 1]内的u, v值的坐标对(<em>u</em>, <em>v</em>)。</p>
+<p>​      （2） triangles——使用重心坐标的一个三角形域；域坐标：带有范围在[0, 1]内的a、b、c三个值的重心坐标(a, b, c)，这里a+b+c&#x3D;1。</p>
+<p>​      （3）isolines——跨单位正方形的一组线；域坐标：u值范围在[0, 1]，v值范围在[0, 1)范围的(<em>u</em>, <em>v</em>)坐标对。</p>
+<p>​		域坐标就是传递给TES的坐标信息，TES利用坐标信息计算顶点并插值顶点属性。</p>
+<p>​		2.equal_spaceing意味着三角形边缘将被细分为具有相等长度的段</p>
+<p>​		3.第三个参数：图元面朝向（cw顺，ccw逆）</p>
+<p>​		如果想输出点，而不是等值线或填充区域的话，可以添加第四个参数point_mode选项。该选项将为每个由TES所处理的顶点渲染一单个点。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">layout</span> (<span class="keyword">triangles</span>, <span class="keyword">equal_spacing</span>, <span class="keyword">ccw</span>, <span class="keyword">point_mode</span>) <span class="keyword">in</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​		TES可以像任何其他着色器一样具有统一变量uniform，由于TES生成了新顶点，因此在TES中进行MVP矩阵变换。TES访问TCS输出的patch，因此TES输入的顶点数据为数组，数组大小即TCS中通过layout (vertices&#x3D;？) out;设置的。最后，声明输出顶点的属性，此处输出顶点数据不为数组，因为TES输出单个顶点。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">triangles</span>, <span class="keyword">equal_spacing</span>, <span class="keyword">ccw</span>) <span class="keyword">in</span>;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> gVP;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_tes[];</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> position;</span><br></pre></td></tr></table></figure>
+
+<p>​	   所有生成的位于细分空间下的新顶点都会经过TES着色器进行处理，TES根据硬件传来的信息计算并生成真正的顶点，除了顶点位置还会插值顶点属性。如下是通过硬件传来的三角形重心坐标生成新的顶点坐标，并且进行MVP变换。如果选择的TL值越高，获得的区域位置点就越多，而且通过在TES中对他们进行计算得到的顶点就会更多，这样就能更好的表示精细的表面。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">vec3</span> interpolate3D(<span class="type">vec3</span> v0, <span class="type">vec3</span> v1, <span class="type">vec3</span> v2)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">vec3</span>(<span class="built_in">gl_TessCoord</span>.x) * v0 + <span class="type">vec3</span>(<span class="built_in">gl_TessCoord</span>.y) * v1 + <span class="type">vec3</span>(<span class="built_in">gl_TessCoord</span>.z) * v2;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//通过硬件获得的重心坐标和TCS输出patch的顶点计算新的顶点</span></span><br><span class="line">    position = interpolate3D(position_tes[<span class="number">0</span>], position_tes[<span class="number">1</span>], position_tes[<span class="number">2</span>]);</span><br><span class="line">    <span class="built_in">gl_Position</span> = gVP * <span class="type">vec4</span>(position, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		以细分四边形为例：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//生成新顶点坐标和颜色值</span></span><br><span class="line"><span class="type">float</span> u = <span class="built_in">gl_TessCoord</span>.x; </span><br><span class="line"><span class="type">float</span> v = <span class="built_in">gl_TessCoord</span>.y;    </span><br><span class="line"><span class="comment">//从TCS输出的顶点（即，在gl_out数组中的gl_Position的值）在TES中的gl_in变量中可用，此处TCS的输出patch有4个顶点</span></span><br><span class="line"><span class="type">vec4</span> p0=<span class="built_in">gl_in</span>[<span class="number">0</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">vec4</span> p1 = <span class="built_in">gl_in</span>[<span class="number">1</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">vec4</span> p2 = <span class="built_in">gl_in</span>[<span class="number">2</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">vec4</span> p3 = <span class="built_in">gl_in</span>[<span class="number">3</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">void</span> main(<span class="type">void</span>)                                             </span><br><span class="line">&#123; </span><br><span class="line"><span class="comment">//根据硬件传来的uv坐标信息插值计算，该算法在平面上生成相同性质的点(可采用其他算法)</span></span><br><span class="line"><span class="built_in">gl_Position</span> = p0 * (<span class="number">1</span>-u) * (<span class="number">1</span>-v) + p1 * u * (<span class="number">1</span>-v) + p2 * v * (<span class="number">1</span>-u) + p3 * u * v; </span><br><span class="line">fragmentColor=tcs_color[<span class="number">0</span>] * (<span class="number">1</span>-u) * (<span class="number">1</span>-v) + tcs_color[<span class="number">1</span>] * u * (<span class="number">1</span>-v) + tcs_color[<span class="number">2</span>] * v * (<span class="number">1</span>-u) + tcs_color[<span class="number">3</span>] * u * v; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>​		以上细分只是patch上细分了多个顶点，形成了更多的三角形，插值出来的顶点都坐落在原始平面或三角形平面上，还未进行实际应用。</p>
+<p>参考文献：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lele0503/article/details/105881101">https://blog.csdn.net/lele0503/article/details/105881101</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aoxuestudy/article/details/124116047">https://blog.csdn.net/aoxuestudy/article/details/124116047</a></p>
+<p>其他问题：</p>
+<p>如果设置四个顶点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"><span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span></span><br></pre></td></tr></table></figure>
+<p>采用三角形细分区域，输出patch为4个顶点，最后得到的为三角形：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304271746157.png" alt="image-20230427174631026" style="zoom: 50%;" />
+
+<p>用四个顶点调用glDrawArrays(GL_TRIANGLES, 0,4);也只能绘制出一个三角形。</p>
+<p>如果设置六个顶点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"><span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"><span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span></span><br></pre></td></tr></table></figure>
+<p>采用四边形细分区域，输出patch为6个顶点，最后得到的为三角形：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304271746157.png" alt="image-20230427174631026" style="zoom: 50%;" />
+
+<h5 id="2-PN三角曲面细分"><a href="#2-PN三角曲面细分" class="headerlink" title="2.PN三角曲面细分"></a>2.PN三角曲面细分</h5><p>（1）顶点着色器</p>
+<p>​		TCS依赖于具有单位长度的法线，否则将无法正确生成新的控制点，因此在顶点着色器需要将法线标准化。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> normal_vert;</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> normal_tcs;</span><br><span class="line">normal_tcs = <span class="built_in">normalize</span>(normal_vert);</span><br></pre></td></tr></table></figure>
+
+<p>（2）曲面细分控制着色文件</p>
+<p>​		layout的输出为1而不是为10：layout设置的输出控制点为多少，TCS就会执行多少次。但在这个算法中，对于10个控制点执行的是不同的操作，因此对所有控制点执行相同的操作不太合适。将输出patch的所有数据封装在OutputPatch结构中，并声明了一个名为oPatch的输出变量。oPatch的前缀是内置关键字patch。该关键字表示变量包含与整个patch相关的数据，而不是当前输出的某一个控制点。TCS主函数将为每个patch运行一次，而不是每个控制点运行一次，并且在这次执行过程中会将这10个控制点的数据存放在结构体中。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">vertices</span> = <span class="number">1</span>) <span class="keyword">out</span>;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_tcs[];</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> normal_tcs[];</span><br><span class="line">struct OutputPatch</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">vec3</span> B030;<span class="type">vec3</span> B021;<span class="type">vec3</span> B012;<span class="type">vec3</span> B003;<span class="type">vec3</span> B102;</span><br><span class="line">    <span class="type">vec3</span> B201;<span class="type">vec3</span> B300;<span class="type">vec3</span> B210;<span class="type">vec3</span> B120;<span class="type">vec3</span> B111;</span><br><span class="line">    <span class="type">vec3</span> Normal[<span class="number">3</span>];</span><br><span class="line">    <span class="type">vec2</span> uv[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">out</span> <span class="keyword">patch</span> OutputPatch oPatch;</span><br></pre></td></tr></table></figure>
+
+<p>​		三个法线原样从输入复制到输出，并且设置细分等级。10个控制点通过CalcPosition生成。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span> ; i &lt; <span class="number">3</span> ; i++) &#123;</span><br><span class="line">       oPatch.Normal[i] = normal_tcs[i];</span><br><span class="line">    &#125;</span><br><span class="line">    CalcPositions();</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262245789.png" alt="image-20230126224517474"></p>
+<p>​		如图所示，控制点的形式像是在三角形上形成一个臌胀的表面。先把三个顶点作为输入patch。然后通过计算产生10个控制点并设置TLs。硬件将根据TLs细分三角形区域，TES会在每个新的顶点上执行。TES将把从PG硬件得到的新顶点的重心坐标和从TCS中得到的10个控制点输入到贝塞尔三角对应的多项式中，得到坐落在那个膨胀三角面上的新的顶点坐标。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262259972.png" alt="image-20230126225943786"></p>
+<p>​		上图所示是三角形的一边，每个端点都有它的原始法线（绿色那条线）。每个端点和它的法线构建了一个平面。如图，中间两个中间点按照虚线方向投影到最近顶点所在的平面上。10个顶点在三角形上形成一个臌胀的表面。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CalcPositions</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">&#123;</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//三角形上的原始顶点保持不变 (名字为B003,B030和B300)；</span></span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B030 = WorldPos_CS_in[<span class="number">0</span>];</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B003 = WorldPos_CS_in[<span class="number">1</span>];</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B300 = WorldPos_CS_in[<span class="number">2</span>];</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 EdgeB300 = oPatch.WorldPos_B003 - oPatch.WorldPos_B030;</span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 EdgeB030 = oPatch.WorldPos_B300 - oPatch.WorldPos_B003;</span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 EdgeB003 = oPatch.WorldPos_B030 - oPatch.WorldPos_B300;</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//每条边上产生两个中间点：一个三1/3处，一个在2/3处；</span></span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B021 = oPatch.WorldPos_B030 + EdgeB300 / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B012 = oPatch.WorldPos_B030 + EdgeB300 * <span class="number">2.0</span> / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B102 = oPatch.WorldPos_B003 + EdgeB030 / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B201 = oPatch.WorldPos_B003 + EdgeB030 * <span class="number">2.0</span> / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B210 = oPatch.WorldPos_B300 + EdgeB003 / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B120 = oPatch.WorldPos_B300 + EdgeB003 * <span class="number">2.0</span> / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//每个中间点投影到由最近的顶点和它的法线所在的平面上：</span></span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B021 = ProjectToPlane(oPatch.WorldPos_B021, oPatch.WorldPos_B030,oPatch.Normal[<span class="number">0</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B012 = ProjectToPlane(oPatch.WorldPos_B012, oPatch.WorldPos_B003,oPatch.Normal[<span class="number">1</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B102 = ProjectToPlane(oPatch.WorldPos_B102, oPatch.WorldPos_B003,oPatch.Normal[<span class="number">1</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B201 = ProjectToPlane(oPatch.WorldPos_B201, oPatch.WorldPos_B300,oPatch.Normal[<span class="number">2</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B210 = ProjectToPlane(oPatch.WorldPos_B210, oPatch.WorldPos_B300,oPatch.Normal[<span class="number">2</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B120 = ProjectToPlane(oPatch.WorldPos_B120, oPatch.WorldPos_B030,oPatch.Normal[<span class="number">0</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//为了计算B111，要计算得到一个向量，这个向量是从原三角形中心到6个投影后的中间点的平均点。延长该向量1.5的终点作为B111。</span></span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 Center = (oPatch.WorldPos_B003 + oPatch.WorldPos_B030 + oPatch.WorldPos_B300) / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B111 = (oPatch.WorldPos_B021 + oPatch.WorldPos_B012 + oPatch.WorldPos_B102 + oPatch.WorldPos_B201 + oPatch.WorldPos_B210 + oPatch.WorldPos_B120) / <span class="number">6.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B111 += (oPatch.WorldPos_B111 - Center) / <span class="number">2.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">&#125;</span></span></span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262253677.png" alt="image-20230126225354504" style="zoom:50%;" />
+
+<p>​		P1和P2位于由平面创建的不同半空间上。当在绿色法线上投影v1时，得到d1的长度。将该长度乘以法线以接收d1本身。现在从P1减去它，得到它在平面上的投影。当在绿色法线上投影v2时，得到d2的长度，但它是负值。将其乘以法线以接收d2本身（负长度意味着它反转法线）。现在从P2减去它，得到它在平面上的投影。结论：无论点在平面的哪一侧，该方法都能正确工作。因此可以用如下算法计算投影后的新控制点坐标。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec3 <span class="title">ProjectToPlane</span><span class="params">(vec3 Point, vec3 PlanePoint, vec3 PlaneNormal)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  vec3 v = Point - PlanePoint;</span><br><span class="line">  <span class="type">float</span> Len = <span class="built_in">dot</span>(v, PlaneNormal);</span><br><span class="line">  vec3 d = Len * PlaneNormal;</span><br><span class="line">  <span class="keyword">return</span> (Point - d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）曲面细分求值着色文件</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262318510.png" alt="image-20230126231841370"></p>
+<p>​		根据贝塞尔三角公式计算新生成的顶点，（u，v，w）是硬件传进来的重心坐标，通过gl_TessCoord访问，它们的和永远为1:u+v+w&#x3D;1。Bxyz指的是控制点，式子右边有10个控制点，生成的b是通过插值后的真正的新顶点坐标，b坐标在patch平面之外，因而实现曲面效果。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">triangles</span>, <span class="keyword">equal_spacing</span>, <span class="keyword">ccw</span>) <span class="keyword">in</span>;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> MVP;</span><br><span class="line">struct OutputPatch</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">vec3</span> B030;<span class="type">vec3</span> B021;<span class="type">vec3</span> B012;<span class="type">vec3</span> B003;<span class="type">vec3</span> B102;</span><br><span class="line">    <span class="type">vec3</span> B201;<span class="type">vec3</span> B300; <span class="type">vec3</span> B210;<span class="type">vec3</span> B120;<span class="type">vec3</span> B111;</span><br><span class="line">    <span class="type">vec3</span> Normal[<span class="number">3</span>];<span class="type">vec2</span> uv[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">in</span> <span class="keyword">patch</span> OutputPatch oPatch;</span><br><span class="line"></span><br><span class="line"><span class="comment">//如果插值纹理就将vec3改成vec2，如下函数可以用于插值顶点其他属性</span></span><br><span class="line"><span class="comment">//vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)</span></span><br><span class="line"><span class="comment">//&#123;</span></span><br><span class="line">   <span class="comment">// return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">float</span> u = <span class="built_in">gl_TessCoord</span>.x;<span class="type">float</span> v = <span class="built_in">gl_TessCoord</span>.y;<span class="type">float</span> w = <span class="built_in">gl_TessCoord</span>.z;</span><br><span class="line"></span><br><span class="line">  <span class="type">float</span> uPow3 = <span class="built_in">pow</span>(u, <span class="number">3</span>);<span class="type">float</span> vPow3 = <span class="built_in">pow</span>(v, <span class="number">3</span>);<span class="type">float</span> wPow3 = <span class="built_in">pow</span>(w, <span class="number">3</span>);</span><br><span class="line">  <span class="type">float</span> uPow2 = <span class="built_in">pow</span>(u, <span class="number">2</span>);<span class="type">float</span> vPow2 = <span class="built_in">pow</span>(v, <span class="number">2</span>);<span class="type">float</span> wPow2 = <span class="built_in">pow</span>(w, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">  vvec3 fi_position = </span><br><span class="line">          oPatch.B300 * wPow3 +</span><br><span class="line">          oPatch.B030 * uPow3 +</span><br><span class="line">          oPatch.B003 * vPow3 +</span><br><span class="line">          oPatch.B210 * <span class="number">3.0</span> * wPow2 * u +</span><br><span class="line">          oPatch.B120 * <span class="number">3.0</span> * w * uPow2 +</span><br><span class="line">          oPatch.B201 * <span class="number">3.0</span> * wPow2 * v +</span><br><span class="line">          oPatch.B021 * <span class="number">3.0</span> * uPow2 * v +</span><br><span class="line">          oPatch.B102 * <span class="number">3.0</span> * w * vPow2 +</span><br><span class="line">          oPatch.B012 * <span class="number">3.0</span> * u * vPow2 +</span><br><span class="line">          oPatch.B111 * <span class="number">6.0</span> * w * u * v;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">gl_Position</span> = MVP * <span class="type">vec4</span>(fi_position, <span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		为了实现曲面效果，一个3个顶点的patch的三个法线不能设置成相同的,不然计算出的多余的10个控制点就不会在patch的平面之上形成曲面。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat vertexdata[] = &#123;</span><br><span class="line">	<span class="number">-1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	<span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	<span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	&#125;;</span><br><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat normaldata[] = &#123;</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>,  <span class="number">-0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>,  <span class="number">-0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​	效果如下，生成曲面：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301270039197.png" alt="image-20230127003907057"></p>
+<h5 id="3-增加法线"><a href="#3-增加法线" class="headerlink" title="3.增加法线"></a>3.增加法线</h5><p>​	通过在曲面细分求值着色文件利用法线，利用算法重新将插值后的新顶点坐标进行修改，使其位于原平面之上。用该方法可以用于绘制曲面等。</p>
+<p>​	曲面细分控制着色文件：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将法线数据传给TES</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> normal_tcs[];</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> normal_tes[];</span><br><span class="line">normal_tes[<span class="built_in">gl_InvocationID</span>] = normal_tcs[<span class="built_in">gl_InvocationID</span>];</span><br></pre></td></tr></table></figure>
+
+<p>​	曲面细分求值着色文件：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//根据顶点到中心的距离计算顶点的高度（可任意写）</span></span><br><span class="line"><span class="type">float</span> <span class="built_in">distance</span> = <span class="built_in">max</span>( <span class="built_in">abs</span>(u<span class="number">-0.5</span>), <span class="built_in">abs</span>(v<span class="number">-0.5</span>) );</span><br><span class="line"><span class="built_in">distance</span> = <span class="built_in">max</span>( <span class="built_in">distance</span>, <span class="built_in">abs</span>(w<span class="number">-0.5</span>) );</span><br><span class="line"><span class="type">float</span> <span class="keyword">offset</span> = <span class="number">0.0</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">distance</span>&lt;<span class="number">0.2</span>)&#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">9.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">distance</span>&lt;<span class="number">0.3</span>)&#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">10.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">distance</span>&lt;<span class="number">0.4</span>)&#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">11.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">distance</span>&lt;<span class="number">0.5</span>)&#123;</span><br><span class="line"> <span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">12.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">13.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">vec3</span> position = interpolate3D(position_tes[<span class="number">0</span>], position_tes[<span class="number">1</span>], position_tes[<span class="number">2</span>]);</span><br><span class="line">position +=  tes_normal[<span class="number">0</span>]*<span class="keyword">offset</span> +tes_normal[<span class="number">1</span>]*<span class="keyword">offset</span> +tes_normal[<span class="number">2</span>]*<span class="keyword">offset</span>;</span><br><span class="line"><span class="built_in">gl_Position</span> = MVP * <span class="type">vec4</span>(position, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>​	效果如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212261544205.png" alt="QQ图片20221226154044" style="zoom:50%;" />
+
+<h5 id="4-修改成ES后出现的问题"><a href="#4-修改成ES后出现的问题" class="headerlink" title="4.修改成ES后出现的问题"></a>4.修改成ES后出现的问题</h5><p>（1）ES的必须3.2版本才能支持细分着色器</p>
+<p>（2）ES的细分着色器TCS和TES间可以传递结构体，但传递的结构体中不能包含数组或者结构体</p>
+<p>（3）ES的细分着色器需要设置精度，如在着色器开头添加precIntision mediump float;但是在添加该行后，就不能用Int类型给之后所有变量赋值</p>
+<p>（4）TCS和TES中不可指定in&#x2F;out数组大小</p>
+<p>（5）TCS中访问当前的控制点只能使用内置变量gl_InvocationID</p>
+<p>（6）ES不支持该函数glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);，因此如果需要用线框绘制，得使用几何着色器</p>
+<p>（7）ES没有内置变量gl_FragColor</p>
+<p><em><a target="_blank" rel="noopener" href="https://blog.csdn.net/whl0071/article/details/127249456">OpenGL 4.0的Tessellation Shader（细分曲面着色器）_opengl4.0_龙行天下01的博客-CSDN博客</a></em></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-封装纹理贴图"
   class="article article-type-post"
   itemscope
@@ -1118,363 +1298,6 @@
 <p>cmake和make时会出现需要配置环境的问题，百度都可以找到，sudo apt install相关配置即可。</p>
 <p>（3)在源文件的文件夹下会出现可执行文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ ./可执行文件名</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY6"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/15/%E6%9D%AD%E5%B7%9E-DAY6/"
-    >杭州-DAY6</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/15/%E6%9D%AD%E5%B7%9E-DAY6/" class="article-date">
-  <time datetime="2022-10-15T15:33:01.000Z" itemprop="datePublished">2022-10-15</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="STATION1-浙江省博物馆"><a href="#STATION1-浙江省博物馆" class="headerlink" title="STATION1-浙江省博物馆"></a>STATION1-浙江省博物馆</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280054166.png" alt="QQ图片20221128005426" style="zoom:25%;" />
-
-<p><strong>路线</strong>：地铁1号线-西湖文化广场站</p>
-<p>最后一天专门买的下午的火车票，为了补一下之前落下的行程浙江省博物馆。之前去西湖的时候在孤山附近其实有一个，但是当时看到它只觉得它小到不觉得它是省博物馆，太没牌面了。后来搜了一下发现，主馆是武林馆（就是第一天去京杭大运河搭船的那一站），浙江省博物馆有10件镇馆之宝，9件在主馆，1件在西湖。所以下面分享一下镇馆之宝以及我个人觉得有意思的藏品。</p>
-<p>先来一张大门</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280058451.jpg" alt="QQ图片20221127235016" style="zoom: 50%;" />
-
-<h5 id="《古物影——黄宾虹古玺印收藏展》"><a href="#《古物影——黄宾虹古玺印收藏展》" class="headerlink" title="《古物影——黄宾虹古玺印收藏展》"></a>《古物影——黄宾虹古玺印收藏展》</h5><table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280118422.jpg" alt="QQ图片20221128011652"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280118079.jpg" alt="QQ图片20221128010310"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>一些科普：黄宾虹不单是大画家，他也是著名的鉴赏家、收藏家。在其逝世后，夫人及子女秉承其遗志，将其遗作、遗物全部捐献国家，由浙江省博物馆保存。在其捐赠的古物中，就有数以千计的古物收藏，囊括书法、绘画和古玺印等。至一九二〇年，黄氏收藏古玺印已达二千余钮。它们陪伴着黄宾虹北上南归，几经波折，最终入藏浙江省博物馆的有九百余钮。</p>
-<p>我：专门将印章作为一个展馆的，我见到的比较少，一般都是和其他物品放一起摆几个的，第一次见到还是在上海博物馆。在这里，除了印章、它的放大图，还有很多黄宾虹有关印学和关于自己收藏的手稿。比较让我惊讶的是居然有秦朝、春秋战国、魏晋南北朝等如此早期的物件；以及黄宾虹将它作为一门学问认真写的手稿。</p>
-<p>一些个人觉得特别（文字&#x2F;形状）的印章</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280111229.jpg" alt="QQ图片20221128010314"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280116657.jpg" alt="QQ图片20221128010320"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280116776.jpg" alt="QQ图片20221128010325"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280111458.jpg" alt="QQ图片20221128010336"></td>
-</tr>
-</tbody></table>
-<p>手稿</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280115638.jpg" alt="QQ图片20221128010330" style="zoom:50%;" />
-
-<h5 id="《非凡的心声——世界非物质文化遗产中的中国古琴》"><a href="#《非凡的心声——世界非物质文化遗产中的中国古琴》" class="headerlink" title="《非凡的心声——世界非物质文化遗产中的中国古琴》"></a>《非凡的心声——世界非物质文化遗产中的中国古琴》</h5><p>先来一点关于古琴的部分知识：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280133108.jpg" alt="QQ图片20221128011711"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280133046.jpg" alt="QQ图片20221128011706"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280135960.jpg" alt="QQ图片20221128011718"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>然后是第一个镇馆之宝唐落霞式”彩凤鸣岐”七弦琴,p1p2是原图，p3是官网官图（较清晰）</p>
-<p>官网复制：</p>
-<p>落霞式**(如果想知道这三个字的意思请看上图)**，面朱红色漆，背褐色漆下露出朱色漆。贝壳徽。长方形龙池凤沼。清九疑山人杨宗稷重修。琴面冰裂断纹和小流水断隐约可见，琴背均冰裂断纹和小流水断纹。龙池两侧有杨宗稷行书鉴定题刻。腹内刻正楷”大唐开元二年雷威制”</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280136033.png" alt="image-20221128013644753" style="zoom:50%;" />
-
-<p>我拍的（还不如看官图）：</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280138800.jpg" alt="QQ图片20221128011722"></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280138632.jpg" alt="QQ图片20221128011728"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">正面</td>
-<td align="center">背面</td>
-</tr>
-</tbody></table>
-<h5 id="《意匠生辉——浙江民间造型艺术》"><a href="#《意匠生辉——浙江民间造型艺术》" class="headerlink" title="《意匠生辉——浙江民间造型艺术》"></a>《意匠生辉——浙江民间造型艺术》</h5><p>  该陈列分为雕塑艺术、剪纸艺术、编织艺术、织染艺术四个单元。每个单元分为若干独立的艺术项目：雕塑艺术有著名的“浙江三雕”（东阳木雕、乐清黄杨木雕、青田石雕）、黄岩翻簧竹雕、瓯塑；剪纸艺术有乐清细纹刻纸、浦江剪纸；编织艺术有东阳竹编、嵊州竹编；织染艺术包括萧山花边、浙南夹缬、桐乡蓝印花布。</p>
-<p>拍了一些非常非常非常精致的工艺品，精致的让我难以想象这是手工。不过关于木雕或许你还记得雷峰塔的白娘子传奇木雕。说实话我看到一些木雕的时候，我当时第一个想法是或许他们的另一个现代化名字叫“手办”（我说的就是那两个长飘带的飞天，其实看到这个我还想到了莫高窟，如果大家今后有机会可以去敦煌看看，亲测不会失望的!）。最后两个是瓯塑，啥意思可以自己搜下，我不太懂…..</p>
-<p>木雕流程</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280155706.jpg" alt="QQ图片20221128015500" style="zoom: 50%;" />
-
-<p>木雕、石雕和瓯塑</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280156335.jpg" alt="QQ图片20221128015457"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280157334.jpg" alt="QQ图片20221128015454"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280157009.jpg" alt="QQ图片20221128015441"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280157990.jpg" alt="QQ图片20221128015444"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280158986.jpg" alt="QQ图片20221128015450"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280159935.jpg" alt="QQ图片20221128015447"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280158091.jpg" alt="QQ图片20221128015435"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280158170.jpg" alt="QQ图片20221128015439"></td>
-</tr>
-</tbody></table>
-<p>竹编(特别是p2的松鼠，细看才能看出细且密的竹丝，远看表面光滑的像木雕)</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280207322.jpg" alt="QQ图片20221128020404"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280207153.jpg" alt="QQ图片20221128020413"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>剪纸（p1是水浒传108将，细看每个人物旁边都有刻名；p2是红楼梦金陵12钗；p3放大看会看见极其细致的几圈不同的花纹。）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280951461.jpg" alt="QQ图片20221128020425"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280952237.jpg" alt="QQ图片20221128020513"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280952382.jpg" alt="QQ图片20221128020503"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>一些布类</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956819.jpg" alt="QQ图片20221128020537"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956772.jpg" alt="QQ图片20221128020530"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956880.jpg" alt="QQ图片20221128020546"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956020.jpg" alt="QQ图片20221128020559"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956829.jpg" alt="QQ图片20221128020542"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956949.jpg" alt="QQ图片20221128020551"></td>
-</tr>
-</tbody></table>
-<h5 id="《十里红妆——宁绍婚俗中的红妆家具》"><a href="#《十里红妆——宁绍婚俗中的红妆家具》" class="headerlink" title="《十里红妆——宁绍婚俗中的红妆家具》"></a>《十里红妆——宁绍婚俗中的红妆家具》</h5><p>​	看到了第二个镇馆之宝，清代的清金箔贴花花轿（万工轿）（据说是一万工时），官网介绍：此轿木质雕花，朱漆铺底饰以金箔贴花，轿上采用圆雕、浮雕、透雕等三种工艺手法进行装饰。轿顶上是锡制的立体形盛开的莲花，轿上雕有250个人物、花鸟虫兽。这顶轿子的结构前后左右对称，雕有24只凤凰，38条龙，54只仙鹤，74只喜鹊，92只狮子和124处石榴百子等。还有一组组圆雕人物，组成的戏曲场景。如《浣纱记》、《天水关》、《铁弓缘》、《水浒传》、《西厢记》、《荆钗记》、《拾玉镯》等。轿子的中段地方还辅以镜片玻璃画，每一幅彩绘画上也都是一个古典名剧片段。此轿子由几百片可拆卸的花板组成，没有特设的轿门。轿子上没有一枚钉子，都用榫卯结构联结。长轿杠二根，朱红漆圆角方杠，通体光素，有双孔。（插杠用），两端阳刻楷书”聚成號大鸿福轿”，短轿杠二根，朱红漆，通体光素，圆角长方杠，横连杠一根，两端楔口，中央阳刻填金彩楷书：”大鸿福”。长杠，592厘米，短杠长219厘米。</p>
-<p>贴图吧，实在震撼（p4是模拟该花轿出嫁队伍）：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011388.jpg" alt="QQ图片20221128101010"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011659.jpg" alt="QQ图片20221128101000"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011180.jpg" alt="QQ图片20221128101007"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011741.jpg" alt="QQ图片20221128101003"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011842.jpg" alt="QQ图片20221128101028"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011806.jpg" alt="QQ图片20221128101015"></td>
-</tr>
-</tbody></table>
-<h5 id="《越地长歌——浙江历史文化陈列》"><a href="#《越地长歌——浙江历史文化陈列》" class="headerlink" title="《越地长歌——浙江历史文化陈列》"></a>《越地长歌——浙江历史文化陈列》</h5><p>因为二层为《钱江潮——浙江现代革命历史陈列》，不是特别感兴趣就跳过去了一楼。时间比较赶所以主要拍了镇馆之宝。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281035663.jpg" alt="QQ图片20221128102242"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281026313.jpg" alt="QQ图片20221128102633"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第三件新石器时代良渚文化玉琮：</p>
-<p>官网介绍：器形呈扁矮的方柱体，内圆外方，上下端为圆面的射，中有对钻圆孔，留有台痕。下端有取料时形成的凹缺。琮体四面由中间的直槽一分为二，又由横槽分为两节，每节再分上下两个组成部分。四面直槽内上下各琢刻一神人兽面纹图像，共八个，用浅浮雕和细线刻两种技法雕琢而成。在分为两节作角尺形的长方形凸面上，以转角为中轴线向两侧展开，每两节琢刻一组简化的象征性的神人兽面纹图案，四角相同，左右对称。这一种人与兽的组合图是良渚文化玉琮纹饰的基本特征。另外，在兽面纹的两侧各雕刻一鸟纹，鸟的头、翼、身均变形夸张。整体纹饰中大量填充卷云纹、直线、弧线，刻画及其繁缛细致。</p>
-<p>p3是我搞错的另一个玉琮，p1是宝物，p2是官网关于纹理的放大图</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281032959.jpg" alt="QQ图片20221128102409"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281143824.png" alt="1"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281032824.jpg" alt="QQ图片20221128102315"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第四件战国伎乐铜房屋模型被借走了，看官网信息叭.</p>
-<p>平面作长方形，三开间，三进深。南面敞开，无墙、门，立圆形明柱两根。东西两面为长方格透空落地式立壁。北墙仅在中心部位开一小窗。四角攒尖顶，顶心立一八角柱，柱顶塑一大尾鸠，柱身中空，但不与屋顶相通。屋下有四阶。屋顶、后墙及四阶均饰勾连回纹，八角柱各面饰S形勾连云纹。室内跪坐六人，束发裸身。二人双手相交于小腹，应是乐伎；其他四人或作吹笙状，或作抚琴弹拨状，或执槌作击拍鼓状，或执小棍作击筑状，当为乐师。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281041582.jpg" alt="4fdd0ec90315477084a6bc5e0f3b6e08"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281041369.jpg" alt="d308806b72a84172852937fc6360b391"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281119930.png" alt="QQ图片20221128111726"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第五件富山春居图，说实话明明是名画，当时找的时候差点错过，很小一段太不起眼了。（哦这段好像还是仿造的）</p>
-<p>百度百科介绍：富春山居图是元代画家<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%BB%84%E5%85%AC%E6%9C%9B/1601756?fromModule=lemma_inlink">黄公望</a>于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/1350%E5%B9%B4/4271036?fromModule=lemma_inlink">1350年</a>创作的纸本<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B0%B4%E5%A2%A8%E7%94%BB/201144?fromModule=lemma_inlink">水墨画</a>，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%AD%E5%9B%BD%E5%8D%81%E5%A4%A7%E4%BC%A0%E4%B8%96%E5%90%8D%E7%94%BB/7671736?fromModule=lemma_inlink">中国十大传世名画</a>之一。黄公望为师弟<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%83%91%E6%A8%97/4042377?fromModule=lemma_inlink">郑樗</a>（无用师）所绘，几经易手，并因“焚画殉葬”而身首两段。前半卷：剩山图，现收藏于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B5%99%E6%B1%9F%E7%9C%81%E5%8D%9A%E7%89%A9%E9%A6%86/1629454?fromModule=lemma_inlink">浙江省博物馆</a>；后半卷：无用师卷，现藏<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8F%B0%E5%8C%97%E6%95%85%E5%AE%AB%E5%8D%9A%E7%89%A9%E9%99%A2/1164?fromModule=lemma_inlink">台北故宫博物院</a>。</p>
-<p>以浙江<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%AF%8C%E6%98%A5%E6%B1%9F/427502?fromModule=lemma_inlink">富春江</a>为背景，画面用墨淡雅，山和水的布置疏密得当，墨色浓淡干湿并用，极富于变化。 富春山居图被誉为“画中之兰亭”，属<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%9B%BD%E5%AE%9D%E7%BA%A7%E6%96%87%E7%89%A9/5579118?fromModule=lemma_inlink">国宝级文物</a>。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281045316.jpg" alt="QQ图片20221128102345"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281045173.jpg" alt="QQ图片20221128102348"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第六件新石器时代河姆渡文化”双鸟朝阳”牙雕，找的时候更不起眼了….</p>
-<p>官网介绍：这是一件”蝶形器”的残件，上半部残缺，底端也稍残。正面中间部位以阴线形式雕刻出一幅寓意深奥的图案：中间为一组由五个大小不等的同心圆构成的太阳纹，外圆上端刻出炽烈的火焰状，以象征着太阳的光芒。两侧各有一振翅欲飞的双鸟。作圆眼、钩喙、伸脖昂首相望之态，器的边缘衬托以羽状纹，线条洗练简洁。鸟的眼和太阳纹中心均以圆锥浅钻而成，更富传神色彩。在图像两侧还对钻有6个小圆孔，以便于捆绑或悬挂之用。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281050768.jpg" alt="QQ图片20221128102338"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281050028.jpg" alt="QQ图片20221128102341"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>穿插一个无意看到的关于西湖十景的命名</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281050728.jpg" alt="QQ图片20221128102352" style="zoom: 50%;" />
-
-<p>第七件战国越王者旨於睗剑。说起来湖北省博物馆的镇馆之宝之一是越王勾践剑，是金色的比这个好看，不过形状大致相同。</p>
-<p>官网介绍：越王者旨於睗剑为铜质，通长52.4厘米，剑体宽阔，中脊起线，双刃呈弧形于近锋处收狭。圆盘形剑首，圆茎上有两凸箍，箍饰变形兽面纹，茎绕丝质缠缑。剑格两面铸双钩鸟虫书铭文，正面为：戉（越）王戉（越）王；反面为：者旨於睗。字口间镶嵌着薄如蝉翼的绿松石，现有部分脱落，脱落处可见红色粘接材料的痕迹。越王者旨於睗剑附有完整的剑鞘，系用两块薄木片粘合而成，外用丝线缠缚加固，再髹以黑漆。</p>
-<p>p4是官图，p2是我拍的乌漆嘛黑的原件。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281054988.jpg" alt="QQ图片20221128102335"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281054706.jpg" alt="QQ图片20221128102414"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281055801.jpg" alt="QQ图片20221128102329"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281055718.jpg" alt="636946489885550482"></td>
-</tr>
-</tbody></table>
-<p>第八件北宋泥塑彩绘观音立像</p>
-<p>官网介绍：高髻华冠,宝缯垂肩.面容端丽,眉目清秀.肩搭石绿色缠枝描金披巾,内着红色菱格纹交领襦衣.袒胸露背,肌肤洁白细腻.项饰璎珞,臂腕着钏,腰束石绿色蜂窝纹描金围裙,下露赭红色锦裙,腰肢微弯呈曲线形.双手纤巧,形体窈窕,婉丽动人.此像为白象塔出土众多彩塑中的精品之一。</p>
-<p>p1是这个，p2p3是另外两个也挺逼真的。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281101906.jpg" alt="QQ图片20221128102359"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281102839.jpg" alt="QQ图片20221128102356"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281102234.jpg" alt="QQ图片20221128102402"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第九件五代十国吴越国鎏金纯银阿育王塔</p>
-<p>官网介绍：由塔座、塔身、山花蕉叶、塔刹等组成，每个部分捶揲成型，整体接合。塔座方形，下有底板，每侧以壸门、小佛像相间装饰。塔身方形，四面镂刻佛本生故事，每面一个，分别为萨埵太子舍身饲虎本生、尸毗王割肉贸鸽本生、快目王舍眼本生及月光王施首本生，外表鎏金，四角各有一只大鹏金翅鸟。塔身的最上层用忍冬及兽面纹作装饰。从塔身镂空处可见里面盛装金质容器（金棺），记载中的”佛螺髻发”应供奉其中，由于塔身没有打开，金棺的形制、大小及内部情况不明。四角的山花蕉叶正面捶揲反映佛祖一生事迹的佛传故事画面共16幅，如无忧树下诞生、尼连河边苦修、鹿野苑里说法等等，背面捶揲佛祖坐禅、说法等形象。塔刹由刹杆、五重相轮和顶部的火焰珠、宝瓶等构成，塔刹的底座装饰十二朵覆莲，五重相轮上饰忍冬、连珠纹，底轮最大，往上渐收。</p>
-<p>p1是镇馆之宝，p2是从雷峰塔发现的（p6）且供奉了舍利，p3特别特别而且上面很多琉璃宝石。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281112860.jpg" alt="QQ图片20221128102425"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281115961.jpg" alt="QQ图片20221128102433"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113544.jpg" alt="QQ图片20221128102449"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113856.jpg" alt="QQ图片20221128102418"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113464.jpg" alt="QQ图片20221128102422"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113553.jpg" alt="QQ图片20221128102429"></td>
-</tr>
-</tbody></table>
-<p>p1是被端正的楷书惊艳到（应该是印刷），p2最初没觉得怎么样，仔细看才发现一圈一圈是用很小的字写的经书。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281106137.jpg" alt="QQ图片20221128102445"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281107973.jpg" alt="QQ图片20221128102436"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281107007.jpg" alt="QQ图片20221128102439"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281107123.jpg" alt="QQ图片20221128102442"></td>
-</tr>
-</tbody></table>
-<p>铜镜很漂亮</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281105588.jpg" alt="QQ图片20221128102452" style="zoom:67%;" />
-
-<p>快逛完的时候看见了这幅地图，我也在上面找到了很多去过的景点。突然想起来在湖滨银泰商业街通往西湖的一条路上，湖边的石板地上用浮雕刻了这幅画。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281104984.jpg" alt="QQ图片20221128102454" style="zoom:67%;" />
-
-<p>对啦，补一张孤山展馆的第十件镇馆之宝</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281155162.jpg" alt="QQ图片20221128115510" style="zoom:67%;" />
-
-<p>走出博物馆就彻底结束这次行程了，纪念一下高安站以及目前行程卡上记录最多的一次：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281115839.jpg" alt="QQ图片20221128102458" style="zoom:67%;" />
-
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281115841.jpg" alt="QQ图片20221128102500" style="zoom:67%;" />
-
-
 
  
       <!-- reward -->
