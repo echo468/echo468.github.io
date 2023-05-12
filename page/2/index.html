@@ -118,6 +118,77 @@
     
     
     <article
+  id="post-延迟渲染"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/"
+    >延迟渲染</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/28/%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93/" class="article-date">
+  <time datetime="2023-01-28T10:58:22.000Z" itemprop="datePublished">2023-01-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="前向渲染"><a href="#前向渲染" class="headerlink" title="前向渲染"></a>前向渲染</h4><p>在VS中对每个物体的顶点做一系列的变换（主要是将顶点位置和法线变换到裁剪空间），然后在FS中对每个像素进行光照计算。由于每个物体上的每个像素只会调用一次FS，因此对于每个FS要传入所有的光源数据并计算每个光源的效果。</p>
+<p>弊端：</p>
+<p>（1）当一个场景非常复杂会有大量的物体以及复杂的深度，每个像素可能被多个物体重叠覆盖，这样会有大量的无效的GPU迭代计算。例如，如果某个像素深度复杂度为4，那么就会有3个像素计算是无效的，因为最后只有最顶部的像素会显示。</p>
+<p>（2）在多光源情景下，例如大量点光源，光源很小照亮的区域也很小，只会照亮场景中的部分物体，但是FS还是会计算每个光源对每个像素的光照影响，即使光源离该像素很远。</p>
+<h4 id="延迟渲染"><a href="#延迟渲染" class="headerlink" title="延迟渲染"></a>延迟渲染</h4><p>​	主要是解决大量光照渲染的方案，延迟渲染的实质是先不要迭代三角形做光照计算，而是先找出来能看到的所有像素，再去迭代光照。直接迭代三角形的话，由于大量三角形是看不到的，无疑是极大的浪费。</p>
+<p>（1）第一个阶段几何pass：正常执行VS但并不是将处理后的属性变量数据继续传递给FS进行光照计算，而是将结果保存到G buffer中。G buffer是一组按照设计格式存储的一组2D贴图，保存着顶点每个属性的数据。将数据分离并一次性写入到不同的贴图中，保存这些贴图的地方是借助于OpenGL的MRT特性支持。由于是在FS中写入属性值进行片段计算，因此G buffer中最终的值是光栅化器对顶点属性执行插值的结果。由于进行了深度测试，因此当几何pass阶段完成时，G缓冲区中的贴图最终保存的将是离相机最近的像素的插值属性值，留在G buffer中的像素都是之后必须要进行光照计算的。</p>
+<p>（2）第二个阶段Lighting Pass：会依次遍历G buffer中的每个像素，从不同的贴图中读取每个像素对应的属性值然后进行光照计算。由于在创建G buffer的时候，经过深度测试除了离相机最近的像素其他的全部被抛弃了，所以现在每个像素对应只会进行一次光照计算。</p>
+<p>在延迟渲染中对于点光源可以计算围绕光源的球体的尺寸（对于spot light聚光灯光源我们则计算光锥体的尺寸）。那个球体表示的是点光源影响的区域，而在球体之外的则会忽视这个光源的影响不进行该光源的光照计算。可以使用一个有少量多边形的粗糙的球体模型，并以光源为中心来进行渲染。VS阶段只需要将position数据变换到裁剪空间而不用干别的。FS阶段只在受光源影响的的相关像素上执行并进行光照计算。</p>
+<h3 id="几何pass"><a href="#几何pass" class="headerlink" title="几何pass"></a>几何pass</h3><h4 id="填充G-buffer"><a href="#填充G-buffer" class="headerlink" title="填充G buffer"></a>填充G buffer</h4><p>​	初始化G缓冲区。首先为顶点属性（位置和法线）和深度缓冲区创建FBO和纹理。然后在执行以下操作的循环中创建纹理的存储区域（不进行初始化），将纹理附加到FBO作为目标。为了进行MRT需要启用对所有两种纹理的写入。通过向glDrawBuffers（）函数提供一个附件位置数组来实现这一点。位置纹理写入GL_COLOR_ATTACHMENT0；法线纹理写入GL_COLOR_ATTACHMENT1。（下面只展示了纹理附件的定义过程）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">2</span>, textures);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; i++) &#123;</span><br><span class="line">		<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, textures[i]);</span><br><span class="line">		<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB32F, <span class="number">1024</span>, <span class="number">1024</span>, <span class="number">0</span>, GL_RGB, GL_FLOAT, <span class="literal">NULL</span>);</span><br><span class="line">		<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i], <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	GLenum DrawBuffers[] = &#123; GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1&#125;;</span><br><span class="line">	<span class="built_in">glDrawBuffers</span>(<span class="number">2</span>, DrawBuffers);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="绘制物体"><a href="#绘制物体" class="headerlink" title="绘制物体"></a>绘制物体</h4><p>绘制完成时，G buffer区将包含最近像素的属性。使用函数glDepthMask（）允许写入深度缓冲区，几何 pass需要深度缓冲区，以便用最接近的像素填充G buffer，而光照pass没有可以写入深度缓冲区的。深度测试限制在几何pass上，在没有竞争的情况下，在光 pass上做深度测试毫无意义。禁用混合，在几何过程中，这是无关紧要的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_DRAW_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line"><span class="built_in">glDepthMask</span>(GL_TRUE);</span><br><span class="line"><span class="built_in">glEnable</span>(GL_DEPTH_TEST);</span><br><span class="line"><span class="built_in">glDisable</span>(GL_BLEND);</span><br><span class="line"><span class="comment">/*绘制物体*/</span></span><br><span class="line"><span class="built_in">glDepthMask</span>(GL_FALSE);</span><br><span class="line"><span class="built_in">glDisable</span>(GL_DEPTH_TEST);<span class="comment">//这两行顺序不能反</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="VS"><a href="#VS" class="headerlink" title="VS"></a>VS</h4><p>简单地执行通常的转换并将需要的结果传递给FS</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in vec3 Normal;</span><br><span class="line">uniform mat4 gWVP;uniform mat4 gWorld;</span><br><span class="line">out vec3 Normal0;out vec3 WorldPos0;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = gWVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">    Normal0 = (gWorld * <span class="built_in">vec4</span>(Normal, <span class="number">0.0</span>)).xyz;</span><br><span class="line">    WorldPos0 = (gWorld * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>)).xyz;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="FS"><a href="#FS" class="headerlink" title="FS"></a>FS</h4><p>负责进行MRT，它不输出单个向量，而是输出多个向量。这些向量中的每一个都指向数组中先前由glDrawBuffers（）设置的相应索引。因此，在每次FS调用中，都会写入G缓冲区的两个纹理。location &#x3D; 0的WorldPosOut写入GL_COLOR_ATTACHMENT0；location &#x3D; 1的NormalOut写入GL_COLOR_ATTACHMENT1。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line">in vec3 Normal0;</span><br><span class="line">in vec3 WorldPos0;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) out vec3 WorldPosOut;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) out vec3 NormalOut;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    WorldPosOut = WorldPos0;</span><br><span class="line">    NormalOut = <span class="built_in">normalize</span>(Normal0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="光照pass"><a href="#光照pass" class="headerlink" title="光照pass"></a>光照pass</h3><h4 id="基本设置"><a href="#基本设置" class="headerlink" title="基本设置"></a>基本设置</h4><p>此处有点光源和平行光两种光源，混合这两种光源类型，因为每个光源都由自己的draw调用处理。在正向渲染中，我们积累了FS中所有光源的结果，但现在每个FS调用只处理一个光源。在我们的例子中，我们将混合方程设置为GL_FUNC_ADD。这意味着GPU只需添加源和目标。因为我们想要真正的加法，所以将源和目标的混合函数设置为gluOne。结果是：1<em>src+1</em>dst。哦，我们需要在做这件事之前启用混合。。。在处理好混合后，我们将G缓冲区设置为读取</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glEnable</span>(GL_BLEND);</span><br><span class="line"><span class="built_in">glBlendEquation</span>(GL_FUNC_ADD);</span><br><span class="line"><span class="built_in">glBlendFunc</span>(GL_ONE, GL_ONE);</span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br></pre></td></tr></table></figure>
+<h4 id="点光源"><a href="#点光源" class="headerlink" title="点光源"></a>点光源</h4> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-三维拾取"
   class="article article-type-post"
   itemscope
@@ -889,92 +960,6 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301031655703.png" alt="image-20230103165513744"></p>
 <p>不使用多级纹理</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301041134459.png" alt="QQ图片20230104113400"></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-TransformFeedback"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/12/30/TransformFeedback/"
-    >TransformFeedback</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/12/30/TransformFeedback/" class="article-date">
-  <time datetime="2022-12-30T07:42:14.000Z" itemprop="datePublished">2022-12-30</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="变换反馈"><a href="#变换反馈" class="headerlink" title="变换反馈"></a>变换反馈</h3><p>将顶点数据发给着色器，变换后从着色器获取数据作为新的顶点数据进行绘制，可以用于绘制粒子及动画效果</p>
-<h4 id="一、shader-cpp文件"><a href="#一、shader-cpp文件" class="headerlink" title="一、shader.cpp文件"></a>一、shader.cpp文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> GLchar* feedbackVaryings[] = &#123; <span class="string">&quot;outposition&quot;</span>,<span class="string">&quot;fragcolor&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">glTransformFeedbackVaryings</span>(ProgramID, <span class="number">2</span>, feedbackVaryings, GL_SEPARATE_ATTRIBS);</span><br></pre></td></tr></table></figure>
-
-<p>这两行代码需要放在glLinkProgram(ProgramID);之前。第一个数组说明了捕获到一个缓冲区中的输出属性（与顶点着色器中需要捕获的out的名字相同）。第二个函数的第一个参数是着色器程序；第二个参数和第三个参数指定了输出名称数组和数组本身的长度，最后一个参数指定了应该如何写入数据。以下两种格式可供选择:</p>
-<p>1.–GL_INTERLEAVED_ATTRIBS:将所有属性写入一个缓冲区对象。</p>
-<p>2.–GL_SEPARATE_ATTRIBS: 将属性写入多个缓冲区对象，或将不同的偏移量写入缓冲区。</p>
-<p>比如一个程序有颜色和顶点两个缓冲区，使用第一个参数只能绑定一个缓冲区，此时想变换颜色和顶点需要把这两组数据写在同一个数组并设置读取的偏移量：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
-
-<p>使用第二个参数就可以将颜色数据和顶点数据分开，将两个缓冲区绑定到trasnformfeedback上：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">1</span>, colorbuffera);</span><br></pre></td></tr></table></figure>
-
-<p>其中第二个参数就是缓冲区索引，绑定两个的话，第一个缓冲区索引是0，第二个是1，可以区分缓冲区。</p>
-<h4 id="二、顶点着色器文件"><a href="#二、顶点着色器文件" class="headerlink" title="二、顶点着色器文件"></a>二、顶点着色器文件</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">in vec4 inposition;</span><br><span class="line">in vec4 color;</span><br><span class="line">out vec4 outposition;</span><br><span class="line">out vec4 fragcolor;<span class="comment">//与feedbackVaryings[]同名</span></span><br><span class="line"><span class="comment">/*在main函数中对inposition和color进行变换*/</span></span><br><span class="line">gl_Position=MVP * inposition;</span><br></pre></td></tr></table></figure>
-
-<p>输入的顶点属性数据inposition经过MVP变换后作为最终的gl_Position数据用来绘制图形；将inposition数据变换后存入outposition写入tf缓冲。（color同理）</p>
-<h4 id="三、应用程序文件"><a href="#三、应用程序文件" class="headerlink" title="三、应用程序文件"></a>三、应用程序文件</h4><p>以GL_INTERLEAVED_ATTRIBS参数为例：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//tf缓冲区只用创建一个</span></span><br><span class="line">GLuint tfbuffera;</span><br><span class="line"><span class="built_in">glGenTransformFeedbacks</span>(<span class="number">1</span>, &amp;tfbuffera);</span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="comment">//给tf缓冲绑定相应的缓冲对象（databuffer用GL_ARRAY_BUFFER类型创建）</span></span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databufferb);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffera);</span><br></pre></td></tr></table></figure>
-
-<p>相同的缓存不能同时作为输入和输出，所以如果想产生连续变换，需要两个缓冲区交换数据。所以需要两个databuffer。第一个buffer绑定data数据用于绘制第一个图形，第二个传递了一个nullptr，以创建一个足够大的缓冲区。（比如粒子系统生成的定点数会越来越多，此处不需要考虑该问题）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), data, GL_DYNAMIC_DRAW);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(data), <span class="literal">nullptr</span>, GL_DYNAMIC_DRAW);</span><br></pre></td></tr></table></figure>
-
-<p>主要代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="built_in">glBindTransformFeedback</span>(GL_TRANSFORM_FEEDBACK, tfbuffera);</span><br><span class="line"><span class="built_in">glBindBufferBase</span>(GL_TRANSFORM_FEEDBACK_BUFFER, <span class="number">0</span>, databuffer[flag]);<span class="comment">//将变换后数据写入databufferb</span></span><br><span class="line"><span class="built_in">glEnable</span>(GL_RASTERIZER_DISCARD);<span class="comment">//此次绘制写入tf缓冲因此不进行绘制，禁用光栅化</span></span><br><span class="line"><span class="built_in">glBeginTransformFeedback</span>(GL_TRIANGLES);<span class="comment">//开启tf缓冲，设置绘制模式与draw相同</span></span><br><span class="line"><span class="comment">//用databuffera也就是最初的数据传入顶点着色器，数据进行第一次变换，但此时不显示，而是写入tf缓冲的databufferb</span></span><br><span class="line"><span class="built_in">glEnableVertexAttribArray</span>(positionID);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[!flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line"><span class="comment">//结束转换反馈模式</span></span><br><span class="line"><span class="built_in">glEndTransformFeedback</span>();</span><br><span class="line"><span class="comment">//使用光栅化，绘制图形</span></span><br><span class="line"><span class="built_in">glDisable</span>(GL_RASTERIZER_DISCARD);</span><br><span class="line"><span class="comment">//使用databufferb第一次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲</span></span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, databuffer[flag]);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>);</span><br><span class="line">flag = !flag;<span class="comment">//进行第二次循环</span></span><br></pre></td></tr></table></figure>
-<p>第二次循环将变换后的数据写入databuffera，将databufferb第一次变换的数据传入顶点着色器，数据进行第二次变换，但此时不显示，而是写入tf缓冲的databuffera。使用databuffera第二次变换的数据绘制图形，因为此使没开启tf缓冲，因此顶点顶点着色器的数据变换不写入缓冲。</p>
-<p>原始数据：-0.1f,0.1f, 0.1f,1.0f,0.1f,0.1f, 0.1f,1.0f</p>
-<p>如下是经过两次循环后tf缓冲中的数据：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021755919.png" alt="image-20230102175536791"></p>
-<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>如下数据每行前四个是顶点坐标数据，后四个是顶点颜色数据：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301021804938.png" alt="image-20230102180412855"></p>
-<p>第五个参数：步长(Stride)，在连续的顶点属性组之间的间隔。上图一行8个数是一个顶点属性，所以步长为8*4&#x3D;32</p>
-<p>第六个参数：使用VBO时是缓冲对象数据存储区的字节偏移量（不使用VBO时是顶点数组指针）</p>
-<p>颜色数据从第五个数据读起，前面有四个顶点坐标数据，因此偏移量为4*4&#x3D;16</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br></pre></td></tr></table></figure>
-
-<p>参考链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/niu2212035673/article/details/79041437">https://blog.csdn.net/niu2212035673/article/details/79041437</a></p>
  
       <!-- reward -->
       
