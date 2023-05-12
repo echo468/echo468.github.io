@@ -118,6 +118,120 @@
     
     
     <article
+  id="post-games101-13-Ray-Tracing1"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/13/games101-13-Ray-Tracing1/"
+    >games101-13-Ray_Tracing</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-date">
+  <time datetime="2023-05-13T05:44:01.000Z" itemprop="datePublished">2023-05-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="光线追踪如何处理全局光照"><a href="#光线追踪如何处理全局光照" class="headerlink" title="光线追踪如何处理全局光照"></a>光线追踪如何处理全局光照</h4><p>​		光栅化不适合处理全局的效果。如软阴影、磨砂材质、间接光照（光反射多次后到达相机）。在之前的光栅化处理中，只考虑光的一次反射，从光源到达着色点再到达相机。光栅化渲染快，常用于实时渲染（每秒超过30帧）</p>
+<p>假设：</p>
+<p>（1）光线沿着直线传播</p>
+<p>（2）光线和光线不会发生碰撞</p>
+<p>（3）光线路径可逆，即从A发出的到B的光线，一定也可以从B发出到A（中途可发生反射和折射）</p>
+<p>​		从人眼或摄像机向近投影平面上的每一个像素点发射一条光线，判断与场景物体的交点。一条光线可能会与不止一个物体相交，但是考虑遮挡关系，只去找最近的交点（相当于进行了深度测试）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121407903.png" alt="image-20230512140740839" style="zoom:67%;" />
+
+<p>​		接着连接该交点和光源，只要判断这条连线之间是否有物体存在就可以知道该交点是否在阴影之中。如果该点不在阴影中，知道该点的法线、相机位置和光源位置，可以计算出该点对应的像素值。遍历所有近投影平面上的像素就能得到一张完整的图像。此时效果与局部光照模型是一样的，只考虑了光一次反射。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121409264.png" alt="image-20230512140905212" style="zoom:67%;" />
+
+<p>​		上一个例子中光线第一个与圆球物体相交，假设该圆球是一个玻璃球，那么便会发生镜面反射。除了镜面反射之外，也存在折射，同时反射与折射出去的光线可能与场景中的物体再次碰撞，发生第二次折射与反射。下图以两个光线，以两次折射或反射的部分光线为例。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121413323.png" alt="image-20230512141359281" style="zoom:67%;" />
+
+<p>​		此时每一个像素的颜色贡献来自直接光照，反射方向间接光，折射方向间接光（如果有折射的话）。下一步将这些所有交点（上图中4个交点）与光源连接，计算这些所有点的局部光照模型的结果（被遮挡就不用计算），将其按照光线能量权重累加(光在传播过程中会有损失，如果不添加权值最后会发生曝光)，最终得到近投影平面上该像素点的颜色。这是一个全局光照模型，不仅仅考虑了直接光源的贡献，还考虑各种折射与反射光线的贡献。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121414958.png" alt="image-20230512141440915" style="zoom:67%;" />
+
+<p>​		上图中的光线分成三种类别，相机到物体为primary ray；中间反射和折射的蓝线为secondary  ray；最后交点与光源的连线为shadow ray，因为要考虑遮挡。</p>
+<h4 id="如何判断光线与物体的交点"><a href="#如何判断光线与物体的交点" class="headerlink" title="如何判断光线与物体的交点"></a>如何判断光线与物体的交点</h4><h5 id="光线与隐式几何求交"><a href="#光线与隐式几何求交" class="headerlink" title="光线与隐式几何求交"></a>光线与隐式几何求交</h5><p>​		通过光源位置O和光线方向d定义一条光线（光线是射线）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121420925.png" alt="image-20230512142046886" style="zoom: 50%;" />
+
+<p>​		光线与球求交，t值对应的点需要满足两个表达式：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424656.png" alt="image-20230512142416606" style="zoom: 67%;" />
+
+<p>​		光线与球求交可能会没有交点、有一个交点或者有两个交点。在有两个交点的情况下，取更小的t值。（t必须是实数且为非负数）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424151.png" alt="image-20230512142454099" style="zoom: 50%;" />
+
+<p>​		对于光线与隐式表面的交点，只要将光线方程代入求解 t 即可：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121502542.png" alt="image-20230512150218495" style="zoom:67%;" />
+
+<h5 id="光线与显示几何求交"><a href="#光线与显示几何求交" class="headerlink" title="光线与显示几何求交"></a>光线与显示几何求交</h5><p>​		对于显示表面，最重要的是判断光线如何与三角形求交（只考虑0&#x2F;1个交点）。如下图可以将该光线与所有三角形面求交，找到最小的t值。对于多个像素（多条光线）都与所有面计算，计算量相当大。总计算量为像素数（一个像素一个光线）✖三角形面。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121507126.png" alt="image-20230512150709077" style="zoom:67%;" />
+
+<p>​		判断光线与三角形所在平面是否有交点，如果有交点再判断该点是否在三角形内部。</p>
+<p>​		首先通过一个点和法线定义一个平面。如果任意一点和该点的连线与法线垂直，则说明该点在平面上。将p和n用xyz定义，展开后如右式。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121515786.png" alt="image-20230512151503743" style="zoom:67%;" />
+
+<p>​		得到参数 t 之后，可以计算出交点，并且再去计算出重心坐标就能判断该交点是否在三角形内。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520092.png" alt="image-20230512152052037" style="zoom: 50%;" />
+
+<p>​		如下方法直接判断光线在三角形内部是否有交点。假设该点在三角形内，则可以通过重心坐标表示。通过如下方法解出t,b1,b2。如果t,b1,b2,1-b1-b2都是非负数，则该点在三角形内部。</p>
+<p>​		<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520552.png" alt="image-20230512152025494" style="zoom: 50%;" /></p>
+<h5 id="光线与包围盒求交"><a href="#光线与包围盒求交" class="headerlink" title="光线与包围盒求交"></a>光线与包围盒求交</h5><p>​		使用包围盒加速光线与物体求交。三维空间常用的包围盒是AABB包围盒，即一个长方体。包围盒是由3个对面形成的交集。以二维为例，计算出光线进入两个对面的时间，和光线出两个对面的时间。将第一幅图和第二幅图的线段做交集。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121549035.png" alt="image-20230512154907983" style="zoom:67%;" />
+
+<p>​		对于三维场景来说，光线进入一个盒子，就说明三个对面都要满足光线已经进入（对所有的进入时间tmin取最大值）；光线离开一个盒子，只要满足光线离开任意一个对面（对所有的离开时间tmax取最小值）。如果进入时间小于离开时间，光线一定会在盒子中停留一段时间，即有交点。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121559857.png" alt="image-20230512155903819" style="zoom: 67%;" />
+
+<p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
+
+<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121642550.png" alt="image-20230512164222503" style="zoom: 67%;" /></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121643720.png" alt="image-20230512164312676" style="zoom:67%;" /></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121652618.png" alt="image-20230512165258572" style="zoom:67%;" /></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games101-12-Geometry3"
   class="article article-type-post"
   itemscope
@@ -1240,139 +1354,6 @@ XConfigureWindow(display, win, mask, &amp;changes);
 
 <p>两个模型的姿态角度始终保持一样。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    mesh.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);<span class="comment">// mesh旋转动画</span></span><br><span class="line">    <span class="comment">// 同步mesh2和mesh的姿态角度一样，不管mesh姿态角度怎么变化，mesh2始终保持同步</span></span><br><span class="line">    mesh2.<span class="property">rotation</span>.<span class="title function_">copy</span>(mesh.<span class="property">rotation</span>);</span><br><span class="line">    renderer.<span class="title function_">render</span>(scene, camera);</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">render</span>();</span><br></pre></td></tr></table></figure> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-几何体BufferGeometry"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/"
-    >几何体BufferGeometry</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/02/05/%E5%87%A0%E4%BD%95%E4%BD%93BufferGeometry/" class="article-date">
-  <time datetime="2023-02-05T07:19:37.000Z" itemprop="datePublished">2023-02-05</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/three-js/">three.js</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="通过BufferGeometry自定义任何几何形状"><a href="#通过BufferGeometry自定义任何几何形状" class="headerlink" title="通过BufferGeometry自定义任何几何形状"></a>通过BufferGeometry自定义任何几何形状</h4><p>Three.js的长方体<code>BoxGeometry</code>、球体<code>SphereGeometry</code>等几何体都是基于<code>BufferGeometry</code>类构建的，<code>BufferGeometry</code>是一个没有任何形状的空几何体，你可以通过<code>BufferGeometry</code>自定义任何几何形状，具体一点说就是定义顶点数据。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferGeometry</span>(); </span><br></pre></td></tr></table></figure>
-
-<p>定义顶点坐标。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vertices = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">  <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">  <span class="number">0</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>, </span><br><span class="line">  <span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>, <span class="number">50</span>, <span class="number">0</span>, <span class="number">10</span></span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
-
-<p>属性缓冲区对象<code>BufferAttribute</code>表示Three.js几何体顶点数据（顶点坐标3个为一组）。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> attribue = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferAttribute</span>(vertices, <span class="number">3</span>); </span><br></pre></td></tr></table></figure>
-
-<p>设置几何体顶点位置属性的值。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geometry.<span class="property">attributes</span>.<span class="property">position</span> = attribue；</span><br></pre></td></tr></table></figure>
-
-<h4 id="点模型"><a href="#点模型" class="headerlink" title="点模型"></a>点模型</h4><p>设置点模型的材质。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PointsMaterial</span>(&#123;</span><br><span class="line">  <span class="attr">color</span>: <span class="number">0xffff00</span>,</span><br><span class="line">  <span class="attr">size</span>: <span class="number">10.0</span><span class="comment">//点对象像素尺寸</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>几何体geometry作为点模型<code>Points</code>参数，会把几何体渲染为点。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> points = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Points</span>(geometry, material);</span><br></pre></td></tr></table></figure>
-
-<h4 id="线模型"><a href="#线模型" class="headerlink" title="线模型"></a>线模型</h4><p>设置线模型的材质。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">LineBasicMaterial</span>(&#123;</span><br><span class="line">  <span class="attr">color</span>: <span class="number">0xffff00</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>几何体geometry作为线模型参数，会把几何体渲染为线。</p>
-<p>（1）渲染效果是从第一个点开始到最后一个点，依次连成线。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> line = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Line</span>(geometry, material);</span><br></pre></td></tr></table></figure>
-
-<p>（2）渲染效果是从第一个点开始到最后一个点，依次连成线；最后一个点再与第一个点连线使图形封口。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> line = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">LineLoop</span>(geometry, material);</span><br></pre></td></tr></table></figure>
-
-<p>（3）渲染效果是每两个点连接成一条线，已经连线的点不会再与其他点连线。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> line = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">LineSegments</span>(geometry, material);</span><br></pre></td></tr></table></figure>
-
-<h4 id="网格模型构建矩形平面"><a href="#网格模型构建矩形平面" class="headerlink" title="网格模型构建矩形平面"></a>网格模型构建矩形平面</h4><p>网格模型Mesh其实就一个一个三角形(面)拼接构成。使用使用网格模型Mesh渲染几何体geometry，就是几何体所有顶点坐标三个为一组，构成一个三角形，多组顶点构成多个三角形，就可以用来模拟表示物体的表面。</p>
-<ul>
-<li>正面：逆时针</li>
-<li>反面：顺时针</li>
-</ul>
-<p>空间中一个三角形有正反两面，相机对着三角形的一个面，如果三个顶点的顺序是逆时针方向，该面视为正面，如果三个顶点的顺序是顺时针方向，该面视为反面。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshLambertMaterial</span>(&#123;</span><br><span class="line">  <span class="attr">color</span>: <span class="number">0xffff00</span>,</span><br><span class="line">  <span class="attr">side</span>:<span class="variable constant_">THREE</span>.<span class="property">DoubleSide</span>,<span class="comment">//双面显示</span></span><br><span class="line">  <span class="comment">//side:THREE.FrontSide//显示正面</span></span><br><span class="line">  <span class="comment">//side:THREE.BackSide//显示反面</span></span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>一个矩形平面，可以至少通过两个三角形拼接而成。而且两个三角形有两个顶点的坐标是重合的。注意三角形的正反面问题：保证矩形平面两个三角形的正面是一样的，也就是从一个方向观察，两个三角形都是逆时针或顺时针。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vertices = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">  <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>, </span><br><span class="line">  <span class="number">80</span>, <span class="number">80</span>, <span class="number">0</span>,<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, </span><br><span class="line">  <span class="number">80</span>, <span class="number">80</span>, <span class="number">0</span>,<span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span></span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
-
-<p>使用<code>THREE.MeshLambertMaterial</code>设置网格模型材质，最后使用<code>THREE.Mesh</code>将几何体渲染成网格模型面。</p>
-<h4 id="几何体顶点索引数据"><a href="#几何体顶点索引数据" class="headerlink" title="几何体顶点索引数据"></a>几何体顶点索引数据</h4><p>如果几何体有顶点索引<code>geometry.index</code>，那么可以三角形重复的顶点位置坐标删除。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vertices = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">    <span class="number">80</span>, <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">80</span>, <span class="number">0</span> </span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
-
-<p>通过javascript类型化数组<code>Uint16Array</code>创建顶点索引数据。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> indexes = <span class="keyword">new</span> <span class="title class_">Uint16Array</span>([</span><br><span class="line">    <span class="comment">//索引值对应顶点位置数据中的顶点坐标</span></span><br><span class="line">    <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>,</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-
-<p>除了设置几何体顶点位置属性的值，还需要通过Three.js的属性缓冲区对象<code>BufferAttribute</code>表示几何体顶点索引数据。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geometry.<span class="property">index</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferAttribute</span>(indexes, <span class="number">1</span>); <span class="comment">//1个为一组</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="顶点法线数据"><a href="#顶点法线数据" class="headerlink" title="顶点法线数据"></a>顶点法线数据</h4><p>使用<code>MeshLambertMaterial</code>材质(受光照影响的材质），几何体<code>BufferGeometry</code>需要定义顶点法线数据。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 矩形平面，无索引，两个三角形，6个顶点(如果有索引可以定义四个法线顶点)</span></span><br><span class="line"><span class="comment">// 每个顶点的法线数据和顶点位置数据一一对应</span></span><br><span class="line"><span class="keyword">const</span> normals = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, </span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>,</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>，<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span></span><br><span class="line">]);</span><br><span class="line"><span class="comment">// 设置几何体的顶点法线属性</span></span><br><span class="line">geometry.<span class="property">attributes</span>.<span class="property">normal</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BufferAttribute</span>(normals, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="查看Threejs自带几何体顶点"><a href="#查看Threejs自带几何体顶点" class="headerlink" title="查看Threejs自带几何体顶点"></a>查看Threejs自带几何体顶点</h4><p>Three.js提供的矩形平面<code>PlaneGeometry</code>、长方体<code>BoxGeometry</code>、球体<code>SphereGeometry</code>等各种形状的几何体，他们都有一个共同的父类<code>BufferGeometry</code>。</p>
-<p>可以用顶点索引index数据构建几何体，也可以不用，three.js默认的大部分几何体都有三角形的顶点索引数据，具体可以通过浏览器控制台打印几何体数据查看。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>); <span class="comment">//矩形平面几何体</span></span><br><span class="line"><span class="comment">// const geometry = new THREE.BoxGeometry(50,50,50); //长方体</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;几何体&#x27;</span>,geometry);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;顶点位置数据&#x27;</span>,geometry.<span class="property">attributes</span>.<span class="property">position</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;顶点索引数据&#x27;</span>,geometry.<span class="property">index</span>);</span><br></pre></td></tr></table></figure>
-
-<p>线条模式渲染，查看几何体三角形结构。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> material = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshLambertMaterial</span>(&#123;</span><br><span class="line">    <span class="attr">color</span>: <span class="number">0x00ffff</span>, </span><br><span class="line">    <span class="attr">wireframe</span>:<span class="literal">true</span>,<span class="comment">//线条模式渲染mesh对应的三角形数据</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>Three.js很多几何体都提供了细分数相关的参数，这里以矩形平面几何体<code>PlaneGeometry</code>为例，矩形平面几何体至少需要两个三角形拼接而成。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//矩形几何体PlaneGeometry的参数3,4表示细分数，默认是1,1</span></span><br><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<p>把一个矩形分为2份，每个矩形2个三角形，总共就是4个三角形。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>,<span class="number">2</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<p>把一个矩形分为4份，每个矩形2个三角形，总共就是8个三角形。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">50</span>,<span class="number">2</span>,<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-
-<p>球体<code>SphereGeometry</code>参数2、3分别代表宽、高度两个方向上的细分数，默认32,16。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">SphereGeometry</span>( <span class="number">50</span>, <span class="number">32</span>, <span class="number">16</span> );</span><br></pre></td></tr></table></figure>
-
-<p>如果球体细分数比较低，表面就不会那么光滑。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> geometry = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">SphereGeometry</span>( <span class="number">15</span>, <span class="number">8</span>, <span class="number">8</span> );</span><br></pre></td></tr></table></figure>
-
-<p>对于一个曲面而言，细分数越大，表面越光滑，但是三角形和顶点数量却越多。几何体三角形数量或者说顶点数量直接影响Three.js的渲染性能，在不影响渲染效果的情况下，一般尽量越少越好。</p>
-<h4 id="旋转、缩放、平移几何体"><a href="#旋转、缩放、平移几何体" class="headerlink" title="旋转、缩放、平移几何体"></a>旋转、缩放、平移几何体</h4><p><code>BufferGeometry</code>通过<code>.scale()</code>、<code>.translate()</code>、<code>.rotateX()</code>、<code>.rotateY()</code>、<code>.rotateZ()</code>等方法可以对几何体本身进行缩放、平移、旋转,这些方法本质上都是改变几何体的顶点数据。（与Object3D的函数区分，此处函数的任何变化都是在局部坐标系中进行的，而局部坐标系原点的位置是通过模型的position属性定义的，Object3D的相关函数本质改变的是position属性）。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//缩放</span></span><br><span class="line">geometry.<span class="title function_">scale</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line"><span class="comment">//平移</span></span><br><span class="line">geometry.<span class="title function_">translate</span>(<span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//旋转</span></span><br><span class="line">geometry.<span class="title function_">rotateX</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">4</span>);</span><br><span class="line">geometry.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">4</span>);</span><br><span class="line">geometry.<span class="title function_">rotateZ</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">4</span>);</span><br><span class="line"><span class="comment">// 居中：已经偏移的几何体居中，执行.center()，可以看到几何体重新与坐标原点重合</span></span><br><span class="line">geometry.<span class="title function_">center</span>();</span><br></pre></td></tr></table></figure>
-
-<p>如下图通过<code>mesh.position.set(50,50,0);</code>将局部坐标系的中心设置在了世界坐标系x&#x3D;50,y&#x3D;50的地方，接下来用<code>geometry.rotateX(Math.PI/2);geometry.translate(50,0,0);</code>将物体相对于局部坐标系向x轴平移50，并且绕x轴旋转90°。可以看到物体中心相对于局部坐标系原点发生了改变，但是局部坐标系原点相对于世界坐标的原点的位置并没有发生改变。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052237626.png" alt="image-20230205223715553"></p>
- 
       <!-- reward -->
       
     </div>

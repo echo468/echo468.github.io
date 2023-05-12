@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-12-Geometry3 |  Hexo
+    games101-13-Ray_Tracing |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-12-Geometry3"
+  id="post-games101-13-Ray-Tracing1"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-12-Geometry3
+  games101-13-Ray_Tracing
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/12/games101-12-Geometry3/" class="article-date">
-  <time datetime="2023-05-12T10:44:12.000Z" itemprop="datePublished">2023-05-12</time>
+      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-date">
+  <time datetime="2023-05-13T05:44:01.000Z" itemprop="datePublished">2023-05-13</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">1.5k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">4 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -109,75 +109,71 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="细分"><a href="#细分" class="headerlink" title="细分"></a>细分</h4><p>​		分出更多的三角形，并且让三角形的位置发生变化，使得原来的模型边的更加精细。所以细分分为两个步骤：增加顶点（面）和对点的位置进行调整。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111940872.png" alt="image-20230511194013793" style="zoom:67%;" />
+  <h4 id="光线追踪如何处理全局光照"><a href="#光线追踪如何处理全局光照" class="headerlink" title="光线追踪如何处理全局光照"></a>光线追踪如何处理全局光照</h4><p>​		光栅化不适合处理全局的效果。如软阴影、磨砂材质、间接光照（光反射多次后到达相机）。在之前的光栅化处理中，只考虑光的一次反射，从光源到达着色点再到达相机。光栅化渲染快，常用于实时渲染（每秒超过30帧）</p>
+<p>假设：</p>
+<p>（1）光线沿着直线传播</p>
+<p>（2）光线和光线不会发生碰撞</p>
+<p>（3）光线路径可逆，即从A发出的到B的光线，一定也可以从B发出到A（中途可发生反射和折射）</p>
+<p>​		从人眼或摄像机向近投影平面上的每一个像素点发射一条光线，判断与场景物体的交点。一条光线可能会与不止一个物体相交，但是考虑遮挡关系，只去找最近的交点（相当于进行了深度测试）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121407903.png" alt="image-20230512140740839" style="zoom:67%;" />
 
-<h5 id="Loop细分"><a href="#Loop细分" class="headerlink" title="Loop细分"></a>Loop细分</h5><p>​		取三角形三条边的中点，用三个中点组成新的三角形，原来的三角形会被细分成四个三角形。以不同的规则调整旧顶点和新生成顶点的位置。如下对于一个新生成的点，且该点所在的边被两个三角形共享，按照如下公式进行加权计算，使得顶点位置改变后，表面相对平滑。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111945734.png" alt="image-20230511194542678" style="zoom: 67%;" />
+<p>​		接着连接该交点和光源，只要判断这条连线之间是否有物体存在就可以知道该交点是否在阴影之中。如果该点不在阴影中，知道该点的法线、相机位置和光源位置，可以计算出该点对应的像素值。遍历所有近投影平面上的像素就能得到一张完整的图像。此时效果与局部光照模型是一样的，只考虑了光一次反射。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121409264.png" alt="image-20230512140905212" style="zoom:67%;" />
 
-<p>​		对于旧的顶点，一个旧顶点可能被多个三角形共享。按照如下公式利用权值、自己的顶点坐标和周围相邻的顶点坐标进行加权计算，如果周围相邻的点多，受周围点的影响就更大。其中n是该点的度，就是该点连接了几条边，u的取值受n值影响。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111946343.png" alt="image-20230511194635296" style="zoom:67%;" />
+<p>​		上一个例子中光线第一个与圆球物体相交，假设该圆球是一个玻璃球，那么便会发生镜面反射。除了镜面反射之外，也存在折射，同时反射与折射出去的光线可能与场景中的物体再次碰撞，发生第二次折射与反射。下图以两个光线，以两次折射或反射的部分光线为例。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121413323.png" alt="image-20230512141359281" style="zoom:67%;" />
 
-<p>​		Loop细分结果如下，注意该方法只能对三角形网格进行细分，如果对四边形网格，需要其他的细分方法：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111952456.png" alt="image-20230511195211382" style="zoom:67%;" />
+<p>​		此时每一个像素的颜色贡献来自直接光照，反射方向间接光，折射方向间接光（如果有折射的话）。下一步将这些所有交点（上图中4个交点）与光源连接，计算这些所有点的局部光照模型的结果（被遮挡就不用计算），将其按照光线能量权重累加(光在传播过程中会有损失，如果不添加权值最后会发生曝光)，最终得到近投影平面上该像素点的颜色。这是一个全局光照模型，不仅仅考虑了直接光源的贡献，还考虑各种折射与反射光线的贡献。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121414958.png" alt="image-20230512141440915" style="zoom:67%;" />
 
-<h5 id="Catmull-Clark细分"><a href="#Catmull-Clark细分" class="headerlink" title="Catmull-Clark细分"></a>Catmull-Clark细分</h5><p>​		定义四边形面（quad face)和非四边形面（Non-quad face）</p>
-<p>​		奇异点：度不为4点</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112020896.png" alt="image-20230511202020854" style="zoom: 50%;" />
+<p>​		上图中的光线分成三种类别，相机到物体为primary ray；中间反射和折射的蓝线为secondary  ray；最后交点与光源的连线为shadow ray，因为要考虑遮挡。</p>
+<h4 id="如何判断光线与物体的交点"><a href="#如何判断光线与物体的交点" class="headerlink" title="如何判断光线与物体的交点"></a>如何判断光线与物体的交点</h4><h5 id="光线与隐式几何求交"><a href="#光线与隐式几何求交" class="headerlink" title="光线与隐式几何求交"></a>光线与隐式几何求交</h5><p>​		通过光源位置O和光线方向d定义一条光线（光线是射线）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121420925.png" alt="image-20230512142046886" style="zoom: 50%;" />
 
-<p>​		取每个面的中点，以及网格面每个边的中点，连接这些中点。如下图所示，现在图中有4个奇异点。只要原来的面不是四边形面，新增的点一定是奇异点。第一次细分，每个非四边形面会引入一个新的奇异点，但是非四边形面会消失，也就是不会再增加奇异点。</p>
+<p>​		光线与球求交，t值对应的点需要满足两个表达式：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424656.png" alt="image-20230512142416606" style="zoom: 67%;" />
+
+<p>​		光线与球求交可能会没有交点、有一个交点或者有两个交点。在有两个交点的情况下，取更小的t值。（t必须是实数且为非负数）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424151.png" alt="image-20230512142454099" style="zoom: 50%;" />
+
+<p>​		对于光线与隐式表面的交点，只要将光线方程代入求解 t 即可：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121502542.png" alt="image-20230512150218495" style="zoom:67%;" />
+
+<h5 id="光线与显示几何求交"><a href="#光线与显示几何求交" class="headerlink" title="光线与显示几何求交"></a>光线与显示几何求交</h5><p>​		对于显示表面，最重要的是判断光线如何与三角形求交（只考虑0&#x2F;1个交点）。如下图可以将该光线与所有三角形面求交，找到最小的t值。对于多个像素（多条光线）都与所有面计算，计算量相当大。总计算量为像素数（一个像素一个光线）✖三角形面。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121507126.png" alt="image-20230512150709077" style="zoom:67%;" />
+
+<p>​		判断光线与三角形所在平面是否有交点，如果有交点再判断该点是否在三角形内部。</p>
+<p>​		首先通过一个点和法线定义一个平面。如果任意一点和该点的连线与法线垂直，则说明该点在平面上。将p和n用xyz定义，展开后如右式。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121515786.png" alt="image-20230512151503743" style="zoom:67%;" />
+
+<p>​		得到参数 t 之后，可以计算出交点，并且再去计算出重心坐标就能判断该交点是否在三角形内。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520092.png" alt="image-20230512152052037" style="zoom: 50%;" />
+
+<p>​		如下方法直接判断光线在三角形内部是否有交点。假设该点在三角形内，则可以通过重心坐标表示。通过如下方法解出t,b1,b2。如果t,b1,b2,1-b1-b2都是非负数，则该点在三角形内部。</p>
+<p>​		<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520552.png" alt="image-20230512152025494" style="zoom: 50%;" /></p>
+<h5 id="光线与包围盒求交"><a href="#光线与包围盒求交" class="headerlink" title="光线与包围盒求交"></a>光线与包围盒求交</h5><p>​		使用包围盒加速光线与物体求交。三维空间常用的包围盒是AABB包围盒，即一个长方体。包围盒是由3个对面形成的交集。以二维为例，计算出光线进入两个对面的时间，和光线出两个对面的时间。将第一幅图和第二幅图的线段做交集。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121549035.png" alt="image-20230512154907983" style="zoom:67%;" />
+
+<p>​		对于三维场景来说，光线进入一个盒子，就说明三个对面都要满足光线已经进入（对所有的进入时间tmin取最大值）；光线离开一个盒子，只要满足光线离开任意一个对面（对所有的离开时间tmax取最小值）。如果进入时间小于离开时间，光线一定会在盒子中停留一段时间，即有交点。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121559857.png" alt="image-20230512155903819" style="zoom: 67%;" />
+
+<p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
+
+<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
 <table>
 <thead>
 <tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112023594.png" alt="image-20230511202351551" style="zoom: 50%;" /></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030671.png" alt="image-20230511203019621" style="zoom: 50%;" /></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121642550.png" alt="image-20230512164222503" style="zoom: 67%;" /></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121643720.png" alt="image-20230512164312676" style="zoom:67%;" /></th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030336.png" alt="image-20230511203041212" style="zoom:50%;" /></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121652618.png" alt="image-20230512165258572" style="zoom:67%;" /></td>
 <td align="center"></td>
 </tr>
 </tbody></table>
-<p>​		用如下方法对新增的点和旧的点进行调整，使得表面相对平滑：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112034363.png" alt="image-20230511203420316" style="zoom: 67%;" />
-
-<h4 id="简化"><a href="#简化" class="headerlink" title="简化"></a>简化</h4><p>1.为了提升性能，节省空间，需要使用更简化的模型。</p>
-<p>2.根据场景决定模型的精细程度，比如对于远距离的物体，可以简化模型（类似Mipmap，但是几何的层次结构，以及不同层次结构之间的过度很难）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112044769.png" alt="image-20230511204425706" style="zoom:67%;" />
-
-<p>​		一种简化方法，边坍缩,如下图将一条边连接的两个顶点变成一个顶点，然后该边就不存在了。但随之而来的问题就是，曲面简化需要尽量保持原本模型的大致形状，如何坍缩一条边，或者说坍缩哪一条边能够使得原模型样貌被改变的程度最小，这就是曲面简化的关键所在。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112050293.png" alt="image-20230511205051245" style="zoom: 67%;" />
-
-<p>​		如左图，将上面两条边坍塌成一个点，如果将该点的坐标用五个顶点或者上面三个顶点的进行平均，得到的结果会比原来的形状小一圈。为此引入一个度量，即二次误差度量(Quadric Error Metrics)。即计算坍缩之后蓝色新顶点所在的位置与原来各个平面的垂直距离的平方和。如果能够使得这个误差最小那么对整个模型样貌修改一定程度上也会较小。误差最小的位置就是最后新顶点的位置。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112054659.png" alt="image-20230511205433625"></p>
-<p>​		对于整个物体，坍缩流程如下，通过局部最优解得到全局最优解：</p>
-<p>（1）为模型每条边赋值，其值为坍缩这条边之后，代替两个老顶点的新顶点所能得到的最小二次误差度量</p>
-<p>（2）选取权值最小的边做坍缩，新顶点位置为原来计算得出使得二次误差最小的位置</p>
-<p>（3） 坍缩完之后，与之相连其他的边的位置会改动，更新这些边的权值</p>
-<p>（4）重复上述步骤，直到到达终止条件</p>
-<h4 id="阴影贴图Shadow-Mapping"><a href="#阴影贴图Shadow-Mapping" class="headerlink" title="阴影贴图Shadow Mapping"></a>阴影贴图Shadow Mapping</h4><p>​		光栅化不能很好的处理全局光照，例如阴影。光栅化具有局部性，只考虑着色点和光源、相机的关系，而不考虑该点是否被遮挡，在阴影内（相对于光源被遮挡，但是相机可以看见）。Shadow Mapping在光栅化的情况下处理阴影，但只能处理点光源。并且生成的阴影具有明显边界，一个点在阴影中&#x2F;不在阴影中。</p>
-<p>​		如果一个点不在阴影内，说明相机可以看到该点，光源也可以看到该点。一个点在阴影内，说明相机可以看到该点，光源不能看到该点。</p>
-<p>​		首先从光源看向场景，根据深度测试的思想记录每个像素最前的深度。如下图是从光源的角度看场景：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331421.png" alt="image-20230511233126307" style="zoom:67%;" />
-
-<p>​		如下图是生成的shadow maps，即光源视角的Z-buffer，但是是存在一张纹理图中：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331418.png" alt="image-20230511233142306" style="zoom:67%;" />
-
-<p>​		从设定好的相机位置看向场景。将所有摄像机视角可见点，计算与光源的距离。再找到该点对应的shadow mapping上记录的深度值，如果二者相等，则表明该点能被相机和光源同时看到，不在阴影中，反之在阴影中。</p>
-<table>
-<thead>
-<tr>
-<th align="center">在阴影中</th>
-<th align="center">不在阴影中</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112328210.png" alt="image-20230511232856119" style="zoom: 67%;" /></td>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112326631.png" alt="image-20230511232651546" style="zoom:67%;" /></td>
-</tr>
-</tbody></table>
-<p>问题：如浮点数难以判断相等，会出现精度问题 ;该方法只适合点光源，生成硬阴影。在光源有一定大小，会存在软阴影。光源具有体积，导致有的地方完全看不到光源(本影, Umbra), 有的地方能看到一部分光源(半影，Penumbra)。所以阴影的边缘会有过渡的情况，从而产生软阴影现象。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112341363.png" alt="image-20230511234128954" style="zoom: 33%;" /> 
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -243,7 +239,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/games101-12-Geometry3/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/13/games101-13-Ray-Tracing1/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -254,19 +250,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            games101-13-Ray_Tracing
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/11/games101-11-Geometry2/" class="article-nav-link">
+      <a href="/2023/05/12/games101-12-Geometry3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-11-Geometry2</div>
+        <div class="article-nav-title">games101-12-Geometry3</div>
       </a>
     
   </nav>
