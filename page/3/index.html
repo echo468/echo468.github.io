@@ -118,6 +118,83 @@
     
     
     <article
+  id="post-采样器采样数据"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/"
+    >采样器采样数据</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/" class="article-date">
+  <time datetime="2023-01-05T00:44:47.000Z" itemprop="datePublished">2023-01-05</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="纹理"><a href="#纹理" class="headerlink" title="纹理"></a>纹理</h4><p>​	纹理是一个2D图片（甚至也有1D和3D的纹理），可以用来添加物体的细节。因此可以在一张图片上插入非常多的细节，这样就可以让物体非常精细而不用指定额外的顶点。<u>除了图像以外，纹理也可以被用来储存大量的数据，这些数据可以发送到着色器上。</u>纹理采样的本质是利用采样器读取数据，所读取的数据不一定是作为纹理渲染。</p>
+<h4 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h4><p>​	为了能够把纹理映射到三角形上，需要指定三角形的每个顶点各自对应纹理的哪个部分。这样每个顶点就会关联着一个纹理坐标(UV坐标)，用来标明该从纹理图像的哪个部分采样。之后在图形的其它片段上进行片段插值。纹理坐标在x和y轴上，范围为0到1之间（2D）。使用纹理坐标获取纹理颜色叫做采样。纹理坐标起始于(0, 0)，也就是纹理图片的左下角，终始于(1, 1)，即纹理图片的右上角。下面的图片展示了如何把纹理坐标映射到三角形上的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301050854550.png" alt="image-20230105085456442"></p>
+<h4 id="纹理单元"><a href="#纹理单元" class="headerlink" title="纹理单元"></a>纹理单元</h4><p>一个纹理的位置值通常称为一个纹理单元。一个纹理的默认纹理单元是0，它是默认的激活纹理单元。纹理单元的主要目的是让我们在着色器中可以使用多于一个的纹理。通过把纹理单元赋值给采样器，可以一次绑定多个纹理，只要我们首先激活对应的纹理单元。激活纹理单元之后，接下来绑定这个纹理到当前激活的纹理单元，纹理单元GL_TEXTURE0默认总是被激活。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, texture1);</span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE1);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, texture2);</span><br></pre></td></tr></table></figure>
+
+<p>定义哪个采样器对应哪个纹理单元，只需要设置一次即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glUniform1i</span>(Texture1ID, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glUniform1i</span>(Texture2ID, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="作为其他数据采样"><a href="#作为其他数据采样" class="headerlink" title="作为其他数据采样"></a>作为其他数据采样</h4><p>先利用phrtest03的函数自定义一组纹理数据：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> cube1[<span class="number">4</span>] = &#123; <span class="number">1.0</span>, <span class="number">-1.0</span>,<span class="number">1.0</span>,<span class="number">0.8</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube2[<span class="number">4</span>] = &#123; <span class="number">0.7</span>, <span class="number">0.8</span>,<span class="number">1.0</span>,<span class="number">0.1</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube3[<span class="number">4</span>] = &#123; <span class="number">-1.0</span>, <span class="number">0.5</span>, <span class="number">1.0</span>,<span class="number">0.3</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube4[<span class="number">4</span>] = &#123; <span class="number">0.4</span>, <span class="number">0.8</span>,<span class="number">1.0</span>,<span class="number">0.6</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>该纹理在1：1的四边形上分成了四块</p>
+<p>纹理坐标：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat tex_data[] = &#123;</span><br><span class="line">        <span class="number">0.0f</span>,<span class="number">1.0f</span>,</span><br><span class="line">        <span class="number">1.0f</span>,<span class="number">1.0f</span>,</span><br><span class="line">        <span class="number">1.0f</span>,<span class="number">0.0f</span>,</span><br><span class="line">        <span class="number">0.0f</span>,<span class="number">0.0f</span></span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>画四个柱形，分别在四块进行采样，因此现在顶点着色器中对UV坐标进行变换（变换方式详见之前的分屏变换）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  UV = vertexUV;</span><br><span class="line">  <span class="keyword">if</span> (position.x&lt;=<span class="number">-0.2</span>) &#123;</span><br><span class="line">    UV.x = UV.x /<span class="number">2.0</span>;UV.y = UV.y /<span class="number">2.0</span><span class="number">-0.001</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (position.x&lt;<span class="number">0.1</span>)&#123;</span><br><span class="line">   UV.x = UV.x /<span class="number">2.0</span>+<span class="number">0.5</span>; UV.y = UV.y /<span class="number">2.0</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (position.x&lt;<span class="number">0.4</span>)&#123;</span><br><span class="line">       UV.x = UV.x /<span class="number">2.0</span>;UV.y = UV.y /<span class="number">2.0</span>+<span class="number">0.5</span>;</span><br><span class="line">   &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          UV.x = UV.x /<span class="number">2.0</span>+<span class="number">0.5</span>;UV.y = UV.y /<span class="number">2.0</span>+<span class="number">0.5</span>; &#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在顶点着色器中设置采样器（如果只有一个纹理可以和片段着色器中的采样器同名），将纹理数据的第四个值作为y轴坐标，注意先声明uniform sampler2D sampler;</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> y=<span class="built_in">texture2D</span>(sampler, UV).a;</span><br><span class="line"><span class="keyword">if</span>(position.y&gt;<span class="number">0.0</span>)&#123;</span><br><span class="line">  gl_Position = <span class="built_in">vec4</span>(position.x,y,position.z,<span class="number">1</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">gl_Position = <span class="built_in">vec4</span>(position,<span class="number">1</span>);&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为要设置光照，在片段着色器中将纹理数据的第四个值作为颜色，将前三个值作为法线数据</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> color=<span class="built_in">texture2D</span>( sampler, UV ).a;</span><br><span class="line">vec3 MaterialDiffuseColor=<span class="built_in">vec3</span>(color,<span class="number">0.0</span>,<span class="number">0.0</span>);</span><br><span class="line">vec3 normal = <span class="built_in">texture2D</span>( sampler, UV ).rgb;</span><br><span class="line">vec3 Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(normal,<span class="number">0</span>)).xyz;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301050944334.png" alt="image-20230105094422261" style="zoom: 50%;" />
+
+<p>因此纹理数据可以作为任意顶点数据使用，采样器在顶点着色器和片段着色器都可以使用。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-多级纹理"
   class="article article-type-post"
   itemscope
@@ -1242,106 +1319,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">#设置cmake的最小版本</span><br><span class="line">cmake_minimum_required (VERSION 2.6)</span><br><span class="line"></span><br><span class="line">#设置项目名称</span><br><span class="line">project (Tutorials)</span><br><span class="line"></span><br><span class="line">#设置构架类型，用debug模式编译</span><br><span class="line">set(CMAKE_BUILD_TYPE &quot;Debug&quot;)</span><br><span class="line"></span><br><span class="line">#mesa是Linux下的OpenGL实现，如下代码包含mesa</span><br><span class="line">find_package(OpenGL REQUIRED)</span><br><span class="line"></span><br><span class="line">#关于目录的报错提醒</span><br><span class="line">if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )</span><br><span class="line">    message( FATAL_ERROR &quot;Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_SOURCE_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line">if( CMAKE_BINARY_DIR MATCHES &quot; &quot; )</span><br><span class="line">  message( &quot;Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause.&quot; )</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">#将子目录添加到构建，外部依赖项</span><br><span class="line">add_subdirectory (external)</span><br><span class="line"></span><br><span class="line"># 在Visual 2005及更高版本上，此模块可以设置调试工作目录</span><br><span class="line">#管理cmake策略设置</span><br><span class="line">cmake_policy(SET CMP0026 OLD)</span><br><span class="line">list(APPEND CMAKE_MODULE_PATH &quot;$&#123;CMAKE_SOURCE_DIR&#125;/external/rpavlik-cmake-modules-fe2273&quot;)</span><br><span class="line">include(CreateLaunchers)</span><br><span class="line">include(MSVCMultipleProcessCompile) # /MP</span><br><span class="line"></span><br><span class="line">#添加子目录</span><br><span class="line">if(INCLUDE_DISTRIB)</span><br><span class="line">  add_subdirectory(distrib)</span><br><span class="line">endif(INCLUDE_DISTRIB)</span><br><span class="line"></span><br><span class="line">#向工程添加多个特定的头文件搜索路径</span><br><span class="line">include_directories(</span><br><span class="line">  external/AntTweakBar-1.16/include/</span><br><span class="line">  external/glfw-3.1.2/include/GLFW/</span><br><span class="line">  external/glm-0.9.7.1/</span><br><span class="line">  external/glew-1.13.0/include/</span><br><span class="line">  external/assimp-3.0.1270/include/</span><br><span class="line">  external/bullet-2.81-rev2613/src/</span><br><span class="line">  .</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#将要链接的库名统一叫ALL_LIBS</span><br><span class="line">set(ALL_LIBS</span><br><span class="line">  $&#123;OPENGL_LIBRARY&#125;</span><br><span class="line">  glfw</span><br><span class="line">  GLEW_1130</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#宏定义</span><br><span class="line">add_definitions(</span><br><span class="line">  -DTW_STATIC</span><br><span class="line">  -DTW_NO_LIB_PRAGMA</span><br><span class="line">  -DTW_NO_DIRECT3D</span><br><span class="line">  -DGLEW_STATIC</span><br><span class="line">  -D_CRT_SECURE_NO_WARNINGS</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># Tutorial 1</span><br><span class="line"></span><br><span class="line">#添加一个可执行文件目标</span><br><span class="line">#第一行：可执行文件</span><br><span class="line">#第二行之后：由source列出的源文件（cpp/hpp/着色器文件）构建而来（源文件路径）</span><br><span class="line">add_executable(tutorial01_first_window</span><br><span class="line">  tutorial01_first_window/tutorial01.cpp</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标要连接库文件的名称</span><br><span class="line">target_link_libraries(tutorial01_first_window</span><br><span class="line">  $&#123;ALL_LIBS&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#设置目标属性</span><br><span class="line"># set_target_properties（目标 PROPERTIES 属性1 值1 属性2 值2）</span><br><span class="line">#设置XCODE属性配置生成目录</span><br><span class="line">set_target_properties(tutorial01_first_window PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line">#设置工作目录</span><br><span class="line">#create_default_target_launcher设置默认工作目录</span><br><span class="line">create_target_launcher(tutorial01_first_window WORKING_DIRECTORY &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;)</span><br><span class="line"></span><br><span class="line">#划分目录结构</span><br><span class="line">#将common目录下面的文件全部分组为common</span><br><span class="line">SOURCE_GROUP(common REGULAR_EXPRESSION &quot;.*/common/.*&quot; )</span><br><span class="line">SOURCE_GROUP(shaders REGULAR_EXPRESSION &quot;.*/.*(shader|vert|frag)$&quot; )</span><br><span class="line"></span><br><span class="line">#CMake针对不同平台支持本地构建工具列表。同时支持命令行工具和集成开发环境(IDE)工具。</span><br><span class="line">#如果生成器不为Xcode工具</span><br><span class="line">if (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">#命令执行</span><br><span class="line">#TARGET 目标 POST_BUILD命令将会在目标构建完后执行</span><br><span class="line">#复制文件  当前正在被处理的二进制目录路径/与构建配置相对应的输出子路径/目标 本平台上可执行文件后缀 正在被处理的源码目录路径</span><br><span class="line">add_custom_command(</span><br><span class="line">   TARGET tutorial01_first_window POST_BUILD</span><br><span class="line">   COMMAND $&#123;CMAKE_COMMAND&#125; -E copy &quot;$&#123;CMAKE_CURRENT_BINARY_DIR&#125;/$&#123;CMAKE_CFG_INTDIR&#125;/tutorial01_first_window$&#123;CMAKE_EXECUTABLE_SUFFIX&#125;&quot; &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/tutorial01_first_window/&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">elseif ($&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br><span class="line">endif (NOT $&#123;CMAKE_GENERATOR&#125; MATCHES &quot;Xcode&quot; )</span><br></pre></td></tr></table></figure>
 
 
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-opengl-phrtest示例学习"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/11/30/opengl-phrtest%E7%A4%BA%E4%BE%8B%E5%AD%A6%E4%B9%A0/"
-    >opengl-phrtest-cpp示例学习</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/11/30/opengl-phrtest%E7%A4%BA%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time datetime="2022-11-30T15:26:35.000Z" itemprop="datePublished">2022-11-30</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="示例一"><a href="#示例一" class="headerlink" title="示例一"></a>示例一</h4><p>内容：利用glMatrixMode函数操作矩阵，增加透视效果</p>
-<p>函数解释：<a target="_blank" rel="noopener" href="https://blog.csdn.net/caoshangpa/article/details/80266028">https://blog.csdn.net/caoshangpa/article/details/80266028</a></p>
-<h4 id="示例二"><a href="#示例二" class="headerlink" title="示例二"></a>示例二</h4><p>内容：利用顶点数组的方式绘制立方体（无VBO、句柄和定义属性）</p>
-<p>顶点数组&amp;顶点缓冲：<a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-24448954-id-3059555.html">http://blog.chinaunix.net/uid-24448954-id-3059555.html</a></p>
-<p>1、顶点数组：</p>
-<p>（1)OpenGL 1.1所提供的功能</p>
-<p>（2)明显的减少函数调用次数</p>
-<p>（3)通常所有的状态保存在服务端的，如是否启用了纹理。而指定顶点，实际上就是把顶点数据从客户端发送到服务端。是否启用顶点数组，只是控制发送顶点数据的方式而已。服务端只管接收顶点数据，而不必管顶点数据到底是用哪种方式指定的。所以，服务端不需要知道顶点数组是否开启。</p>
-<p>（4)为了表示服务端状态和客户端状态的区别，服务端的状态用glEnable&#x2F;glDisable，客户端的状态则用glEnableClientState&#x2F;glDisableClientState。</p>
-<p>（5)数据是存放在内存（客户端），可以随时修改。每次绘制的时候，需要把所有的顶点数据从客户端（内存）发送到服务端（显示设备）。对于显示列表，数据是放在显示列表（服务器端），无法取出修改，但不会重复的发送数据。</p>
-<p>（6)顶点数据和索引数据可以混合</p>
-<p><u>可以不需要着色器</u></p>
-<p>2、顶点缓冲区对象：</p>
-<p>（1）OpenGL 1.5所提供的功能</p>
-<p>（2）数据存放在服务端，同时允许客户端修改</p>
-<p>（3）顶点数据和索引数据在两个缓冲区</p>
-<p>（4）数不再从指针所指的位置取数据。函数会先把指针转化为整数，假设转化后结果为k，则会从当前缓冲区的第k个字节开始取数据。</p>
-<p>使用缓冲，从缓冲读数据到现存而不是从内存中读取数据，所以运行速度会快很多。</p>
-<p>测速代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> lastTime = <span class="built_in">glfwGetTime</span>();</span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line"><span class="comment">//计算1秒内的帧数从而计算一帧需要的毫秒数</span></span><br><span class="line"><span class="type">double</span> current = <span class="built_in">glfwGetTime</span>();</span><br><span class="line">nbFrames++;</span><br><span class="line"><span class="keyword">if</span> (current - lastTime &gt;= <span class="number">1.0</span>) &#123; </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%f ms/frame\n&quot;</span>, <span class="number">1000.0</span> / <span class="built_in">double</span>(nbFrames));</span><br><span class="line">	nbFrames = <span class="number">0</span>;</span><br><span class="line">	lastTime += <span class="number">1.0</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>顶点缓冲：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212260850812.png" alt="image-20221226085052532" style="zoom:67%;" />
-
-<p>显示列表顶点数组：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212260850847.png" alt="image-20221226085030449" style="zoom:67%;" />
-
-<h4 id="示例三"><a href="#示例三" class="headerlink" title="示例三"></a>示例三</h4><p>内容：自己绘制纹理，使用纹理数组选择要渲染的对象，绘制时利用封装的函数</p>
-<h4 id="示例四"><a href="#示例四" class="headerlink" title="示例四"></a>示例四</h4><p>内容：利用显示列表进行颜色渲染</p>
-<p> glFrontFace函数：[<a target="_blank" rel="noopener" href="https://blog.csdn.net/zhongjling/article/details/7528091">https://blog.csdn.net/zhongjling/article/details/7528091</a>]</p>
-<h4 id="示例四-1"><a href="#示例四-1" class="headerlink" title="示例四-1"></a>示例四-1</h4><p>内容：利用索引和显示列表绘制立方体（定义面的法线，省略法线数组）</p>
-<h4 id="示例五、六、七"><a href="#示例五、六、七" class="headerlink" title="示例五、六、七"></a>示例五、六、七</h4><p>内容：噪声绘制动态纹理</p>
-<h4 id="示例八"><a href="#示例八" class="headerlink" title="示例八"></a>示例八</h4><p>内容：着色器定义随时间变化的内容</p>
-<h4 id="示例九"><a href="#示例九" class="headerlink" title="示例九"></a>示例九</h4><p>内容：读取两张纹理图片绘制，通过纹理数组和纹理混和绘制重叠的背景图。</p>
-<h4 id="示例十"><a href="#示例十" class="headerlink" title="示例十"></a>示例十</h4><p>内容：创建着色器程序，利用帧缓冲分层渲染纹理</p>
-<h4 id="示例十一"><a href="#示例十一" class="headerlink" title="示例十一"></a>示例十一</h4><p>内容：绘制点</p>
-<p>1.glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION,pointpara);</p>
-<p>2.glEnable(GL_POINT_SMOOTH);</p>
-<p>函数解释：<a target="_blank" rel="noopener" href="https://www.codetd.com/article/1755475">https://www.codetd.com/article/1755475</a></p>
-<p>启动抗锯齿：<a target="_blank" rel="noopener" href="https://blog.csdn.net/tiankefeng19850520/article/details/18601709">https://blog.csdn.net/tiankefeng19850520/article/details/18601709</a></p>
-<h4 id="示例十二"><a href="#示例十二" class="headerlink" title="示例十二"></a>示例十二</h4><p>内容：设置深度使图形有层次</p>
-<h4 id="示例十三"><a href="#示例十三" class="headerlink" title="示例十三"></a>示例十三</h4><p>内容：循环绘制堆叠图形</p>
-<h4 id="示例十四"><a href="#示例十四" class="headerlink" title="示例十四"></a>示例十四</h4><p>内容：用同一组顶点，通过定义视口画出不同位置的两个图形</p>
-<h4 id="示例十五"><a href="#示例十五" class="headerlink" title="示例十五"></a>示例十五</h4><p>内容：用纹理属性而非纹理数组绘制背景</p>
-<h4 id="示例十六"><a href="#示例十六" class="headerlink" title="示例十六"></a>示例十六</h4><p>内容：用uniform给着色器发送颜色数据，能够覆盖着色器定义的颜色</p>
-<p>uniforms(统一数据)：可以传递给顶点着色器和片元着色器，传递的数据是不易更改的比较统一的数据，比如发生旋转的变换矩阵，进行颜色渲染的渲染矩阵。一般用于对同一组顶点组成的单个3D物体中所有顶点都相同的变量，如当前光源的位置。</p>
-<h4 id="示例十七"><a href="#示例十七" class="headerlink" title="示例十七"></a>示例十七</h4><p>内容：不设置光照，索引绘制球体</p>
-<h4 id="示例十七-1"><a href="#示例十七-1" class="headerlink" title="示例十七-1"></a>示例十七-1</h4><p>内容：绘制球体，设置环境光和漫反射光</p>
-<p>球体绘制原理：<a target="_blank" rel="noopener" href="https://www.jb51.net/article/254487.htm">https://www.jb51.net/article/254487.htm</a></p>
-<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>glScissor( 0, 0, 800, 800)：剪裁测试用于限制绘制区域。我们可以指定一个矩形的剪裁窗口，当启用剪裁测试后，只有在这个窗口之内的像素才能被绘制，其它像素则会被丢弃。换句话说，无论怎么绘制，剪裁窗口以外的像素将不会被修改。</p>
  
       <!-- reward -->
       

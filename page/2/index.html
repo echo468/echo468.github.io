@@ -118,6 +118,162 @@
     
     
     <article
+  id="post-模型对象及材质"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/"
+    >模型对象及材质</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/" class="article-date">
+  <time datetime="2023-02-05T09:18:27.000Z" itemprop="datePublished">2023-02-05</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/three-js/">three.js</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="三维向量Vector3与模型位置"><a href="#三维向量Vector3与模型位置" class="headerlink" title="三维向量Vector3与模型位置"></a>三维向量Vector3与模型位置</h4><p>点模型<code>Points</code>、线模型<code>Line</code>、网格网格模型<code>Mesh</code>等模型对象的父类都是Object3D。</p>
+<p>三维向量<code>Vector3</code>有xyz三个分量，Three.js中会用三维向量<code>Vector3</code>表示很多种数据。<code>Vector3</code>对象具有属性<code>.x</code>、<code>.y</code>、<code>.z</code>，<code>Vector3</code>对象还具有<code>.set()</code>等方法。位置属性<code>.position</code>使用Three.js三维向量对象<code>Vector3</code>表示，因此具有<code>Vector3</code>所有的属性和方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v3 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v3&#x27;</span>, v3);</span><br><span class="line">v3.<span class="title function_">set</span>(<span class="number">10</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">v3.<span class="property">x</span> = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过模型位置属性<code>.position</code>可以设置模型在场景<code>Scene</code>中的位置。模型位置<code>.position</code>的默认值是<code>THREE.Vector3(0.0,0.0,0.0)</code>，表示坐标原点。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置网格模型y坐标</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="property">y</span> = <span class="number">80</span>;</span><br><span class="line"><span class="comment">//设置模型xyz坐标</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">80</span>,<span class="number">2</span>,<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>.translateX()</code>、<code>.translateY()</code>、<code>.translateZ()</code>等方法本质上改变的都是模型的位置属性<code>.position</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 等价于mesh.position.x = mesh.position.x + 100;</span></span><br><span class="line"><span class="comment">//而不是mesh.position.x = 100;</span></span><br><span class="line">mesh.<span class="title function_">translateX</span>(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果调用两次<code>mesh.translateX(100);</code>，第二次是在第一次的基础上进行累计变换。注意这些平移以及缩放函数与<code>BufferGeometry</code>平移以及缩放函数的区别。如下图<code>mesh.position.set(50,50,0);mesh.translateZ(100);</code>函数将局部坐标系的原点设置在世界坐标系x&#x3D;50,y&#x3D;50处，接着将局部坐标系的原点沿着世界坐标系的z轴平移100。<code>geometry.rotateX(Math.PI/2);geometry.translate(50,0,0);</code>函数将物体的中心点绕局部坐标系的x轴旋转90°并且平移50。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052253053.png" alt="image-20230205225318979" style="zoom: 50%;" />
+
+<p>沿着自定义的方向移动。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//向量Vector3对象表示方向</span></span><br><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">axis.<span class="title function_">normalize</span>(); <span class="comment">//向量归一化</span></span><br><span class="line"><span class="comment">//沿着axis轴表示方向平移100</span></span><br><span class="line">mesh.<span class="title function_">translateOnAxis</span>(axis, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>.scale</code>表示模型对象的xyz三个方向上的缩放比例，<code>.scale</code>的属性值是一个三维向量对象<code>Vector3</code>,默认值是<code>THREE.Vector3(1.0,1.0,1.0)</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//x轴方向放大2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="property">x</span> = <span class="number">2.0</span>;</span><br><span class="line"><span class="comment">//网格模型xyz方向分别缩放0.5,1.5,2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="title function_">set</span>(<span class="number">0.5</span>, <span class="number">1.5</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如下图通过旋转使得局部坐标系的y轴与世界坐标系的z轴平行，使用<code>geometry.scale(1,2,1);</code>函数后图形沿着局部坐标系的y轴放大至原来的2倍。即在世界坐标系中沿z轴前后放大而不是沿y轴上下放大。但是如果是<code>mesh.scale</code>会将局部坐标系和物体按照局部坐标系的轴一起缩放。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052323314.png" alt="image-20230205232310262" style="zoom:67%;" />
+
+<h4 id="欧拉Euler与角度属性-rotation"><a href="#欧拉Euler与角度属性-rotation" class="headerlink" title="欧拉Euler与角度属性.rotation"></a>欧拉Euler与角度属性.rotation</h4><p>模型的角度属性<code>.rotation</code>和四元数属性<code>.quaternion</code>都是表示模型的角度状态，只是表示方法不同，<code>.rotation</code>属性值是欧拉对象,<code>.quaternion</code>属性值是四元数对象。</p>
+<p> 创建一个欧拉对象，表示绕着xyz轴分别旋转45度，0度，90度。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Euler</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Euler</span>( <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>,<span class="number">0</span>, <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>通过属性设置欧拉对象的三个分量值。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Euler</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Euler</span>();</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">x</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>;</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">y</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>;</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">z</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+
+<p>角度属性<code>.rotation</code>的值是欧拉对象<code>Euler</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绕y轴的角度设置为60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br><span class="line"><span class="comment">//绕y轴的角度增加60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> += <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br><span class="line"><span class="comment">//绕y轴的角度减去60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> -= <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<p>模型执行<code>.rotateX()</code>、<code>.rotateY()</code>等旋转方法，会发现改变了模型的角度属性<code>.rotation</code>。如下函数是对<code>model.rotation.y</code>的累计变化。注意如果是mesh下的rotate函数就会将局部坐标系和物体按照局部坐标系的轴一起旋转，如果是geometry下的rotate函数只将物体按照局部坐标系的轴旋转。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="title function_">rotateX</span>(<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>);</span><br><span class="line">mesh.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>旋转动画。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    model.<span class="property">rotation</span>.<span class="property">y</span>+=<span class="number">0.01</span>;</span><br><span class="line">    <span class="comment">//等价与model.rotateY(0.01);</span></span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    model.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是绕某个轴旋转，如下是网格模型绕<code>(0,1,0)</code>向量表示的轴旋转<code>π/8</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//向量axis</span></span><br><span class="line">mesh.<span class="title function_">rotateOnAxis</span>(axis,<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">8</span>);<span class="comment">//绕axis轴旋转π/8</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="模型材质颜色-Color对象"><a href="#模型材质颜色-Color对象" class="headerlink" title="模型材质颜色(Color对象)"></a>模型材质颜色(Color对象)</h4><p>浏览器控制台查看材质颜色属性的属性值。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.color&#x27;</span>,material.<span class="property">color</span>);</span><br></pre></td></tr></table></figure>
+
+<p>颜色对象有三个属性，分别为<code>.r</code>、<code>.g</code>、<code>.b</code>，表示颜色RGB的三个分量。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个颜色对象</span></span><br><span class="line"><span class="keyword">const</span> color = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>();<span class="comment">//默认是纯白色0xffffff。</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看颜色对象结构&#x27;</span>,color);<span class="comment">//可以查看rgb的值</span></span><br><span class="line"><span class="comment">// 查看Color对象设置0x00ff00对应的的.r、.g、.b值</span></span><br><span class="line"><span class="keyword">const</span> color = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>(<span class="number">0x00ff00</span>);</span><br><span class="line"><span class="comment">//通过.r、.g、.b属性改变颜色值</span></span><br><span class="line">color.<span class="property">r</span> = <span class="number">0.0</span>;</span><br><span class="line">color.<span class="property">b</span> = <span class="number">0.0</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>Color</code>提供了<code>.setHex()</code>、<code>.setRGB()</code>、<code>.setStyle()</code>、<code>.set()</code>等修改颜色值的方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">color.<span class="title function_">setRGB</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//RGB方式设置颜色</span></span><br><span class="line">color.<span class="title function_">setHex</span>(<span class="number">0x00ff00</span>);<span class="comment">//十六进制方式设置颜色</span></span><br><span class="line">color.<span class="title function_">setStyle</span>(<span class="string">&#x27;#00ff00&#x27;</span>);<span class="comment">//前端CSS颜色值设置颜色</span></span><br></pre></td></tr></table></figure>
+
+<p><code>.setHex()</code>、<code>.setStyle()</code>风格的颜色值都可以作为<code>.set()</code>的参数。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">color.<span class="title function_">set</span>(<span class="number">0x00ff00</span>);<span class="comment">//十六进制方式设置颜色</span></span><br><span class="line">color.<span class="title function_">set</span>(<span class="string">&#x27;#00ff00&#x27;</span>);<span class="comment">//前端CSS颜色值设置颜色</span></span><br></pre></td></tr></table></figure>
+
+<p>重置模型材质颜色。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0x00ffff</span>);</span><br><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="string">&#x27;#00ff00&#x27;</span>);</span><br><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="string">&#x27;rgb(0,255,0)&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型材质父类Material"><a href="#模型材质父类Material" class="headerlink" title="模型材质父类Material"></a>模型材质父类Material</h4><p>基础网格材质<code>MeshBasicMaterial</code>、漫反射网格材质<code>MeshLambertMaterial</code>、高光网格材质<code>MeshPhongMaterial</code>等网格材质都有一个共同的父类<code>Material</code>。</p>
+<p>材质半透明设置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">transparent</span> = <span class="literal">true</span>;<span class="comment">//开启透明</span></span><br><span class="line">material.<span class="property">opacity</span> = <span class="number">0.5</span>;<span class="comment">//设置透明度</span></span><br></pre></td></tr></table></figure>
+
+<p>材质面属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">BackSide</span>;<span class="comment">//背面可以看到</span></span><br><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">FrontSide</span>;<span class="comment">//正面面可以看到</span></span><br><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">DoubleSide</span>;<span class="comment">//双面可见</span></span><br></pre></td></tr></table></figure>
+
+<p><code>THREE.FrontSide</code>、<code>THREE.BackSide</code>、<code>THREE.DoubleSide</code>其实在theeejs内部都表示一个数字,可以通过浏览器控制打印查看验证。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.side&#x27;</span>,material.<span class="property">side</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型材质和几何体属性"><a href="#模型材质和几何体属性" class="headerlink" title="模型材质和几何体属性"></a>模型材质和几何体属性</h4><p>浏览器控制打印模型对象mesh，可以展开对象，查看对象的几何体<code>.geometry</code>和材质属性<code>.material</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh&#x27;</span>,mesh);</span><br></pre></td></tr></table></figure>
+
+<p>浏览器控制台打印模型的几何体属性<code>.geometry</code>和材质属性<code>.material</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh.geometry&#x27;</span>,mesh.<span class="property">geometry</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh.material&#x27;</span>,mesh.<span class="property">material</span>);</span><br></pre></td></tr></table></figure>
+
+<p>访问改变模型材质属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 访问模型材质,并设置材质的颜色属性</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br></pre></td></tr></table></figure>
+
+<p>访问改变模型几何体属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 访问模型几何体,并平移几何体顶点数据</span></span><br><span class="line">mesh.<span class="property">geometry</span>.<span class="title function_">translate</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>材质或几何体共享。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> mesh1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line">mesh1.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>,<span class="number">50</span>,<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 两个mesh共享一个材质，改变一个mesh的颜色，另一个mesh2的颜色也会跟着改变</span></span><br><span class="line"><span class="comment">// 三者等价：mesh.material、mesh2.material、material</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br><span class="line"><span class="comment">// 三者等价：mesh.geometry、mesh2.geometry、geometry</span></span><br><span class="line">mesh.<span class="property">geometry</span>.<span class="title function_">translate</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052331753.png" alt="image-20230205233114699" style="zoom:50%;" />
+
+<h4 id="克隆-clone-和复制-copy"><a href="#克隆-clone-和复制-copy" class="headerlink" title="克隆.clone()和复制.copy()"></a>克隆.clone()和复制.copy()</h4><p>克隆<code>.clone()</code>、复制<code>.copy()</code>是Three.js很多对象都具有的方法，比如三维向量对象<code>Vector3</code>、网格模型、几何体、材质。</p>
+<p>克隆<code>.clone()</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v1&#x27;</span>,v1);</span><br><span class="line"><span class="comment">//v2是一个新的Vector3对象，和v1的.x、.y、.z属性值一样</span></span><br><span class="line"><span class="keyword">const</span> v2 = v1.<span class="title function_">clone</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v2&#x27;</span>,v2);</span><br></pre></td></tr></table></figure>
+
+<p>复制<code>.copy()</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="keyword">const</span> v3 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>);</span><br><span class="line"><span class="comment">//读取v1.x、v1.y、v1.z的赋值给v3.x、v3.y、v3.z</span></span><br><span class="line">v3.<span class="title function_">copy</span>(v1);</span><br></pre></td></tr></table></figure>
+
+<p>通过mesh克隆<code>.clone()</code>一个和mesh一样的新模型对象mesh2。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh2 = mesh.<span class="title function_">clone</span>();</span><br><span class="line">mesh2.<span class="property">position</span>.<span class="property">x</span> = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过克隆<code>.clone()</code>获得的新模型和原来的模型共享材质和几何体。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 改变材质颜色，或者说改变mesh2颜色，mesh和mesh2颜色都会改变</span></span><br><span class="line"><span class="comment">//material.color.set(0xffff00);</span></span><br><span class="line">mesh2.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052334395.png" alt="image-20230205233443346"></p>
+<p>几何体和材质克隆<code>.clone()</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh2 = mesh.<span class="title function_">clone</span>();</span><br><span class="line"><span class="comment">// 克隆几何体和材质，重新设置mesh2的材质和几何体属性</span></span><br><span class="line">mesh2.<span class="property">geometry</span> = mesh.<span class="property">geometry</span>.<span class="title function_">clone</span>();</span><br><span class="line">mesh2.<span class="property">material</span> = mesh.<span class="property">material</span>.<span class="title function_">clone</span>();</span><br><span class="line"><span class="comment">// 改变mesh2颜色，不会改变mesh的颜色</span></span><br><span class="line">mesh2.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff0000</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052335397.png" alt="image-20230205233522340" style="zoom:67%;" />
+
+<p>改变mesh的位置，使之位于mesh2的正上方(y)，距离100。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">position</span>.<span class="title function_">copy</span>(mesh2.<span class="property">position</span>);<span class="comment">//1. 第1步位置重合</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="property">y</span> += <span class="number">100</span>;<span class="comment">//1. 第2步mesh在原来y的基础上增加100</span></span><br></pre></td></tr></table></figure>
+
+<p>两个模型的姿态角度始终保持一样。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    mesh.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);<span class="comment">// mesh旋转动画</span></span><br><span class="line">    <span class="comment">// 同步mesh2和mesh的姿态角度一样，不管mesh姿态角度怎么变化，mesh2始终保持同步</span></span><br><span class="line">    mesh2.<span class="property">rotation</span>.<span class="title function_">copy</span>(mesh.<span class="property">rotation</span>);</span><br><span class="line">    renderer.<span class="title function_">render</span>(scene, camera);</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">render</span>();</span><br></pre></td></tr></table></figure> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-几何体BufferGeometry"
   class="article article-type-post"
   itemscope
@@ -891,83 +1047,6 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 <p>***经常情况下依赖插值的两个变量是三角形的法向量和纹理坐标***。顶点的法向量通常是计算包含这个顶点的所有三角形法向量的平均值而得。如果物体不是平坦的话那么每个三角形的三个顶点的法向量会各不相同，那样我们可以通过插值来计算每个像素的法向量，那些向量会用于光线的计算，从而产生更逼真可信的光照效果。插值对于纹理坐标的应用也类似，这些坐标作为模型的一部分定义在每个顶点上。为了用贴图覆盖三角形你必须对每个像素进行一样的插值操作并给每个像素定义正确的纹理坐标，这些坐标都是插值的结果</p>
 <p>复合变换</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 Rotation_tree2 = <span class="built_in">eulerAngleYXZ</span>(gOrientation1.y, gOrientation1.x, gOrientation2.z);</span><br><span class="line">glm::mat4 Transla_tree2 = <span class="built_in">translate</span>(<span class="built_in">mat4</span>(), gPosition2);</span><br><span class="line">glm::mat4 Scaling_tree2 = <span class="built_in">scale</span>(<span class="built_in">mat4</span>(), <span class="built_in">vec3</span>(<span class="number">0.3f</span>, <span class="number">0.3f</span>, <span class="number">0.3f</span>));</span><br><span class="line">glm::mat4 Model_tree2 = Transla_tree2 * Rotation_tree2 * Scaling_tree2;</span><br></pre></td></tr></table></figure>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-采样器采样数据"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/"
-    >采样器采样数据</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/05/%E9%87%87%E6%A0%B7%E5%99%A8%E9%87%87%E6%A0%B7%E6%95%B0%E6%8D%AE/" class="article-date">
-  <time datetime="2023-01-05T00:44:47.000Z" itemprop="datePublished">2023-01-05</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="纹理"><a href="#纹理" class="headerlink" title="纹理"></a>纹理</h4><p>​	纹理是一个2D图片（甚至也有1D和3D的纹理），可以用来添加物体的细节。因此可以在一张图片上插入非常多的细节，这样就可以让物体非常精细而不用指定额外的顶点。<u>除了图像以外，纹理也可以被用来储存大量的数据，这些数据可以发送到着色器上。</u>纹理采样的本质是利用采样器读取数据，所读取的数据不一定是作为纹理渲染。</p>
-<h4 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h4><p>​	为了能够把纹理映射到三角形上，需要指定三角形的每个顶点各自对应纹理的哪个部分。这样每个顶点就会关联着一个纹理坐标(UV坐标)，用来标明该从纹理图像的哪个部分采样。之后在图形的其它片段上进行片段插值。纹理坐标在x和y轴上，范围为0到1之间（2D）。使用纹理坐标获取纹理颜色叫做采样。纹理坐标起始于(0, 0)，也就是纹理图片的左下角，终始于(1, 1)，即纹理图片的右上角。下面的图片展示了如何把纹理坐标映射到三角形上的。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301050854550.png" alt="image-20230105085456442"></p>
-<h4 id="纹理单元"><a href="#纹理单元" class="headerlink" title="纹理单元"></a>纹理单元</h4><p>一个纹理的位置值通常称为一个纹理单元。一个纹理的默认纹理单元是0，它是默认的激活纹理单元。纹理单元的主要目的是让我们在着色器中可以使用多于一个的纹理。通过把纹理单元赋值给采样器，可以一次绑定多个纹理，只要我们首先激活对应的纹理单元。激活纹理单元之后，接下来绑定这个纹理到当前激活的纹理单元，纹理单元GL_TEXTURE0默认总是被激活。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, texture1);</span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE1);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, texture2);</span><br></pre></td></tr></table></figure>
-
-<p>定义哪个采样器对应哪个纹理单元，只需要设置一次即可</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glUniform1i</span>(Texture1ID, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glUniform1i</span>(Texture2ID, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="作为其他数据采样"><a href="#作为其他数据采样" class="headerlink" title="作为其他数据采样"></a>作为其他数据采样</h4><p>先利用phrtest03的函数自定义一组纹理数据：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> cube1[<span class="number">4</span>] = &#123; <span class="number">1.0</span>, <span class="number">-1.0</span>,<span class="number">1.0</span>,<span class="number">0.8</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube2[<span class="number">4</span>] = &#123; <span class="number">0.7</span>, <span class="number">0.8</span>,<span class="number">1.0</span>,<span class="number">0.1</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube3[<span class="number">4</span>] = &#123; <span class="number">-1.0</span>, <span class="number">0.5</span>, <span class="number">1.0</span>,<span class="number">0.3</span>&#125;;</span><br><span class="line"><span class="type">float</span> cube4[<span class="number">4</span>] = &#123; <span class="number">0.4</span>, <span class="number">0.8</span>,<span class="number">1.0</span>,<span class="number">0.6</span>&#125;;</span><br></pre></td></tr></table></figure>
-<p>该纹理在1：1的四边形上分成了四块</p>
-<p>纹理坐标：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat tex_data[] = &#123;</span><br><span class="line">        <span class="number">0.0f</span>,<span class="number">1.0f</span>,</span><br><span class="line">        <span class="number">1.0f</span>,<span class="number">1.0f</span>,</span><br><span class="line">        <span class="number">1.0f</span>,<span class="number">0.0f</span>,</span><br><span class="line">        <span class="number">0.0f</span>,<span class="number">0.0f</span></span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>画四个柱形，分别在四块进行采样，因此现在顶点着色器中对UV坐标进行变换（变换方式详见之前的分屏变换）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  UV = vertexUV;</span><br><span class="line">  <span class="keyword">if</span> (position.x&lt;=<span class="number">-0.2</span>) &#123;</span><br><span class="line">    UV.x = UV.x /<span class="number">2.0</span>;UV.y = UV.y /<span class="number">2.0</span><span class="number">-0.001</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (position.x&lt;<span class="number">0.1</span>)&#123;</span><br><span class="line">   UV.x = UV.x /<span class="number">2.0</span>+<span class="number">0.5</span>; UV.y = UV.y /<span class="number">2.0</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (position.x&lt;<span class="number">0.4</span>)&#123;</span><br><span class="line">       UV.x = UV.x /<span class="number">2.0</span>;UV.y = UV.y /<span class="number">2.0</span>+<span class="number">0.5</span>;</span><br><span class="line">   &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          UV.x = UV.x /<span class="number">2.0</span>+<span class="number">0.5</span>;UV.y = UV.y /<span class="number">2.0</span>+<span class="number">0.5</span>; &#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在顶点着色器中设置采样器（如果只有一个纹理可以和片段着色器中的采样器同名），将纹理数据的第四个值作为y轴坐标，注意先声明uniform sampler2D sampler;</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> y=<span class="built_in">texture2D</span>(sampler, UV).a;</span><br><span class="line"><span class="keyword">if</span>(position.y&gt;<span class="number">0.0</span>)&#123;</span><br><span class="line">  gl_Position = <span class="built_in">vec4</span>(position.x,y,position.z,<span class="number">1</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">gl_Position = <span class="built_in">vec4</span>(position,<span class="number">1</span>);&#125;</span><br></pre></td></tr></table></figure>
-
-<p>因为要设置光照，在片段着色器中将纹理数据的第四个值作为颜色，将前三个值作为法线数据</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> color=<span class="built_in">texture2D</span>( sampler, UV ).a;</span><br><span class="line">vec3 MaterialDiffuseColor=<span class="built_in">vec3</span>(color,<span class="number">0.0</span>,<span class="number">0.0</span>);</span><br><span class="line">vec3 normal = <span class="built_in">texture2D</span>( sampler, UV ).rgb;</span><br><span class="line">vec3 Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(normal,<span class="number">0</span>)).xyz;</span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301050944334.png" alt="image-20230105094422261" style="zoom: 50%;" />
-
-<p>因此纹理数据可以作为任意顶点数据使用，采样器在顶点着色器和片段着色器都可以使用。</p>
  
       <!-- reward -->
       

@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-11-Geometry2 |  Hexo
+    Cameras_Lenses_LightFields |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,8 +55,8 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-11-Geometry2"
-  class="article article-type-post"
+  id="games101-19-Cameras-Lenses-LightFields"
+  class="article article-type-games101-19"
   itemscope
   itemprop="blogPost"
   data-scroll-reveal
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-11-Geometry2
+  Cameras_Lenses_LightFields
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/11/games101-11-Geometry2/" class="article-date">
-  <time datetime="2023-05-11T04:36:59.000Z" itemprop="datePublished">2023-05-11</time>
+      <a href="/2023/05/12/Cameras-Lenses-LightFields/" class="article-date">
+  <time datetime="2023-05-12T10:33:50.000Z" itemprop="datePublished">2023-05-12</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.9k</span>
+            <span class="post-count">1.5k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">6 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -109,72 +109,62 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="显示几何"><a href="#显示几何" class="headerlink" title="显示几何"></a>显示几何</h4><h5 id="点云"><a href="#点云" class="headerlink" title="点云"></a>点云</h5><p>​		不考虑物体是一个表面，而是考虑物体由点组成，只要点的数量足够多，就可以变成物体表面。空间中每一个点由（x,y,z)表示。理论上只要点足够密集，可以表示任何几何，由点变成多边形面。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111242600.png" alt="image-20230511124237550"></p>
-<h5 id="多边形面"><a href="#多边形面" class="headerlink" title="多边形面"></a>多边形面</h5><p>​		常用三角形面和四边形面，如下图将任何复杂的几何体拆成三角形面。通过定义各个多边形面的顶点以及顶点之间的连接关系就可以得到许许多多的三角形面或是四边形面，再通过这些面来近似表现出我们想要的模型效果。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111245848.png" alt="image-20230511124525785" style="zoom:67%;" />
+  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
+<p>2.不存在的合成的物体：光栅化和光追</p>
+<pre><code>     传感器用于捕捉并记录光。
+</code></pre>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
 
-<p>​		例如比较著名的.obj文件，其格式如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111247870.png" alt="image-20230511124752805" style="zoom:67%;" />
+<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
 
-<p>​		v定义三角形面的三个顶点坐标（立方体8个顶点）；vt定义三角形面的三个顶点uv坐标（每个面4个点，共6个面所以最多有24种不同的纹理坐标信息）；vn定义三角形面的三个顶点的法线坐标（6个面的法线信息，有8个是因为建模软件输出的精度问题）；f定义点的连接关系，哪三个点形成三角形面。如5&#x2F;1&#x2F;1定义三角形的第一个顶点是第5个v，使用第1个vt作为uv该顶点的uv坐标，使用第1个vn作为该顶点的法线坐标。</p>
-<h5 id="贝塞尔曲线"><a href="#贝塞尔曲线" class="headerlink" title="贝塞尔曲线"></a>贝塞尔曲线</h5><p>​		用一系列控制点定义曲线，并且定义曲线满足的一些性质。如下图p0,p1,p2,p3为控制点，该曲线的起始点为p0，结束点为p3，且曲线起始位置的切线沿p0p1方向，结束位置的切线沿p2p3方向（参数3是根据控制点的个数决定的）。曲线不一定要经过p1,p2。可以用任意多个点定义曲线，但2个点只能定义线段。将控制点经过仿射变换后绘制出的还是同一个曲线（仿射变换不包括投影变换）  。所形成的曲线具有凸包性质 ，即曲线一定在在控制点形成的凸包内，不会超出所有控制点构成的凸多边形范围。所以如果四个控制点在一个线段上，最后形成的曲线就是这个线段。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111306969.png" alt="image-20230511130613920" style="zoom: 50%;" />
+<p>​		针孔相机拍出来的结果不会出现虚化。</p>
+<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
 
-<p>​		以三个控制点的情况为例：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111307165.png" alt="image-20230511130719131" style="zoom:50%;" />
+<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
 
-<p>​		假设曲线起始对应时间0，结束对应时间1，现在要找到0-1中间任意一个时刻所对应曲线上点的位置。假设t&#x3D;1&#x2F;3，取b0b1线段上1&#x2F;3处的点：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111311501.png" alt="image-20230511131116462" style="zoom: 50%;" />
+<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
+<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
 
-<p>​		取b1b2线段上1&#x2F;3处的点：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111311372.png" alt="image-20230511131143327" style="zoom:50%;" />
+<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
 
-<p>​		此时连接上述的两个点形成一个新的线段（两个线段变成一个线段），取这个线段1&#x2F;3处的点，这个点就是t&#x3D;1&#x2F;3时刻，曲线上的点。遍历所有t，就可以获得整条曲线。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111312851.png" alt="image-20230511131222819" style="zoom:50%;" />
+<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
 
-<p>​		如下是四个控制迪安的情况，三个线段变成两个线段，两个线段变成一个线段：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111315766.png" alt="image-20230511131501727" style="zoom:50%;" />
+<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
 
-<p>​		将上述过程变成代数形式，如下是递归规程：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111317078.png" alt="image-20230511131741041" style="zoom: 67%;" />
+<p>​		高速摄影（更大光圈或者更大ISO）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
 
-<p>​		代数表达式相当于在每个线段上进行插值。以b0b1为例，如果t&#x3D;0，新生成的点在b0处；如果t&#x3D;1，新生成的点在b1处，最后曲线上的点可以通过时间t以及三个控制点的坐标表示（上标表示第几层（从0开始），下标表示该层的第几个点（从0开始），最后一层只有一个点）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111319182.png" alt="image-20230511131938146" style="zoom:67%;" />
+<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
 
-<p>​		第n层也就是最后一层只会新生成一个点，该点可以用每一个控制点和时间t的多项式进行线性组合计算出来，一共n+1项（bj表示第几个控制点（第0层），B表示该控制点对应的关于t的多项式）。该绘制曲线的方法也可以推广至三维，每一个控制点用（x,y,z)定义。该方法属于显示表达，已知t的范围已知映射关系，只要遍历所有的t就可以得到曲线上所有的坐标。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111320523.png" alt="image-20230511132053483" style="zoom: 67%;" />
+<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
 
-<p>​		例如由四个控制点，就会有四个关于时间t的多项式，n的值为3，j的值从0-3。四个多项式随时间t的变化如下，在任意一个时刻，四个多项式的和为1：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111323212.png" alt="image-20230511132315175" style="zoom:67%;" />
+<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
 
-<h5 id="逐段贝塞尔曲线"><a href="#逐段贝塞尔曲线" class="headerlink" title="逐段贝塞尔曲线"></a>逐段贝塞尔曲线</h5><p>​		当控制点多的时候，不便于计算操作。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111447297.png" alt="image-20230511144704245" style="zoom:50%;" />
+<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
 
-<p>​		将一个贝塞尔曲线，用多段贝塞尔曲线组合起来，逐段定义贝塞尔曲线。一般情况下，每一段由四个控制点控制。如下曲线由三段拼接。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111452294.png" alt="image-20230511145214254" style="zoom:50%;" />
+<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
 
-<p>​		如果要使得曲线之间的拼接光滑（已知第一个曲线的最后一个控制点和第二个曲线的第一个控制点是同一个点），需要第一个曲线最后一个点的切线和第二个曲线第一个点的切线共线、反向，第一个曲线倒数第二个点和第二个曲线第二个点距离两个曲线重叠的点的距离相同。（如果不相同不能称之为光滑）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111453267.png" alt="image-20230511145338232" style="zoom: 80%;" />
+<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
 
+<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
 
-
-<p>​		另一种定义曲线的方法叫做B样条曲线。对于多个控制点定义的曲线，如果移动一个点，会使得整条曲线发生变换。现在只想对曲线的局部进行变化，B样条曲线可以在不逐段定义的情况先，控制一个控制点的变化最多影响到曲线的哪一个局部范围内。</p>
-<p>​		对于两段曲线，有重合的点，叫做C0连续：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111628969.png" alt="image-20230511162850925" style="zoom:67%;" />
-
-<p>​		对于两段曲线，不仅有重合的点，重合区域切线等长、共线且相反，叫做C1连续：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111629412.png" alt="image-20230511162918366" style="zoom:67%;" />
-
-<h5 id="曲面"><a href="#曲面" class="headerlink" title="曲面"></a>曲面</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111624270.png" alt="image-20230511162453198" style="zoom:67%;" />
-
-<p>​		首先规定一共4x4 &#x3D; 16个控制点，其水平面位置如图中16个黑点所示(并未表示出高度，防止图形太乱)，将这16个点分成4列，图中红色圈中的为一列的具体例子。第1步在这4个控制点之下利用第一个参数 u得到蓝色点，因为有4列，所以一共可以得到如图所示的4个蓝色点。(灰色曲线分别为每列4个点所对应的贝塞尔曲线)第2步在得到4个蓝色顶点之后，在这四个蓝色顶点的基础之下利用第二个参数 v 可以得出贝塞尔曲面上的正确一点。第3步遍历所有的 u，v值就可以成功得到一个贝塞尔曲面。对于曲面和曲面间如何光滑衔接是更复杂的问题。这里由uv可以映射到曲面上的一个点，所以也是显示表示。</p>
-<h5 id="其他面操作"><a href="#其他面操作" class="headerlink" title="其他面操作"></a>其他面操作</h5><p>对于曲面物体更广泛的操作还是分解成多边形面。</p>
-<p>1.细分：通过将面细分成更多的面（如三角形或者四边形）使得模型精细。</p>
-<p>2.简化：将不破坏大体形状的前提下，使用更少的面（如三角形或者四边形）节省内存空间。</p>
-<p>3.正规化：例如所有组成物体的三角形都为正三角形，这会具有很多很好的性质，但不不能丢失物体原本的表现质量。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111509325.png" alt="image-20230511150928273"></p>
- 
+<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -240,7 +230,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/11/games101-11-Geometry2/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/Cameras-Lenses-LightFields/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -251,19 +241,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/12/Cameras-Lenses-LightFields/" class="article-nav-link">
+      <a href="/2023/05/12/games101-12-Geometry3/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            Cameras_Lenses_LightFields
+            games101-12-Geometry3
           
         </div>
       </a>
     
     
-      <a href="/2023/05/11/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" class="article-nav-link">
+      <a href="/2023/05/11/games101-11-Geometry2/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">线性代数</div>
+        <div class="article-nav-title">games101-11-Geometry2</div>
       </a>
     
   </nav>
