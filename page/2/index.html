@@ -118,6 +118,249 @@
     
     
     <article
+  id="post-计算着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >计算着色器</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2023-03-14T01:35:48.000Z" itemprop="datePublished">2023-03-14</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>计算着色器是在GPU上运行的，是在普通渲染管线之外的着色器程序。计算着色器是完全用于计算任意信息的着色器阶段。虽然它可以进行渲染，但它通常用于与绘制三角形和像素没有直接关系的任务。利用GUP的快速计算和并行性，可以用于处理大量的计算。</p>
+<p>opengl4.3才开始支持计算着色器，opengl es是3.1才开始支持计算着色器。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 320 es</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">local_size_x</span> = <span class="number">1</span>) <span class="keyword">in</span>; </span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">rgba32f</span>, <span class="keyword">binding</span> = <span class="number">0</span>) <span class="keyword">uniform</span> <span class="keyword">readonly</span> <span class="keyword">mediump</span> <span class="type">imageBuffer</span> po_buffer;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">rgba32f</span>, <span class="keyword">binding</span> = <span class="number">1</span>) <span class="keyword">uniform</span> <span class="keyword">writeonly</span> <span class="keyword">mediump</span> <span class="type">imageBuffer</span> po_buffer1;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//此处全局工作组和本地工作组yz均为1，因此可以通过x确定位置</span></span><br><span class="line">    <span class="type">int</span> pos = <span class="type">int</span>(<span class="built_in">gl_GlobalInvocationID</span>.x);</span><br><span class="line">    <span class="type">vec4</span> value = <span class="built_in">imageLoad</span>(po_buffer, pos);</span><br><span class="line">    value.x = value.x+<span class="number">0.4</span>;</span><br><span class="line">    value.y = value.y+<span class="number">0.4</span>;</span><br><span class="line">    <span class="built_in">imageStore</span>(po_buffer1, pos, value); </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>binding与之后glBindImageTexture的第一个参数相同，通过ID绑定对应的tbo，而tbo绑定对应的buffer。相当于通过绑定知道从哪个buffer读取数据，从哪个buffer写入数据。因为此处是读取buffer所以使用imageBuffer，如果是数组的话可能使用image2D。es需要指定精度，所以添加mediump。同时因为需要读取的是rgba而不是r（如果只设置r，value就无法读取y值），所以需要指定readonly和writeonly。但是在opengl4.3中不需要指定精度，并且读写可以在一个buffer中进行。</p>
+<p>imageLoad从buffer的指定位置读取数据，imageStore将值写入buffer的指定位置。</p>
+<p>计算着色器任务以组为单位进行执行，称为工作组。拥有邻居的工作组被称为本地工作组（局部）, 这些组可以组成更大的组，称为全局工作组，而全局工作组通常作为执行命令的一个单位。计算着色器会被全局工作组中每一个本地工作组中的每一个单元调用一次，工作组的每一个单元称为工作项，每一次调用称为一次执行。执行的单元之间可以u通过变量和显存进行通信（不同工作组不能通信），且可执行同步操作保持一致性（单个工作组内可以并行）。</p>
+<p>如下例子假设全局工作组yz轴都为1 ，局部工作组只有xy：</p>
+<p>gl_LocalInvocationID.x × local_size_y+gl_LocalInvocationID.y+local_size_x×local_size_y×gl_WorkGroupID.x&#x3D;gl_GlobalInvocationID.x×local_size_y×y轴的工作组个数+gl_GlobalInvocationID.y</p>
+<p>local_size是本地工作组的大小，有xyz三个维度，不设置默认为1。gl_WorkGroupID本地工作组在全局工作组的索引（从0开始），local_size_x×local_size_y本地工作组的大小（该大小尽量与硬件匹配），gl_LocalInvocationID工作项在本地工作组的坐标（从0开始）。gl_GlobalInvocationID：在全局工作组中，当前工作项所在位置。（在es中imageLoad后的pos只能使用int，所以可以设置本地工作组和全局工作组yz均为1，这样可以只使用gl_GlobalInvocationID.x就可以遍历到所有数据，否则可以通过上述公式计算。）本地工作组的大小×全局工作组的大小-&gt;所有需要遍历的数据</p>
+<p>与普通着色器一样正常链接</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">computeShader = LoadShader(GL_COMPUTE_SHADER, cShaderStr);</span><br><span class="line">compute_prog = glCreateProgram();</span><br><span class="line"><span class="keyword">if</span> (compute_prog == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">glAttachShader(compute_prog, computeShader);</span><br><span class="line">glLinkProgram(compute_prog);</span><br></pre></td></tr></table></figure>
+<p> 将顶点数据arraybuffer与texbuffer绑定</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">glGenBuffers(<span class="number">1</span>, &amp;po_buffer);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, po_buffer);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vVertices), vVertices, GL_DYNAMIC_COPY);</span><br><span class="line"></span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;po_buffer1);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, po_buffer1);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vVertices),vVertices, GL_DYNAMIC_COPY);</span><br><span class="line"></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;po_tbo);</span><br><span class="line">glBindTexture(GL_TEXTURE_BUFFER, po_tbo);</span><br><span class="line">glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, po_buffer);</span><br><span class="line"></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;po_tbo1);</span><br><span class="line">glBindTexture(GL_TEXTURE_BUFFER, po_tbo1);</span><br><span class="line">glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, po_buffer1);</span><br></pre></td></tr></table></figure>
+<p>先使用计算着色器，绑定tbo和id，GL_READ_WRITE设置读写权限（如果计算着色器规定了这里可以就设置读写,opengl因为读写可以在一个buffer进行因此一定要设置可读可写）。glDispatchCompute的三个参数设置了全局工作组的大小，三个参数可以理解为xyz方向各有几个本地工作组。glMemoryBarrier是隔断作用，为了保证计算着色器中纹理像素全部写入完成才进行下一步。最后使用渲染着色器进行绘制。如果至使用一次计算着色器的话，可以不用vao，渲染着色器默认使用writeonly的buffer。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glUseProgram(userData-&gt;compute_prog);</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glDispatchCompute(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);</span><br><span class="line">vao(po_tbo1配置数据与tbo1绑定)</span><br></pre></td></tr></table></figure>
+<p>如果要进行类似transformfeedback的操作，进行累加变换，需要交换读写tbo。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(flag)&#123;</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">vao(po_tbo配置数据与tbo绑定)</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">vao1(po_tbo1配置数据与tbo1绑定)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-webgl基础"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/02/07/webgl%E5%9F%BA%E7%A1%80/"
+    >webgl基础</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/02/07/webgl%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2023-02-07T13:36:35.000Z" itemprop="datePublished">2023-02-07</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Webgl/">Webgl</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>1.导入相关文件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;../lib/webgl-utils.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;../lib/webgl-debug.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;../lib/cuon-utils.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>2.在html<body>元素中创建Canvas画布，并且对其css进行相关设置。该画布具有2D绘图和3D绘图的功能。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">&quot;webgl&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>3.通过JavaScript获取上面创建的Canvas元素返回一个Canvas对象。Canvas对象也可以不通过<canvas>标签创建，然后id方式获取，也可以通过DOM直接创建。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取</span></span><br><span class="line"><span class="keyword">var</span> canvas= <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;webgl&#x27;</span>)</span><br><span class="line"><span class="comment">//直接创建后添加</span></span><br><span class="line"><span class="keyword">var</span> canvas = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;canvas&#x27;</span>);</span><br><span class="line"><span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(canvas);</span><br></pre></td></tr></table></figure>
+
+<p>4.获取Canvas上下文，执行<code>canvas.getContext(&#39;2d&#39;)</code>返回对象具有一系列绘制二维图形的方法，比如绘制直线、圆弧等API。执行<code>canvas.getContext(&#39;webgl&#39;);</code>返回对象具有一系列绘制渲染三维场景的方法，也就是WebGL API。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c =canvas.<span class="title function_">getContext</span>(<span class="string">&#x27;2d&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> gl=canvas.<span class="title function_">getContext</span>(<span class="string">&#x27;webgl&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>5.编写着色器文件</p>
+<p>可以直接将着色器文件写成字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> vertexShaderSource = <span class="string">&#x27;&#x27;</span> +    </span><br><span class="line">    <span class="string">&#x27;void main()&#123;&#x27;</span> + </span><br><span class="line">    <span class="string">&#x27;   gl_PointSize=20.0;&#x27;</span> +   </span><br><span class="line">    <span class="string">&#x27;   gl_Position =vec4(0.0,0.0,0.0,1.0);&#x27;</span> +    </span><br><span class="line">    <span class="string">&#x27;&#125;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>或者将着色器文件写在<script>标签中并通过innerText获取，获取到的对象为字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script id=<span class="string">&quot;vertexShader&quot;</span> type=<span class="string">&quot;x-shader/x-vertex&quot;</span>&gt;</span><br><span class="line"><span class="keyword">var</span> vertexShaderSource = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;vertexShader&#x27;</span>).<span class="property">innerText</span>;</span><br></pre></td></tr></table></figure>
+
+<p>6.初始化着色器</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> program = <span class="title function_">initShader</span>(gl,vertex,frag);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">initShader</span>(<span class="params">gl,vertexShaderSource,fragmentShaderSource</span>)&#123;</span><br><span class="line"><span class="comment">//创建着色器对象</span></span><br><span class="line"><span class="keyword">var</span> vertexShader = gl.<span class="title function_">createShader</span>(gl.<span class="property">VERTEX_SHADER</span>);</span><br><span class="line"><span class="keyword">var</span> fragmentShader = gl.<span class="title function_">createShader</span>(gl.<span class="property">FRAGMENT_SHADER</span>);</span><br><span class="line"><span class="comment">//引入源代码</span></span><br><span class="line">gl.<span class="title function_">shaderSource</span>(vertexShader,vertexShaderSource); </span><br><span class="line">gl.<span class="title function_">shaderSource</span>(fragmentShader,fragmentShaderSource);</span><br><span class="line"><span class="comment">//编译着色器</span></span><br><span class="line">gl.<span class="title function_">compileShader</span>(vertexShader);</span><br><span class="line">gl.<span class="title function_">compileShader</span>(fragmentShader);</span><br><span class="line"><span class="comment">//创建着色器对象</span></span><br><span class="line"><span class="keyword">var</span> program = gl.<span class="title function_">createProgram</span>();</span><br><span class="line"><span class="comment">//附着着色器到program</span></span><br><span class="line">gl.<span class="title function_">attachShader</span>(program,vertexShader);</span><br><span class="line">gl.<span class="title function_">attachShader</span>(program,fragmentShader);</span><br><span class="line"><span class="comment">//链接program</span></span><br><span class="line">gl.<span class="title function_">linkProgram</span>(program);</span><br><span class="line"><span class="comment">//使用program</span></span><br><span class="line">gl.<span class="title function_">useProgram</span>(program);</span><br><span class="line"><span class="keyword">return</span> program;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>7.正常调用webgl函数，以绘制正方形为例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在着色器中的位置设置，与顶点着色器中的attribute同名</span></span><br><span class="line"><span class="keyword">var</span> apos = gl.<span class="title function_">getAttribLocation</span>(program,<span class="string">&#x27;apos&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//类型数组构造函数Float32Array创建顶点数组（-1~1之间）</span></span><br><span class="line"><span class="keyword">var</span> data = <span class="keyword">new</span> <span class="title class_">Float32Array</span>([<span class="number">0.5</span>,<span class="number">0.5</span>,-<span class="number">0.5</span>,<span class="number">0.5</span>,-<span class="number">0.5</span>,-<span class="number">0.5</span>,<span class="number">0.5</span>,-<span class="number">0.5</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//缓冲区设置</span></span><br><span class="line"><span class="keyword">var</span> buffer=gl.<span class="title function_">createBuffer</span>();</span><br><span class="line">gl.<span class="title function_">bindBuffer</span>(gl.<span class="property">ARRAY_BUFFER</span>,buffer);</span><br><span class="line">gl.<span class="title function_">bufferData</span>(gl.<span class="property">ARRAY_BUFFER</span>,data,gl.<span class="property">STATIC_DRAW</span>);</span><br><span class="line">gl.<span class="title function_">vertexAttribPointer</span>(apos,<span class="number">2</span>,gl.<span class="property">FLOAT</span>,<span class="literal">false</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">gl.<span class="title function_">enableVertexAttribArray</span>(apos);</span><br><span class="line"></span><br><span class="line"><span class="comment">//开始绘制</span></span><br><span class="line">gl.<span class="title function_">drawArrays</span>(gl.<span class="property">LINE_LOOP</span>,<span class="number">0</span>,<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-层级模型"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/"
+    >层级模型</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/" class="article-date">
+  <time datetime="2023-02-05T15:44:24.000Z" itemprop="datePublished">2023-02-05</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/three-js/">three.js</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="使用层级模型"><a href="#使用层级模型" class="headerlink" title="使用层级模型"></a>使用层级模型</h4><p>创建两个网格模型mesh1、mesh2，通过<code>THREE.Group</code>类创建一个组对象group,然后通过<code>add</code>方法把网格模型mesh1、mesh2作为设置为组对象group的子对象，然后在通过执行<code>scene.add(group)</code>把组对象group作为场景对象的scene的子对象。也就是说场景对象是scene是group的父对象，group是mesh1、mesh2的父对象，这样就构成了一个三层的层级结构。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> group = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group.<span class="title function_">add</span>(mesh1);</span><br><span class="line">group.<span class="title function_">add</span>(mesh2);</span><br><span class="line">scene.<span class="title function_">add</span>(group);<span class="comment">//.add()方法都是继承自它们共同的基类(父类)Object3D</span></span><br><span class="line"><span class="comment">//等价于group.add(mesh1,mesh2);</span></span><br></pre></td></tr></table></figure>
+
+<p>Three.js场景对象<code>Scene</code>、组对象<code>Group</code>都有一个子对象属性<code>.children</code>,通过该属性可以访问父对象的子对象，子对象属性<code>.children</code>的值是数组，所有子对象是数组的值。场景对象<code>Scene</code>的子对象，除了组对象<code>Group</code>之外，还可以看到环境光<code>AmbientLight</code>、平行光<code>DirectionalLight</code>、辅助坐标对象<code>AxesHelper</code>等。场景对象<code>Scene</code>构成的层级模型本身是一个树结构，场景对象层级模型的第一层，也就是树结构的根节点，一般来说网格模型Mesh、点模型Points、线模型Line是树结构的最外层叶子结点。构建层级模型的中间层一般都是通过Three.js的<code>Group</code>类来完成，<code>Group</code>类实例化的对象可以称为组对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看group的子对象&#x27;</span>,group.<span class="property">children</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看Scene的子对象&#x27;</span>,scene.<span class="property">children</span>);</span><br></pre></td></tr></table></figure>
+
+<p>网格模型mesh1、mesh2作为设置为父对象group的子对象，如果父对象group进行旋转、缩放、平移变换，子对象同样跟着变换。使用层级模型可以操作一组对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//沿着Y轴平移mesh1和mesh2的父对象，mesh1和mesh2跟着平移</span></span><br><span class="line">group.<span class="title function_">translateY</span>(<span class="number">100</span>);</span><br><span class="line"><span class="comment">//父对象缩放，子对象跟着缩放</span></span><br><span class="line">group.<span class="property">scale</span>.<span class="title function_">set</span>(<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>);</span><br><span class="line"><span class="comment">//父对象旋转，子对象跟着旋转</span></span><br><span class="line">group.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如下代码等效</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> mesh2 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> obj = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Object3D</span>();<span class="comment">//作为mesh1和mesh2的父对象</span></span><br><span class="line">obj.<span class="title function_">add</span>(mesh1,mesh2);</span><br></pre></td></tr></table></figure>
+
+<p>Three.js默认mesh也可以添加子对象，mesh基类也是Object3D。如下代码与<code>group.add(mesh1,mesh2);</code>等效。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">group.<span class="title function_">add</span>(mesh1);</span><br><span class="line">mesh1.<span class="title function_">add</span>(mesh2);</span><br></pre></td></tr></table></figure>
+
+<h4 id="遍历模型树结构、查询模型节点"><a href="#遍历模型树结构、查询模型节点" class="headerlink" title="遍历模型树结构、查询模型节点"></a>遍历模型树结构、查询模型节点</h4><p>在层级模型中可以给组或者模型对象通过<code>.name</code>属性命名进行标记。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">group.<span class="property">name</span>=<span class="string">&#x27;小区房子&#x27;</span>;</span><br><span class="line">mesh.<span class="property">name</span>=<span class="string">&#x27;一号楼&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如下代码将5个mesh作为group1（高层）的子对象，将5个mesh作为group2（洋房）的子对象，将group1和group2作为group3（小区房子）的子对象，一共是4层模型。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> group1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group1.<span class="property">name</span> = <span class="string">&quot;高层&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    <span class="comment">/*...*/</span></span><br><span class="line">    group1.<span class="title function_">add</span>(mesh);</span><br><span class="line">    mesh.<span class="property">name</span> = i + <span class="number">1</span> + <span class="string">&#x27;号楼&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">group1.<span class="property">position</span>.<span class="property">y</span> = <span class="number">30</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> group2 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group2.<span class="property">name</span> = <span class="string">&quot;洋房&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    <span class="comment">/*...*/</span></span><br><span class="line">    group2.<span class="title function_">add</span>(mesh);</span><br><span class="line">    mesh.<span class="property">name</span> = i + <span class="number">6</span> + <span class="string">&#x27;号楼&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">group2.<span class="property">position</span>.<span class="property">z</span> = <span class="number">50</span>;</span><br><span class="line">group2.<span class="property">position</span>.<span class="property">y</span> = <span class="number">15</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> model = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">model.<span class="property">name</span>=<span class="string">&#x27;小区房子&#x27;</span>;</span><br><span class="line">model.<span class="title function_">add</span>(group1, group2);</span><br><span class="line">model.<span class="property">position</span>.<span class="title function_">set</span>(-<span class="number">50</span>,<span class="number">0</span>,-<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Three.js层级模型就是一个树结构，可以通过递归遍历的算法去遍历Three.js一个模型对象包含的所有后代。obj.name包括mesh的name和group的name。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 递归遍历model包含所有的模型节点</span></span><br><span class="line">model.<span class="title function_">traverse</span>(<span class="keyword">function</span>(<span class="params">obj</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;所有模型节点的名称&#x27;</span>,obj.<span class="property">name</span>);</span><br><span class="line">    <span class="comment">// obj.isMesh：if判断模型对象obj是不是网格模型&#x27;Mesh&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> (obj.<span class="property">isMesh</span>) &#123;<span class="comment">//判断条件也可以是obj.type === &#x27;Mesh&#x27;</span></span><br><span class="line">        obj.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);。</span><br></pre></td></tr></table></figure>
+
+<p>通过一些方法查找一个模型树中的某个节点，并对其进行设置。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回名.name为&quot;4号楼&quot;对应的对象</span></span><br><span class="line"><span class="keyword">const</span> nameNode = scene.<span class="property">getObjectByName</span> (<span class="string">&quot;4号楼&quot;</span>);</span><br><span class="line">nameNode.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xff0000</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="本地坐标和世界坐标"><a href="#本地坐标和世界坐标" class="headerlink" title="本地坐标和世界坐标"></a>本地坐标和世界坐标</h4><p>改变子对象的<code>.position</code>，子对象在世界坐标系中的坐标会发生改变。改变父对象的<code>.position</code>，子对象在世界坐标系中的位置也会跟着变化，也就是说父对象<code>.position</code>和子对象<code>.position</code>叠加才是才是子对象的<code>.position</code>。任何一个模型的本地坐标就是模型的<code>.position</code>属性。一个模型的世界坐标，是模型自身<code>.position</code>和所有父对象<code>.position</code>累加的坐标。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">const</span> group = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group.<span class="title function_">add</span>(mesh);</span><br><span class="line">group.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>mesh.getWorldPosition(Vector3)</code>读取一个模型的世界坐标，并把读取结果存储到参数<code>Vector3</code>中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明一个三维向量用来表示某个坐标</span></span><br><span class="line"><span class="keyword">const</span> worldPosition = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>();</span><br><span class="line"><span class="comment">// 获取mesh的世界坐标，mesh的世界坐标受到父对象group的.position影响</span></span><br><span class="line">mesh.<span class="title function_">getWorldPosition</span>(worldPosition);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;世界坐标&#x27;</span>,worldPosition);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;本地坐标&#x27;</span>,mesh.<span class="property">position</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>mesh.add(坐标系)</code>给mesh添加一个可视化的局部坐标系。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//可视化mesh的局部坐标系</span></span><br><span class="line"><span class="keyword">const</span> meshAxesHelper = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">AxesHelper</span>(<span class="number">50</span>);</span><br><span class="line">mesh.<span class="title function_">add</span>(meshAxesHelper);</span><br></pre></td></tr></table></figure>
+
+<h4 id="移除对象-remove"><a href="#移除对象-remove" class="headerlink" title="移除对象.remove()"></a>移除对象.remove()</h4><p><code>.add()</code>方法是给父对象添加一个子对象，<code>.remove()</code>方法是删除父对象中的一个子对象，这将改变<code>.children()</code>属性。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除父对象group的子对象网格模型mesh1</span></span><br><span class="line">group.<span class="title function_">remove</span>(mesh1);</span><br><span class="line">scene.<span class="title function_">remove</span>(ambient);<span class="comment">//移除场景中环境光</span></span><br><span class="line">scene.<span class="title function_">remove</span>(model);<span class="comment">//移除场景中模型对象</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以一次性移除多个子对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">group.<span class="title function_">remove</span>(mesh1,mesh2);</span><br></pre></td></tr></table></figure>
+
+<h3 id="模型属性-visible"><a href="#模型属性-visible" class="headerlink" title="模型属性.visible"></a>模型属性<code>.visible</code></h3><p>模型对象的父类<code>Object3D</code>封装了一个属性<code>.visible</code>，通过该属性可以隐藏或显示一个模型。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">visible</span> =<span class="literal">false</span>;<span class="comment">// 隐藏一个网格模型，visible的默认值是true</span></span><br><span class="line">group.<span class="property">visible</span> =<span class="literal">false</span>;<span class="comment">// 隐藏一个包含多个模型的组对象group</span></span><br><span class="line">mesh.<span class="property">visible</span> =<span class="literal">true</span>;<span class="comment">// 使网格模型mesh处于显示状态</span></span><br></pre></td></tr></table></figure>
+
+<p>材质对象的父类<code>Material</code>封装了一个<code>.visible</code>属性，通过该属性可以控制是否隐藏该材质对应的模型对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 隐藏网格模型mesh，visible的默认值是true</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">visible</span> =<span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 注意如果mesh2和mesh的.material属性指向同一个材质，mesh2也会跟着mesh隐藏</span></span><br></pre></td></tr></table></figure>
+
+<p>注意:如果多个模型引用了同一个材质，如果该材质<code>.visible</code>设置为false，意味着隐藏绑定该材质的所有模型。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-模型对象及材质"
   class="article article-type-post"
   itemscope
@@ -827,252 +1070,13 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 </article>
 
     
-    <article
-  id="post-天空盒"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/"
-    >天空盒</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-date">
-  <time datetime="2023-01-18T03:38:27.000Z" itemprop="datePublished">2023-01-18</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>​	天空盒子是一种让场景看上去更广阔无垠的一种视觉技术，用无缝对接的封闭纹理将摄像机的视口360度无死角的包裹起来。视角中除了真实模型的其他空余部分被封闭纹理所完全填充充当背景。</p>
-<p>​	天空盒子的一种实现方法是渲染一个巨大的正六面体封闭盒子纹理，并将相机置于中心，当摄像机移动的时候封闭纹理也跟着移动，所以看上去永远走不到场景中的视平线边缘。天空盒子技术除了用上面的立方体实现，还可以用球面来实现。</p>
-<p>​	这种纹理叫做立方体贴图(Cubemap)。为了从立方体贴图中采样，要采用3d纹理坐标而不是我们之前用的2d纹理坐标。纹理采样器将3d纹理坐标看做一个向量，找出该文素位于立方体的哪一个面上并从那个面上取出需要的文素。</p>
-<h4 id="创建纹理"><a href="#创建纹理" class="headerlink" title="创建纹理"></a>创建纹理</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> GLuint</span></span><br><span class="line"><span class="function"><span class="title">InitTextures</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    GLenum imgFormat;</span><br><span class="line">    GLuint texture;</span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;texture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, texture);</span><br><span class="line"></span><br><span class="line">	GLint imgWidth, imgHeight;</span><br><span class="line">	GLubyte* image = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	image = <span class="built_in">LoadRGBImage</span>(TexFiles[<span class="number">0</span>], &amp;imgWidth, &amp;imgHeight, &amp;imgFormat);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, <span class="number">0</span>,</span><br><span class="line">        GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_X, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">free</span>(image);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> texture;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>​	开始先创建一个纹理对象来加载cubemap纹理，这个对象绑定到了一个特殊的GL_TEXTURE_CUBE_MAP目标对象上。设置cubemap的六个面枚举：</p>
-<p>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_X<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_X<br>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_Y<br>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_Z</p>
-<p>​	通过glTexImage2D()函数将资源数据传给OpenGL。cubemap加载解析结束后，设置过滤。（这里简化只加载了一张图片）</p>
-<h4 id="着色器文件"><a href="#着色器文件" class="headerlink" title="着色器文件"></a>着色器文件</h4><p>顶点着色器</p>
-<p>1.顶点着色器之后，光栅器将获得gl_Position向量，并进行透视分割以完成投影变换(将各分量除以W分量)。将Z分量设置成W分量的值可以保证透视分割后位置向量最终的Z分量值为1.0。Z分量为1意味着永远处于Z轴最远处，在深度测试中相对于其他物体模型天空盒子将永远处于劣势，因此天空盒子就总是作为其他物体的背景了，而其他物体会一直渲染在背景前面。</p>
-<p>2.使用天空盒子自身坐标系中顶点的原始坐标来作为3D纹理坐标。因为对cubemap纹理采样时是从中心发射一个向量到立方体盒子或者球面上的，因此盒子表面上点的坐标恰好就是纹理坐标。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v_Position=vertexPosition_modelspace;</span><br><span class="line">gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">gl_Position=gl_Position.xyww;</span><br></pre></td></tr></table></figure>
-<p>片段着色器</p>
-<p>使用’samplerCube’而不是’sampler2D’以获取cubemap的纹理。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uniform samplerCube myTextureSampler;</span><br><span class="line">gl_FragColor=<span class="built_in">textureCube</span>(myTextureSampler, v_Position);</span><br></pre></td></tr></table></figure>
-
-<h4 id="应用纹理"><a href="#应用纹理" class="headerlink" title="应用纹理"></a>应用纹理</h4><p>1.第一个要改变的是表面剔除模式。通常，会剔除掉背向相机看不到的三角形图元，而对于天空盒子来说，相机是置于盒子内部的，所以想看到盒子的内部而不是外部。用相反的OpenGL剔除模式,就要告诉OpenGL剔除去正面的三角形。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glEnable</span>(GL_CULL_FACE);<span class="comment">//开启表面剔除(默认背面剔除)</span></span><br><span class="line"><span class="built_in">glCullFace</span>(GL_FRONT);<span class="comment">//剔除正面实现</span></span><br></pre></td></tr></table></figure>
-<p>2.第二个要改变的是深度测试函数模式。默认是告诉OpenGL，输入的片元如果比存储的片元Z值小就认为赢得深度测试而被渲染，但是对于天空盒子，Z值总是最远的边界，如果深度测试函数模式设置为‘小于’，天空盒子会被裁剪掉，为了让盒子成为场景的一部分要将深度测试函数模式改为‘小于等于’。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDepthFunc</span>(GL_LEQUAL);</span><br></pre></td></tr></table></figure>
-
-<p>3.计算WVP矩阵。对于天空盒子来说，世界坐标系的中心位于相机处，从而保证相机始终在天空盒子中心。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 V = glm::<span class="built_in">mat4</span>(glm::<span class="built_in">mat3</span>(<span class="built_in">getViewMatrix</span>()));<span class="comment">//天空盒v矩阵</span></span><br><span class="line">glm::mat4 V1 = <span class="built_in">getViewMatrix</span>();<span class="comment">//其他物体v矩阵</span></span><br></pre></td></tr></table></figure>
-<p>cubemap的纹理贴图绑定到纹理单元0号上,设置为GL_TEXTURE_CUBE_MAP</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, Texture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>最后还原原本的剔除模式和深度测试函数还原</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-光照详解"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/"
-    >光照详解</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/06/%E5%85%89%E7%85%A7%E8%AF%A6%E8%A7%A3/" class="article-date">
-  <time datetime="2023-01-06T06:40:50.000Z" itemprop="datePublished">2023-01-06</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="基于平行光的环境光"><a href="#基于平行光的环境光" class="headerlink" title="基于平行光的环境光"></a>基于平行光的环境光</h4><p>​	环境光是平行光，平行光有特定的方向但是没有特定的光源，所有的光都互相平行，计算时完全忽略光的方向，整个场景被均匀照亮。平行光的另外一个重要性质是不管它离物体多远亮度是不变的。</p>
-<p>​	光源的颜色定义为一个包含三个浮点数的三元组，浮点数介于[0,1]之间。光源的颜色和物体表面的颜色相乘得到反射回来的颜色。同时，加入强度，可以定义为一个[0，1]之间的一个单一的浮点数，然后和之前的相乘，从而得到最终的颜色值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061119134.png" alt="image-20230106111932045" style="zoom: 33%;" />
-
-<p>​	一般只是添加少量的环境光来避免出现物体一面被照亮而另一面完全是黑色的现象。例如希望物体的背后有一点亮光，因为在现实生活中灯泡会照亮它背后的墙，而墙会反过来（微弱地）照亮物体的背后，但计算这种光照的代价过大，因此通常可以简单地以假的光源代替这种计算。</p>
-<h4 id="基于点光源的漫反射光"><a href="#基于点光源的漫反射光" class="headerlink" title="基于点光源的漫反射光"></a>基于点光源的漫反射光</h4><p>​	漫射光的特性依赖光线的方向，漫射光使物体朝向它的那一面比其他背向光的面要更亮，亮度取决于光线和物体表面的角度。光线如果要对物体表面的亮度产生影响，那么光线和法线的角度要在0-90度之间但不包含90度。这种影响通过光向量l和法线向量n的点积计算。基于点光源的漫反射，表面收到的光通量依赖于表面到光源的距离：越远光越少，与距离的平方成反比。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061444894.png" style="zoom:50%;" />
-
-<p>​	顶点和法线都定义在本地坐标系空间，MVP变化后到裁剪空间。然而光照在世界空间中定义，所以在计算之前首先要将法线向量变换到世界坐标系空间。</p>
-<p>​	一个多边形面上分布的任意法向量都是一样的，足以用其中一个代表来计算顶点着色器中的漫射光。但有时一个顶点的多个面法线不同。需要使用到一个概念叫做‘顶点法线’，顶点法线是共用一个顶点的所有三角形法线的平均值。将顶点法线作为一个成员属性传给片段着色器。光栅器会得到三个不同的法向量并对其之间进行插值运算。片段着色器将会对每个像素计算其特定的插值法向量对应的颜色值，对漫射光的计算可以达到像素级别。效果是光照效果在每个相邻三角形面之间会平滑的变化。</p>
-<h4 id="基于点光源的镜面反射光"><a href="#基于点光源的镜面反射光" class="headerlink" title="基于点光源的镜面反射光"></a>基于点光源的镜面反射光</h4><p>​	基于点光源的镜面反射，比起漫反射还包含了观察者的位置。镜面反射时光以一定角度照射到物体表面，同时会在法线的另一侧对称的角度上反射出去，如果观察者刚好在反射光线的路径上那么就会看到格外强烈的光线。镜面反射最终的结果是物体在从某个角度看上去会十分明亮，而移动开后这个光亮又会消失。镜面反射光的存在更取决于反射物体的材料性质而不是光源本身。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061445748.png" alt="image-20230106144515706" style="zoom:50%;" />
-
-<p>​	亮度取决于观察者和反射光的夹角，随着角度增大反射光衰弱。这种影响通过R和V的点积计算。随着夹角’α’增大余弦值慢慢减小，直到夹角达到90°时无镜面反射的效果，夹角大于90°时余弦值为负，也没有任何反射效果，也就是观察者不在反射光的路径范围内。</p>
-<p>反射光线’R’使用’I’向量来计算，如下图：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061445499.png" alt="image-20230106144537465" style="zoom:80%;" />
-
-<p>​	向量没有起点的概念，所有方向相同且长度相同的向量都是同一个向量。因此，图中将入射光向量’I’复制到表面下面位置向量本身是不变的。根据向量的加法，’R’等于’I’+’V’，’I’已知求’V’。法线’N’的反向向量为’-N’，计算’I’和’-N’的点积可以得到’I’在’-N’上的投影，这是’V’的模长度的一半。另外’V’和’N’的方向是相同的，所以只要用计算的那个投影长度乘以单位向量’N’再乘以2就是向量’V’了。用公式简单表示如下，通过’reflect’内部函数计算：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446642.png" alt="image-20230106144604599" style="zoom: 67%;" />
-
-<p>​	计算镜面反射的最终公式：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446532.png" alt="image-20230106144620480" style="zoom:67%;" />
-
-<p>​	开始先是将光的颜色和物体表面的颜色相乘，这个和在计算环境光以及漫反射光时一样。得到的结果再和材料的镜面反射强度参数（’M’）相乘。如果材料没有反射性能，比如木头，那么镜面反射参数就为0，而像金属这种发光材料镜面反射能力就会很强。之后再乘以光线和观察者视线夹角的余弦值，即镜面参数’或者叫做‘发光参数’，用来增强加剧反射光区域边缘的强度。</p>
-<h4 id="聚光灯光源"><a href="#聚光灯光源" class="headerlink" title="聚光灯光源"></a>聚光灯光源</h4><p>​	聚光灯光源也会随着距离衰减，相当于取点光源的一个锥形的一小部分，聚光灯光源呈锥形，离光源越远，照亮的圆形区域会越大（光源位于锥形体的尖端）。如下图：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061446864.png" alt="image-20230106144647823" style="zoom:67%;" />
-
-<p>​	图中L是光源方向，实现让光源只照亮两条红线夹角之间的区域。可以定义光锥为光线方向L和红线之间的夹角（两条红线之间夹角的一半）。点积计算夹角的余弦值‘C’以及L和V夹角的余弦，其中V指的是光源到某个像素的向量，如果后者的值大于余弦值‘C’，说明L和V之间的夹角偏小，该像素就位于被照亮的区域内。反之，像素位于区域外就不会被该光源照亮。</p>
-<p>​	如果仅按照上面说的在照亮区域内就点亮像素，否则就不点亮，照亮区域和未照亮区域之间的边界边缘会非常明显。一个真实的聚光灯光源会从照亮区域的中心向圆形边缘慢慢衰减。可以利用上面计算得到的那些点积作为一个衰减的参数。但是用余弦来做衰减参数会有问题，因为聚光灯光源的夹角不能太大，否则范围太广就失去了聚光灯的效果，但是在夹角从0到一个比较小的角度范围内，cos值得变化是很缓慢的，导致衰减不明显。要想衰减效果明显这个参数范围应该是[0,1]。解决方法是将这个参数的小范围映射到[0,1]的范围。</p>
-<p>​	聚光灯光源需要光源的方向向量和截断光源照亮范围的一个阈值。阈值代表的是光源方向向量和光源到可照亮像素之间的最大夹角。比这个阈值夹角大的像素是不会被该光源照亮的。</p>
-<p>​	首先得到光源到某个像素的向量，将向量单位化方便点积运算，然后和单位化了的光源方向向量进行点积运算得到他们之间夹角的余弦值。将得到的余弦值和光源的阈值（定义光源范围的最大夹角的余弦值）进行比较，如果余弦值比阈值小，说明夹角太大像素在照亮圆区域的外面，这样像素就不会被该光源点亮。反之如果像素在照亮区域内，我们就先像点光源那样计算光源的基础颜色。然后将计算的余弦值插值到0到1的范围，最后和点光源颜色相乘计算得到最终的聚光灯颜色值。</p>
-<h4 id="基于点光源的着色器文件编写"><a href="#基于点光源的着色器文件编写" class="headerlink" title="基于点光源的着色器文件编写"></a>基于点光源的着色器文件编写</h4><p>顶点着色器</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">attribute vec3 vertexPosition_modelspace;</span><br><span class="line">attribute vec2 vertexUV;</span><br><span class="line">attribute vec3 vertexNormal_modelspace;<span class="comment">//法线数组</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform mat4 MVP;</span><br><span class="line">uniform mat4 V;</span><br><span class="line">uniform mat4 M;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">	<span class="comment">//计算世界空间下的物体矩阵（便于等下计算世界空间下光与表面的距离）</span></span><br><span class="line">	Position_worldspace = (M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的物体矩阵</span></span><br><span class="line">	vec3 vertexPosition_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>)).xyz;</span><br><span class="line">    </span><br><span class="line">	EyeDirection_cameraspace = <span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>) - vertexPosition_cameraspace;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//观察空间下光的位置</span></span><br><span class="line">	vec3 LightPosition_cameraspace = ( V * <span class="built_in">vec4</span>(LightPosition_worldspace,<span class="number">1</span>)).xyz;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//观察空间下表面到点光源的向量</span></span><br><span class="line">    <span class="comment">//如果是基于平行光的漫反射此处直接归一化光的方向</span></span><br><span class="line">    LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//计算观察空间下的法线数组</span></span><br><span class="line">	Normal_cameraspace = ( V * M * <span class="built_in">vec4</span>(vertexNormal_modelspace,<span class="number">0</span>)).xyz; </span><br><span class="line"></span><br><span class="line">	UV = vertexUV;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>片段着色器</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 120</span></span><br><span class="line"></span><br><span class="line">varying vec2 UV;</span><br><span class="line">varying vec3 Position_worldspace;</span><br><span class="line">varying vec3 Normal_cameraspace;</span><br><span class="line">varying vec3 EyeDirection_cameraspace;</span><br><span class="line">varying vec3 LightDirection_cameraspace;</span><br><span class="line"></span><br><span class="line">uniform sampler2D myTextureSampler;</span><br><span class="line">uniform mat4 MV;</span><br><span class="line">uniform vec3 LightPosition_worldspace;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//光照颜色和强度</span></span><br><span class="line">	vec3 LightColor = <span class="built_in">vec3</span>(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">	<span class="type">float</span> LightPower = <span class="number">50.0f</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//材质本身的颜色也影响最终颜色</span></span><br><span class="line">    <span class="comment">//漫反射分量</span></span><br><span class="line">	vec3 MaterialDiffuseColor = <span class="built_in">texture2D</span>( myTextureSampler, UV ).rgb;</span><br><span class="line">    <span class="comment">//环境光分量</span></span><br><span class="line">	vec3 MaterialAmbientColor = <span class="built_in">vec3</span>(<span class="number">0.1</span>,<span class="number">0.1</span>,<span class="number">0.1</span>) * MaterialDiffuseColor;</span><br><span class="line">    <span class="comment">//镜面光分量</span></span><br><span class="line">	vec3 MaterialSpecularColor = <span class="built_in">vec3</span>(<span class="number">0.3</span>,<span class="number">0.3</span>,<span class="number">0.3</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//计算光与表面的距离：光通量与距离的平方成反比（世界空间下）</span></span><br><span class="line">	<span class="type">float</span> distance = <span class="built_in">length</span>( LightPosition_worldspace - Position_worldspace );</span><br><span class="line"></span><br><span class="line">	<span class="comment">//归一化n和l（观察空间下计算（可以是任意空间））</span></span><br><span class="line">	vec3 n = <span class="built_in">normalize</span>( Normal_cameraspace );</span><br><span class="line">	vec3 l = <span class="built_in">normalize</span>( LightDirection_cameraspace );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//n：表面法线，l表面到光源的单位向量（与光相反，简化计算），二者计算点积</span></span><br><span class="line">    <span class="comment">//如果光源在三角形后面，n和l方向相反，那么n.l是负值。这意味着colour将是一个负值，没有意义。因此这种情况下必须用clamp()将cosTheta截取为0：</span></span><br><span class="line">	<span class="type">float</span> cosTheta = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( n,l ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//E：观察者，R反射光，二者计算点积</span></span><br><span class="line">	vec3 E = <span class="built_in">normalize</span>(EyeDirection_cameraspace);</span><br><span class="line">	vec3 R = <span class="built_in">reflect</span>(-l,n);<span class="comment">//内置函数计算反射光</span></span><br><span class="line">	<span class="type">float</span> cosAlpha = <span class="built_in">clamp</span>( <span class="built_in">dot</span>( E,R ), <span class="number">0</span>,<span class="number">1</span> );</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//最终颜色计算</span></span><br><span class="line">    <span class="comment">//聚光灯需要添加余弦参数</span></span><br><span class="line">	gl_FragColor.rgb = </span><br><span class="line">		MaterialAmbientColor +</span><br><span class="line">		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">        <span class="comment">//pow(cosAlpha,5)用来控制镜面反射的波瓣，镜面反射与材料本身有关</span></span><br><span class="line">		MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-step-by-step实例学习"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/"
-    >step_by_step实例学习</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/06/step-by-step%E5%AE%9E%E4%BE%8B%E5%AD%A6%E4%B9%A0/" class="article-date">
-  <time datetime="2023-01-06T00:52:54.000Z" itemprop="datePublished">2023-01-06</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="矩阵变换"><a href="#矩阵变换" class="headerlink" title="矩阵变换"></a>矩阵变换</h3><h4 id="平移"><a href="#平移" class="headerlink" title="平移"></a>平移</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060903912.png" alt="image-20230106090323761" style="zoom: 67%;" />
-
-<p>​	因为所有的位移值都要乘以向量的w行，所以位移值会加到向量的原始值上。这样使用一个4维向量表示一个3维向量叫做齐次坐标。通常对于表示点的矩阵会让w&#x3D;1，而对于表示向量的矩阵会让w&#x3D;0，因为点可以被做变换而向量不可以，可以改变一个向量的长度和方向，但是长度和方向一样的所有向量都是相等的，不管他们的起点在哪里，所以可以把所有的向量起点放到原点来看。对于向量设置w&#x3D;0然后乘以变换矩阵会得到和自身一样的向量。</p>
-<h4 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060933717.png" alt="image-20230106093340662" style="zoom:50%;" />
-
-<p>旋转后的坐标变换</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093352086.png" alt="image-20230106093352086" style="zoom:50%;" />
-
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093404574.png" alt="image-20230106093404574" style="zoom:50%;" />
-
-<p>旋转矩阵</p>
-<p>绕z轴</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093419847.png" alt="image-20230106093419847" style="zoom:50%;" />
-
-<p>绕y轴</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230106093429878.png" alt="image-20230106093429878" style="zoom:50%;" />
-
-<p>绕z轴</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301060934083.png" alt="image-20230106093440038" style="zoom:50%;" />
-
-<p>更好的方法是四元组</p>
-<h4 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h4><p>进行缩放变换其实很简单。我们从最开始的原变换矩阵来看，回忆平移变换矩阵的样子，我们保持结果矩阵中V1,V2和V3保持原样的办法是让变换矩阵主对角线上的值都为’1’，这样原向量一次都<strong>和1相乘</strong>之后依然保持不变，各分量之间互不影响。所以，这里的缩放变换，只要把那些‘1’换成我们想缩放的值，原向量各分量分别乘以这些值之后就会在相应坐标轴上进行相应的缩放了，值大于1则放大，值小于1则缩小。</p>
-<p>如果片断着色器没有显式地请求那个变量（你可以使用同一个顶点着色器混合并匹配多个片断着色器）那么一般的驱动优化会丢弃顶点着色器vs中只是影响该变量的操作（特定的shader程序是针对vs和fs的配对组合）。但如果片断着色器fs确实使用到了那个变量，光栅器会在光栅化阶段对其进行插值，并且每一次片断着色器fs的调用都会提供一个匹配特定位置的插值后的值，这意味着相邻的两个像素的值都略有不同（虽然随着三角形离摄像头越来越远那样会越来越不合适）。</p>
-<p>***经常情况下依赖插值的两个变量是三角形的法向量和纹理坐标***。顶点的法向量通常是计算包含这个顶点的所有三角形法向量的平均值而得。如果物体不是平坦的话那么每个三角形的三个顶点的法向量会各不相同，那样我们可以通过插值来计算每个像素的法向量，那些向量会用于光线的计算，从而产生更逼真可信的光照效果。插值对于纹理坐标的应用也类似，这些坐标作为模型的一部分定义在每个顶点上。为了用贴图覆盖三角形你必须对每个像素进行一样的插值操作并给每个像素定义正确的纹理坐标，这些坐标都是插值的结果</p>
-<p>复合变换</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 Rotation_tree2 = <span class="built_in">eulerAngleYXZ</span>(gOrientation1.y, gOrientation1.x, gOrientation2.z);</span><br><span class="line">glm::mat4 Transla_tree2 = <span class="built_in">translate</span>(<span class="built_in">mat4</span>(), gPosition2);</span><br><span class="line">glm::mat4 Scaling_tree2 = <span class="built_in">scale</span>(<span class="built_in">mat4</span>(), <span class="built_in">vec3</span>(<span class="number">0.3f</span>, <span class="number">0.3f</span>, <span class="number">0.3f</span>));</span><br><span class="line">glm::mat4 Model_tree2 = Transla_tree2 * Rotation_tree2 * Scaling_tree2;</span><br></pre></td></tr></table></figure>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
   </nav>
   
 </section>

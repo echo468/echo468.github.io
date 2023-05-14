@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-12-Geometry3 |  Hexo
+    games101-14-Ray-Tracing2 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-12-Geometry3"
+  id="post-games101-14-Ray-Tracing2"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-12-Geometry3
+  games101-14-Ray-Tracing2
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/12/games101-12-Geometry3/" class="article-date">
-  <time datetime="2023-05-12T10:44:12.000Z" itemprop="datePublished">2023-05-12</time>
+      <a href="/2023/05/13/games101-14-Ray-Tracing2/" class="article-date">
+  <time datetime="2023-05-13T01:45:04.000Z" itemprop="datePublished">2023-05-13</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">2.5k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">4 min</span>
+            <span class="post-count">8 min</span>
         </span>
     </span>
 </div>
@@ -109,75 +109,105 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="细分"><a href="#细分" class="headerlink" title="细分"></a>细分</h4><p>​		分出更多的三角形，并且让三角形的位置发生变化，使得原来的模型边的更加精细。所以细分分为两个步骤：增加顶点（面）和对点的位置进行调整。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111940872.png" alt="image-20230511194013793" style="zoom:67%;" />
+  <p>​		如果整个场景只有一个极其复杂的单一人物模型，那么只对这一个物体做包围盒的话，相当于对效率没有任何提升。如果整个场景充斥着大量的细小模型，如草，花之类的，每个模型可能只有很少的面，如果此时对每个物体求包围盒，得到的包围盒数量会相当之多，对于光线追踪效率来说效率提升有限。基于以上两点考虑，AABB并不应只局限于以物体模型为单位，因此如何更好的划分场景形成不同的AABB，使得划分之后的AABB能够更好的加速光线追踪，就是接下来要考虑的问题关键。</p>
+<h4 id="均匀空间划分"><a href="#均匀空间划分" class="headerlink" title="均匀空间划分"></a>均匀空间划分</h4><p>（1）对所要考虑的场景找一个包围盒：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029114.png" alt="image-20230513102915947" style="zoom:50%;" />
 
-<h5 id="Loop细分"><a href="#Loop细分" class="headerlink" title="Loop细分"></a>Loop细分</h5><p>​		取三角形三条边的中点，用三个中点组成新的三角形，原来的三角形会被细分成四个三角形。以不同的规则调整旧顶点和新生成顶点的位置。如下对于一个新生成的点，且该点所在的边被两个三角形共享，按照如下公式进行加权计算，使得顶点位置改变后，表面相对平滑。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111945734.png" alt="image-20230511194542678" style="zoom: 67%;" />
+<p>（2）在光线追踪之前，均匀用小格子划分这个大包围盒（相当于把场景均匀划分成更小的AABB包围盒）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029151.png" alt="image-20230513102934066" style="zoom:50%;" />
 
-<p>​		对于旧的顶点，一个旧顶点可能被多个三角形共享。按照如下公式利用权值、自己的顶点坐标和周围相邻的顶点坐标进行加权计算，如果周围相邻的点多，受周围点的影响就更大。其中n是该点的度，就是该点连接了几条边，u的取值受n值影响。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111946343.png" alt="image-20230511194635296" style="zoom:67%;" />
+<p>（3）标记出与物体表面相交的格子(不包括物体内部)，存储物体模型信息:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029586.png" alt="image-20230513102953483" style="zoom:50%;" />
 
-<p>​		Loop细分结果如下，注意该方法只能对三角形网格进行细分，如果对四边形网格，需要其他的细分方法：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111952456.png" alt="image-20230511195211382" style="zoom:67%;" />
+<p>（4）根据光线的方向与判断出所有与光线相交的格子(这一步可以利用bresenham算法，如对于朝右上方的光线，光线经过的下一个格子为当前格子的右边或者上边的格子，求交点找更近的格子)，倘若格子还与物体表面相交，就说明光线可能会和物体相交，再进一步将光线与格子中的物体模型或是三角形面求交。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131030156.png" alt="image-20230513103007070" style="zoom:50%;" />
 
-<h5 id="Catmull-Clark细分"><a href="#Catmull-Clark细分" class="headerlink" title="Catmull-Clark细分"></a>Catmull-Clark细分</h5><p>​		定义四边形面（quad face)和非四边形面（Non-quad face）</p>
-<p>​		奇异点：度不为4点</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112020896.png" alt="image-20230511202020854" style="zoom: 50%;" />
+<p>问题1：小格子的大小</p>
+<p>​		在该方法中，更多的计算是光线与AABB包围盒（小格子）而不是物体，通过包围盒把计算的三角形面限制在更小的范围内，所以某种程度上可以加速计算。但是格子的大小也会影响计算速度。在极端情况下，假如格子的大小为1✖1,相当于没有进行划分。如果格子太过密集，要计算的小格子很多，也会影响计算速度。较好的划分程度为格子数&#x3D;C✖物体个数，在3维情况下C的值一般取27。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131046138.png" alt="image-20230513104601004" style="zoom: 50%;" />
 
-<p>​		取每个面的中点，以及网格面每个边的中点，连接这些中点。如下图所示，现在图中有4个奇异点。只要原来的面不是四边形面，新增的点一定是奇异点。第一次细分，每个非四边形面会引入一个新的奇异点，但是非四边形面会消失，也就是不会再增加奇异点。</p>
+<p>问题2：均匀划分场景引发的问题</p>
+<p>​		如果说场景较为空旷，物体较小且分离得比较开，那么均匀分割的效果就会很差了，因为会有很多无效的方格与光线的求交过程。例如对于一个空旷的操场，操场中间放置了一个茶壶，光线到达茶壶之前，需要计算光线和很多空格子求交过程。因此空旷的地方不适合划分太多小格子，用大格子快速跳过空旷位置的计算。均匀划分的方法适合的场景是空间中均匀布满了三角形面，如下图这种场景，物体多的地方适合划分更多的小格子，将需要计算的三角形面限制在更小范围，如果格子太大，就需要将光线和更多的三角面求交：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131120079.png" alt="image-20230513112034871" style="zoom:67%;" />
+
+<p>如下是其他划分方法：</p>
+<p>（1）八叉树，每次将空间分为8个相等的部分，再递归的对子空间进行划分。当划分的子空间足够小或是空间中三角形面的数量很少的时候会停止划分。这种方法的显著缺点是，随着维度的上升划分的空间数量会呈指数级增长。</p>
+<p>（2）KD-Tree，每次将空间划分为两部分，且划分依次沿着x-axis，y-axis，z-axis交替进行，使得空间划分相对均匀，终止条件与八叉树类似。</p>
+<p>（3）BSP-Tree，其与KD-Tree类似，唯一不同的是划分不再沿着固定一轴，可以任意方向划分，缺点是划分的空间没有规则性，对比于AABB来说，求交困难。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131059825.png" alt="image-20230513105950720" style="zoom:67%;" />
+
+<h4 id="KD-Tree空间划分"><a href="#KD-Tree空间划分" class="headerlink" title="KD-Tree空间划分"></a>KD-Tree空间划分</h4><p>​		如下所有操作都在光线追踪之前，对场景预处理，以2维为例。</p>
+<p>​		先将整个场景放在包围盒中，将空间分为两部分：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412006.png" alt="image-20230513141209956" style="zoom: 50%;" />
+
+<p>​		对左右两个子空间换个方向再分为两部分(这里只画出了右半部分，其实左边也是一样)，之后以此类推进一步分割，形成KD-tree。</p>
+<p>（1）依次沿着x-axis,y-axis,z-axis划分，使得空间被划分的更加平衡<br>（2）划分的位置由空间中三角面的分布决定，具体细节不展开<br>（3） 叶子节点存储对应空间的所有物体或三角面信息，中间节点仅存储指针指向两个子空间<br>（4） 当划分空间太小或是子空间内只有少量三角形则停止划分</p>
 <table>
 <thead>
 <tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112023594.png" alt="image-20230511202351551" style="zoom: 50%;" /></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030671.png" alt="image-20230511203019621" style="zoom: 50%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412784.png" alt="image-20230513141218740" style="zoom:50%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131416122.png" alt="image-20230513141650076" style="zoom:67%;" /></th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030336.png" alt="image-20230511203041212" style="zoom:50%;" /></td>
-<td align="center"></td>
+<td></td>
+<td></td>
 </tr>
 </tbody></table>
-<p>​		用如下方法对新增的点和旧的点进行调整，使得表面相对平滑：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112034363.png" alt="image-20230511203420316" style="zoom: 67%;" />
+<p>​		对于一条光线，第一步判断光线是否与最外层的包围盒相交，如果相交进一步判断是否与对应的两个子空间相交：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412799.png" alt="image-20230513141228752" style="zoom:50%;" />
 
-<h4 id="简化"><a href="#简化" class="headerlink" title="简化"></a>简化</h4><p>1.为了提升性能，节省空间，需要使用更简化的模型。</p>
-<p>2.根据场景决定模型的精细程度，比如对于远距离的物体，可以简化模型（类似Mipmap，但是几何的层次结构，以及不同层次结构之间的过度很难）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112044769.png" alt="image-20230511204425706" style="zoom:67%;" />
+<p>​		因图中做了简化，最大包围盒的左半边并没继续进行划分(实际上应该要划分的)，所以左半部分对应的1号空间是叶子节点，如果光线与之相交，进一步判断与存储在叶子节点的物体求交。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412090.png" alt="image-20230513141238041" style="zoom:50%;" />
 
-<p>​		一种简化方法，边坍缩,如下图将一条边连接的两个顶点变成一个顶点，然后该边就不存在了。但随之而来的问题就是，曲面简化需要尽量保持原本模型的大致形状，如何坍缩一条边，或者说坍缩哪一条边能够使得原模型样貌被改变的程度最小，这就是曲面简化的关键所在。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112050293.png" alt="image-20230511205051245" style="zoom: 67%;" />
-
-<p>​		如左图，将上面两条边坍塌成一个点，如果将该点的坐标用五个顶点或者上面三个顶点的进行平均，得到的结果会比原来的形状小一圈。为此引入一个度量，即二次误差度量(Quadric Error Metrics)。即计算坍缩之后蓝色新顶点所在的位置与原来各个平面的垂直距离的平方和。如果能够使得这个误差最小那么对整个模型样貌修改一定程度上也会较小。误差最小的位置就是最后新顶点的位置。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112054659.png" alt="image-20230511205433625"></p>
-<p>​		对于整个物体，坍缩流程如下，通过局部最优解得到全局最优解：</p>
-<p>（1）为模型每条边赋值，其值为坍缩这条边之后，代替两个老顶点的新顶点所能得到的最小二次误差度量</p>
-<p>（2）选取权值最小的边做坍缩，新顶点位置为原来计算得出使得二次误差最小的位置</p>
-<p>（3） 坍缩完之后，与之相连其他的边的位置会改动，更新这些边的权值</p>
-<p>（4）重复上述步骤，直到到达终止条件</p>
-<h4 id="阴影贴图Shadow-Mapping"><a href="#阴影贴图Shadow-Mapping" class="headerlink" title="阴影贴图Shadow Mapping"></a>阴影贴图Shadow Mapping</h4><p>​		光栅化不能很好的处理全局光照，例如阴影。光栅化具有局部性，只考虑着色点和光源、相机的关系，而不考虑该点是否被遮挡，在阴影内（相对于光源被遮挡，但是相机可以看见）。Shadow Mapping在光栅化的情况下处理阴影，但只能处理点光源。并且生成的阴影具有明显边界，一个点在阴影中&#x2F;不在阴影中。</p>
-<p>​		如果一个点不在阴影内，说明相机可以看到该点，光源也可以看到该点。一个点在阴影内，说明相机可以看到该点，光源不能看到该点。</p>
-<p>​		首先从光源看向场景，根据深度测试的思想记录每个像素最前的深度。如下图是从光源的角度看场景：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331421.png" alt="image-20230511233126307" style="zoom:67%;" />
-
-<p>​		如下图是生成的shadow maps，即光源视角的Z-buffer，但是是存在一张纹理图中：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331418.png" alt="image-20230511233142306" style="zoom:67%;" />
-
-<p>​		从设定好的相机位置看向场景。将所有摄像机视角可见点，计算与光源的距离。再找到该点对应的shadow mapping上记录的深度值，如果二者相等，则表明该点能被相机和光源同时看到，不在阴影中，反之在阴影中。</p>
+<p>​		左半边判断完之后，接着判断右半部分，如果对于右半部分存在相交情况，则对于右半部分的所有子空间，递归的执行这个步骤即可：</p>
 <table>
 <thead>
 <tr>
-<th align="center">在阴影中</th>
-<th align="center">不在阴影中</th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131444748.png" alt="image-20230513144410699" style="zoom: 50%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412368.png" alt="image-20230513141258321" style="zoom:50%;" /></th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112328210.png" alt="image-20230511232856119" style="zoom: 67%;" /></td>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112326631.png" alt="image-20230511232651546" style="zoom:67%;" /></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131427636.png" alt="image-20230513142703588"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131427025.png" alt="image-20230513142754978"></td>
 </tr>
 </tbody></table>
-<p>问题：如浮点数难以判断相等，会出现精度问题 ;该方法只适合点光源，生成硬阴影。在光源有一定大小，会存在软阴影。光源具有体积，导致有的地方完全看不到光源(本影, Umbra), 有的地方能看到一部分光源(半影，Penumbra)。所以阴影的边缘会有过渡的情况，从而产生软阴影现象。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112341363.png" alt="image-20230511234128954" style="zoom: 33%;" /> 
+<p>​		利用KD-Tree的结构来对空间划分AABB包围盒的好处是倘若光线与哪一部分空间不相交，那么则可以省略该部分空间所有子空间的判断过程，提升了效率。缺点是判断包围盒与三角面的是否相交较难，因此划分的过程不是那么想象的简单，其次同一个三角形面或物体可能被不同的包围盒同时占有，不同包围盒内的叶节点会同时存储这一个三角形面或物体。</p>
+<h4 id="BVH物体划分"><a href="#BVH物体划分" class="headerlink" title="BVH物体划分"></a>BVH物体划分</h4><p>​		BVH与前几种方法最显著的区别就是，不再以空间作为划分依据，而是从对象的角度考虑，即三角形面（物体）。<br>​		第一步同样找出场景的整体包围盒作为根节点:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131453263.png" alt="image-20230513145329220" style="zoom:50%;" />
+
+<p>​		第二步找到合适的划分点，将最大包围盒内的三角形面分为两部分，再分别重新就算新的包围盒:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131454548.png" alt="image-20230513145402505" style="zoom:50%;" />
+
+<p>​		注意到这里，包围盒会重叠，但一个三角形面只会被存储在唯一的包围盒内，而这也就解决了KD-Tree的缺点。接下来与KD-Tree的建立类似，递归的对所有子空间重复该步骤（如何划分使得重叠部分更少很有讲究），当叶子节点三角形个数足够少停止（一般≤5）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131454256.png" alt="image-20230513145433211" style="zoom:50%;" />
+
+<p>​		划分顺序可以按照xyz轴。为了划分均匀，也可以每次划分一般选择最长的那一轴划分，假设是x轴，n个三角形从左到右，找到中位数的三角形进行左右划分（对于x轴，将三角形重心按照x排序，找到中间的三角形），如此便能保证划分的左右两边三角形数量尽可能差不多。之后判断光线与包围盒求交的步骤同KD-Tree。BVH不需要判断包围盒和三角形面的关系。</p>
+<h4 id="辐射度量学Radiometry"><a href="#辐射度量学Radiometry" class="headerlink" title="辐射度量学Radiometry"></a>辐射度量学Radiometry</h4><p>​		在Blinn-Phong模型中，光的能量用常数I表示，没有单位和一个准确的定义。该模型在计算高光的时候，只考虑是否能看见高光，不考虑实际接收到的能量，即光线方向和法线的关系。whited-style的光线追踪模型中，认为所有反射都是完美镜面反射，对于漫反射的光线没有进行追踪，直接用当前点的颜色。并且光在多次折射和反射中会有能量损失，能量损失的值是自定义的。</p>
+<p>（1）Radiant Energy:光源辐射出能量Q[J]</p>
+<p>（2）Radiant flux:单位时间内光源辐射出的能量（时间越长能量越多，在辐射度量学中考虑单位时间的性质）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131520260.png" alt="image-20230513152037223" style="zoom: 67%;" />
+
+<p>（3）Radiant intensity：单位时间光源在单位立体角（某个方向）上辐射出的能量</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131526426.png" alt="image-20230513152636391" style="zoom: 67%;" />
+
+<p>​		弧度制，数学术语，指用弧长与半径之比度量对应圆心角角度的方式。用符号rad表示，读作弧度。等于半径长的圆弧所对的圆心角叫做1弧度的角。由于圆弧长短与圆半径之比，不因为圆的大小而改变，所以弧度数也是一个与圆的半径无关的量。（圆周长2 πR，面积 πR^2）整个圆的弧度为2 π。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131529358.png" alt="image-20230513152911322" style="zoom:67%;" />
+
+<p>​		对应在三维上的球的弧度(立体角)的计算方式如下，立体角度所对应球上的投影面积比上半径的平方，整个球的立体角为4 π 。（球表面积 4πR^2）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131529984.png" alt="image-20230513152919949" style="zoom:67%;" />
+
+<p>​		利用微分立体角dw定义一个方向（就好比用一个浮点数定义一个时间），计算如下：通过θ,ϕ确定空间中一个方向，在这两个角度上分别增加一个微分值，其中rdθ 是微分面积元的高，rsinθdϕ 是微分面积元的宽，二者相乘是微分立体角在球面上的面积。用该微分面积除以半径的平方即为微分立体角的值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131534431.png" alt="image-20230513153447386" style="zoom: 67%;" />
+
+<p>​		对dw在整个球上积分，积分结果为4π。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131536006.png" alt="image-20230513153620960" style="zoom: 67%;" />
+
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230513153752040.png" alt="image-20230513153752040" style="zoom:67%;" />
+
+<p>​		对各向同性点光源，所有方向上的亮度都与方向无关，所以I是一个常数，因此对Φ积分时只用对立体角积分。最后推算出的I是一个常数。</p>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -243,7 +273,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/games101-12-Geometry3/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/13/games101-14-Ray-Tracing2/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -254,19 +284,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/games101-14-Ray-Tracing2/" class="article-nav-link">
+      <a href="/2023/05/13/games101-categories/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            games101-14-Ray-Tracing2
+            games101-categories
           
         </div>
       </a>
     
     
-      <a href="/2023/05/12/games101-19-Cameras/" class="article-nav-link">
+      <a href="/2023/05/12/games101-12-Geometry3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-19-Cameras</div>
+        <div class="article-nav-title">games101-12-Geometry3</div>
       </a>
     
   </nav>

@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-12-Geometry3 |  Hexo
+    games101-15-Ray-Tracing3 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-12-Geometry3"
+  id="post-games101-15-Ray-Tracing3"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-12-Geometry3
+  games101-15-Ray-Tracing3
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/12/games101-12-Geometry3/" class="article-date">
-  <time datetime="2023-05-12T10:44:12.000Z" itemprop="datePublished">2023-05-12</time>
+      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
+  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.4k</span>
+            <span class="post-count">2k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">4 min</span>
+            <span class="post-count">7 min</span>
         </span>
     </span>
 </div>
@@ -109,75 +109,95 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="细分"><a href="#细分" class="headerlink" title="细分"></a>细分</h4><p>​		分出更多的三角形，并且让三角形的位置发生变化，使得原来的模型边的更加精细。所以细分分为两个步骤：增加顶点（面）和对点的位置进行调整。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111940872.png" alt="image-20230511194013793" style="zoom:67%;" />
+  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
 
-<h5 id="Loop细分"><a href="#Loop细分" class="headerlink" title="Loop细分"></a>Loop细分</h5><p>​		取三角形三条边的中点，用三个中点组成新的三角形，原来的三角形会被细分成四个三角形。以不同的规则调整旧顶点和新生成顶点的位置。如下对于一个新生成的点，且该点所在的边被两个三角形共享，按照如下公式进行加权计算，使得顶点位置改变后，表面相对平滑。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111945734.png" alt="image-20230511194542678" style="zoom: 67%;" />
+<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
 
-<p>​		对于旧的顶点，一个旧顶点可能被多个三角形共享。按照如下公式利用权值、自己的顶点坐标和周围相邻的顶点坐标进行加权计算，如果周围相邻的点多，受周围点的影响就更大。其中n是该点的度，就是该点连接了几条边，u的取值受n值影响。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111946343.png" alt="image-20230511194635296" style="zoom:67%;" />
+<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
 
-<p>​		Loop细分结果如下，注意该方法只能对三角形网格进行细分，如果对四边形网格，需要其他的细分方法：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111952456.png" alt="image-20230511195211382" style="zoom:67%;" />
+<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
 
-<h5 id="Catmull-Clark细分"><a href="#Catmull-Clark细分" class="headerlink" title="Catmull-Clark细分"></a>Catmull-Clark细分</h5><p>​		定义四边形面（quad face)和非四边形面（Non-quad face）</p>
-<p>​		奇异点：度不为4点</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112020896.png" alt="image-20230511202020854" style="zoom: 50%;" />
+<p>​		该方程也可以转换成如下两个方程：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
 
-<p>​		取每个面的中点，以及网格面每个边的中点，连接这些中点。如下图所示，现在图中有4个奇异点。只要原来的面不是四边形面，新增的点一定是奇异点。第一次细分，每个非四边形面会引入一个新的奇异点，但是非四边形面会消失，也就是不会再增加奇异点。</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112023594.png" alt="image-20230511202351551" style="zoom: 50%;" /></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030671.png" alt="image-20230511203019621" style="zoom: 50%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030336.png" alt="image-20230511203041212" style="zoom:50%;" /></td>
-<td align="center"></td>
-</tr>
-</tbody></table>
-<p>​		用如下方法对新增的点和旧的点进行调整，使得表面相对平滑：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112034363.png" alt="image-20230511203420316" style="zoom: 67%;" />
+<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
 
-<h4 id="简化"><a href="#简化" class="headerlink" title="简化"></a>简化</h4><p>1.为了提升性能，节省空间，需要使用更简化的模型。</p>
-<p>2.根据场景决定模型的精细程度，比如对于远距离的物体，可以简化模型（类似Mipmap，但是几何的层次结构，以及不同层次结构之间的过度很难）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112044769.png" alt="image-20230511204425706" style="zoom:67%;" />
+<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
 
-<p>​		一种简化方法，边坍缩,如下图将一条边连接的两个顶点变成一个顶点，然后该边就不存在了。但随之而来的问题就是，曲面简化需要尽量保持原本模型的大致形状，如何坍缩一条边，或者说坍缩哪一条边能够使得原模型样貌被改变的程度最小，这就是曲面简化的关键所在。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112050293.png" alt="image-20230511205051245" style="zoom: 67%;" />
+<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
 
-<p>​		如左图，将上面两条边坍塌成一个点，如果将该点的坐标用五个顶点或者上面三个顶点的进行平均，得到的结果会比原来的形状小一圈。为此引入一个度量，即二次误差度量(Quadric Error Metrics)。即计算坍缩之后蓝色新顶点所在的位置与原来各个平面的垂直距离的平方和。如果能够使得这个误差最小那么对整个模型样貌修改一定程度上也会较小。误差最小的位置就是最后新顶点的位置。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112054659.png" alt="image-20230511205433625"></p>
-<p>​		对于整个物体，坍缩流程如下，通过局部最优解得到全局最优解：</p>
-<p>（1）为模型每条边赋值，其值为坍缩这条边之后，代替两个老顶点的新顶点所能得到的最小二次误差度量</p>
-<p>（2）选取权值最小的边做坍缩，新顶点位置为原来计算得出使得二次误差最小的位置</p>
-<p>（3） 坍缩完之后，与之相连其他的边的位置会改动，更新这些边的权值</p>
-<p>（4）重复上述步骤，直到到达终止条件</p>
-<h4 id="阴影贴图Shadow-Mapping"><a href="#阴影贴图Shadow-Mapping" class="headerlink" title="阴影贴图Shadow Mapping"></a>阴影贴图Shadow Mapping</h4><p>​		光栅化不能很好的处理全局光照，例如阴影。光栅化具有局部性，只考虑着色点和光源、相机的关系，而不考虑该点是否被遮挡，在阴影内（相对于光源被遮挡，但是相机可以看见）。Shadow Mapping在光栅化的情况下处理阴影，但只能处理点光源。并且生成的阴影具有明显边界，一个点在阴影中&#x2F;不在阴影中。</p>
-<p>​		如果一个点不在阴影内，说明相机可以看到该点，光源也可以看到该点。一个点在阴影内，说明相机可以看到该点，光源不能看到该点。</p>
-<p>​		首先从光源看向场景，根据深度测试的思想记录每个像素最前的深度。如下图是从光源的角度看场景：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331421.png" alt="image-20230511233126307" style="zoom:67%;" />
+<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
 
-<p>​		如下图是生成的shadow maps，即光源视角的Z-buffer，但是是存在一张纹理图中：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331418.png" alt="image-20230511233142306" style="zoom:67%;" />
+<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
 
-<p>​		从设定好的相机位置看向场景。将所有摄像机视角可见点，计算与光源的距离。再找到该点对应的shadow mapping上记录的深度值，如果二者相等，则表明该点能被相机和光源同时看到，不在阴影中，反之在阴影中。</p>
-<table>
-<thead>
-<tr>
-<th align="center">在阴影中</th>
-<th align="center">不在阴影中</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112328210.png" alt="image-20230511232856119" style="zoom: 67%;" /></td>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112326631.png" alt="image-20230511232651546" style="zoom:67%;" /></td>
-</tr>
-</tbody></table>
-<p>问题：如浮点数难以判断相等，会出现精度问题 ;该方法只适合点光源，生成硬阴影。在光源有一定大小，会存在软阴影。光源具有体积，导致有的地方完全看不到光源(本影, Umbra), 有的地方能看到一部分光源(半影，Penumbra)。所以阴影的边缘会有过渡的情况，从而产生软阴影现象。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112341363.png" alt="image-20230511234128954" style="zoom: 33%;" /> 
+<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
+
+<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
+<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
+
+<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
+
+<p>​		对于多个点光源：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
+
+<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
+
+<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
+
+<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
+
+<p>​		进一步简写：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
+
+<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
+
+<p>​		如下是一个示例：</p>
+<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
+
+<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
+
+<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
+
+<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
+
+<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
+<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
+<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
+<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
+
+<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
+<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
+
+<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
+
+<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
+
+<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -243,7 +263,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/games101-12-Geometry3/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/15/games101-15-Ray-Tracing3/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -254,19 +274,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/13/games101-14-Ray-Tracing2/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            games101-14-Ray-Tracing2
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/12/games101-19-Cameras/" class="article-nav-link">
+      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-19-Cameras</div>
+        <div class="article-nav-title">games101-13-Ray_Tracing1</div>
       </a>
     
   </nav>
