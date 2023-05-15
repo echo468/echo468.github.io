@@ -118,7 +118,7 @@
     
     
     <article
-  id="post-games101-2-Transformation"
+  id="post-games101-3-Transformation"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -129,15 +129,15 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-2-Transformation/"
-    >games101-2-Transformation</a> 
+  <a class="article-title" href="/2023/05/15/games101-3-Transformation/"
+    >games101-3-Transformation</a> 
 </h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-2-Transformation/" class="article-date">
+      <a href="/2023/05/15/games101-3-Transformation/" class="article-date">
   <time datetime="2023-05-15T07:40:34.000Z" itemprop="datePublished">2023-05-15</time>
 </a> 
   <div class="article-category">
@@ -148,7 +148,94 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-   
+  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
+<p>（1）均匀缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556613.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556643.png" alt="img"></p>
+<p>（2）非均匀缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
+<p><em><strong>*R*</strong></em><em><strong>*eflection*</strong></em><em><strong>*反射*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556876.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556742.png" alt="img"></p>
+<p><em><strong>*Shear Matric*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps11.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556090.png" alt="img">（此处认为最大高度为1）</p>
+<p><em><strong>*Rotate旋转*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
+<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
+<p>以边长为1进行旋转矩阵推导：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556293.png" alt="img"> –&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556219.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556428.png" alt="img"> –&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556403.png" alt="img"></p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps19.png" alt="img"></p>
+<p>如果旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556558.png" alt="img">:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
+<p>矩阵为旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556727.png" alt="img">时旋转矩阵的转置，并且由于旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557583.png" alt="img">是旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557125.png" alt="img">的逆变换，因此该矩阵还为旋转<img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps25.png" alt="img">时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
+<p><em><strong>*线性变换*</strong></em></p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps26.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557100.png" alt="img"></p>
+<p><em><strong>*Translation平移*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
+<p>此处是先进性线性变换再平移。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557628.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557847.png" alt="img"></p>
+<p><em><strong>*齐次坐标*</strong></em></p>
+<p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
+<p>点的平移变换，点平移后成为新的点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
+<p>向量具有平移不变性：</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps33.png" alt="img"></p>
+<p>可以通过齐次坐标的w验证：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
+<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下：,</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps35.png" alt="img">是二维的点<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557342.png" alt="img"></p>
+<p><em><strong>*Affine Transformation仿射变换*</strong></em></p>
+<p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>缩放变换矩阵</th>
+<th>旋转变换矩阵</th>
+<th>平移变换矩阵</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps38.png" alt="img"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
+</tr>
+</tbody></table>
+<p><em><strong>*Inverse Transform逆变换*</strong></em></p>
+<p>逆变换相当于乘以变换的逆矩阵。</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps41.jpg" alt="img"> </p>
+<p><em><strong>*Composite Transform组合变换*</strong></em></p>
+<p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps42.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps44.png" alt="img"></p>
+<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></p>
+<p><em><strong>*变换分解*</strong></em></p>
+<p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
+<p><em><strong>*三维齐次坐标*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps48.png" alt="img">是三维的点<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557970.png" alt="img"></p>
+<p><em><strong>*三维仿射变换*</strong></em></p>
+<p>如下矩阵是先进行线性变换再进行平移变换。</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps50.png" alt="img"></p>
+<p><em><strong>*三维缩放*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
+<p><em><strong>*三维平移*</strong></em></p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps52.png" alt="img"></p>
+<p><em><strong>*三维绕轴旋转*</strong></em></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps55.png" alt="img"></p>
+<p>任意旋转都已由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
+<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
+ 
       <!-- reward -->
       
     </div>
@@ -168,7 +255,7 @@
 
     
     <article
-  id="post-games101-1-Transformation"
+  id="post-games101-2-Tlinea_algebra"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -179,15 +266,15 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-1-Transformation/"
-    >games101-1-Transformation</a> 
+  <a class="article-title" href="/2023/05/15/games101-2-Tlinea_algebra/"
+    >games101-2-Tlinea_algebra</a> 
 </h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-1-Transformation/" class="article-date">
+      <a href="/2023/05/15/games101-2-Tlinea_algebra/" class="article-date">
   <time datetime="2023-05-15T07:40:24.000Z" itemprop="datePublished">2023-05-15</time>
 </a> 
   <div class="article-category">
