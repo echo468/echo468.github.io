@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-2-Tlinea_algebra |  Hexo
+    games101-20-Color_Perception |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-2-Tlinea_algebra"
+  id="post-games101-20-Color-Perception"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-2-Tlinea_algebra
+  games101-20-Color_Perception
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-2-Tlinea_algebra/" class="article-date">
-  <time datetime="2023-05-15T07:40:24.000Z" itemprop="datePublished">2023-05-15</time>
+      <a href="/2023/05/20/games101-20-Color-Perception/" class="article-date">
+  <time datetime="2023-05-20T12:04:20.000Z" itemprop="datePublished">2023-05-20</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.1k</span>
+            <span class="post-count">2.7k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">9 min</span>
         </span>
     </span>
 </div>
@@ -109,70 +109,116 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
-<p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
-<p>单位向量（只关心方向不关心长度）：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
-<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
+  <h4 id="光场"><a href="#光场" class="headerlink" title="光场"></a>光场</h4><p>​		我们看到这个三维世界，在人眼里类似就是一幅二维的图 ，那如果直接看到一幅图，这幅图完全记录了之前看到的光线信息，也能得到同样的结果（类似虚拟现实设备的应用）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142021885.png" alt="image-20230514202102820" style="zoom:67%;" />
 
-<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
-<p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
-<p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
-<h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
-<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
-<p>点乘的性质：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
-<p>点乘的代数计算（对应元素相乘，最后将所有乘积相加）：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345885.jpg" alt="img"> </p>
-<p>点乘的作用：</p>
-<p>（1）计算一个向量在另一个向量上的投影</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345069.jpg" alt="img"> </p>
-<p>​		b向量在a向量上的投影的方向为a向量的方向，投影的大小为||b||cosθ，所以b向量在a向量上的投影为||b||cosθa，cosθ通过a向量和b向量的点乘获得。</p>
-<p>计算向量的投影可以对向量进行分解</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346329.jpg" alt="img"> </p>
-<p>（2）通过点乘结果的正负判断向量在前还是在后（方向基本一致，垂直或者相反），在图形学上通过点乘结果判断两个向量的接近程度。例如对于两个单位向量，如果这两个向量方向接近，则点乘结果接近1；如果方向垂直，点乘结果接近0；如果方向相反，点乘结果接近1.</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
-<h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
-<p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
-<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用左手坐标系）:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
+<h5 id="全光函数"><a href="#全光函数" class="headerlink" title="全光函数"></a>全光函数</h5><p>​		假设在一个场景中，位置固定，可以四面八方地去看，则用极坐标可以定义看的方向，全光函数描述了向某个方向看会看到什么样的值：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142022397.png" alt="image-20230514202215347" style="zoom: 67%;" />
 
-<p>向量叉乘的代数运算:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102350731.png" alt="image-20230510235008653"> </p>
-<p>向量叉乘的作用:</p>
-<p>（1）判断左右位置关系</p>
-<p>如下在X、Y平面，判断向量b在向量a的左侧还是右侧。计算向量a叉乘向量b，如果结果为正，则向量b在向量a在左侧，即a-b是逆时针；如果结果为负，则向量b在向量a在右侧，即a-b是顺时针。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554742.png" alt="image-20230515155411695" style="zoom:80%;" /> 
+<p>​	引入波长（引入不同的颜色）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142023512.png" alt="image-20230514202302428" style="zoom:67%;" />
 
-<p>（2）判断内外</p>
-<p>如下三角形，ABC按照逆时针顺序输入。AB叉乘AP，结果为正，点p在AB左侧；BC叉乘BP，结果为正，点p在BC左侧；CA叉乘CP，结果为正，p在CA左侧；结论p在三角形内部。如果ABC按照顺时针顺序输入，如果p在三条边右侧，则p在三角形内部。所以不管顺时针还是逆时针输入，p如果在三角形内部，p必须在三条边的同一边。在三角形光栅化时，用该方法可以判断三角形覆盖哪些像素。如果叉乘结果为0，则自定义是否在三角形内部。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554163.png" alt="image-20230515155440122" style="zoom:67%;" /> 
+<p>​	引入时间t，类似电影，在不同时间显示不同的东西：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142025475.png" alt="image-20230514202540398" style="zoom:67%;" />
 
-<h5 id="在三维直角坐标系（右手坐标系）中进行向量分解"><a href="#在三维直角坐标系（右手坐标系）中进行向量分解" class="headerlink" title="在三维直角坐标系（右手坐标系）中进行向量分解"></a>在三维直角坐标系（右手坐标系）中进行向量分解</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151555684.png" alt="image-20230515155508640" style="zoom: 67%;" /> 
+<p>​		人可以站在任何位置，在任何位置往任何方向看在任何时间看到所有的颜色，即看到的整个世界：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142024090.png" alt="image-20230514202420012" style="zoom:67%;" />
 
-<p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
-<h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
-<p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
-<p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346338.png" alt="img">由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
-<p>矩阵乘法的性质：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550391.png" alt="image-20230515155028337" style="zoom:80%;" /> 
+<p>​		可以从全光函数中提取一部分信息出来，表示更复杂的光的信息，这个概念比在一个点各个方向的光信息更多，首先来定义光线。前两个维度是方向，后三个维度是起点位置（也可以通过两点确定一条直线来定义光线）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142028598.png" alt="image-20230514202839568" style="zoom:67%;" />
 
-<p>矩阵与向量相乘，一般默认向量在右侧，矩阵列数与向量行数相同：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550865.png" alt="image-20230515155049820" style="zoom:67%;" /> 
+<p>​		要记录一个物体向四周展示的样子，只需要记录包围盒上表面各个点往各个方向发射的光线的信息，也就是记录了其光场信息（在物体表面任何一个位置去向任何一个方向的光线强度）。当相机看向物体，两点确定一条光线，可以查询该光线的信息 。物体的表面是二维的（根据纹理坐标的原理），方向也是二维的（用两个角度定义），所以用这个四个信息当变量的函数就是光场（全光函数的一部分只有位置和方向）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142034612.png" alt="image-20230514203419565" style="zoom:50%;" />
 
-<p>矩阵的转置：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551322.png" alt="image-20230515155114282" style="zoom: 50%;" /> 
+<p>​		记录下物体的光场后，就可以根据摄像机的位置和摄像机看向物体哪一点（相机可以看见很多点，因为视锥体是一个区域），连接一个光线，查询其相应的光线强度（记录了物体任意一个点朝任意一个方向的光场强度）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142042946.png" alt="image-20230514204228880" style="zoom: 33%;" />
 
-<p>单位矩阵和逆矩阵:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551377.png" alt="image-20230515155143338" style="zoom:67%;" /> 
+<p>​		还可以理解成取一个平面，平面右边是一个物体，它的光会穿过这个平面来到左边，我们不需要知道右边有什么，只需要知道对于平面上任意一个点的任意一个方向会发出什么（就好比在最初的例子中，看一个平面和看窗外的几何体效果相同，注意相机在平面外侧）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142052842.png" alt="image-20230514205203793" style="zoom: 50%;" />
 
-<p>原矩阵乘以单位矩阵，相当于不对原矩阵不做任何操作.</p>
-<p>向量的点积和叉积可以转换成矩阵乘法（向量默认为列向量）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151552558.png" alt="image-20230515155234507" style="zoom:67%;" /> 
+<p>​		通过定义一个平面上点和角度，也可以定义两个平面上的点，通过两个坐标信息来表示一个光线，这是一个经典的参数化表示的方法。用两个平面来定义光场，便于降维也就是从上面的 位置+方向 变成 位置+位置 两个平面两点一连就得到一个光线。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142052186.png" alt="image-20230514205246138" style="zoom:50%;" />
+
+<p>​		</p>
+<pre><code>    现实中也有人用第一种方式记录光场
+</code></pre>
+<p>这样参数化有两种理解方式</p>
+<ul>
+<li>a. 一种是固定(u,v)(<em>u</em>,<em>v</em>), 所有的(s,t)(<em>s</em>,<em>t</em>)组成一张图，也就是从(u,v)点看到的外部世界的样子</li>
+<li>b. 另一种是固定(s,t)(<em>s</em>,<em>t</em>), 所有的(u,v)(<em>u</em>,<em>v</em>)组成一张图，也就是显示从不同方向看同一个点的样子</li>
+</ul>
+<p>相当于不同的位置(u, v)，拍摄同一张图(s,t)</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142108397.png" alt="image-20230514210849259" style="zoom: 67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142109272.png" alt="image-20230514210951197" style="zoom:50%;" />
+
+<p>自然界中苍蝇的复眼就是类似于第二种理解<br>我们在照片中任意一个像素记录的是irradiance，不区分方向，但是对于复眼来说，它们记录的分光之后的分量，也就是记录的是radiance</p>
+<p>微透镜原理：把一个pixel替换成透镜，可以把来自于不同方向的光分开再记录下来<br>支持后期聚焦（可以先拍照再调焦）<br>光场camera的原理：（其实就是光场的原理）</p>
+<p>光场照相机的图怎么还原成普通相机呢？<br>我们把分散的光，每个透镜都选一条，然后把得到的结果都记录在一个像素的结果上，现在一个透镜就对应一个值了，和之前一样<br>选光线的步骤就相当于是重新聚焦，虚拟地移动相机的位置<br>我们不涉及重新聚焦具体怎么做，只介绍思想，我们从四维光场中按需查询选取光线</p>
+<p>光场照相机的问题：<br>分辨率不足，因为原来一个位置可能只需要一个像素，但是透镜把光分开以后，可能会需要好几个像素来记录不同方向的光，同样的胶片尺寸下，光场相机的分辨率不足<br>高成本、难设计<br>再次体现trade-offs</p>
+<h4 id="颜色"><a href="#颜色" class="headerlink" title="颜色"></a>颜色</h4><p>​		太阳光被折射成不同的颜色-太阳光由多种波长的光组成，不同波长的光有不同的折射率。</p>
+<p>​		一种光对应一个光谱，就是光的能量在不同波长上的分布。波长越小频率越高。在图形学中主要关心可见光光谱（波长大约在400nm到700nm）。光谱也叫做SPD普功率密度，光在不同波长有不同的强度。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142343407.png" alt="image-20230514234310285" style="zoom:67%;" />
+
+<p>​		不同光有不同的光谱，也就是不同的普功率密度：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142342803.png" alt="image-20230514234258648" style="zoom:67%;" />
+
+<p>​		普功率密度有线性性质，两种光一起照射的谱功率密度等于两种光单独照射的普功率密度之和。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142342560.png" alt="image-20230514234246453" style="zoom: 67%;" />
+
+<p>​		颜色是人的感知，它不是光的一种根本的属性，也就是波长不是颜色。人的眼睛类似一个摄像机，晶状体类似透镜，视网膜类似于成像的地方（光最终达到的地方），瞳孔类似光圈。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142342540.png" alt="image-20230514234226356" style="zoom: 67%;" />
+
+<p>​		视网膜具有如下两种细胞：</p>
+<p>​		（1）杆细胞（Rods cells）：棒状，数量多，只感知光的强度而非颜色</p>
+<p>​		（2）视锥细胞（Cones cells）：锥形，数量少，用来感知颜色</p>
+<p>​		（3）视锥细胞又被分为S, M, L三种，用来感知不同波长的光，三种细胞对不同波长的光的相应能力不同，如下是三种细胞对光的相应曲线：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142341831.png" alt="image-20230514234136685" style="zoom: 67%;" />
+
+<p>​		不同的人这三种视锥细胞分布非常不同，所以对于相同的光，感知不同，看到的结果也不同，因此颜色是人的感知。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142347634.png" alt="image-20230514234741409" style="zoom:67%;" />
+
+<p>​		人眼无法测量，大脑也无法接收有关每种光波长的信息（已经被积分掉了），光谱到视网膜上，眼形成3个响应值(S,M,L)(<em>S</em>,<em>M</em>,<em>L</em>)并最终由大脑接受。不同视锥细胞感知结果的计算方式如下：假如一个光的光谱分布在430-490，通过光谱获得光在430波长的强度，通过下图获得S细胞对430波长的感知数，二者相乘，在从430积分到490，就获得S细胞对这个光的感知结果，以此类推获得M值和L值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305142356418.png" alt="image-20230514235619301" style="zoom: 67%;" />
+
+<p>​		同色异谱是指两个不同的光谱，它们最终投射到相同的(S,M,L)响应值（也就是两种不一样的光谱最后的积分结果相同）。如下四种光能被人感知相同的结果：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150012650.png" alt="image-20230515001230547" style="zoom:67%;" />
+
+<p>​		同色异谱会导致人感知到相同的颜色，其存在对于色彩再现至关重要，这个过程也叫颜色匹配(Color Matching)过程。一个例子：同色异谱使得只有三种颜色的显示器上可以再现真实场景的感知颜色，即使他们波谱完全不同，也能被人眼感知为相同的颜色。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150014184.png" alt="image-20230515001406059" style="zoom: 67%;" />
+
+<p>颜色混合</p>
+<p>​		我们认为计算机中使用的成像系统是加色系统 Additive Color。给定三种原色 $s _ { R } ( X ) , s _ { G } ( X ) , s _ { B } ( X )$，调整这些原色的强度，将他们混合在一起 $Rs _ { R } ( X ) + Gs _ { G } ( X ) +Bs _ { B } ( X )$。利用混合三种颜色的系数来描述颜色 R*,<em>G</em>,*B。加色系统很多颜色都可以通过三原色混合合成。但是有的颜色怎么都混合不出来，这时候的系数可能是负的（因为是加色系统值不能为负数，所以只能给左边要匹配的颜色加）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150023574.png" alt="image-20230515002342430" style="zoom:67%;" />
+
+<p>​		CIE是一个组织，它们定义了RGB的系统，与之前的加色匹配设置相同，只有三种原色，但原色和测试光都是单波长的光，通过测试来测量多少强度的三种原色加起来与测试光相同。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150027057.png" alt="image-20230515002704933" style="zoom:67%;" />
+
+<p>​		如下的颜色匹配函数描述了每个 CIE RGB 原色光各自多少强度相加起来才能匹配 x 轴上给定波长的单色光（红色部分确实会存在负数）。每一列得到的是对应的是单一波长的光，但是现实的光线SPD是很多波长组合在一起的，所以在表示现实颜色时要把每一个波长都考虑进去，要使用积分表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150027494.png" alt="image-20230515002718396" style="zoom:67%;" />
+
+<p>​		标准sRGB，是一种被广泛运用于各种设备的色彩系统，但是RGB所能形成的色域是有限的。</p>
+<p>​		CIE XYZ系统不是实验得到的，而是人造的，认为规定某个单波长光由多少红绿蓝组成。这个系统使用XYZ表示颜色，红色区域不再存在负数，并且由于绿色部分在轴上分布比较均匀，Y也表示亮度，与RGB的区别其实就是匹配函数的不同。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150048100.png" alt="image-20230515004845995"></p>
+<p>​		如果想要把XYZ系统表示的颜色都可视化显示出来，需要将这些三维的数表示成二维，要使用归一化，又由于Y表示亮度，可以将其固定下来，这样就可以得到了xy图，这就是色域。纯的颜色都在边界，接近单波，白色是最不纯的颜色。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150053890.png" alt="image-20230515005305748" style="zoom:67%;" />
+
+<p>​		不同色彩空间所覆盖的色域范围也有所区别，它们能表示的颜色范围各不相同：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150056381.png" alt="image-20230515005605185" style="zoom:67%;" />
+
+<p>​		HSV色彩空间被广泛地运用于颜色选择器（色调、饱和度（越饱和越接近单波）、亮度）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150102860.png" alt="image-20230515010248637" style="zoom:67%;" />
+
+<p>​		CIE还有一种Lab色彩空间。L为亮度、a表示红绿、b表示蓝黄，这个空间认为轴的两端都是互补色。互补色是通过实验得到的，可以通过视觉暂留效果验证。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150103720.png" alt="image-20230515010340610" style="zoom:67%;" />
+
+<p>CMYK是一种减色系统 CMYK: A Subtractive Color Space</p>
+<ul>
+<li>CMYK用的是靛蓝、品红、黄色、黑色 Cyan, Magenta, Yellow, and Key</li>
+<li>CMYK系统在印刷时很常见 Widely used in printing</li>
+<li>通过混合CMY可以得到黑色，但是由于打印成本原因，黑色墨水成本低需求大，故存在黑色 黑色墨水好造</li>
+</ul>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -238,7 +284,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/15/games101-2-Tlinea_algebra/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/20/games101-20-Color-Perception/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -249,19 +295,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/15/games101-3-Transformation/" class="article-nav-link">
+      <a href="/2023/05/21/games101-21-Animation/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            games101-3-Transformation
+            games101-21-Animation
           
         </div>
       </a>
     
     
-      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-nav-link">
+      <a href="/2023/05/19/games101-19-Cameras/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-15-Ray-Tracing3</div>
+        <div class="article-nav-title">games101-19-Cameras</div>
       </a>
     
   </nav>

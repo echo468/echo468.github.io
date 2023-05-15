@@ -118,394 +118,6 @@
     
     
     <article
-  id="post-games101-3-Transformation"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-3-Transformation/"
-    >games101-3-Transformation</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/15/games101-3-Transformation/" class="article-date">
-  <time datetime="2023-05-15T07:40:34.000Z" itemprop="datePublished">2023-05-15</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
-<p>（1）均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556613.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556643.png" alt="img"></p>
-<p>（2）非均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
-<p><em><strong>*R*</strong></em><em><strong>*eflection*</strong></em><em><strong>*反射*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556876.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556742.png" alt="img"></p>
-<p><em><strong>*Shear Matric*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps11.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556090.png" alt="img">（此处认为最大高度为1）</p>
-<p><em><strong>*Rotate旋转*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
-<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
-<p>以边长为1进行旋转矩阵推导：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556293.png" alt="img"> –&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556219.png" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556428.png" alt="img"> –&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556403.png" alt="img"></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps19.png" alt="img"></p>
-<p>如果旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556558.png" alt="img">:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
-<p>矩阵为旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556727.png" alt="img">时旋转矩阵的转置，并且由于旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557583.png" alt="img">是旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557125.png" alt="img">的逆变换，因此该矩阵还为旋转<img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps25.png" alt="img">时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
-<p><em><strong>*线性变换*</strong></em></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps26.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557100.png" alt="img"></p>
-<p><em><strong>*Translation平移*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
-<p>此处是先进性线性变换再平移。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557628.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557847.png" alt="img"></p>
-<p><em><strong>*齐次坐标*</strong></em></p>
-<p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
-<p>点的平移变换，点平移后成为新的点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
-<p>向量具有平移不变性：</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps33.png" alt="img"></p>
-<p>可以通过齐次坐标的w验证：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
-<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下：,</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps35.png" alt="img">是二维的点<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557342.png" alt="img"></p>
-<p><em><strong>*Affine Transformation仿射变换*</strong></em></p>
-<p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
-<table>
-<thead>
-<tr>
-<th>缩放变换矩阵</th>
-<th>旋转变换矩阵</th>
-<th>平移变换矩阵</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps38.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
-</tr>
-</tbody></table>
-<p><em><strong>*Inverse Transform逆变换*</strong></em></p>
-<p>逆变换相当于乘以变换的逆矩阵。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps41.jpg" alt="img"> </p>
-<p><em><strong>*Composite Transform组合变换*</strong></em></p>
-<p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps42.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps44.png" alt="img"></p>
-<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></p>
-<p><em><strong>*变换分解*</strong></em></p>
-<p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
-<p><em><strong>*三维齐次坐标*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps48.png" alt="img">是三维的点<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557970.png" alt="img"></p>
-<p><em><strong>*三维仿射变换*</strong></em></p>
-<p>如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps50.png" alt="img"></p>
-<p><em><strong>*三维缩放*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
-<p><em><strong>*三维平移*</strong></em></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps52.png" alt="img"></p>
-<p><em><strong>*三维绕轴旋转*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps55.png" alt="img"></p>
-<p>任意旋转都已由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
-<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-2-Tlinea_algebra"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-2-Tlinea_algebra/"
-    >games101-2-Tlinea_algebra</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/15/games101-2-Tlinea_algebra/" class="article-date">
-  <time datetime="2023-05-15T07:40:24.000Z" itemprop="datePublished">2023-05-15</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
-<p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
-<p>单位向量（只关心方向不关心长度）：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
-<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
-
-<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
-<p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
-<p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
-<h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
-<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
-<p>点乘的性质：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
-<p>点乘的代数计算（对应元素相乘，最后将所有乘积相加）：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345885.jpg" alt="img"> </p>
-<p>点乘的作用：</p>
-<p>（1）计算一个向量在另一个向量上的投影</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345069.jpg" alt="img"> </p>
-<p>​		b向量在a向量上的投影的方向为a向量的方向，投影的大小为||b||cosθ，所以b向量在a向量上的投影为||b||cosθa，cosθ通过a向量和b向量的点乘获得。</p>
-<p>计算向量的投影可以对向量进行分解</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346329.jpg" alt="img"> </p>
-<p>（2）通过点乘结果的正负判断向量在前还是在后（方向基本一致，垂直或者相反），在图形学上通过点乘结果判断两个向量的接近程度。例如对于两个单位向量，如果这两个向量方向接近，则点乘结果接近1；如果方向垂直，点乘结果接近0；如果方向相反，点乘结果接近1.</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
-<h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
-<p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
-<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用左手坐标系）:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
-
-<p>向量叉乘的代数运算:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102350731.png" alt="image-20230510235008653"> </p>
-<p>向量叉乘的作用:</p>
-<p>（1）判断左右位置关系</p>
-<p>如下在X、Y平面，判断向量b在向量a的左侧还是右侧。计算向量a叉乘向量b，如果结果为正，则向量b在向量a在左侧，即a-b是逆时针；如果结果为负，则向量b在向量a在右侧，即a-b是顺时针。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554742.png" alt="image-20230515155411695" style="zoom:80%;" /> 
-
-<p>（2）判断内外</p>
-<p>如下三角形，ABC按照逆时针顺序输入。AB叉乘AP，结果为正，点p在AB左侧；BC叉乘BP，结果为正，点p在BC左侧；CA叉乘CP，结果为正，p在CA左侧；结论p在三角形内部。如果ABC按照顺时针顺序输入，如果p在三条边右侧，则p在三角形内部。所以不管顺时针还是逆时针输入，p如果在三角形内部，p必须在三条边的同一边。在三角形光栅化时，用该方法可以判断三角形覆盖哪些像素。如果叉乘结果为0，则自定义是否在三角形内部。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554163.png" alt="image-20230515155440122" style="zoom:67%;" /> 
-
-<h5 id="在三维直角坐标系（右手坐标系）中进行向量分解"><a href="#在三维直角坐标系（右手坐标系）中进行向量分解" class="headerlink" title="在三维直角坐标系（右手坐标系）中进行向量分解"></a>在三维直角坐标系（右手坐标系）中进行向量分解</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151555684.png" alt="image-20230515155508640" style="zoom: 67%;" /> 
-
-<p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
-<h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
-<p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
-<p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346338.png" alt="img">由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
-<p>矩阵乘法的性质：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550391.png" alt="image-20230515155028337" style="zoom:80%;" /> 
-
-<p>矩阵与向量相乘，一般默认向量在右侧，矩阵列数与向量行数相同：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550865.png" alt="image-20230515155049820" style="zoom:67%;" /> 
-
-<p>矩阵的转置：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551322.png" alt="image-20230515155114282" style="zoom: 50%;" /> 
-
-<p>单位矩阵和逆矩阵:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551377.png" alt="image-20230515155143338" style="zoom:67%;" /> 
-
-<p>原矩阵乘以单位矩阵，相当于不对原矩阵不做任何操作.</p>
-<p>向量的点积和叉积可以转换成矩阵乘法（向量默认为列向量）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151552558.png" alt="image-20230515155234507" style="zoom:67%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-15-Ray-Tracing3"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-15-Ray-Tracing3/"
-    >games101-15-Ray-Tracing3</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
-  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
-
-<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
-
-<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
-
-<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
-
-<p>​		该方程也可以转换成如下两个方程：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
-
-<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
-
-<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
-
-<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
-
-<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
-
-<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
-
-<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
-
-<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
-<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
-
-<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
-
-<p>​		对于多个点光源：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
-
-<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
-
-<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
-
-<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
-
-<p>​		进一步简写：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
-
-<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
-
-<p>​		如下是一个示例：</p>
-<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
-
-<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
-
-<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
-
-<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
-
-<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
-<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
-<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
-<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
-
-<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
-<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
-
-<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
-
-<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
-
-<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
   id="post-games101-21-Animation"
   class="article article-type-post"
   itemscope
@@ -517,7 +129,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-21-Animation/"
+  <a class="article-title" href="/2023/05/21/games101-21-Animation/"
     >games101-21-Animation</a> 
 </h2>
  
@@ -525,8 +137,8 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-21-Animation/" class="article-date">
-  <time datetime="2023-05-15T01:38:11.000Z" itemprop="datePublished">2023-05-15</time>
+      <a href="/2023/05/21/games101-21-Animation/" class="article-date">
+  <time datetime="2023-05-21T01:38:11.000Z" itemprop="datePublished">2023-05-21</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -689,7 +301,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/05/14/games101-20-Color-Perception/"
+  <a class="article-title" href="/2023/05/20/games101-20-Color-Perception/"
     >games101-20-Color_Perception</a> 
 </h2>
  
@@ -697,8 +309,8 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/14/games101-20-Color-Perception/" class="article-date">
-  <time datetime="2023-05-14T12:04:20.000Z" itemprop="datePublished">2023-05-14</time>
+      <a href="/2023/05/20/games101-20-Color-Perception/" class="article-date">
+  <time datetime="2023-05-20T12:04:20.000Z" itemprop="datePublished">2023-05-20</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -837,7 +449,7 @@
 
     
     <article
-  id="post-games101-13-Ray-Tracing1"
+  id="post-games101-19-Cameras"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -848,16 +460,16 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/05/13/games101-13-Ray-Tracing1/"
-    >games101-13-Ray_Tracing1</a> 
+  <a class="article-title" href="/2023/05/19/games101-19-Cameras/"
+    >games101-19-Cameras</a> 
 </h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-date">
-  <time datetime="2023-05-13T05:44:01.000Z" itemprop="datePublished">2023-05-13</time>
+      <a href="/2023/05/19/games101-19-Cameras/" class="article-date">
+  <time datetime="2023-05-19T10:33:50.000Z" itemprop="datePublished">2023-05-19</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -867,71 +479,199 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="光线追踪如何处理全局光照"><a href="#光线追踪如何处理全局光照" class="headerlink" title="光线追踪如何处理全局光照"></a>光线追踪如何处理全局光照</h4><p>​		光栅化不适合处理全局的效果。如软阴影、磨砂材质、间接光照（光反射多次后到达相机）。在之前的光栅化处理中，只考虑光的一次反射，从光源到达着色点再到达相机。光栅化渲染快，常用于实时渲染（每秒超过30帧）</p>
-<p>假设：</p>
-<p>（1）光线沿着直线传播</p>
-<p>（2）光线和光线不会发生碰撞</p>
-<p>（3）光线路径可逆，即从A发出的到B的光线，一定也可以从B发出到A（中途可发生反射和折射）</p>
-<p>​		从人眼或摄像机向近投影平面上的每一个像素点发射一条光线，判断与场景物体的交点。一条光线可能会与不止一个物体相交，但是考虑遮挡关系，只去找最近的交点（相当于进行了深度测试）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121407903.png" alt="image-20230512140740839" style="zoom:67%;" />
+  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
+<p>2.不存在的合成的物体：光栅化和光追</p>
+<p>​		传感器用于捕捉并记录光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
 
-<p>​		接着连接该交点和光源，只要判断这条连线之间是否有物体存在就可以知道该交点是否在阴影之中。如果该点不在阴影中，知道该点的法线、相机位置和光源位置，可以计算出该点对应的像素值。遍历所有近投影平面上的像素就能得到一张完整的图像。此时效果与局部光照模型是一样的，只考虑了光一次反射。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121409264.png" alt="image-20230512140905212" style="zoom:67%;" />
+<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
 
-<p>​		上一个例子中光线第一个与圆球物体相交，假设该圆球是一个玻璃球，那么便会发生镜面反射。除了镜面反射之外，也存在折射，同时反射与折射出去的光线可能与场景中的物体再次碰撞，发生第二次折射与反射。下图以两个光线，以两次折射或反射的部分光线为例。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121413323.png" alt="image-20230512141359281" style="zoom:67%;" />
+<p>​		针孔相机拍出来的结果不会出现虚化。</p>
+<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
 
-<p>​		此时每一个像素的颜色贡献来自直接光照，反射方向间接光，折射方向间接光（如果有折射的话）。下一步将这些所有交点（上图中4个交点）与光源连接，计算这些所有点的局部光照模型的结果（被遮挡就不用计算），将其按照光线能量权重累加(光在传播过程中会有损失，如果不添加权值最后会发生曝光)，最终得到近投影平面上该像素点的颜色。这是一个全局光照模型，不仅仅考虑了直接光源的贡献，还考虑各种折射与反射光线的贡献。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121414958.png" alt="image-20230512141440915" style="zoom:67%;" />
+<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
 
-<p>​		上图中的光线分成三种类别，相机到物体为primary ray；中间反射和折射的蓝线为secondary  ray；最后交点与光源的连线为shadow ray，因为要考虑遮挡。</p>
-<h4 id="如何判断光线与物体的交点"><a href="#如何判断光线与物体的交点" class="headerlink" title="如何判断光线与物体的交点"></a>如何判断光线与物体的交点</h4><h5 id="光线与隐式几何求交"><a href="#光线与隐式几何求交" class="headerlink" title="光线与隐式几何求交"></a>光线与隐式几何求交</h5><p>​		通过光源位置O和光线方向d定义一条光线（光线是射线）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121420925.png" alt="image-20230512142046886" style="zoom: 50%;" />
+<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
+<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
 
-<p>​		光线与球求交，t值对应的点需要满足两个表达式：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424656.png" alt="image-20230512142416606" style="zoom: 67%;" />
+<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
 
-<p>​		光线与球求交可能会没有交点、有一个交点或者有两个交点。在有两个交点的情况下，取更小的t值。（t必须是实数且为非负数）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424151.png" alt="image-20230512142454099" style="zoom: 50%;" />
+<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
 
-<p>​		对于光线与隐式表面的交点，只要将光线方程代入求解 t 即可：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121502542.png" alt="image-20230512150218495" style="zoom:67%;" />
+<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
 
-<h5 id="光线与显示几何求交"><a href="#光线与显示几何求交" class="headerlink" title="光线与显示几何求交"></a>光线与显示几何求交</h5><p>​		对于显示表面，最重要的是判断光线如何与三角形求交（只考虑0&#x2F;1个交点）。如下图可以将该光线与所有三角形面求交，找到最小的t值。对于多个像素（多条光线）都与所有面计算，计算量相当大。总计算量为像素数（一个像素一个光线）✖三角形面。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121507126.png" alt="image-20230512150709077" style="zoom:67%;" />
+<p>​		高速摄影（更大光圈或者更大ISO）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
 
-<p>​		判断光线与三角形所在平面是否有交点，如果有交点再判断该点是否在三角形内部。</p>
-<p>​		首先通过一个点和法线定义一个平面。如果任意一点和该点的连线与法线垂直，则说明该点在平面上。将p和n用xyz定义，展开后如右式。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121515786.png" alt="image-20230512151503743" style="zoom:67%;" />
+<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
 
-<p>​		得到参数 t 之后，可以计算出交点，并且再去计算出重心坐标就能判断该交点是否在三角形内。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520092.png" alt="image-20230512152052037" style="zoom: 50%;" />
+<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
 
-<p>​		如下方法直接判断光线在三角形内部是否有交点。假设该点在三角形内，则可以通过重心坐标表示。通过如下方法解出t,b1,b2。如果t,b1,b2,1-b1-b2都是非负数，则该点在三角形内部。</p>
-<p>​		<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520552.png" alt="image-20230512152025494" style="zoom: 50%;" /></p>
-<h5 id="光线与包围盒求交"><a href="#光线与包围盒求交" class="headerlink" title="光线与包围盒求交"></a>光线与包围盒求交</h5><p>​		使用包围盒加速光线与物体求交。三维空间常用的包围盒是AABB包围盒，即一个长方体。包围盒是由3个对面形成的交集。以二维为例，计算出光线进入两个对面的时间，和光线出两个对面的时间。将第一幅图和第二幅图的线段做交集。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121549035.png" alt="image-20230512154907983" style="zoom:67%;" />
+<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
 
-<p>​		对于三维场景来说，光线进入一个盒子，就说明三个对面都要满足光线已经进入（对所有的进入时间tmin取最大值）；光线离开一个盒子，只要满足光线离开任意一个对面（对所有的离开时间tmax取最小值）。如果进入时间小于离开时间，光线一定会在盒子中停留一段时间，即有交点。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121559857.png" alt="image-20230512155903819" style="zoom: 67%;" />
+<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
 
-<p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
+<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
 
-<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121642550.png" alt="image-20230512164222503" style="zoom: 67%;" /></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121643720.png" alt="image-20230512164312676" style="zoom:67%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121652618.png" alt="image-20230512165258572" style="zoom:67%;" /></td>
-<td align="center"></td>
-</tr>
-</tbody></table>
+<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
+
+<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
+
+<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
  
+   
+</article>
+
+    
+    <article
+  id="post-games101-15-Ray-Tracing3"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/15/games101-15-Ray-Tracing3/"
+    >games101-15-Ray-Tracing3</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
+  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
+
+<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
+
+<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
+
+<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
+
+<p>​		该方程也可以转换成如下两个方程：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
+
+<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
+
+<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
+
+<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
+
+<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
+
+<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
+
+<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
+
+<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
+<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
+
+<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
+
+<p>​		对于多个点光源：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
+
+<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
+
+<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
+
+<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
+
+<p>​		进一步简写：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
+
+<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
+
+<p>​		如下是一个示例：</p>
+<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
+
+<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
+
+<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
+
+<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
+
+<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
+<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
+<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
+<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
+
+<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
+<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
+
+<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
+
+<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
+
+<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
       <!-- reward -->
       
     </div>
@@ -962,7 +702,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/05/13/games101-14-Ray-Tracing2/"
+  <a class="article-title" href="/2023/05/14/games101-14-Ray-Tracing2/"
     >games101-14-Ray-Tracing2</a> 
 </h2>
  
@@ -970,8 +710,8 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/13/games101-14-Ray-Tracing2/" class="article-date">
-  <time datetime="2023-05-13T01:45:04.000Z" itemprop="datePublished">2023-05-13</time>
+      <a href="/2023/05/14/games101-14-Ray-Tracing2/" class="article-date">
+  <time datetime="2023-05-14T01:45:04.000Z" itemprop="datePublished">2023-05-14</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -1079,6 +819,120 @@
 <img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230513153752040.png" alt="image-20230513153752040" style="zoom:67%;" />
 
 <p>​		对各向同性点光源，所有方向上的亮度都与方向无关，所以I是一个常数，因此对Φ积分时只用对立体角积分。最后推算出的I是一个常数。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-13-Ray-Tracing1"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/13/games101-13-Ray-Tracing1/"
+    >games101-13-Ray_Tracing1</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-date">
+  <time datetime="2023-05-13T05:44:01.000Z" itemprop="datePublished">2023-05-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="光线追踪如何处理全局光照"><a href="#光线追踪如何处理全局光照" class="headerlink" title="光线追踪如何处理全局光照"></a>光线追踪如何处理全局光照</h4><p>​		光栅化不适合处理全局的效果。如软阴影、磨砂材质、间接光照（光反射多次后到达相机）。在之前的光栅化处理中，只考虑光的一次反射，从光源到达着色点再到达相机。光栅化渲染快，常用于实时渲染（每秒超过30帧）</p>
+<p>假设：</p>
+<p>（1）光线沿着直线传播</p>
+<p>（2）光线和光线不会发生碰撞</p>
+<p>（3）光线路径可逆，即从A发出的到B的光线，一定也可以从B发出到A（中途可发生反射和折射）</p>
+<p>​		从人眼或摄像机向近投影平面上的每一个像素点发射一条光线，判断与场景物体的交点。一条光线可能会与不止一个物体相交，但是考虑遮挡关系，只去找最近的交点（相当于进行了深度测试）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121407903.png" alt="image-20230512140740839" style="zoom:67%;" />
+
+<p>​		接着连接该交点和光源，只要判断这条连线之间是否有物体存在就可以知道该交点是否在阴影之中。如果该点不在阴影中，知道该点的法线、相机位置和光源位置，可以计算出该点对应的像素值。遍历所有近投影平面上的像素就能得到一张完整的图像。此时效果与局部光照模型是一样的，只考虑了光一次反射。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121409264.png" alt="image-20230512140905212" style="zoom:67%;" />
+
+<p>​		上一个例子中光线第一个与圆球物体相交，假设该圆球是一个玻璃球，那么便会发生镜面反射。除了镜面反射之外，也存在折射，同时反射与折射出去的光线可能与场景中的物体再次碰撞，发生第二次折射与反射。下图以两个光线，以两次折射或反射的部分光线为例。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121413323.png" alt="image-20230512141359281" style="zoom:67%;" />
+
+<p>​		此时每一个像素的颜色贡献来自直接光照，反射方向间接光，折射方向间接光（如果有折射的话）。下一步将这些所有交点（上图中4个交点）与光源连接，计算这些所有点的局部光照模型的结果（被遮挡就不用计算），将其按照光线能量权重累加(光在传播过程中会有损失，如果不添加权值最后会发生曝光)，最终得到近投影平面上该像素点的颜色。这是一个全局光照模型，不仅仅考虑了直接光源的贡献，还考虑各种折射与反射光线的贡献。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121414958.png" alt="image-20230512141440915" style="zoom:67%;" />
+
+<p>​		上图中的光线分成三种类别，相机到物体为primary ray；中间反射和折射的蓝线为secondary  ray；最后交点与光源的连线为shadow ray，因为要考虑遮挡。</p>
+<h4 id="如何判断光线与物体的交点"><a href="#如何判断光线与物体的交点" class="headerlink" title="如何判断光线与物体的交点"></a>如何判断光线与物体的交点</h4><h5 id="光线与隐式几何求交"><a href="#光线与隐式几何求交" class="headerlink" title="光线与隐式几何求交"></a>光线与隐式几何求交</h5><p>​		通过光源位置O和光线方向d定义一条光线（光线是射线）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121420925.png" alt="image-20230512142046886" style="zoom: 50%;" />
+
+<p>​		光线与球求交，t值对应的点需要满足两个表达式：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424656.png" alt="image-20230512142416606" style="zoom: 67%;" />
+
+<p>​		光线与球求交可能会没有交点、有一个交点或者有两个交点。在有两个交点的情况下，取更小的t值。（t必须是实数且为非负数）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424151.png" alt="image-20230512142454099" style="zoom: 50%;" />
+
+<p>​		对于光线与隐式表面的交点，只要将光线方程代入求解 t 即可：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121502542.png" alt="image-20230512150218495" style="zoom:67%;" />
+
+<h5 id="光线与显示几何求交"><a href="#光线与显示几何求交" class="headerlink" title="光线与显示几何求交"></a>光线与显示几何求交</h5><p>​		对于显示表面，最重要的是判断光线如何与三角形求交（只考虑0&#x2F;1个交点）。如下图可以将该光线与所有三角形面求交，找到最小的t值。对于多个像素（多条光线）都与所有面计算，计算量相当大。总计算量为像素数（一个像素一个光线）✖三角形面。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121507126.png" alt="image-20230512150709077" style="zoom:67%;" />
+
+<p>​		判断光线与三角形所在平面是否有交点，如果有交点再判断该点是否在三角形内部。</p>
+<p>​		首先通过一个点和法线定义一个平面。如果任意一点和该点的连线与法线垂直，则说明该点在平面上。将p和n用xyz定义，展开后如右式。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121515786.png" alt="image-20230512151503743" style="zoom:67%;" />
+
+<p>​		得到参数 t 之后，可以计算出交点，并且再去计算出重心坐标就能判断该交点是否在三角形内。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520092.png" alt="image-20230512152052037" style="zoom: 50%;" />
+
+<p>​		如下方法直接判断光线在三角形内部是否有交点。假设该点在三角形内，则可以通过重心坐标表示。通过如下方法解出t,b1,b2。如果t,b1,b2,1-b1-b2都是非负数，则该点在三角形内部。</p>
+<p>​		<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520552.png" alt="image-20230512152025494" style="zoom: 50%;" /></p>
+<h5 id="光线与包围盒求交"><a href="#光线与包围盒求交" class="headerlink" title="光线与包围盒求交"></a>光线与包围盒求交</h5><p>​		使用包围盒加速光线与物体求交。三维空间常用的包围盒是AABB包围盒，即一个长方体。包围盒是由3个对面形成的交集。以二维为例，计算出光线进入两个对面的时间，和光线出两个对面的时间。将第一幅图和第二幅图的线段做交集。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121549035.png" alt="image-20230512154907983" style="zoom:67%;" />
+
+<p>​		对于三维场景来说，光线进入一个盒子，就说明三个对面都要满足光线已经进入（对所有的进入时间tmin取最大值）；光线离开一个盒子，只要满足光线离开任意一个对面（对所有的离开时间tmax取最小值）。如果进入时间小于离开时间，光线一定会在盒子中停留一段时间，即有交点。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121559857.png" alt="image-20230512155903819" style="zoom: 67%;" />
+
+<p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
+
+<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121642550.png" alt="image-20230512164222503" style="zoom: 67%;" /></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121643720.png" alt="image-20230512164312676" style="zoom:67%;" /></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121652618.png" alt="image-20230512165258572" style="zoom:67%;" /></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
  
       <!-- reward -->
       
@@ -1217,110 +1071,6 @@
 
     
     <article
-  id="post-games101-19-Cameras"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/12/games101-19-Cameras/"
-    >games101-19-Cameras</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/12/games101-19-Cameras/" class="article-date">
-  <time datetime="2023-05-12T10:33:50.000Z" itemprop="datePublished">2023-05-12</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
-<p>2.不存在的合成的物体：光栅化和光追</p>
-<p>​		传感器用于捕捉并记录光。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
-
-<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
-
-<p>​		针孔相机拍出来的结果不会出现虚化。</p>
-<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
-
-<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
-
-<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
-<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
-
-<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
-
-<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
-
-<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
-
-<p>​		高速摄影（更大光圈或者更大ISO）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
-
-<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
-
-<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
-
-<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
-
-<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
-
-<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
-
-<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
-
-<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
-
-<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
   id="post-games101-11-Geometry2"
   class="article article-type-post"
   itemscope
@@ -1417,6 +1167,238 @@
 <p>3.正规化：例如所有组成物体的三角形都为正三角形，这会具有很多很好的性质，但不不能丢失物体原本的表现质量。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111509325.png" alt="image-20230511150928273"></p>
  
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-3-Transformation"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/03/games101-3-Transformation/"
+    >games101-3-Transformation</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/03/games101-3-Transformation/" class="article-date">
+  <time datetime="2023-05-03T07:40:34.000Z" itemprop="datePublished">2023-05-03</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
+<p>（1）均匀缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151616417.png" alt="image-20230515161619367"></p>
+<p>（2）非均匀缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
+<h5 id="Reflection反射"><a href="#Reflection反射" class="headerlink" title="Reflection反射"></a>Reflection反射</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151617348.png" alt="image-20230515161742312"></p>
+<h5 id="Shear-Matric"><a href="#Shear-Matric" class="headerlink" title="Shear Matric"></a>Shear Matric</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151618772.png" alt="image-20230515161856725"></p>
+<h5 id="Rotate旋转"><a href="#Rotate旋转" class="headerlink" title="Rotate旋转"></a>Rotate旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
+<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转,也就是角度值为正。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
+<p>以边长为1进行旋转矩阵推导：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151620544.png" alt="image-20230515162027508"></p>
+<p>如果旋转-θ:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
+<p>矩阵为旋转θ时旋转矩阵的转置，并且由于旋转-θ是旋转θ的逆变换，因此该矩阵还为旋转θ时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
+<h5 id="线性变换"><a href="#线性变换" class="headerlink" title="线性变换"></a>线性变换</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623337.png" alt="image-20230515162329289"></p>
+<h5 id="Translation平移"><a href="#Translation平移" class="headerlink" title="Translation平移"></a>Translation平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
+<p>此处是先进性线性变换再平移。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623645.png" alt="image-20230515162355592"></p>
+<h5 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h5><p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
+<p>点的平移变换，点平移后成为新的点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
+<p>向量具有平移不变性：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151624937.png" alt="img"></p>
+<p>可以通过齐次坐标的w验证：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
+<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下，(x,y,w)是二维点（x&#x2F;w,y&#x2F;w,1）。</p>
+<h5 id="Affine-Transformation仿射变换"><a href="#Affine-Transformation仿射变换" class="headerlink" title="Affine Transformation仿射变换"></a>Affine Transformation仿射变换</h5><p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>缩放变换矩阵</th>
+<th>旋转变换矩阵</th>
+<th>平移变换矩阵</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630316.png" alt="img"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
+</tr>
+</tbody></table>
+<h5 id="Inverse-Transform逆变换"><a href="#Inverse-Transform逆变换" class="headerlink" title="Inverse Transform逆变换"></a>Inverse Transform逆变换</h5><p>逆变换相当于乘以变换的逆矩阵。</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps41.jpg" alt="img"> </p>
+<h5 id="Composite-Transform组合变换"><a href="#Composite-Transform组合变换" class="headerlink" title="Composite Transform组合变换"></a>Composite Transform组合变换</h5><p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630935.jpg" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630157.png" alt="img"></p>
+<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
+<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></h5><h5 id="变换分解"><a href="#变换分解" class="headerlink" title="变换分解"></a>变换分解</h5><p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
+<h5 id="三维齐次坐标"><a href="#三维齐次坐标" class="headerlink" title="三维齐次坐标"></a>三维齐次坐标</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
+<p>在w不等于0的情况下，(x,y,z,w)是三维点（x&#x2F;w,y&#x2F;w,z&#x2F;w,1）。</p>
+<h5 id="三维仿射变换"><a href="#三维仿射变换" class="headerlink" title="三维仿射变换"></a>三维仿射变换</h5><p>如下矩阵是先进行线性变换再进行平移变换。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629055.png" alt="img"></p>
+<h5 id="三维缩放"><a href="#三维缩放" class="headerlink" title="三维缩放"></a>三维缩放</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
+<h5 id="三维平移"><a href="#三维平移" class="headerlink" title="三维平移"></a>三维平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629010.png" alt="img"></p>
+<h5 id="三维绕轴旋转"><a href="#三维绕轴旋转" class="headerlink" title="三维绕轴旋转"></a>三维绕轴旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629293.png" alt="img"></p>
+<p>任意旋转都已由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
+<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-2-Linear_algebra"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/02/games101-2-Linear_algebra/"
+    >games101-2-Linear_algebra</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/02/games101-2-Linear_algebra/" class="article-date">
+  <time datetime="2023-05-02T07:40:24.000Z" itemprop="datePublished">2023-05-02</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
+<p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
+<p>单位向量（只关心方向不关心长度）：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
+<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
+
+<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
+<p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
+<p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
+<h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
+<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
+<p>点乘的性质：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
+<p>点乘的代数计算（对应元素相乘，最后将所有乘积相加）：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345885.jpg" alt="img"> </p>
+<p>点乘的作用：</p>
+<p>（1）计算一个向量在另一个向量上的投影</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345069.jpg" alt="img"> </p>
+<p>​		b向量在a向量上的投影的方向为a向量的方向，投影的大小为||b||cosθ，所以b向量在a向量上的投影为||b||cosθa，cosθ通过a向量和b向量的点乘获得。</p>
+<p>计算向量的投影可以对向量进行分解</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346329.jpg" alt="img"> </p>
+<p>（2）通过点乘结果的正负判断向量在前还是在后（方向基本一致，垂直或者相反），在图形学上通过点乘结果判断两个向量的接近程度。例如对于两个单位向量，如果这两个向量方向接近，则点乘结果接近1；如果方向垂直，点乘结果接近0；如果方向相反，点乘结果接近1.</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
+<h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
+<p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
+<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用左手坐标系）:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
+
+<p>向量叉乘的代数运算:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102350731.png" alt="image-20230510235008653"> </p>
+<p>向量叉乘的作用:</p>
+<p>（1）判断左右位置关系</p>
+<p>如下在X、Y平面，判断向量b在向量a的左侧还是右侧。计算向量a叉乘向量b，如果结果为正，则向量b在向量a在左侧，即a-b是逆时针；如果结果为负，则向量b在向量a在右侧，即a-b是顺时针。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554742.png" alt="image-20230515155411695" style="zoom:80%;" /> 
+
+<p>（2）判断内外</p>
+<p>如下三角形，ABC按照逆时针顺序输入。AB叉乘AP，结果为正，点p在AB左侧；BC叉乘BP，结果为正，点p在BC左侧；CA叉乘CP，结果为正，p在CA左侧；结论p在三角形内部。如果ABC按照顺时针顺序输入，如果p在三条边右侧，则p在三角形内部。所以不管顺时针还是逆时针输入，p如果在三角形内部，p必须在三条边的同一边。在三角形光栅化时，用该方法可以判断三角形覆盖哪些像素。如果叉乘结果为0，则自定义是否在三角形内部。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554163.png" alt="image-20230515155440122" style="zoom:67%;" /> 
+
+<h5 id="在三维直角坐标系（右手坐标系）中进行向量分解"><a href="#在三维直角坐标系（右手坐标系）中进行向量分解" class="headerlink" title="在三维直角坐标系（右手坐标系）中进行向量分解"></a>在三维直角坐标系（右手坐标系）中进行向量分解</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151555684.png" alt="image-20230515155508640" style="zoom: 67%;" /> 
+
+<p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
+<h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
+<p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
+<p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素Aij由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
+<p>矩阵乘法的性质：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550391.png" alt="image-20230515155028337" style="zoom:80%;" /> 
+
+<p>矩阵与向量相乘，一般默认向量在右侧，矩阵列数与向量行数相同：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550865.png" alt="image-20230515155049820" style="zoom:67%;" /> 
+
+<p>矩阵的转置：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551322.png" alt="image-20230515155114282" style="zoom: 50%;" /> 
+
+<p>单位矩阵和逆矩阵:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551377.png" alt="image-20230515155143338" style="zoom:67%;" /> 
+
+<p>原矩阵乘以单位矩阵，相当于不对原矩阵不做任何操作.</p>
+<p>向量的点积和叉积可以转换成矩阵乘法（向量默认为列向量）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151552558.png" alt="image-20230515155234507" style="zoom:67%;" /> 
       <!-- reward -->
       
     </div>

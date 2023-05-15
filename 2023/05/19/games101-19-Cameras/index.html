@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-3-Transformation |  Hexo
+    games101-19-Cameras |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-3-Transformation"
+  id="post-games101-19-Cameras"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-3-Transformation
+  games101-19-Cameras
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-3-Transformation/" class="article-date">
-  <time datetime="2023-05-15T07:40:34.000Z" itemprop="datePublished">2023-05-15</time>
+      <a href="/2023/05/19/games101-19-Cameras/" class="article-date">
+  <time datetime="2023-05-19T10:33:50.000Z" itemprop="datePublished">2023-05-19</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">668</span>
+            <span class="post-count">1.5k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">2 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -109,94 +109,61 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
-<p>（1）均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556613.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556643.png" alt="img"></p>
-<p>（2）非均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
-<p><em><strong>*R*</strong></em><em><strong>*eflection*</strong></em><em><strong>*反射*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556876.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556742.png" alt="img"></p>
-<p><em><strong>*Shear Matric*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps11.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556090.png" alt="img">（此处认为最大高度为1）</p>
-<p><em><strong>*Rotate旋转*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
-<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
-<p>以边长为1进行旋转矩阵推导：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556293.png" alt="img"> –&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556219.png" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556428.png" alt="img"> –&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556403.png" alt="img"></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps19.png" alt="img"></p>
-<p>如果旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556558.png" alt="img">:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
-<p>矩阵为旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556727.png" alt="img">时旋转矩阵的转置，并且由于旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557583.png" alt="img">是旋转<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557125.png" alt="img">的逆变换，因此该矩阵还为旋转<img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps25.png" alt="img">时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
-<p><em><strong>*线性变换*</strong></em></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps26.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557100.png" alt="img"></p>
-<p><em><strong>*Translation平移*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
-<p>此处是先进性线性变换再平移。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557628.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557847.png" alt="img"></p>
-<p><em><strong>*齐次坐标*</strong></em></p>
-<p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
-<p>点的平移变换，点平移后成为新的点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
-<p>向量具有平移不变性：</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps33.png" alt="img"></p>
-<p>可以通过齐次坐标的w验证：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
-<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下：,</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps35.png" alt="img">是二维的点<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557342.png" alt="img"></p>
-<p><em><strong>*Affine Transformation仿射变换*</strong></em></p>
-<p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
-<table>
-<thead>
-<tr>
-<th>缩放变换矩阵</th>
-<th>旋转变换矩阵</th>
-<th>平移变换矩阵</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps38.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
-</tr>
-</tbody></table>
-<p><em><strong>*Inverse Transform逆变换*</strong></em></p>
-<p>逆变换相当于乘以变换的逆矩阵。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps41.jpg" alt="img"> </p>
-<p><em><strong>*Composite Transform组合变换*</strong></em></p>
-<p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps42.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps44.png" alt="img"></p>
-<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></p>
-<p><em><strong>*变换分解*</strong></em></p>
-<p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
-<p><em><strong>*三维齐次坐标*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps48.png" alt="img">是三维的点<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557970.png" alt="img"></p>
-<p><em><strong>*三维仿射变换*</strong></em></p>
-<p>如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps50.png" alt="img"></p>
-<p><em><strong>*三维缩放*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
-<p><em><strong>*三维平移*</strong></em></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps52.png" alt="img"></p>
-<p><em><strong>*三维绕轴旋转*</strong></em></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps55.png" alt="img"></p>
-<p>任意旋转都已由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
-<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
- 
+  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
+<p>2.不存在的合成的物体：光栅化和光追</p>
+<p>​		传感器用于捕捉并记录光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
+
+<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
+
+<p>​		针孔相机拍出来的结果不会出现虚化。</p>
+<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
+
+<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
+
+<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
+<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
+
+<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
+
+<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
+
+<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
+
+<p>​		高速摄影（更大光圈或者更大ISO）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
+
+<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
+
+<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
+
+<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
+
+<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
+
+<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
+
+<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
+
+<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
+
+<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -262,7 +229,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/15/games101-3-Transformation/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/19/games101-19-Cameras/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -273,10 +240,19 @@
    
   <nav class="article-nav">
     
+      <a href="/2023/05/20/games101-20-Color-Perception/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            games101-20-Color_Perception
+          
+        </div>
+      </a>
     
-      <a href="/2023/05/15/games101-2-Tlinea_algebra/" class="article-nav-link">
+    
+      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-2-Tlinea_algebra</div>
+        <div class="article-nav-title">games101-15-Ray-Tracing3</div>
       </a>
     
   </nav>

@@ -118,100 +118,6 @@
     
     
     <article
-  id="post-三维拾取"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/"
-    >三维拾取</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-date">
-  <time datetime="2023-01-27T14:56:03.000Z" itemprop="datePublished">2023-01-27</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>​	让每一个像素都有自己独特的索引，当鼠标点击时获取鼠标点击处的像素和像素索引（一般glReadPixels函数是获取鼠标点击处的指定的数据，比如说3d拾取就选择获取rgb颜色数据 ，但是此处并不是真正的获取颜色数据，而是在颜色纹理中填充的是三元索引，所以从颜色纹理中获取的是三元索引），就可知道点击的像素属于哪个对象 ，就可以知道点击到了哪个对象。</p>
-<p>​	通过创建帧缓冲， 将三元索引代替每个顶点像素的颜色rgb存储进入帧缓冲的颜色缓冲，从而使像素位置和索引相对应。这样在点击的时候就可以知道点击到了哪个索引。</p>
-<p>三元索引：</p>
-<ol>
-<li>第一级是像素所在物体的索引值，场景中的每一个物体都会得到一个唯一的索引；</li>
-<li>物体的draw call的索引，这个索引会在开始渲染新物体时重置；</li>
-<li>每个draw call中图元的索引值，每次新的draw call开始时该索引会重置；</li>
-</ol>
-<h4 id="拾取阶段"><a href="#拾取阶段" class="headerlink" title="拾取阶段"></a>拾取阶段</h4><p>把模型相应数据传进拾取着色器，绘制一遍模型，把相应的顶点和索引绘制进帧缓冲。</p>
-<h5 id="step1-创建帧缓冲，绑定颜色和深度纹理"><a href="#step1-创建帧缓冲，绑定颜色和深度纹理" class="headerlink" title="step1:创建帧缓冲，绑定颜色和深度纹理"></a>step1:创建帧缓冲，绑定颜色和深度纹理</h5><p>把模型的各个顶点放入帧缓冲的深度纹理，把模型的对象索引，绘制索引，原始索引放入帧缓冲的颜色纹理。下面只显示了基于阴影贴图init代码（只用了深度纹理）后添加的部分：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//注意颜色纹理的参数设置GL_RGB32F、GL_RGB</span></span><br><span class="line">    <span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;pickingTexture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, pickingTexture);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB32F, <span class="number">1024</span>, <span class="number">1024</span>,<span class="number">0</span>, GL_RGB, GL_FLOAT, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//将此纹理附加到FBO的GL_COLOR_ATTACHMENT0目标，这将使其成为片段着色器输出的目标。</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,pickingTexture, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glDrawBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//重置读取缓冲区和帧缓冲区</span></span><br><span class="line">    <span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="step2-拾取着色器"><a href="#step2-拾取着色器" class="headerlink" title="step2:拾取着色器"></a>step2:拾取着色器</h5><p>顶点着色器进行正常的MVP变换，片段着色器代码如下：</p>
-<p>​	在同一次绘图调用中对象索引和绘图索引对于所有像素都是相同的，因此它们来自统一的变量。为了获得原始索引，使用内置变量gl_PimitiveID（渲染过程中的图元数量）。这是系统自动维护的原语的运行索引。系统在绘图开始时将gl_PimitiveID重置为零。这使得很难区分“背景”像素和实际被对象覆盖的像素。为了克服这个问题，在将索引写入输出之前先将其递增一。这意味着可以识别背景像素，因为它们的图元ID为零，而对象覆盖的像素具有1…n作为图元ID。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line">uniform uint gDrawIndex;</span><br><span class="line">uniform uint gObjectIndex;</span><br><span class="line">out vec3 FragColor;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FragColor = <span class="built_in">vec3</span>(<span class="built_in">float</span>(gObjectIndex), <span class="built_in">float</span>(gDrawIndex),<span class="built_in">float</span>(gl_PrimitiveID + <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="step3-写入帧缓冲"><a href="#step3-写入帧缓冲" class="headerlink" title="step3:写入帧缓冲"></a>step3:写入帧缓冲</h5><p>主循环中：开启拾取帧缓冲-开启拾取着色器-把模型相应数据传进拾取着色器-绘制一遍模型-恢复默认缓冲</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_DRAW_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="comment">/*绘制图形*/</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="绘制阶段"><a href="#绘制阶段" class="headerlink" title="绘制阶段"></a>绘制阶段</h4><p>如果左键点击了，获取鼠标点击处的像素的三元索引（此处将点击处改成了光标位置处）<br>如果该像素不是背景，通过得到的该像素的绘制索引和原始索引绘制出相应片段（此处将绘制出相应片段改成了设置不同的颜色）</p>
-<h5 id="step1-从点击的像素中获取三元索引"><a href="#step1-从点击的像素中获取三元索引" class="headerlink" title="step1:从点击的像素中获取三元索引"></a>step1:从点击的像素中获取三元索引</h5><p>​	函数参数为鼠标点击的屏幕上的xy坐标。要读取FBO，必须将其绑定到GL_read_FRAMEBUFFER目标。然后需要使用函数glReadBuffer（）指定从哪个颜色缓冲区读取，原因是FBO可以包含多个颜色缓冲区。函数glReadPixels执行实际读取，它使用左下角（第一对参数）和宽度&#x2F;高度（第二对参数）指定的矩形，并将结果读入最后一个参数给出的地址，此处矩形的大小是一个纹素。因为需要原始数据，因此使用GL_RGB作为格式，使用GL_FLOAT作为类型。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">PixelInfo</span> &#123;</span><br><span class="line">	<span class="type">float</span> ObjectID;<span class="type">float</span> DrawID;<span class="type">float</span> PrimID;</span><br><span class="line">	<span class="built_in">PixelInfo</span>() &#123;ObjectID = <span class="number">0.0f</span>;DrawID = <span class="number">0.0f</span>;PrimID = <span class="number">0.0f</span>;&#125;&#125;;</span><br><span class="line"><span class="function">PixelInfo <span class="title">ReadPixel</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> x, <span class="type">unsigned</span> <span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, fbo);</span><br><span class="line">	<span class="built_in">glReadBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	PixelInfo Pixel;</span><br><span class="line">	<span class="built_in">glReadPixels</span>(x, y, <span class="number">1</span>, <span class="number">1</span>, GL_RGB, GL_FLOAT, &amp;Pixel);</span><br><span class="line">    <span class="comment">//必须重置读取缓冲区和帧缓冲区</span></span><br><span class="line">	<span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">return</span> Pixel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="step2-绘制"><a href="#step2-绘制" class="headerlink" title="step2:绘制"></a>step2:绘制</h5><p>​	此处绘制一个物体正方体，但是利用不同的MVP矩阵将其draw两次。两次的gObjectIndex都为0，第一次draw的DrawIndex是0，第二次draw的DrawIndex是1。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glUniform1ui</span>(gObjectIndexID, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glUniform1ui</span>(gDrawIndexID, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-<p>glfwGetCursorPos获取窗口上光标的位置，存入xy中。注意y轴的计算方式：height-int(y)+1(屏幕y轴与世界空间的y轴相反)。通过如下代码：如果光标在第一个物体的第一个三角形，则为红色；第一个物体的第二个三角形，则为墨绿色；如果光标在第二个物体的第一个三角形，则为蓝色；第二个物体的第二个三角形，则为灰色；光标不在物体上则为绿色。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">glfwGetCursorPos</span>(window,&amp;x,&amp;y);</span><br><span class="line">PixelInfo Pixel = <span class="built_in">ReadPixel</span>(<span class="built_in">int</span>(x), <span class="number">768</span>-<span class="built_in">int</span>(y)+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (Pixel.PrimID != <span class="number">0</span>) &#123;</span><br><span class="line">	glm::uint a = (uint)Pixel.DrawID;</span><br><span class="line">	glm::uint b = (uint)Pixel.PrimID;</span><br><span class="line">	<span class="keyword">if</span> (a == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(b == <span class="number">1</span>)&#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (a == <span class="number">1</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">1</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="真正绘制阶段"><a href="#真正绘制阶段" class="headerlink" title="真正绘制阶段"></a>真正绘制阶段</h4><p>主循环中正常绘制，使物体显示在屏幕。</p>
-<p>效果：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281856762.png" alt="img"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857280.png" alt="image-20230128185721248"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857475.png" alt="image-20230128185707432"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857155.png" alt="image-20230128185729121"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857598.png" alt="image-20230128185734563"></td>
-<td></td>
-</tr>
-</tbody></table>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
   id="post-实例渲染"
   class="article article-type-post"
   itemscope
@@ -975,6 +881,97 @@ if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glVertexAttribPointer</span>(positionID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">0</span>);</span><br><span class="line"><span class="built_in">glVertexAttribPointer</span>(colorID,<span class="number">4</span>,GL_FLOAT,GL_FALSE,<span class="number">32</span>,(<span class="type">void</span>*)<span class="number">16</span>);</span><br></pre></td></tr></table></figure>
 
 <p>参考链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/niu2212035673/article/details/79041437">https://blog.csdn.net/niu2212035673/article/details/79041437</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-几何着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >几何着色器&amp;公告牌</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2022-12-28T01:30:43.000Z" itemprop="datePublished">2022-12-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="几何着色器"><a href="#几何着色器" class="headerlink" title="几何着色器"></a>几何着色器</h4><img src="C:\Users\华为\Desktop\QQ图片20221228095854.png" alt="QQ图片20221228095854" style="zoom:50%;" />
+
+<p>渲染管线：顶点着色器-细分着色器-几何着色器-片段着色器</p>
+<p>作用：由于几何着色器可以在顶点发送到下一着色阶段之前对他们随意变换，所以作用就是将一个图元变换为另一个完全不同的图元，或者修改图元的位置</p>
+<p>使用方法：</p>
+<ul>
+<li>在几何着色器的顶部，声明从顶点着色器输入的图元类型：layout (类型) in;</li>
+<li>可以输入的图元有5类：points，lines，lines_adjacency，triangles，triangles_adjacency</li>
+<li>指定几何着色器的输出图元类型：layout (primitive, max_vertices &#x3D; n) out;</li>
+<li>输出图元有三种选项：points，line_strip，triangle_strip</li>
+<li>几何着色器还要设置一个他的最大输出顶点数量，如果绘制时超过了这个值，OpenGL将不会绘制多出的顶点</li>
+</ul>
+<p>以一个简单的几何着色器为例（顶点和细分着色器都不用修改，但是要注意细分着色器的patch不能为四边形）：</p>
+<p>注意ES中没有gl_PositionIn内置变量，因此需要从TES中通过out和in传入顶点数据，且进入几何着色器的数据为一个图元所有顶点数据，因此传入的顶点数据为数组。并且对于不确定大小的数据，不能通过变量访问，因此不能使用i循环访问，需要使用0,1,2。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="meta">#extension GL_ARB_geometry_shader4:enable</span></span><br><span class="line"><span class="built_in">layout</span>( triangles ) in;</span><br><span class="line"><span class="comment">//layout( line_strip, max_vertices = 3 ) out;的话一个三角形三个顶点用2条线绘制，四边形不能封口</span></span><br><span class="line"><span class="built_in">layout</span>( line_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line">out vec4 color;<span class="comment">//将当前顶点color传给片段着色器的gl_FragColor</span></span><br><span class="line">in vec4 fragmentColor[];<span class="comment">//几何着色器的输入为图元的一组顶点相关数据，必须设置为数组类型</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i =<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//输入图元的一个图元的顶点的个数</span></span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;gl_PositionIn.<span class="built_in">length</span>();i++)</span><br><span class="line">	&#123;</span><br><span class="line">	    gl_Position=gl_PositionIn[i];</span><br><span class="line">		color=fragmentColor[<span class="number">0</span>];<span class="comment">//颜色传入一组，为当前顶点选择一个颜色值</span></span><br><span class="line">	    <span class="built_in">EmitVertex</span>();<span class="comment">//输出一个顶点</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//四边形在[0]封口</span></span><br><span class="line">	gl_Position=gl_PositionIn[<span class="number">0</span>];</span><br><span class="line">	color=fragmentColor[<span class="number">0</span>];</span><br><span class="line">	<span class="built_in">EmitVertex</span>();</span><br><span class="line">	<span class="built_in">EndPrimitive</span>();<span class="comment">//结束一个图元的输出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上几何着色器代码实现的效果同理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221228133913472.png" alt="image-20221228133913472" style="zoom:50%;" />
+
+<p>暂时不太会用几何着色器和细分着色器的情况下添加光照计算</p>
+<h4 id="几何着色器绘制公告牌"><a href="#几何着色器绘制公告牌" class="headerlink" title="几何着色器绘制公告牌"></a>几何着色器绘制公告牌</h4><p>​	公告板技术（billboarding）。公告板是一个始终朝向相机的四边形，当相机在场景中转动的时候，公告板也会随着相机转动保证相机方向向量始终垂直于公告板的正面。可以将怪物角色、树木等任何场景中重复性高、数量多的物体以纹理贴图的形式直接贴到四边形公告板上（而不需要复杂的计算和渲染实际的3d模型），始终朝向相机。公告板常常用来创建需要大量树木的森林效果，每一个公告板只需要4个顶点。</p>
+<p>让公告板始终朝向相机：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271142340.png" alt="image-20230127114208268"></p>
+<p>​	首先把公告板的四边形中心定义在世界中心center(0.0,0.0,0.0,0.0)。为了让四边形始终朝向相机，其四个顶点坐标与相机空间的u和s轴相同。（opengl使用右手坐标系）</p>
+<p>几何着色器中先求出 -f 向量，即摄像机朝向。先获取公告板中心坐标，用该坐标-相机位置坐标（也是定义在世界空间），最后将其标准化。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 Pos = gl_in[<span class="number">0</span>].gl_Position.xyz;</span><br><span class="line">vec3 toCamera = <span class="built_in">normalize</span>(Pos-gCameraPos);</span><br></pre></td></tr></table></figure>
+<p>在选取一个up向量，一般选取（0.0，1.0，0.0）,利用up向量和-f向量叉乘可以获得right向量，up向量和-f向量在一个平面，因此right一定垂直于-f。注意叉乘的顺序。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 up = <span class="built_in">vec3</span>(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>);</span><br><span class="line">vec3 right = <span class="built_in">normalize</span>(<span class="built_in">cross</span>(toCamera, up));</span><br></pre></td></tr></table></figure>
+
+<p>最后用rihgt向量和-f向量叉乘得到u向量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 u = <span class="built_in">cross</span>(right, toCamera);</span><br></pre></td></tr></table></figure>
+
+<p>通过中心点，u向量和right向量计算公告板的四个顶点坐标，每计算出一个顶点就输出一次顶点，还根据顶点位置计算UV坐标。顶点着色器只传入一个中心点，几何着色器输入point，输出triangle_strip形成三角形带。但是要注意的是up向量不一定就是u向量，向量仅仅是用于计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">layout</span>( points ) in;</span><br><span class="line"><span class="built_in">layout</span>( triangle_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line"></span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos - right * <span class="number">0.5</span> - u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">0.0</span>, <span class="number">0.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos - right * <span class="number">0.5</span> + u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos + right * <span class="number">0.5</span> - u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">0.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos + right * <span class="number">0.5</span> + u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line"><span class="built_in">EndPrimitive</span>();</span><br></pre></td></tr></table></figure>
+<p>下图是view矩阵的结构，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271203336.png" alt="image-20230127120306288"></p>
+<p>glm库储存矩阵元素采用的是列优先的储存方式，因此除了在几何着色器中手动计算right，up向量，还可以通过如下代码直接获取right,up向量直接传入着色器，此时就不需要传入相机位置。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">computeMatricesFromInputs</span>();</span><br><span class="line">glm::mat4 ProjectionMatrix = <span class="built_in">getProjectionMatrix</span>();</span><br><span class="line">glm::mat4 ViewMatrix = <span class="built_in">getViewMatrix</span>();</span><br><span class="line"><span class="comment">//此处也可以使用glm::lookat函数计算ViewMatrix（参数：相机位置坐标，目标位置坐标，up向量）</span></span><br><span class="line"><span class="built_in">glUniform3f</span>(rightID, ViewMatrix[<span class="number">0</span>][<span class="number">0</span>], ViewMatrix[<span class="number">1</span>][<span class="number">0</span>], ViewMatrix[<span class="number">2</span>][<span class="number">0</span>]);</span><br><span class="line"><span class="built_in">glUniform3f</span>(upID, ViewMatrix[<span class="number">0</span>][<span class="number">1</span>], ViewMatrix[<span class="number">1</span>][<span class="number">1</span>], ViewMatrix[<span class="number">2</span>][<span class="number">1</span>]);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">glm::vec3 CameraPosition = glm::vec3(-ViewMatrix[0][2], -ViewMatrix[1][2], -ViewMatrix[2][2]);</span></span><br><span class="line"><span class="comment">glUniform3f(PosID, CameraPosition.x, CameraPosition.y, CameraPosition.z);</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
  
       <!-- reward -->
       

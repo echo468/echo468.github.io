@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-19-Cameras |  Hexo
+    games101-21-Animation |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-19-Cameras"
+  id="post-games101-21-Animation"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-19-Cameras
+  games101-21-Animation
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/12/games101-19-Cameras/" class="article-date">
-  <time datetime="2023-05-12T10:33:50.000Z" itemprop="datePublished">2023-05-12</time>
+      <a href="/2023/05/21/games101-21-Animation/" class="article-date">
+  <time datetime="2023-05-21T01:38:11.000Z" itemprop="datePublished">2023-05-21</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">2.6k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">5 min</span>
+            <span class="post-count">8 min</span>
         </span>
     </span>
 </div>
@@ -109,61 +109,129 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
-<p>2.不存在的合成的物体：光栅化和光追</p>
-<p>​		传感器用于捕捉并记录光。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
+  <h4 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h4><p>将场景模型表示为时间的函数, 输出：当顺序查看时提供运动感的图像序列</p>
+<p>• 电影：每秒 24 帧</p>
+<p>• 视频（一般）：30 fps</p>
+<p>• 虚拟现实：90 fps</p>
+<h5 id="动画历史"><a href="#动画历史" class="headerlink" title="动画历史"></a>动画历史</h5><p>•1931，Phenakistoscope圆盘，通过转动圆盘来做动画（右边是可见的窗口，通过旋转时钟，能在窗口看到不同的动作，从而形成动画）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151023040.png" alt="image-20230515102349693" style="zoom:50%;" />
 
-<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
+<p>•1878，第一部电影Sallie Gardner，早期电影用来做科学研究，而不是用来娱乐</p>
+<p>•1937，第一部剧场版手绘电影-白雪公主与七个小矮人（每秒24帧）</p>
+<p>•1963，第一个计算机生成的动画</p>
+<p>•1972，早期计算机动画 — 人脸动画</p>
+<p>•1993，侏罗纪公园（里程碑作品,电脑生成的恐龙直接使用在电影里）</p>
+<p>•1995，玩具总动员，第一部完全计算机生成的CG动画电影(用的光栅化方法)</p>
+<h5 id="Keyframe-Animation关键帧动画"><a href="#Keyframe-Animation关键帧动画" class="headerlink" title="Keyframe Animation关键帧动画"></a>Keyframe Animation关键帧动画</h5><p>​		关键帧定义整个动画的走向，早期由最厉害的艺术家画出关键帧，再让助手把中间的过程补齐。（如软件flash可以通过关键帧自动生成中间的过度）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305150957430.png" alt="image-20230515095720277" style="zoom: 67%;" />
 
-<p>​		针孔相机拍出来的结果不会出现虚化。</p>
-<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
+<p>​		该方法的本质是插值。例如找到第k帧各个顶点的位置，再找到k+1帧各个顶点的位置，插值中二者中间过程的顶点位置。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151000646.png" alt="image-20230515100020509" style="zoom:67%;" />
 
-<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
+<p>​		但是插值不是简单的线性插值，如果是线性插值，其结果是折线，但是很多时候需要曲线（如可能需要通过样条的方法）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151001080.png" alt="image-20230515100139977" style="zoom:50%;" />
 
-<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
-<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
+<h5 id="Physical-Simulation物理模拟-x2F-仿真"><a href="#Physical-Simulation物理模拟-x2F-仿真" class="headerlink" title="Physical Simulation物理模拟&#x2F;仿真"></a>Physical Simulation物理模拟&#x2F;仿真</h5><p>​		牛顿定律，知道加在物体上的力就可以获得加速度，从而获得速度和新的位置（已知一些初始条件，如开始的位置、速度），来动态更新位置。</p>
+<img src="https://pic1.zhimg.com/80/v2-0d8447cded709d389189acc62d085abc_720w.webp" alt="img" style="zoom: 33%;" />
 
-<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
+<p>​		该方法通过正确建立真实的受力模型来模拟出真实的动画系统。如布料模拟、流体模拟，头发（重力，头发间的摩擦力，风力）。</p>
+<p>​		布料可以视为三角形网格，对于每个点，有自己的重力和来自其他点的拉力。建立相互作用力，从而模拟正确效果（模拟得不好，就有反物理现象：比如穿模，布料穿过人体模型）。如下图，布料可以看成质点弹簧网：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151009986.png" alt="image-20230515100952739" style="zoom:50%;" />
 
-<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151038667.png" alt="image-20230515103857485" style="zoom:50%;" />
 
-<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
+<p>​		在流体模拟中，先模拟这些水是怎么运动的，水滴在各种地方是怎么形成的；模拟了水的位置、形状等之后，拿去渲染，得出最后的结果。</p>
+<h5 id="Mass-Spring-System质点弹簧系统-（最简单，也非常实用的系统）"><a href="#Mass-Spring-System质点弹簧系统-（最简单，也非常实用的系统）" class="headerlink" title="Mass Spring System质点弹簧系统 （最简单，也非常实用的系统）"></a>Mass Spring System质点弹簧系统 （最简单，也非常实用的系统）</h5><p>​		质点弹簧系统是一系列相互连接的质点和弹簧。最基本的单元：一个弹簧，左右各连着一个质点。假设理想化的弹簧没有初始长度，只考虑拉伸的情况。对于a来说，弹簧对a的力从a指向b，弹力大小和ab的距离成正比，所以此处b-a是一个向量，表示了力的大小和方向，ks是弹簧系数。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151039537.png" alt="image-20230515103947449" style="zoom:50%;" />
 
-<p>​		高速摄影（更大光圈或者更大ISO）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
+<p>​		在实际情况下，弹簧有初始长度。弹力大小和拉伸的长度成正比，所以弹力大小用（||b-a||-l）表示，弹力方向用a指向b的单位向量表示。但是由于没有能量损失，动力和势力会相互转换，拉伸后的弹簧会不断震荡而不会最终停止。因此，弹簧系统需要添加阻力。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151102397.png" alt="image-20230515110202293" style="zoom:50%;" />
 
-<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
+<p>​		计算机图形学中，如果x表示为位移，x上一点是速度（一阶导数）点两个点是加速度（二阶导数）。如果按照如下方式定义阻力，对于b来说，b的阻力与速度相反，速度越大阻力越大。kd是阻尼系数，速度定义了力的大小和方向。引入阻尼的目的是让震荡的弹簧不会永远震荡下去，会因为阻尼的存在而停下，弹簧长度恢复到原长。目前引入的阻尼确实能达到目的，但还会阻止一个处于常态的弹簧的一切非震荡运动。比如弹簧两端相对静止，但是处于自由落体状态，都有向下的速度，则此阻尼力会使其落得越来越慢，这不正常。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151429644.png" alt="image-20230515142929565" style="zoom:50%;" />
 
-<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
+<p>​		完整公式如下，f只与相对速度大小有关（也就是弹簧长度发生变化才有阻力），而与弹簧拉伸长度无关。如下对于b来说，阻力从b指向a，所以要添加-号，之后一项表示方向。红色点乘表示力的大小，b-a是相对速度大小，点乘后为该速度在a到b方向上的投影（对于ab不伸长的圆周运动，作用在b上的力垂直于ab，在ab方向上的投影为0，此时无阻力）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151112803.png" alt="image-20230515111251697" style="zoom: 50%;" />
 
-<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
+<p>​		单个模型可以组成更复杂的模型：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151134053.png" alt="image-20230515113408957" style="zoom:50%;" />
 
-<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
+<p>​		布料可以抵抗切变，但是如下模型不能抵抗切变（当有如下两个力拉动时，两端会被拉伸，中间会向内部收缩）。以及布料能力对抗“折”的力，例如纸很容易对折：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151148629.png" alt="image-20230515114817530" style="zoom:50%;" />
 
-<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
+<p>​		这种结构将抵抗切变, 当中间想往里收缩时，中间的弹簧因为阻力会阻碍收缩。但具有各向异性偏差(朝↖拉有弹簧,↗无)不对称, 也不会抵抗平面外弯曲，比如右上角和左下角可以对折（且不改变弹簧形状）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151242052.png" alt="image-20230515124234960" style="zoom:67%;" />
 
-<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
+<p>​		这种结构将抵抗切变, 方向偏差较小, 也无法抵抗平面外弯曲，因为可以沿着竖线或者横线对折。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151243715.png" alt="image-20230515124344616" style="zoom: 67%;" />
 
-<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
+<pre><code>     这种结构将抵抗切变, 方向偏差较小, 也可以抵抗平面外弯曲。相比青色弹簧, 红色的弹簧相连接的力应该弱得多 (因为青色相连代表布的韧性, 红色则代表布放在桌边, 布会自然下垂, 红色线就会被拉扯)，所以不能只用红线，红线只是辅助作用。
+</code></pre>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151244150.png" alt="image-20230515124450068" style="zoom:67%;" />
 
-<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
+<p>​		如可以用质点弹簧裙子+人物，有时会采用更好的有限元法FEM代替弹簧系统。</p>
+<h5 id="粒子系统"><a href="#粒子系统" class="headerlink" title="粒子系统"></a>粒子系统</h5><p>​		用大量的粒子模拟，例如模拟流体、灰尘等。定义每一个粒子受到的力从而定义粒子运动，例如重力、粒子间的相互作用力（如碰撞、引力等，对于引力需要找到粒子周围最近的一些粒子，但是粒子间的位置会不断改变，因此计算较为复杂）、或者粒子很小可能具有风给的浮力。粒子越多模拟的越精细，但是计算量更大。粒子除了模拟点（如水滴），还可以模拟一大群中的一个个体，如鸟群中的一个鸟。本质是在定义个体和群体的关系。</p>
+<p>对于动画中的每一帧，粒子系统大概制作过程：</p>
+<p>① [如果需要] 创建新的粒子</p>
+<p>② 计算作用于每个粒子的力（决定了最后的效果，如根据万有引力考虑粒子间的引力）</p>
+<p>③ 更新每个粒子的位置和速度（通过受力解出位置和速度）</p>
+<p>④ [如果需要] 去除死粒子</p>
+<p>⑤ 渲染粒子</p>
+<p>对于渲染鸟群：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151303288.png" alt="image-20230515130332172" style="zoom:80%;" />
+
+<p>① 对邻居中心的吸引力(不离群)</p>
+<p>② 来自个别邻居的排斥力(不靠太近)</p>
+<p>③ 与邻居的平均轨迹对齐(一起飞)</p>
+<h5 id="运动学"><a href="#运动学" class="headerlink" title="运动学"></a>运动学</h5><p>（1）正向运动学</p>
+<p>​		可以创作骨骼动画，如下图先定义拓扑关系（结构间的连接关系），树状结构等（此处不做详细讨论），再定义连接类型：Pin（平面上的旋转）、Ball(空间内的旋转)、Prismatic joint（平移）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151308038.png" alt="image-20230515130844902" style="zoom:67%;" />
+
+<p>​		例如有两部分构成的手臂，第一部分旋转θ1，第二部分旋转θ2，问端点p的位置在哪？计算方法非常简单，说明只要定义好骨骼连接方式，任何时刻只要知道角度，就能算出尖端p应该停在哪里。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151452811.png" alt="image-20230515145235688" style="zoom:67%;" />
+
+<p>​		动画被描述为作为时间函数的角度参数值。已知根据时间两个角度值的变换，就可以知道任何时间点的位置，从而创建出动画。该方法的优点是实施很简单，动画可能和实际物理不太一致使得动画创作者耗时。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151453433.png" alt="image-20230515145308329" style="zoom:67%;" />
+
+<p>（2）逆向运动学</p>
+<p>​		实现如抓住手移动使得整个手臂跟着移动的动画。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151457892.png" alt="image-20230515145720652" style="zoom:50%;" />
+
+<p>​		也就是通过控制尖端位置，反算出应该旋转多少。动画师提供末端执行器的位置p：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151500023.png" alt="image-20230515150008918" style="zoom: 50%;" />
+
+<p>​		计算机必须算出满足约束的关节角度：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151500743.png" alt="image-20230515150034617" style="zoom: 50%;" />
+
+<p>​		会出现的问题是，对于同一个位置p，可能有多组解：</p>
+<table>
+<thead>
+<tr>
+<th align="right"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151501651.png" alt="image-20230515150156467"  /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151502680.png" alt="image-20230515150215565"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right"></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>​		还可能出现没有解的情况，如下图顶点p到达不了第三个半圆外和第一个半圆内：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151503053.png" alt="image-20230515150302939" style="zoom: 67%;" />
+
+<p>​		对于上述情况有多种优化方式。</p>
+<h5 id="Rigging绑定"><a href="#Rigging绑定" class="headerlink" title="Rigging绑定"></a>Rigging绑定</h5><p>​		一种对角色更高层次的控制，允许更快速且直观的调整姿势、表情等。类似提线木偶，是逆运动学的一种应用。在角色身体、脸部等位置创造一系列控制点，艺术家通过调整控制点的位置，带动脸部其他从点移动，从而实现表情变化，动作变化等（类似贝塞尔曲线）。缺点：需要艺术能力也需要技术，全手工制作费时费力费钱。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151514964.png" alt="image-20230515151414884" style="zoom:67%;" />
+
+<h5 id="Blend-Shapes"><a href="#Blend-Shapes" class="headerlink" title="Blend Shapes"></a>Blend Shapes</h5><p>​		类似关键帧动画，给定两个时间的两个状态，对于每一个控制点进行插值。</p>
+<h5 id="Motion-Capture"><a href="#Motion-Capture" class="headerlink" title="Motion Capture"></a>Motion Capture</h5><p>​		在真人身上放置许多控制点，在不同时刻对人进行拍照，记录控制点的位置，同步到对应的虚拟人物上。真实感很强，比起用计算机调节，可以迅速获得大量数据。但是昂贵，准备工作麻烦。捕捉的动画跟预期艺术需要不太符合，需要调整，以及控制点被遮挡问题。很多控制控制点的方法，有些方法也可以避免控制点遮挡。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151524557.png" alt="image-20230515152447453" style="zoom:67%;" />
+
+<p>​		众多动捕设备中最常用的还是光学动捕设备，在人身上贴光学贴片。最重要的被遮挡问题，可以通过增加摄像机等方法避免</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151525261.png" alt="image-20230515152558181" style="zoom:67%;" />
+
+<p>​		得到的数据是每个控制点在三维空间中的运动数据。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151526281.png" alt="image-20230515152621228" style="zoom:67%;" /> 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -229,7 +297,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/12/games101-19-Cameras/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/21/games101-21-Animation/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -240,19 +308,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/12/games101-12-Geometry3/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            games101-12-Geometry3
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/11/games101-11-Geometry2/" class="article-nav-link">
+      <a href="/2023/05/20/games101-20-Color-Perception/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-11-Geometry2</div>
+        <div class="article-nav-title">games101-20-Color_Perception</div>
       </a>
     
   </nav>
