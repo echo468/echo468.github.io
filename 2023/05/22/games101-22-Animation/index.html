@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-15-Ray-Tracing3 |  Hexo
+    games101-22-Animation |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-15-Ray-Tracing3"
+  id="post-games101-22-Animation"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-15-Ray-Tracing3
+  games101-22-Animation
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
-  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
+      <a href="/2023/05/22/games101-22-Animation/" class="article-date">
+  <time datetime="2023-05-22T13:50:41.000Z" itemprop="datePublished">2023-05-22</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2k</span>
+            <span class="post-count">1.1k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">7 min</span>
+            <span class="post-count">3 min</span>
         </span>
     </span>
 </div>
@@ -109,95 +109,46 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
+  <h4 id="速度场"><a href="#速度场" class="headerlink" title="速度场"></a>速度场</h4><p>​		模拟单个粒子在速度场中的运动情况（速度场指的就是一种函数，在任意时刻t和位置x，都有对应的速度取值v(x,t)。速度场是一种理想化情况，实际上只能通过对物体进行受力分析得到加速度进而得到速度。粒子在不同起点会有不同的运动轨迹，切线方向即该点的速度方向。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172305775.png" alt="image-20230517230558683" style="zoom: 67%;" />
 
-<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
+<p>​		速度可以用路程对时间的一阶导数获得，因此求解下面方程即可获得对应时刻粒子的位置（上一次位置+位移）。这个方程只有一个变量t，因此是一阶常微分方程。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172309233.png" alt="image-20230517230949140" style="zoom: 67%;" />
 
-<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
+<p>​		如下使用欧拉方法（前向欧拉 显示欧拉）将时间离散化进行求解，Δt称为步长。用上一时刻的数据求解下一时刻。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172313259.png" alt="image-20230517231357154" style="zoom: 50%;" />
 
-<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
+<p>​		可以通过减小步长来减小误差（增加时间步长，误差会不断积累）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172314099.png" alt="image-20230517231432970" style="zoom:67%;" />
 
-<p>​		该方程也可以转换成如下两个方程：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
+<p>​		但是该方法具有不稳定性，不稳定是指无论如何减小Δt，有一些情况始终无法通过模拟得到。如下两种情况，场中的曲线是在不同位置理想的运动轨迹，切线方向是速度。细微的影响会被无限放大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172316050.png" alt="image-20230517231617880" style="zoom: 67%;" />
 
-<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
+<h5 id="中点法-x2F-修正欧拉"><a href="#中点法-x2F-修正欧拉" class="headerlink" title="中点法&#x2F;修正欧拉"></a>中点法&#x2F;修正欧拉</h5><p>​		首先在某一个位置根据该位置的速度用显示欧拉计算出下一个位置在a，取a和初始点的中点b的速度作为初始点的速度，用显示欧拉再计算一次下一个位置，得到点c。用二次项进行模拟，更加准确。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172344969.png" alt="image-20230517234452830" style="zoom: 67%;" />
 
-<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
+<h5 id="自适应改变步长方法"><a href="#自适应改变步长方法" class="headerlink" title="自适应改变步长方法"></a>自适应改变步长方法</h5><p>​		首先在某一个位置根据该位置的速度用显示欧拉计算出下一个位置在a，将Δt分成两个Δt&#x2F;2，在第一个Δt&#x2F;2的位置，用该位置的速度和Δt&#x2F;2的时间计算出位置在b。对比a和b，若小于误差阈值则无需继续细分步长, 若大于则继续细分步长。效果更好，但是可能需要更小的步长。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180002029.png" alt="image-20230518000231928"></p>
+<h5 id="隐式方法"><a href="#隐式方法" class="headerlink" title="隐式方法"></a>隐式方法</h5><p>​		该方法是用未来的一些量（速度、加速度）来求解这个时刻的位移。计算复杂。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180007709.png" alt="image-20230518000753635" style="zoom:67%;" />
 
-<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
+<h5 id="如何量化稳定性"><a href="#如何量化稳定性" class="headerlink" title="如何量化稳定性"></a>如何量化稳定性</h5><p>​		 使用局部误差（每一步）和总累积误差（整体）判断稳定性。但是比起这两个绝对值，与步长的阶数的关系更值得探究。例如隐式欧拉的阶数为 1，这意味着局部截断误差O(h^2) ，全局截断误差O(h) （h 是步长，即 Δt）。对O(h) 的理解：如果将 h 减半，预期误差也会减半。对O(h^2) 的理解：如果将 h 减半，预期误差也会减1&#x2F;4。阶数越高，效果越好。</p>
+<h5 id="Runge-Kutta-Families"><a href="#Runge-Kutta-Families" class="headerlink" title="Runge-Kutta Families"></a>Runge-Kutta Families</h5><p>​		求解 ODE 的一系列高级方法，特别擅长处理非线性。它的四阶版本是使用最广泛的版本，即 RK4。用更复杂的方法更新位置。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180043977.png" alt="image-20230518004327829" style="zoom:67%;" />
 
-<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
+<h5 id="刚体模拟"><a href="#刚体模拟" class="headerlink" title="刚体模拟"></a>刚体模拟</h5><p>​		刚体不会发生形变，运动时内部所有点按照同一种方式运动。类似于模拟大量粒子，但是要考虑更多属性。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180047864.png" alt="image-20230518004753600" style="zoom:67%;" />
 
-<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
-
-<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
-
-<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
-<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
-
-<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
-
-<p>​		对于多个点光源：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
-
-<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
-
-<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
-
-<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
-
-<p>​		进一步简写：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
-
-<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
-
-<p>​		如下是一个示例：</p>
-<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
-
-<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
-
-<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
-
-<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
-
-<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
-<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
-<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
-<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
-
-<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
-<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
-
-<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
-
-<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
-
-<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
+<h4 id="Position-Based-x2F-Verlet-Integration"><a href="#Position-Based-x2F-Verlet-Integration" class="headerlink" title="Position-Based &#x2F; Verlet Integration"></a>Position-Based &#x2F; Verlet Integration</h4><p>​		不是基于物理的方法，用一些规则调整位置。没有能量守恒的性质，不基于物理计算速度快。</p>
+<h5 id="流体模拟"><a href="#流体模拟" class="headerlink" title="流体模拟"></a>流体模拟</h5><p>（1）假设水是由无数小的刚体球体组成</p>
+<p>（2）假设水无法被压缩，即任意处水的密度相等</p>
+<p>（模拟和渲染分开进行）</p>
+<p>​		要知道水的任意处密度发生了改变，就需要改变刚体球体的位置来修正这一部分的密度（梯度下降）；需要知道任意一个点的密度关于每一个刚体小球位置的导数，也就是和每一个刚体小球的位置变化会如何影响该点密度。如果小球距离该点位置越远，影响就越小。需要加入有关能量损失的方法，使得最后的运动可以停下。</p>
+<h4 id="Eulerian-vs-Lagrangian"><a href="#Eulerian-vs-Lagrangian" class="headerlink" title="Eulerian vs. Lagrangian"></a>Eulerian vs. Lagrangian</h4><p>模拟大规模物质：</p>
+<p>拉格朗日质点法（依次模拟空间中每个粒子，也需要考虑相互作用）</p>
+<p>网格法（将空间划分为不同格子，考虑不同格子的运动和密度变化）</p>
+<p>MPM：将上述两种方法结合</p>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -263,7 +214,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/15/games101-15-Ray-Tracing3/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/22/games101-22-Animation/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -274,19 +225,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-nav-link">
+      <a href="/2023/06/25/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            games101-18-Advanced_Rendering
+            环境配置
           
         </div>
       </a>
     
     
-      <a href="/2023/05/14/games101-14-Ray-Tracing2/" class="article-nav-link">
+      <a href="/2023/05/21/games101-21-Animation/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-14-Ray-Tracing2</div>
+        <div class="article-nav-title">games101-21-Animation</div>
       </a>
     
   </nav>

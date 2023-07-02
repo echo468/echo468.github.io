@@ -118,6 +118,310 @@
     
     
     <article
+  id="post-games101-3-Transformation1"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/07/02/games101-3-Transformation1/"
+    >games101-3-Transformation1</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/02/games101-3-Transformation1/" class="article-date">
+  <time datetime="2023-07-02T08:21:05.000Z" itemprop="datePublished">2023-07-02</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="MVP变换"><a href="#MVP变换" class="headerlink" title="MVP变换"></a>MVP变换</h4><p>局部空间-世界空间-观察空间-裁剪空间-屏幕空间</p>
+<p>局部坐标-世界坐标-观察坐标-裁剪坐标（会变成NDC坐标）-屏幕坐标-光栅化-片元</p>
+<p>​		一般可以直接将坐标定义在世界空间，M矩阵取单位矩阵。（当需要对物体进行修改的时候，在局部空间中来操作更方便；如果要对一个物体做出一个相对于其它物体位置的操作时，在世界坐标系中来操作更方便；）</p>
+<h4 id="View变换"><a href="#View变换" class="headerlink" title="View变换"></a>View变换</h4><p>确定相机坐标系：</p>
+<p>（1）相机位置坐标e</p>
+<p>（2）观察方向g:由相机位置指向目标物体</p>
+<p>（3）视点正方向t</p>
+<p>计算相机坐标系三个轴的方法：</p>
+<p>（1）观察方向向量g:目标物体坐标减相机坐标e,再除以长度变成单位向量</p>
+<p>（2）辅助向量up：一般设置成（0，1，0），认为相机本身不会歪</p>
+<p>（3）向量g×t（e）：通过向量g和辅助向量叉乘得到，此时向量g×t一定垂直于g和t所在平面,再除以长度变成单位向量</p>
+<p>（4）视点正方向t向量：通过向量g×t和g向量叉乘得到，再除以长度变成单位向量</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622014.png" alt="image-20230702162236905" style="zoom:67%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622687.png" alt="image-20230702162254649"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>​		如果相机和目标物体的相对位置不变，则最后的观察结果都相同。因此当相机处于任意位置时，可以将相机移动到原点，相机始终看向-z方向，且相机坐标系的剩下两个轴与世界坐标系的两个轴X,Y方向一致。之后将物体坐标进行相同的变换，即可得到相机在原位置时相同的结果（将作用于相机的矩阵作用在物体上）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021623987.png" alt="image-20230702162356943" style="zoom:67%;" />
+
+<p>下面求解view矩阵：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624535.png" alt="image-20230702162404488" style="zoom:67%;" />
+
+<p>（1）平移操作，将e点移动到原点</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624611.png" alt="img"></p>
+<p>（2）旋转操作</p>
+<p>由于计算从相机坐标系到世界坐标系的旋转矩阵较为复杂，因此可以先计算从世界坐标系变换到相机坐标系将y轴旋转到t轴，将z轴旋转到-g轴，将x轴旋转到g×t的轴。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624681.png" alt="img"></p>
+<p>该操作为将相机坐标系变换到世界坐标系的逆操作，因此求出来的R矩阵为目标R矩阵的逆矩阵，也是目标R矩阵的转置矩阵。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624648.png" alt="img"></p>
+<p>（3）最后求出的M矩阵如下，对目标物体坐标进行M矩阵变换</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624731.png" alt="img"></p>
+<h4 id="Projection变换"><a href="#Projection变换" class="headerlink" title="Projection变换"></a>Projection变换</h4><p> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625273.jpg" alt="img"></p>
+<h5 id="Orthographic-projection-正交投影"><a href="#Orthographic-projection-正交投影" class="headerlink" title="Orthographic projection 正交投影"></a>Orthographic projection 正交投影</h5><p>假设相机在原点，看向-z轴。</p>
+<p>将视线范围内的物体(假设在一个立方体中，该立方体通过六个数定义，注意越远z值越小，立方体外的部分都会被剪裁)全部压缩到[-1,1]范围内的正方体中，变成NDC坐标。先将立方体的重心平移到原点，再将立方体进行缩放(此处先不考虑旋转)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625714.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625766.png" alt="img"></p>
+<p>正交投影坐标的相对位置都不会改变，只需将物体全部转换到一个[−1,1]的正方体之中即可（其中x，y坐标便是投影结果，保留z是为了之后的深度检测）。压缩到一个正方体是为了之后的计算更加的方便在转换到屏幕坐标的时候就会重新拉伸回来。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626160.jpg" alt="img"></p>
+<p>正交投影不会影响w值,w仍为1，进行透视除法后没有任何作用。由于这个原因，正射投影主要用于二维渲染以及一些建筑或工程的程序，在这些场景中更希望顶点不会被透视所干扰。（opengl使用右手坐标系，此处越远z越小，在opengl中NDC坐标会变换成左手坐标，越远z越大）</p>
+<h5 id="Perspective-projection-透视投影"><a href="#Perspective-projection-透视投影" class="headerlink" title="Perspective projection 透视投影"></a>Perspective projection 透视投影</h5><p>(1) 将视锥体压缩成立方体</p>
+<p>距离越远，压缩程度越大，形成近大远小的效果。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626131.jpg" alt="img"> </p>
+<p>近平面n的xyz坐标不变，远平面f中心的xyz值不变。</p>
+<p>根据相似三角形：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626190.png" alt="img"></p>
+<p>即</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626271.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626239.jpg" alt="img"></p>
+<p>（x,y,z,1）,(kx,ky,kz,k!&#x3D;0)都是三维空间中的点（x,y,z）。</p>
+<p>可得矩阵：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627989.png" alt="img"></p>
+<p>近平面n的xyz坐标不变：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627136.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627025.png" alt="img"></p>
+<p>远平面f中心的xyz值不变：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627384.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627068.png" alt="img"></p>
+<p>最后解的<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627191.png" alt="img"></p>
+<p>（2）将立方体变换到[-1,1]的正方体</p>
+<p>将目标物体经过上述变换后，再进行正交投影变换即可：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627125.png" alt="img"></p>
+<p><em><strong>*为什么在（1）中中间压缩的点z值不知道？*</strong></em><br><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627363.png" alt="img"></p>
+<p>Persp-&gt;ortho矩阵会改变顶点的w值（w&#x3D;z＜0），在进行完透视投影的MVP变换后，得离观察者越远的顶点坐标w分量的绝对值越大。顶点坐标的每个分量都会除以它的w分量，距离观察者越远顶点坐标就会越小。（最后的顶点应该被赋值到顶点着色器中的gl_Position输出，OpenGL将会自动进行透视除法和裁剪。）。</p>
+<p>比较更新后的z值和原z值：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627495.png" alt="img"></p>
+<p>因为n≥z≥f，所以(z-n)(f-z)值＞0，因为z＜0，方程最左侧的分数值小＜0，即更新后的z值小于原z值，即透视投影之后，中间物体距离相机更远。所以在推算时不知道z值。</p>
+<p><em><strong>*如何确定视锥体？*</strong></em></p>
+<p>利用垂直可视角度或者水平可视角度、近平面距离、远平面距离（距离相机的距离）以及进平面宽高比(width&#x2F;heigth)可以确定一个视锥体。（在opengl中，可视角度一般取45°，近平面取0.1，远平面100.0f）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627813.jpg" alt="img"> </p>
+<p>如下图所示，相机在原点看向-z轴。已知Y（垂直可视角度）和n，可以计算出height&#x2F;2-&gt;height，通过宽高比可以得到width。远平面可以通过Y和f计算。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627150.jpg" alt="img"> </p>
+<p>如果只是图元(Primitive)，例如三角形，的一部分超出了裁剪体积(Clipping Volume)，则OpenGL会重新构建这个三角形为一个或多个三角形让其能够适合这个裁剪范围。</p>
+<h4 id="视口变换"><a href="#视口变换" class="headerlink" title="视口变换"></a>视口变换</h4><p>屏幕可以看作一组x<em>y的像素数组，数组的大小x</em>y为分辨率。此处认为在一个像素内部颜色不变，像素的颜色值通过RGB三个0-255之间的数表示。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627542.jpg" alt="img"> </p>
+<p>像素坐标从（0，0）到（x-1，y-1）。像素（x，y）的中心在（x+0.5，y+0.5）,这些像素的覆盖范围从（0，0）到（x，y）。</p>
+<p>视口变换就是将物体坐标从[-1,1]的正方体变到x*y的屏幕。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627754.jpg" alt="img"> </p>
+<p>该变换与z无关，z保持不变用于后续深度测试。先把正方体的x、y进行缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627215.png" alt="img"></p>
+<p>再将缩放后的立方体中心平移到屏幕中心：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021628869.png" alt="img"></p>
+<p><em><strong>*为什么不能先平移再缩放？*</strong></em></p>
+<p>缩放会将每个坐标以原点为中心进行缩放（也就是位移向量也会被缩放），而不是物体中心，如下白色正方形按照缩放矩阵缩小一半的结果是蓝色正方形而不是红色正方形。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627809.jpg" alt="img"> </p>
+<p>显示图像：将显存中的一块区映射到屏幕。</p>
+<p>（区分 view变换：先平移再旋转 正交投影：先平移再缩放）</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-环境配置"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/06/25/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"
+    >环境配置</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/06/25/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" class="article-date">
+  <time datetime="2023-06-25T03:23:34.000Z" itemprop="datePublished">2023-06-25</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Learnopengl/">Learnopengl</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="vs下freetype环境配置"><a href="#vs下freetype环境配置" class="headerlink" title="vs下freetype环境配置"></a>vs下freetype环境配置</h4><p>1.下载并解压freetype-2.10.2.tar.gz，放在项目适当的目录下</p>
+<p>2.进入freetype-2.10.2&#x2F;builds&#x2F;windows&#x2F;vc2010，双击freetype.sln</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251139739.png" alt="image-20230625113913617"></p>
+<p>3.在Win32位下，右键项目点击生成</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251138342.png" alt="image-20230625113841193"></p>
+<p>4.如果生成成功，在freetype-2.10.2&#x2F;objs&#x2F;Win32&#x2F;Debug目录下会出现freetype.dll和freetype.lib</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251138526.png" alt="image-20230625113817362"></p>
+<p>5.cmake项目时选择Visual Studio 15 2017而不是Visual Studio 15 2017（Win64），不然之后运行会找不到freetype.lib，lib的x86与目标项目的x64冲突。</p>
+<p>6.将freetype.dll复制到项目生成的Debug目录下，否则之后运行会出错</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251140235.png" alt="image-20230625114033076"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251141972.png" alt="image-20230625114100871"></p>
+<p>7.右击项目，选择属性</p>
+<p>配置属性-VC++目录-包含目录：源文件#include需要的头文件所在目录</p>
+<p>D:\practice\case_learn\ogl-2.1_branch_tutorial\ogl-2.1_branch_tutorial\external\freetype-2.10.2\include</p>
+<p>配置属性-VC++目录-库目录：lib&#x2F;dll所在的库目录（为了以防万一将该目录添加进环境变量）</p>
+<p>D:\practice\case_learn\ogl-2.1_branch_tutorial\ogl-2.1_branch_tutorial\external\freetype-2.10.2\objs\Win32\Debug</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251150581.png" alt="image-20230625115053397"></p>
+<p>链接器-输入-附加依赖项：添加freetype.lib（为了以防万一将文件目录写全，而不是只写freetype.lib）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251154084.png" alt="image-20230625115426929"></p>
+<p>8.准备好需要的字体文件.ttf，在需要freetype的源文件中添加如下两行：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ft2build.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> FT_FREETYPE_H  </span></span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-22-Animation"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/22/games101-22-Animation/"
+    >games101-22-Animation</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/22/games101-22-Animation/" class="article-date">
+  <time datetime="2023-05-22T13:50:41.000Z" itemprop="datePublished">2023-05-22</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="速度场"><a href="#速度场" class="headerlink" title="速度场"></a>速度场</h4><p>​		模拟单个粒子在速度场中的运动情况（速度场指的就是一种函数，在任意时刻t和位置x，都有对应的速度取值v(x,t)。速度场是一种理想化情况，实际上只能通过对物体进行受力分析得到加速度进而得到速度。粒子在不同起点会有不同的运动轨迹，切线方向即该点的速度方向。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172305775.png" alt="image-20230517230558683" style="zoom: 67%;" />
+
+<p>​		速度可以用路程对时间的一阶导数获得，因此求解下面方程即可获得对应时刻粒子的位置（上一次位置+位移）。这个方程只有一个变量t，因此是一阶常微分方程。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172309233.png" alt="image-20230517230949140" style="zoom: 67%;" />
+
+<p>​		如下使用欧拉方法（前向欧拉 显示欧拉）将时间离散化进行求解，Δt称为步长。用上一时刻的数据求解下一时刻。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172313259.png" alt="image-20230517231357154" style="zoom: 50%;" />
+
+<p>​		可以通过减小步长来减小误差（增加时间步长，误差会不断积累）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172314099.png" alt="image-20230517231432970" style="zoom:67%;" />
+
+<p>​		但是该方法具有不稳定性，不稳定是指无论如何减小Δt，有一些情况始终无法通过模拟得到。如下两种情况，场中的曲线是在不同位置理想的运动轨迹，切线方向是速度。细微的影响会被无限放大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172316050.png" alt="image-20230517231617880" style="zoom: 67%;" />
+
+<h5 id="中点法-x2F-修正欧拉"><a href="#中点法-x2F-修正欧拉" class="headerlink" title="中点法&#x2F;修正欧拉"></a>中点法&#x2F;修正欧拉</h5><p>​		首先在某一个位置根据该位置的速度用显示欧拉计算出下一个位置在a，取a和初始点的中点b的速度作为初始点的速度，用显示欧拉再计算一次下一个位置，得到点c。用二次项进行模拟，更加准确。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305172344969.png" alt="image-20230517234452830" style="zoom: 67%;" />
+
+<h5 id="自适应改变步长方法"><a href="#自适应改变步长方法" class="headerlink" title="自适应改变步长方法"></a>自适应改变步长方法</h5><p>​		首先在某一个位置根据该位置的速度用显示欧拉计算出下一个位置在a，将Δt分成两个Δt&#x2F;2，在第一个Δt&#x2F;2的位置，用该位置的速度和Δt&#x2F;2的时间计算出位置在b。对比a和b，若小于误差阈值则无需继续细分步长, 若大于则继续细分步长。效果更好，但是可能需要更小的步长。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180002029.png" alt="image-20230518000231928"></p>
+<h5 id="隐式方法"><a href="#隐式方法" class="headerlink" title="隐式方法"></a>隐式方法</h5><p>​		该方法是用未来的一些量（速度、加速度）来求解这个时刻的位移。计算复杂。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180007709.png" alt="image-20230518000753635" style="zoom:67%;" />
+
+<h5 id="如何量化稳定性"><a href="#如何量化稳定性" class="headerlink" title="如何量化稳定性"></a>如何量化稳定性</h5><p>​		 使用局部误差（每一步）和总累积误差（整体）判断稳定性。但是比起这两个绝对值，与步长的阶数的关系更值得探究。例如隐式欧拉的阶数为 1，这意味着局部截断误差O(h^2) ，全局截断误差O(h) （h 是步长，即 Δt）。对O(h) 的理解：如果将 h 减半，预期误差也会减半。对O(h^2) 的理解：如果将 h 减半，预期误差也会减1&#x2F;4。阶数越高，效果越好。</p>
+<h5 id="Runge-Kutta-Families"><a href="#Runge-Kutta-Families" class="headerlink" title="Runge-Kutta Families"></a>Runge-Kutta Families</h5><p>​		求解 ODE 的一系列高级方法，特别擅长处理非线性。它的四阶版本是使用最广泛的版本，即 RK4。用更复杂的方法更新位置。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180043977.png" alt="image-20230518004327829" style="zoom:67%;" />
+
+<h5 id="刚体模拟"><a href="#刚体模拟" class="headerlink" title="刚体模拟"></a>刚体模拟</h5><p>​		刚体不会发生形变，运动时内部所有点按照同一种方式运动。类似于模拟大量粒子，但是要考虑更多属性。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305180047864.png" alt="image-20230518004753600" style="zoom:67%;" />
+
+<h4 id="Position-Based-x2F-Verlet-Integration"><a href="#Position-Based-x2F-Verlet-Integration" class="headerlink" title="Position-Based &#x2F; Verlet Integration"></a>Position-Based &#x2F; Verlet Integration</h4><p>​		不是基于物理的方法，用一些规则调整位置。没有能量守恒的性质，不基于物理计算速度快。</p>
+<h5 id="流体模拟"><a href="#流体模拟" class="headerlink" title="流体模拟"></a>流体模拟</h5><p>（1）假设水是由无数小的刚体球体组成</p>
+<p>（2）假设水无法被压缩，即任意处水的密度相等</p>
+<p>（模拟和渲染分开进行）</p>
+<p>​		要知道水的任意处密度发生了改变，就需要改变刚体球体的位置来修正这一部分的密度（梯度下降）；需要知道任意一个点的密度关于每一个刚体小球位置的导数，也就是和每一个刚体小球的位置变化会如何影响该点密度。如果小球距离该点位置越远，影响就越小。需要加入有关能量损失的方法，使得最后的运动可以停下。</p>
+<h4 id="Eulerian-vs-Lagrangian"><a href="#Eulerian-vs-Lagrangian" class="headerlink" title="Eulerian vs. Lagrangian"></a>Eulerian vs. Lagrangian</h4><p>模拟大规模物质：</p>
+<p>拉格朗日质点法（依次模拟空间中每个粒子，也需要考虑相互作用）</p>
+<p>网格法（将空间划分为不同格子，考虑不同格子的运动和密度变化）</p>
+<p>MPM：将上述两种方法结合</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games101-21-Animation"
   class="article article-type-post"
   itemscope
@@ -553,6 +857,112 @@
 
     
     <article
+  id="post-games101-18-Advanced-Rendering"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/18/games101-18-Advanced-Rendering/"
+    >games101-18-Advanced_Rendering</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-date">
+  <time datetime="2023-05-18T15:38:39.000Z" itemprop="datePublished">2023-05-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="有偏与无偏的计算方法"><a href="#有偏与无偏的计算方法" class="headerlink" title="有偏与无偏的计算方法"></a>有偏与无偏的计算方法</h4><p>​		无偏积分的期望值总是正确的值，无论使用多少样本。反之就是有偏。但是如果取的样本无限多，最后期望会收敛到一定值，但这种情况也是有偏 ，但是一致。</p>
+<h5 id="BDPT（无偏）"><a href="#BDPT（无偏）" class="headerlink" title="BDPT（无偏）"></a>BDPT（无偏）</h5><p>单向光线追踪:从相机产生一条光线，连接最后一个点和光源</p>
+<p>双向光线追踪： 从光源和相机分别产生一些半路径，连接两个半路径的端点形成一条完整的光路。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190911290.png" alt="image-20230519091135260" style="zoom:67%;" />
+
+<p>​		对于如下场景，几乎整个场景都是通过漫反射照亮。如果从相机开始计算，找到带有很多能量的光路较为复杂。如果第一个点是漫反射点，很难控制光路打到光线集中的地方。这种情况下，从光源开始便于计算。但是该方法实现困难并且计算慢。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190917374.png" alt="image-20230519091728291" style="zoom:67%;" />
+
+<h5 id="MLT（无偏）"><a href="#MLT（无偏）" class="headerlink" title="MLT（无偏）"></a>MLT（无偏）</h5><p>​		用马尔科夫链作为采样工具。当前有一个样本，基于当前样本在附近生成新样本，用这些样本估计函数值。对于蒙特卡洛，采样的pdf和要积分的函数形状一值时，误差最小。马尔科夫链可以形成符合这种特性的样本。</p>
+<p>​		在光线传播上，在有一个路径的情况下，可以生成周围更多相似的路径。如下图对蓝色光路进行局部扰动获得新路径，最后可以找到所有路径。适合做复杂的光路传播，擅长从局部探索困难的路径。例如光线在水底聚焦被相机看到，经历了相机-折射-漫反射-折射-光源（SDS），但是光经过漫反射后只有在很小一部分区域才能折射出来。使用马尔科夫链就可以在折射出来的光线附近找到新的光线。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190021893.png" alt="image-20230519002121754" style="zoom: 80%;" />
+
+<p>​		简单的蒙特卡洛方法可以根据样本数分析其收敛速度。但是MLT很难估计收敛速度，不能保证每一个像素收敛速度相同，会产生噪声。因为每一张图收敛结果不确定且不同，因此不能渲染动画。</p>
+<h5 id="光子映射（有偏）"><a href="#光子映射（有偏）" class="headerlink" title="光子映射（有偏）"></a>光子映射（有偏）</h5><p>​		适合光在折射&#x2F;反射后聚焦产生新的图案及SDS下用该方法。</p>
+<p>一种光子映射的方法如下：</p>
+<p>1.从光源出发进行光线追踪，直至光线到达漫反射物体</p>
+<p>2.从相机出发进行光线追踪，直至光线到达漫反射物体</p>
+<p>3.局部的密度估计：对任意一个着色点，通过最邻近算法取离它最近的N个光子，计算这些光子所占的面积，得到光子的密度，也就是用光子数N除以面积。密度大的地方更亮。</p>
+<p>​		当取的光子数N比较少，采样点少，就会产生比较大的噪声。而光子取多图像就会比较模糊，对于临近的点计算出的结果可能相同。计算光子密度的时候，正确的方法应该是对当前一个点的一个微小的面积dA进行计算它的光子数从而计算密度，但是此处是对一定的光子数的实际面积进行的计算，所以两者本质上并不相等。</p>
+<p>​		当光源发出的光子足够多的时候，同样数量的光子覆盖的面积ΔA会更小，也就会更接近dA，最终的结果也会更准确，当打出的光子接近极限，ΔA&#x3D;dA，则结果正确，所以光子映射是一个有偏但是一致的方法。</p>
+<p>​		如果给定一个微小面积计算每个微小面积的光子密度，也就是ΔA是常数，则确定了光子范围。但是给定的常数始终不等于dA，所以得到的结果有偏但是不一致。</p>
+<h5 id="VCM（有偏）"><a href="#VCM（有偏）" class="headerlink" title="VCM（有偏）"></a>VCM（有偏）</h5><p>​		该方法是BDPT和光子映射的组合。对于两条半路径，如果两者的端点无法连接但是很接近，不要浪费两个子路径，使用光子映射来处理临近的光子。</p>
+<h5 id="实时辐射度-Instant-Radiosity-IR-（有偏）"><a href="#实时辐射度-Instant-Radiosity-IR-（有偏）" class="headerlink" title="实时辐射度 Instant Radiosity (IR)（有偏）"></a>实时辐射度 Instant Radiosity (IR)（有偏）</h5><p>​		已经被照亮的面都可以认为是光源，光源可以再照亮其他物体。光源首先发出光线，最后光线停住的点可以视作新的虚拟光源照亮着色点。在有很多细小光源的场景很适合，但是当虚拟光源接近着色点时会出现闪光点。该方法不适合毛玻璃材质。</p>
+<h4 id="外观建模"><a href="#外观建模" class="headerlink" title="外观建模"></a>外观建模</h4><p>​		对于表面模型，其材质就是BRDF，下面讨论非表面模型。</p>
+<h5 id="散射介质（如云、雾）"><a href="#散射介质（如云、雾）" class="headerlink" title="散射介质（如云、雾）"></a>散射介质（如云、雾）</h5><p>​		以光线穿过云为例，云由许多冰晶组成，不考虑自发光。光经过冰晶可能被吸收、被散射到各个方向，冰晶也可能接受别的方向散射来的光。</p>
+<p>​		光如何散射通过Phase Function定义（类似BRDF决定光如何反射）。从相机开始找光路，能走多远由散射介质的吸收能力决定，停下时考虑光的散射方向。最后找到的光路类似光在物体表面弹射，只是在光路了上的任何一点都可能发生方向的改变。此处不是光与表面作用而是和体积作用，因此不能使用渲染方程，但是都需要找光路。</p>
+<p>​		很多物体光都有进去的可能，只是穿透能力不强，光进去一段时间就消失。</p>
+<h5 id="头发"><a href="#头发" class="headerlink" title="头发"></a>头发</h5><p>​		头发是一根根，不能当作是一个表面。如下图，对于头发有无色的高光和有色的高光。计算量大，需要计算光线和每一根头发的作用。</p>
+<p> （1）Kajiya-Kay Model		</p>
+<p>​		将头发当作一个圆柱，光会散射成一个圆锥的形状，剩下一部分类似漫反射。但是渲染效果不真实。</p>
+<p>（2）Marschner Model</p>
+<p>​		将头发当成玻璃圆柱。光与头发的作用有三种情况，R-在表面直接被反射；TT-折射进头发再被折射出去；TRT-折射进头发，在头发内壁发生反射再折射出去。（将头发分为表面和内部，内部也会有色素，会发生光线被吸收）</p>
+<h5 id="动物毛发"><a href="#动物毛发" class="headerlink" title="动物毛发"></a>动物毛发</h5><p>​		动物毛发比人的头发的髓质更大，因此不能用头发模型来计算动物毛发。</p>
+<p>（1）Double Cylinder Model</p>
+<p>R:光再毛发表面直接被反射</p>
+<p>TT：光与髓质没有作用，折射进头发再被折射出去</p>
+<p>TRT：光与髓质没有作用，折射进头发，在头发内壁反射，再被折射出去</p>
+<p>TTs：折射进入, 第一次穿过髓质时, 产生散射, 再次折射出去</p>
+<p>TRTs:折射进入, 第一次穿过髓质后并未折射出去, 而是在头发内壁反射回来, 第二次穿过髓质, 再产生一次折射后出去（散射两次）</p>
+<h5 id="颗粒材质"><a href="#颗粒材质" class="headerlink" title="颗粒材质"></a>颗粒材质</h5><p>​		下面讨论几种表面模型。</p>
+<p>玉石</p>
+<p>​		光线从某个点进入物体表面，在物体内部发生大量散射，再从物体表面另一位置出去。也称作次表面散射。</p>
+<p>​		BRDF：对于任意方向来的光，到达某一个着色点，从任意方向反射出去</p>
+<p>​		BSSRDF:对于任意方向来的光，到达某一个着色点，从任意方向反射出去,但是反射点的位置可以表面任意一个位置。所以除了对立体角积分，还需要对物体表面积分。BSSRDF需要四个参数定义（入射点位置，入射点方向，出射点位置，入出射点方向）</p>
+<p>​		还可以将该模型模拟成两个光源，一个在物体内部，一个在物体外部。</p>
+<h5 id="布料"><a href="#布料" class="headerlink" title="布料"></a>布料</h5><p>纤维fibers-股ply-线yarn-布料</p>
+<p>​		计算表面与光的作用，结果与织法有关。给定编织模式，计算整体行为。但是表面渲染有限制，羊毛绒是往外一根一根, 不是一个平面。</p>
+<p>​		一种方法是不再把布料当成纤维，而是当成体积。对空间划分格子，在每一个格子内部将布料当成类似云的散射介质计算。但是计算量庞大。</p>
+<p>​		另一种方法是，知道每一个纤维的缠绕方式，渲染每一个纤维（如渲染每一根头发）。</p>
+<h5 id="详细外观"><a href="#详细外观" class="headerlink" title="详细外观"></a>详细外观</h5><p>​		看起来不真实，现实世界更复杂，车会有划痕等等, 鼠标会有大小不一的高光。用微表面模型得到的结果不太真实。</p>
+<p>​		在微表面模型中，D（h）采用简单的模型，如符合正态分布，因此效果不真实。真实情况是，D（h）基本符合统计规律，但是又自己的细节。</p>
+<p>​		在这种情况下路径采样困难。每一个微表面是一个镜面, 再假设一个针孔摄像机和点光源。无论从针孔摄像机, 还是点光源连接微表面, 发生镜面反射。都很难反射到点光源或者针孔摄像机.</p>
+<p>​		一个像素覆盖很多的微表面形成一个区域, 把这个区域的法线分布算出来, 然后替代原本的光滑的法线分布, 用在原本的微表面模型里.</p>
+<p>​		一个像素覆盖法线贴图的面积, 导致不同特征的法线分布。 不同的法线贴图, 有不同的法线分布。</p>
+<h5 id="通过波动光学研究材质"><a href="#通过波动光学研究材质" class="headerlink" title="通过波动光学研究材质"></a>通过波动光学研究材质</h5><p>​		波动光学得到的BRDF与几何得到的不太相同，有自己的特点。</p>
+<h4 id="程序化生成"><a href="#程序化生成" class="headerlink" title="程序化生成"></a>程序化生成</h4><p>​		定义三维纹理，但是内存开销较大。可以不进行存储，在需要的时候查询。如3D噪声函数，空间中任意一个坐标, 返回需要查询的值(纹理细节)。通过任意方式处理噪声函数，就可以得到任意的效果。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games101-15-Ray-Tracing3"
   class="article article-type-post"
   itemscope
@@ -934,471 +1344,6 @@
 </tr>
 </tbody></table>
  
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-12-Geometry3"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/12/games101-12-Geometry3/"
-    >games101-12-Geometry3</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/12/games101-12-Geometry3/" class="article-date">
-  <time datetime="2023-05-12T10:44:12.000Z" itemprop="datePublished">2023-05-12</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="细分"><a href="#细分" class="headerlink" title="细分"></a>细分</h4><p>​		分出更多的三角形，并且让三角形的位置发生变化，使得原来的模型边的更加精细。所以细分分为两个步骤：增加顶点（面）和对点的位置进行调整。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111940872.png" alt="image-20230511194013793" style="zoom:67%;" />
-
-<h5 id="Loop细分"><a href="#Loop细分" class="headerlink" title="Loop细分"></a>Loop细分</h5><p>​		取三角形三条边的中点，用三个中点组成新的三角形，原来的三角形会被细分成四个三角形。以不同的规则调整旧顶点和新生成顶点的位置。如下对于一个新生成的点，且该点所在的边被两个三角形共享，按照如下公式进行加权计算，使得顶点位置改变后，表面相对平滑。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111945734.png" alt="image-20230511194542678" style="zoom: 67%;" />
-
-<p>​		对于旧的顶点，一个旧顶点可能被多个三角形共享。按照如下公式利用权值、自己的顶点坐标和周围相邻的顶点坐标进行加权计算，如果周围相邻的点多，受周围点的影响就更大。其中n是该点的度，就是该点连接了几条边，u的取值受n值影响。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111946343.png" alt="image-20230511194635296" style="zoom:67%;" />
-
-<p>​		Loop细分结果如下，注意该方法只能对三角形网格进行细分，如果对四边形网格，需要其他的细分方法：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111952456.png" alt="image-20230511195211382" style="zoom:67%;" />
-
-<h5 id="Catmull-Clark细分"><a href="#Catmull-Clark细分" class="headerlink" title="Catmull-Clark细分"></a>Catmull-Clark细分</h5><p>​		定义四边形面（quad face)和非四边形面（Non-quad face）</p>
-<p>​		奇异点：度不为4点</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112020896.png" alt="image-20230511202020854" style="zoom: 50%;" />
-
-<p>​		取每个面的中点，以及网格面每个边的中点，连接这些中点。如下图所示，现在图中有4个奇异点。只要原来的面不是四边形面，新增的点一定是奇异点。第一次细分，每个非四边形面会引入一个新的奇异点，但是非四边形面会消失，也就是不会再增加奇异点。</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112023594.png" alt="image-20230511202351551" style="zoom: 50%;" /></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030671.png" alt="image-20230511203019621" style="zoom: 50%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112030336.png" alt="image-20230511203041212" style="zoom:50%;" /></td>
-<td align="center"></td>
-</tr>
-</tbody></table>
-<p>​		用如下方法对新增的点和旧的点进行调整，使得表面相对平滑：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112034363.png" alt="image-20230511203420316" style="zoom: 67%;" />
-
-<h4 id="简化"><a href="#简化" class="headerlink" title="简化"></a>简化</h4><p>1.为了提升性能，节省空间，需要使用更简化的模型。</p>
-<p>2.根据场景决定模型的精细程度，比如对于远距离的物体，可以简化模型（类似Mipmap，但是几何的层次结构，以及不同层次结构之间的过度很难）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112044769.png" alt="image-20230511204425706" style="zoom:67%;" />
-
-<p>​		一种简化方法，边坍缩,如下图将一条边连接的两个顶点变成一个顶点，然后该边就不存在了。但随之而来的问题就是，曲面简化需要尽量保持原本模型的大致形状，如何坍缩一条边，或者说坍缩哪一条边能够使得原模型样貌被改变的程度最小，这就是曲面简化的关键所在。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112050293.png" alt="image-20230511205051245" style="zoom: 67%;" />
-
-<p>​		如左图，将上面两条边坍塌成一个点，如果将该点的坐标用五个顶点或者上面三个顶点的进行平均，得到的结果会比原来的形状小一圈。为此引入一个度量，即二次误差度量(Quadric Error Metrics)。即计算坍缩之后蓝色新顶点所在的位置与原来各个平面的垂直距离的平方和。如果能够使得这个误差最小那么对整个模型样貌修改一定程度上也会较小。误差最小的位置就是最后新顶点的位置。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112054659.png" alt="image-20230511205433625"></p>
-<p>​		对于整个物体，坍缩流程如下，通过局部最优解得到全局最优解：</p>
-<p>（1）为模型每条边赋值，其值为坍缩这条边之后，代替两个老顶点的新顶点所能得到的最小二次误差度量</p>
-<p>（2）选取权值最小的边做坍缩，新顶点位置为原来计算得出使得二次误差最小的位置</p>
-<p>（3） 坍缩完之后，与之相连其他的边的位置会改动，更新这些边的权值</p>
-<p>（4）重复上述步骤，直到到达终止条件</p>
-<h4 id="阴影贴图Shadow-Mapping"><a href="#阴影贴图Shadow-Mapping" class="headerlink" title="阴影贴图Shadow Mapping"></a>阴影贴图Shadow Mapping</h4><p>​		光栅化不能很好的处理全局光照，例如阴影。光栅化具有局部性，只考虑着色点和光源、相机的关系，而不考虑该点是否被遮挡，在阴影内（相对于光源被遮挡，但是相机可以看见）。Shadow Mapping在光栅化的情况下处理阴影，但只能处理点光源。并且生成的阴影具有明显边界，一个点在阴影中&#x2F;不在阴影中。</p>
-<p>​		如果一个点不在阴影内，说明相机可以看到该点，光源也可以看到该点。一个点在阴影内，说明相机可以看到该点，光源不能看到该点。</p>
-<p>​		首先从光源看向场景，根据深度测试的思想记录每个像素最前的深度。如下图是从光源的角度看场景：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331421.png" alt="image-20230511233126307" style="zoom:67%;" />
-
-<p>​		如下图是生成的shadow maps，即光源视角的Z-buffer，但是是存在一张纹理图中：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112331418.png" alt="image-20230511233142306" style="zoom:67%;" />
-
-<p>​		从设定好的相机位置看向场景。将所有摄像机视角可见点，计算与光源的距离。再找到该点对应的shadow mapping上记录的深度值，如果二者相等，则表明该点能被相机和光源同时看到，不在阴影中，反之在阴影中。</p>
-<table>
-<thead>
-<tr>
-<th align="center">在阴影中</th>
-<th align="center">不在阴影中</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112328210.png" alt="image-20230511232856119" style="zoom: 67%;" /></td>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112326631.png" alt="image-20230511232651546" style="zoom:67%;" /></td>
-</tr>
-</tbody></table>
-<p>问题：如浮点数难以判断相等，会出现精度问题 ;该方法只适合点光源，生成硬阴影。在光源有一定大小，会存在软阴影。光源具有体积，导致有的地方完全看不到光源(本影, Umbra), 有的地方能看到一部分光源(半影，Penumbra)。所以阴影的边缘会有过渡的情况，从而产生软阴影现象。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305112341363.png" alt="image-20230511234128954" style="zoom: 33%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-11-Geometry2"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/11/games101-11-Geometry2/"
-    >games101-11-Geometry2</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/11/games101-11-Geometry2/" class="article-date">
-  <time datetime="2023-05-11T04:36:59.000Z" itemprop="datePublished">2023-05-11</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="显示几何"><a href="#显示几何" class="headerlink" title="显示几何"></a>显示几何</h4><h5 id="点云"><a href="#点云" class="headerlink" title="点云"></a>点云</h5><p>​		不考虑物体是一个表面，而是考虑物体由点组成，只要点的数量足够多，就可以变成物体表面。空间中每一个点由（x,y,z)表示。理论上只要点足够密集，可以表示任何几何，由点变成多边形面。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111242600.png" alt="image-20230511124237550"></p>
-<h5 id="多边形面"><a href="#多边形面" class="headerlink" title="多边形面"></a>多边形面</h5><p>​		常用三角形面和四边形面，如下图将任何复杂的几何体拆成三角形面。通过定义各个多边形面的顶点以及顶点之间的连接关系就可以得到许许多多的三角形面或是四边形面，再通过这些面来近似表现出我们想要的模型效果。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111245848.png" alt="image-20230511124525785" style="zoom:67%;" />
-
-<p>​		例如比较著名的.obj文件，其格式如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111247870.png" alt="image-20230511124752805" style="zoom:67%;" />
-
-<p>​		v定义三角形面的三个顶点坐标（立方体8个顶点）；vt定义三角形面的三个顶点uv坐标（每个面4个点，共6个面所以最多有24种不同的纹理坐标信息）；vn定义三角形面的三个顶点的法线坐标（6个面的法线信息，有8个是因为建模软件输出的精度问题）；f定义点的连接关系，哪三个点形成三角形面。如5&#x2F;1&#x2F;1定义三角形的第一个顶点是第5个v，使用第1个vt作为uv该顶点的uv坐标，使用第1个vn作为该顶点的法线坐标。</p>
-<h5 id="贝塞尔曲线"><a href="#贝塞尔曲线" class="headerlink" title="贝塞尔曲线"></a>贝塞尔曲线</h5><p>​		用一系列控制点定义曲线，并且定义曲线满足的一些性质。如下图p0,p1,p2,p3为控制点，该曲线的起始点为p0，结束点为p3，且曲线起始位置的切线沿p0p1方向，结束位置的切线沿p2p3方向（参数3是根据控制点的个数决定的）。曲线不一定要经过p1,p2。可以用任意多个点定义曲线，但2个点只能定义线段。将控制点经过仿射变换后绘制出的还是同一个曲线（仿射变换不包括投影变换）  。所形成的曲线具有凸包性质 ，即曲线一定在在控制点形成的凸包内，不会超出所有控制点构成的凸多边形范围。所以如果四个控制点在一个线段上，最后形成的曲线就是这个线段。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111306969.png" alt="image-20230511130613920" style="zoom: 50%;" />
-
-<p>​		以三个控制点的情况为例：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111307165.png" alt="image-20230511130719131" style="zoom:50%;" />
-
-<p>​		假设曲线起始对应时间0，结束对应时间1，现在要找到0-1中间任意一个时刻所对应曲线上点的位置。假设t&#x3D;1&#x2F;3，取b0b1线段上1&#x2F;3处的点：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111311501.png" alt="image-20230511131116462" style="zoom: 50%;" />
-
-<p>​		取b1b2线段上1&#x2F;3处的点：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111311372.png" alt="image-20230511131143327" style="zoom:50%;" />
-
-<p>​		此时连接上述的两个点形成一个新的线段（两个线段变成一个线段），取这个线段1&#x2F;3处的点，这个点就是t&#x3D;1&#x2F;3时刻，曲线上的点。遍历所有t，就可以获得整条曲线。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111312851.png" alt="image-20230511131222819" style="zoom:50%;" />
-
-<p>​		如下是四个控制迪安的情况，三个线段变成两个线段，两个线段变成一个线段：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111315766.png" alt="image-20230511131501727" style="zoom:50%;" />
-
-<p>​		将上述过程变成代数形式，如下是递归规程：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111317078.png" alt="image-20230511131741041" style="zoom: 67%;" />
-
-<p>​		代数表达式相当于在每个线段上进行插值。以b0b1为例，如果t&#x3D;0，新生成的点在b0处；如果t&#x3D;1，新生成的点在b1处，最后曲线上的点可以通过时间t以及三个控制点的坐标表示（上标表示第几层（从0开始），下标表示该层的第几个点（从0开始），最后一层只有一个点）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111319182.png" alt="image-20230511131938146" style="zoom:67%;" />
-
-<p>​		第n层也就是最后一层只会新生成一个点，该点可以用每一个控制点和时间t的多项式进行线性组合计算出来，一共n+1项（bj表示第几个控制点（第0层），B表示该控制点对应的关于t的多项式）。该绘制曲线的方法也可以推广至三维，每一个控制点用（x,y,z)定义。该方法属于显示表达，已知t的范围已知映射关系，只要遍历所有的t就可以得到曲线上所有的坐标。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111320523.png" alt="image-20230511132053483" style="zoom: 67%;" />
-
-<p>​		例如由四个控制点，就会有四个关于时间t的多项式，n的值为3，j的值从0-3。四个多项式随时间t的变化如下，在任意一个时刻，四个多项式的和为1：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111323212.png" alt="image-20230511132315175" style="zoom:67%;" />
-
-<h5 id="逐段贝塞尔曲线"><a href="#逐段贝塞尔曲线" class="headerlink" title="逐段贝塞尔曲线"></a>逐段贝塞尔曲线</h5><p>​		当控制点多的时候，不便于计算操作。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111447297.png" alt="image-20230511144704245" style="zoom:50%;" />
-
-<p>​		将一个贝塞尔曲线，用多段贝塞尔曲线组合起来，逐段定义贝塞尔曲线。一般情况下，每一段由四个控制点控制。如下曲线由三段拼接。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111452294.png" alt="image-20230511145214254" style="zoom:50%;" />
-
-<p>​		如果要使得曲线之间的拼接光滑（已知第一个曲线的最后一个控制点和第二个曲线的第一个控制点是同一个点），需要第一个曲线最后一个点的切线和第二个曲线第一个点的切线共线、反向，第一个曲线倒数第二个点和第二个曲线第二个点距离两个曲线重叠的点的距离相同。（如果不相同不能称之为光滑）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111453267.png" alt="image-20230511145338232" style="zoom: 80%;" />
-
-
-
-<p>​		另一种定义曲线的方法叫做B样条曲线。对于多个控制点定义的曲线，如果移动一个点，会使得整条曲线发生变换。现在只想对曲线的局部进行变化，B样条曲线可以在不逐段定义的情况先，控制一个控制点的变化最多影响到曲线的哪一个局部范围内。</p>
-<p>​		对于两段曲线，有重合的点，叫做C0连续：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111628969.png" alt="image-20230511162850925" style="zoom:67%;" />
-
-<p>​		对于两段曲线，不仅有重合的点，重合区域切线等长、共线且相反，叫做C1连续：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111629412.png" alt="image-20230511162918366" style="zoom:67%;" />
-
-<h5 id="曲面"><a href="#曲面" class="headerlink" title="曲面"></a>曲面</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111624270.png" alt="image-20230511162453198" style="zoom:67%;" />
-
-<p>​		首先规定一共4x4 &#x3D; 16个控制点，其水平面位置如图中16个黑点所示(并未表示出高度，防止图形太乱)，将这16个点分成4列，图中红色圈中的为一列的具体例子。第1步在这4个控制点之下利用第一个参数 u得到蓝色点，因为有4列，所以一共可以得到如图所示的4个蓝色点。(灰色曲线分别为每列4个点所对应的贝塞尔曲线)第2步在得到4个蓝色顶点之后，在这四个蓝色顶点的基础之下利用第二个参数 v 可以得出贝塞尔曲面上的正确一点。第3步遍历所有的 u，v值就可以成功得到一个贝塞尔曲面。对于曲面和曲面间如何光滑衔接是更复杂的问题。这里由uv可以映射到曲面上的一个点，所以也是显示表示。</p>
-<h5 id="其他面操作"><a href="#其他面操作" class="headerlink" title="其他面操作"></a>其他面操作</h5><p>对于曲面物体更广泛的操作还是分解成多边形面。</p>
-<p>1.细分：通过将面细分成更多的面（如三角形或者四边形）使得模型精细。</p>
-<p>2.简化：将不破坏大体形状的前提下，使用更少的面（如三角形或者四边形）节省内存空间。</p>
-<p>3.正规化：例如所有组成物体的三角形都为正三角形，这会具有很多很好的性质，但不不能丢失物体原本的表现质量。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305111509325.png" alt="image-20230511150928273"></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-3-Transformation"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/03/games101-3-Transformation/"
-    >games101-3-Transformation</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/03/games101-3-Transformation/" class="article-date">
-  <time datetime="2023-05-03T07:40:34.000Z" itemprop="datePublished">2023-05-03</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
-<p>（1）均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151616417.png" alt="image-20230515161619367"></p>
-<p>（2）非均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
-<h5 id="Reflection反射"><a href="#Reflection反射" class="headerlink" title="Reflection反射"></a>Reflection反射</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151617348.png" alt="image-20230515161742312"></p>
-<h5 id="Shear-Matric"><a href="#Shear-Matric" class="headerlink" title="Shear Matric"></a>Shear Matric</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151618772.png" alt="image-20230515161856725"></p>
-<h5 id="Rotate旋转"><a href="#Rotate旋转" class="headerlink" title="Rotate旋转"></a>Rotate旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
-<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转,也就是角度值为正。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
-<p>以边长为1进行旋转矩阵推导：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151620544.png" alt="image-20230515162027508"></p>
-<p>如果旋转-θ:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
-<p>矩阵为旋转θ时旋转矩阵的转置，并且由于旋转-θ是旋转θ的逆变换，因此该矩阵还为旋转θ时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
-<h5 id="线性变换"><a href="#线性变换" class="headerlink" title="线性变换"></a>线性变换</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623337.png" alt="image-20230515162329289"></p>
-<h5 id="Translation平移"><a href="#Translation平移" class="headerlink" title="Translation平移"></a>Translation平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
-<p>此处是先进性线性变换再平移。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623645.png" alt="image-20230515162355592"></p>
-<h5 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h5><p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
-<p>点的平移变换，点平移后成为新的点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
-<p>向量具有平移不变性：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151624937.png" alt="img"></p>
-<p>可以通过齐次坐标的w验证：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
-<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下，(x,y,w)是二维点（x&#x2F;w,y&#x2F;w,1）。</p>
-<h5 id="Affine-Transformation仿射变换"><a href="#Affine-Transformation仿射变换" class="headerlink" title="Affine Transformation仿射变换"></a>Affine Transformation仿射变换</h5><p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
-<table>
-<thead>
-<tr>
-<th>缩放变换矩阵</th>
-<th>旋转变换矩阵</th>
-<th>平移变换矩阵</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630316.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
-</tr>
-</tbody></table>
-<h5 id="Inverse-Transform逆变换"><a href="#Inverse-Transform逆变换" class="headerlink" title="Inverse Transform逆变换"></a>Inverse Transform逆变换</h5><p>逆变换相当于乘以变换的逆矩阵。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps41.jpg" alt="img"> </p>
-<h5 id="Composite-Transform组合变换"><a href="#Composite-Transform组合变换" class="headerlink" title="Composite Transform组合变换"></a>Composite Transform组合变换</h5><p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630935.jpg" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630157.png" alt="img"></p>
-<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
-<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></h5><h5 id="变换分解"><a href="#变换分解" class="headerlink" title="变换分解"></a>变换分解</h5><p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
-<h5 id="三维齐次坐标"><a href="#三维齐次坐标" class="headerlink" title="三维齐次坐标"></a>三维齐次坐标</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
-<p>在w不等于0的情况下，(x,y,z,w)是三维点（x&#x2F;w,y&#x2F;w,z&#x2F;w,1）。</p>
-<h5 id="三维仿射变换"><a href="#三维仿射变换" class="headerlink" title="三维仿射变换"></a>三维仿射变换</h5><p>如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629055.png" alt="img"></p>
-<h5 id="三维缩放"><a href="#三维缩放" class="headerlink" title="三维缩放"></a>三维缩放</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
-<h5 id="三维平移"><a href="#三维平移" class="headerlink" title="三维平移"></a>三维平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629010.png" alt="img"></p>
-<h5 id="三维绕轴旋转"><a href="#三维绕轴旋转" class="headerlink" title="三维绕轴旋转"></a>三维绕轴旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629293.png" alt="img"></p>
-<p>任意旋转都已由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
-<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-2-Linear_algebra"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/02/games101-2-Linear_algebra/"
-    >games101-2-Linear_algebra</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/02/games101-2-Linear_algebra/" class="article-date">
-  <time datetime="2023-05-02T07:40:24.000Z" itemprop="datePublished">2023-05-02</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
-<p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
-<p>单位向量（只关心方向不关心长度）：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
-<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
-
-<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
-<p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
-<p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
-<h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
-<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
-<p>点乘的性质：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
-<p>点乘的代数计算（对应元素相乘，最后将所有乘积相加）：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345885.jpg" alt="img"> </p>
-<p>点乘的作用：</p>
-<p>（1）计算一个向量在另一个向量上的投影</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345069.jpg" alt="img"> </p>
-<p>​		b向量在a向量上的投影的方向为a向量的方向，投影的大小为||b||cosθ，所以b向量在a向量上的投影为||b||cosθa，cosθ通过a向量和b向量的点乘获得。</p>
-<p>计算向量的投影可以对向量进行分解</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346329.jpg" alt="img"> </p>
-<p>（2）通过点乘结果的正负判断向量在前还是在后（方向基本一致，垂直或者相反），在图形学上通过点乘结果判断两个向量的接近程度。例如对于两个单位向量，如果这两个向量方向接近，则点乘结果接近1；如果方向垂直，点乘结果接近0；如果方向相反，点乘结果接近1.</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
-<h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
-<p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
-<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用左手坐标系）:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
-
-<p>向量叉乘的代数运算:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102350731.png" alt="image-20230510235008653"> </p>
-<p>向量叉乘的作用:</p>
-<p>（1）判断左右位置关系</p>
-<p>如下在X、Y平面，判断向量b在向量a的左侧还是右侧。计算向量a叉乘向量b，如果结果为正，则向量b在向量a在左侧，即a-b是逆时针；如果结果为负，则向量b在向量a在右侧，即a-b是顺时针。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554742.png" alt="image-20230515155411695" style="zoom:80%;" /> 
-
-<p>（2）判断内外</p>
-<p>如下三角形，ABC按照逆时针顺序输入。AB叉乘AP，结果为正，点p在AB左侧；BC叉乘BP，结果为正，点p在BC左侧；CA叉乘CP，结果为正，p在CA左侧；结论p在三角形内部。如果ABC按照顺时针顺序输入，如果p在三条边右侧，则p在三角形内部。所以不管顺时针还是逆时针输入，p如果在三角形内部，p必须在三条边的同一边。在三角形光栅化时，用该方法可以判断三角形覆盖哪些像素。如果叉乘结果为0，则自定义是否在三角形内部。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554163.png" alt="image-20230515155440122" style="zoom:67%;" /> 
-
-<h5 id="在三维直角坐标系（右手坐标系）中进行向量分解"><a href="#在三维直角坐标系（右手坐标系）中进行向量分解" class="headerlink" title="在三维直角坐标系（右手坐标系）中进行向量分解"></a>在三维直角坐标系（右手坐标系）中进行向量分解</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151555684.png" alt="image-20230515155508640" style="zoom: 67%;" /> 
-
-<p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
-<h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
-<p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
-<p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素Aij由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
-<p>矩阵乘法的性质：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550391.png" alt="image-20230515155028337" style="zoom:80%;" /> 
-
-<p>矩阵与向量相乘，一般默认向量在右侧，矩阵列数与向量行数相同：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550865.png" alt="image-20230515155049820" style="zoom:67%;" /> 
-
-<p>矩阵的转置：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551322.png" alt="image-20230515155114282" style="zoom: 50%;" /> 
-
-<p>单位矩阵和逆矩阵:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551377.png" alt="image-20230515155143338" style="zoom:67%;" /> 
-
-<p>原矩阵乘以单位矩阵，相当于不对原矩阵不做任何操作.</p>
-<p>向量的点积和叉积可以转换成矩阵乘法（向量默认为列向量）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151552558.png" alt="image-20230515155234507" style="zoom:67%;" /> 
       <!-- reward -->
       
     </div>

@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">692</span>
+            <span class="post-count">735</span>
         </span>
     </span>
 
@@ -158,8 +158,11 @@
 </tr>
 </tbody></table>
 <h5 id="Inverse-Transform逆变换"><a href="#Inverse-Transform逆变换" class="headerlink" title="Inverse Transform逆变换"></a>Inverse Transform逆变换</h5><p>逆变换相当于乘以变换的逆矩阵。</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml15828\wps41.jpg" alt="img"> </p>
-<h5 id="Composite-Transform组合变换"><a href="#Composite-Transform组合变换" class="headerlink" title="Composite Transform组合变换"></a>Composite Transform组合变换</h5><p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151641812.png" alt="image-20230515164100755" style="zoom:67%;" /> 
+
+<h5 id="Composite-Transform组合变换"><a href="#Composite-Transform组合变换" class="headerlink" title="Composite Transform组合变换"></a>Composite Transform组合变换</h5><p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。在c中cos和sin函数的参数都是弧度</p>
+<p>（1）弧度转角度：角度 &#x3D; 弧度 * (180.0f &#x2F; PI)</p>
+<p>（2）角度转弧度：弧度 &#x3D; 角度 * (PI &#x2F; 180.0f)</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630935.jpg" alt="img"></p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"></p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630157.png" alt="img"></p>
@@ -174,7 +177,7 @@
 <h5 id="三维平移"><a href="#三维平移" class="headerlink" title="三维平移"></a>三维平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629010.png" alt="img"></p>
 <h5 id="三维绕轴旋转"><a href="#三维绕轴旋转" class="headerlink" title="三维绕轴旋转"></a>三维绕轴旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629293.png" alt="img"></p>
-<p>任意旋转都已由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
+<p>任意旋转都可由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
 <p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>

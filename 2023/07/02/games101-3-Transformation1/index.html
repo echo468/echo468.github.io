@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-15-Ray-Tracing3 |  Hexo
+    games101-3-Transformation1 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-15-Ray-Tracing3"
+  id="post-games101-3-Transformation1"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-15-Ray-Tracing3
+  games101-3-Transformation1
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
-  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
+      <a href="/2023/07/02/games101-3-Transformation1/" class="article-date">
+  <time datetime="2023-07-02T08:21:05.000Z" itemprop="datePublished">2023-07-02</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2k</span>
+            <span class="post-count">1.8k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">7 min</span>
+            <span class="post-count">6 min</span>
         </span>
     </span>
 </div>
@@ -109,95 +109,100 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
+  <h4 id="MVP变换"><a href="#MVP变换" class="headerlink" title="MVP变换"></a>MVP变换</h4><p>局部空间-世界空间-观察空间-裁剪空间-屏幕空间</p>
+<p>局部坐标-世界坐标-观察坐标-裁剪坐标（会变成NDC坐标）-屏幕坐标-光栅化-片元</p>
+<p>​		一般可以直接将坐标定义在世界空间，M矩阵取单位矩阵。（当需要对物体进行修改的时候，在局部空间中来操作更方便；如果要对一个物体做出一个相对于其它物体位置的操作时，在世界坐标系中来操作更方便；）</p>
+<h4 id="View变换"><a href="#View变换" class="headerlink" title="View变换"></a>View变换</h4><p>确定相机坐标系：</p>
+<p>（1）相机位置坐标e</p>
+<p>（2）观察方向g:由相机位置指向目标物体</p>
+<p>（3）视点正方向t</p>
+<p>计算相机坐标系三个轴的方法：</p>
+<p>（1）观察方向向量g:目标物体坐标减相机坐标e,再除以长度变成单位向量</p>
+<p>（2）辅助向量up：一般设置成（0，1，0），认为相机本身不会歪</p>
+<p>（3）向量g×t（e）：通过向量g和辅助向量叉乘得到，此时向量g×t一定垂直于g和t所在平面,再除以长度变成单位向量</p>
+<p>（4）视点正方向t向量：通过向量g×t和g向量叉乘得到，再除以长度变成单位向量</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622014.png" alt="image-20230702162236905" style="zoom:67%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622687.png" alt="image-20230702162254649"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>​		如果相机和目标物体的相对位置不变，则最后的观察结果都相同。因此当相机处于任意位置时，可以将相机移动到原点，相机始终看向-z方向，且相机坐标系的剩下两个轴与世界坐标系的两个轴X,Y方向一致。之后将物体坐标进行相同的变换，即可得到相机在原位置时相同的结果（将作用于相机的矩阵作用在物体上）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021623987.png" alt="image-20230702162356943" style="zoom:67%;" />
 
-<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
+<p>下面求解view矩阵：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624535.png" alt="image-20230702162404488" style="zoom:67%;" />
 
-<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
-
-<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
-
-<p>​		该方程也可以转换成如下两个方程：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
-
-<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
-
-<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
-
-<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
-
-<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
-
-<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
-
-<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
-
-<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
-<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
-
-<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
-
-<p>​		对于多个点光源：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
-
-<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
-
-<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
-
-<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
-
-<p>​		进一步简写：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
-
-<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
-
-<p>​		如下是一个示例：</p>
-<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
-
-<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
-
-<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
-
-<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
-
-<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
-<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
-<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
-<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
-
-<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
-<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
-
-<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
-
-<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
-
-<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
+<p>（1）平移操作，将e点移动到原点</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624611.png" alt="img"></p>
+<p>（2）旋转操作</p>
+<p>由于计算从相机坐标系到世界坐标系的旋转矩阵较为复杂，因此可以先计算从世界坐标系变换到相机坐标系将y轴旋转到t轴，将z轴旋转到-g轴，将x轴旋转到g×t的轴。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624681.png" alt="img"></p>
+<p>该操作为将相机坐标系变换到世界坐标系的逆操作，因此求出来的R矩阵为目标R矩阵的逆矩阵，也是目标R矩阵的转置矩阵。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624648.png" alt="img"></p>
+<p>（3）最后求出的M矩阵如下，对目标物体坐标进行M矩阵变换</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624731.png" alt="img"></p>
+<h4 id="Projection变换"><a href="#Projection变换" class="headerlink" title="Projection变换"></a>Projection变换</h4><p> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625273.jpg" alt="img"></p>
+<h5 id="Orthographic-projection-正交投影"><a href="#Orthographic-projection-正交投影" class="headerlink" title="Orthographic projection 正交投影"></a>Orthographic projection 正交投影</h5><p>假设相机在原点，看向-z轴。</p>
+<p>将视线范围内的物体(假设在一个立方体中，该立方体通过六个数定义，注意越远z值越小，立方体外的部分都会被剪裁)全部压缩到[-1,1]范围内的正方体中，变成NDC坐标。先将立方体的重心平移到原点，再将立方体进行缩放(此处先不考虑旋转)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625714.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625766.png" alt="img"></p>
+<p>正交投影坐标的相对位置都不会改变，只需将物体全部转换到一个[−1,1]的正方体之中即可（其中x，y坐标便是投影结果，保留z是为了之后的深度检测）。压缩到一个正方体是为了之后的计算更加的方便在转换到屏幕坐标的时候就会重新拉伸回来。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626160.jpg" alt="img"></p>
+<p>正交投影不会影响w值,w仍为1，进行透视除法后没有任何作用。由于这个原因，正射投影主要用于二维渲染以及一些建筑或工程的程序，在这些场景中更希望顶点不会被透视所干扰。（opengl使用右手坐标系，此处越远z越小，在opengl中NDC坐标会变换成左手坐标，越远z越大）</p>
+<h5 id="Perspective-projection-透视投影"><a href="#Perspective-projection-透视投影" class="headerlink" title="Perspective projection 透视投影"></a>Perspective projection 透视投影</h5><p>(1) 将视锥体压缩成立方体</p>
+<p>距离越远，压缩程度越大，形成近大远小的效果。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626131.jpg" alt="img"> </p>
+<p>近平面n的xyz坐标不变，远平面f中心的xyz值不变。</p>
+<p>根据相似三角形：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626190.png" alt="img"></p>
+<p>即</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626271.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626239.jpg" alt="img"></p>
+<p>（x,y,z,1）,(kx,ky,kz,k!&#x3D;0)都是三维空间中的点（x,y,z）。</p>
+<p>可得矩阵：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627989.png" alt="img"></p>
+<p>近平面n的xyz坐标不变：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627136.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627025.png" alt="img"></p>
+<p>远平面f中心的xyz值不变：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627384.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627068.png" alt="img"></p>
+<p>最后解的<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627191.png" alt="img"></p>
+<p>（2）将立方体变换到[-1,1]的正方体</p>
+<p>将目标物体经过上述变换后，再进行正交投影变换即可：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627125.png" alt="img"></p>
+<p><em><strong>*为什么在（1）中中间压缩的点z值不知道？*</strong></em><br><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627363.png" alt="img"></p>
+<p>Persp-&gt;ortho矩阵会改变顶点的w值（w&#x3D;z＜0），在进行完透视投影的MVP变换后，得离观察者越远的顶点坐标w分量的绝对值越大。顶点坐标的每个分量都会除以它的w分量，距离观察者越远顶点坐标就会越小。（最后的顶点应该被赋值到顶点着色器中的gl_Position输出，OpenGL将会自动进行透视除法和裁剪。）。</p>
+<p>比较更新后的z值和原z值：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627495.png" alt="img"></p>
+<p>因为n≥z≥f，所以(z-n)(f-z)值＞0，因为z＜0，方程最左侧的分数值小＜0，即更新后的z值小于原z值，即透视投影之后，中间物体距离相机更远。所以在推算时不知道z值。</p>
+<p><em><strong>*如何确定视锥体？*</strong></em></p>
+<p>利用垂直可视角度或者水平可视角度、近平面距离、远平面距离（距离相机的距离）以及进平面宽高比(width&#x2F;heigth)可以确定一个视锥体。（在opengl中，可视角度一般取45°，近平面取0.1，远平面100.0f）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627813.jpg" alt="img"> </p>
+<p>如下图所示，相机在原点看向-z轴。已知Y（垂直可视角度）和n，可以计算出height&#x2F;2-&gt;height，通过宽高比可以得到width。远平面可以通过Y和f计算。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627150.jpg" alt="img"> </p>
+<p>如果只是图元(Primitive)，例如三角形，的一部分超出了裁剪体积(Clipping Volume)，则OpenGL会重新构建这个三角形为一个或多个三角形让其能够适合这个裁剪范围。</p>
+<h4 id="视口变换"><a href="#视口变换" class="headerlink" title="视口变换"></a>视口变换</h4><p>屏幕可以看作一组x<em>y的像素数组，数组的大小x</em>y为分辨率。此处认为在一个像素内部颜色不变，像素的颜色值通过RGB三个0-255之间的数表示。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627542.jpg" alt="img"> </p>
+<p>像素坐标从（0，0）到（x-1，y-1）。像素（x，y）的中心在（x+0.5，y+0.5）,这些像素的覆盖范围从（0，0）到（x，y）。</p>
+<p>视口变换就是将物体坐标从[-1,1]的正方体变到x*y的屏幕。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627754.jpg" alt="img"> </p>
+<p>该变换与z无关，z保持不变用于后续深度测试。先把正方体的x、y进行缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627215.png" alt="img"></p>
+<p>再将缩放后的立方体中心平移到屏幕中心：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021628869.png" alt="img"></p>
+<p><em><strong>*为什么不能先平移再缩放？*</strong></em></p>
+<p>缩放会将每个坐标以原点为中心进行缩放（也就是位移向量也会被缩放），而不是物体中心，如下白色正方形按照缩放矩阵缩小一半的结果是蓝色正方形而不是红色正方形。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627809.jpg" alt="img"> </p>
+<p>显示图像：将显存中的一块区映射到屏幕。</p>
+<p>（区分 view变换：先平移再旋转 正交投影：先平移再缩放）</p>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
@@ -263,7 +268,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/15/games101-15-Ray-Tracing3/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/07/02/games101-3-Transformation1/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -274,19 +279,10 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            games101-18-Advanced_Rendering
-          
-        </div>
-      </a>
     
-    
-      <a href="/2023/05/14/games101-14-Ray-Tracing2/" class="article-nav-link">
+      <a href="/2023/06/25/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-14-Ray-Tracing2</div>
+        <div class="article-nav-title">环境配置</div>
       </a>
     
   </nav>

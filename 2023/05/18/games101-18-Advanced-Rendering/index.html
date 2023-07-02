@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-categories |  Hexo
+    games101-18-Advanced_Rendering |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-categories"
+  id="post-games101-18-Advanced-Rendering"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,15 +66,15 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-categories
+  games101-18-Advanced_Rendering
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/01/games101-categories/" class="article-date">
-  <time datetime="2023-05-01T01:47:59.000Z" itemprop="datePublished">2023-05-01</time>
+      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-date">
+  <time datetime="2023-05-18T15:38:39.000Z" itemprop="datePublished">2023-05-18</time>
 </a> 
   <div class="article-category">
     <a class="article-category-link" href="/categories/games101/">games101</a>
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">207</span>
+            <span class="post-count">2.5k</span>
         </span>
     </span>
 
@@ -94,28 +94,77 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
+            <span class="post-count">8 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>games101-2：线性代数复习，向量、点乘、叉乘和矩阵</p>
-<p>games101-11：显示几何的表示方法，贝塞尔曲线和贝塞尔曲面</p>
-<p>games101-12：曲面细分操作，曲面简化坍塌操作，阴影贴图</p>
-<p>games101-13：Whitted-Style光线追踪处理全局光照，光线与物体求交（隐式，三角形面，AABB包围盒）</p>
-<p>games101-14：基于场景空间或物体划分包围盒加速光线追踪，部分辐射度量学定义</p>
-<p>games101-15：部分辐射度量学定，BRDF函数，反射方程和渲染方程，部分概率论知识</p>
-<p>games101-19：相机成像，相机部件及透镜</p>
-<p>games101-20：光场，光谱和颜色及颜色混合</p>
-<p>games101-21：动画的历史，多种制作动画的方式（获得物体在不同时间位置的方式）</p>
+  <h4 id="有偏与无偏的计算方法"><a href="#有偏与无偏的计算方法" class="headerlink" title="有偏与无偏的计算方法"></a>有偏与无偏的计算方法</h4><p>​		无偏积分的期望值总是正确的值，无论使用多少样本。反之就是有偏。但是如果取的样本无限多，最后期望会收敛到一定值，但这种情况也是有偏 ，但是一致。</p>
+<h5 id="BDPT（无偏）"><a href="#BDPT（无偏）" class="headerlink" title="BDPT（无偏）"></a>BDPT（无偏）</h5><p>单向光线追踪:从相机产生一条光线，连接最后一个点和光源</p>
+<p>双向光线追踪： 从光源和相机分别产生一些半路径，连接两个半路径的端点形成一条完整的光路。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190911290.png" alt="image-20230519091135260" style="zoom:67%;" />
+
+<p>​		对于如下场景，几乎整个场景都是通过漫反射照亮。如果从相机开始计算，找到带有很多能量的光路较为复杂。如果第一个点是漫反射点，很难控制光路打到光线集中的地方。这种情况下，从光源开始便于计算。但是该方法实现困难并且计算慢。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190917374.png" alt="image-20230519091728291" style="zoom:67%;" />
+
+<h5 id="MLT（无偏）"><a href="#MLT（无偏）" class="headerlink" title="MLT（无偏）"></a>MLT（无偏）</h5><p>​		用马尔科夫链作为采样工具。当前有一个样本，基于当前样本在附近生成新样本，用这些样本估计函数值。对于蒙特卡洛，采样的pdf和要积分的函数形状一值时，误差最小。马尔科夫链可以形成符合这种特性的样本。</p>
+<p>​		在光线传播上，在有一个路径的情况下，可以生成周围更多相似的路径。如下图对蓝色光路进行局部扰动获得新路径，最后可以找到所有路径。适合做复杂的光路传播，擅长从局部探索困难的路径。例如光线在水底聚焦被相机看到，经历了相机-折射-漫反射-折射-光源（SDS），但是光经过漫反射后只有在很小一部分区域才能折射出来。使用马尔科夫链就可以在折射出来的光线附近找到新的光线。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190021893.png" alt="image-20230519002121754" style="zoom: 80%;" />
+
+<p>​		简单的蒙特卡洛方法可以根据样本数分析其收敛速度。但是MLT很难估计收敛速度，不能保证每一个像素收敛速度相同，会产生噪声。因为每一张图收敛结果不确定且不同，因此不能渲染动画。</p>
+<h5 id="光子映射（有偏）"><a href="#光子映射（有偏）" class="headerlink" title="光子映射（有偏）"></a>光子映射（有偏）</h5><p>​		适合光在折射&#x2F;反射后聚焦产生新的图案及SDS下用该方法。</p>
+<p>一种光子映射的方法如下：</p>
+<p>1.从光源出发进行光线追踪，直至光线到达漫反射物体</p>
+<p>2.从相机出发进行光线追踪，直至光线到达漫反射物体</p>
+<p>3.局部的密度估计：对任意一个着色点，通过最邻近算法取离它最近的N个光子，计算这些光子所占的面积，得到光子的密度，也就是用光子数N除以面积。密度大的地方更亮。</p>
+<p>​		当取的光子数N比较少，采样点少，就会产生比较大的噪声。而光子取多图像就会比较模糊，对于临近的点计算出的结果可能相同。计算光子密度的时候，正确的方法应该是对当前一个点的一个微小的面积dA进行计算它的光子数从而计算密度，但是此处是对一定的光子数的实际面积进行的计算，所以两者本质上并不相等。</p>
+<p>​		当光源发出的光子足够多的时候，同样数量的光子覆盖的面积ΔA会更小，也就会更接近dA，最终的结果也会更准确，当打出的光子接近极限，ΔA&#x3D;dA，则结果正确，所以光子映射是一个有偏但是一致的方法。</p>
+<p>​		如果给定一个微小面积计算每个微小面积的光子密度，也就是ΔA是常数，则确定了光子范围。但是给定的常数始终不等于dA，所以得到的结果有偏但是不一致。</p>
+<h5 id="VCM（有偏）"><a href="#VCM（有偏）" class="headerlink" title="VCM（有偏）"></a>VCM（有偏）</h5><p>​		该方法是BDPT和光子映射的组合。对于两条半路径，如果两者的端点无法连接但是很接近，不要浪费两个子路径，使用光子映射来处理临近的光子。</p>
+<h5 id="实时辐射度-Instant-Radiosity-IR-（有偏）"><a href="#实时辐射度-Instant-Radiosity-IR-（有偏）" class="headerlink" title="实时辐射度 Instant Radiosity (IR)（有偏）"></a>实时辐射度 Instant Radiosity (IR)（有偏）</h5><p>​		已经被照亮的面都可以认为是光源，光源可以再照亮其他物体。光源首先发出光线，最后光线停住的点可以视作新的虚拟光源照亮着色点。在有很多细小光源的场景很适合，但是当虚拟光源接近着色点时会出现闪光点。该方法不适合毛玻璃材质。</p>
+<h4 id="外观建模"><a href="#外观建模" class="headerlink" title="外观建模"></a>外观建模</h4><p>​		对于表面模型，其材质就是BRDF，下面讨论非表面模型。</p>
+<h5 id="散射介质（如云、雾）"><a href="#散射介质（如云、雾）" class="headerlink" title="散射介质（如云、雾）"></a>散射介质（如云、雾）</h5><p>​		以光线穿过云为例，云由许多冰晶组成，不考虑自发光。光经过冰晶可能被吸收、被散射到各个方向，冰晶也可能接受别的方向散射来的光。</p>
+<p>​		光如何散射通过Phase Function定义（类似BRDF决定光如何反射）。从相机开始找光路，能走多远由散射介质的吸收能力决定，停下时考虑光的散射方向。最后找到的光路类似光在物体表面弹射，只是在光路了上的任何一点都可能发生方向的改变。此处不是光与表面作用而是和体积作用，因此不能使用渲染方程，但是都需要找光路。</p>
+<p>​		很多物体光都有进去的可能，只是穿透能力不强，光进去一段时间就消失。</p>
+<h5 id="头发"><a href="#头发" class="headerlink" title="头发"></a>头发</h5><p>​		头发是一根根，不能当作是一个表面。如下图，对于头发有无色的高光和有色的高光。计算量大，需要计算光线和每一根头发的作用。</p>
+<p> （1）Kajiya-Kay Model		</p>
+<p>​		将头发当作一个圆柱，光会散射成一个圆锥的形状，剩下一部分类似漫反射。但是渲染效果不真实。</p>
+<p>（2）Marschner Model</p>
+<p>​		将头发当成玻璃圆柱。光与头发的作用有三种情况，R-在表面直接被反射；TT-折射进头发再被折射出去；TRT-折射进头发，在头发内壁发生反射再折射出去。（将头发分为表面和内部，内部也会有色素，会发生光线被吸收）</p>
+<h5 id="动物毛发"><a href="#动物毛发" class="headerlink" title="动物毛发"></a>动物毛发</h5><p>​		动物毛发比人的头发的髓质更大，因此不能用头发模型来计算动物毛发。</p>
+<p>（1）Double Cylinder Model</p>
+<p>R:光再毛发表面直接被反射</p>
+<p>TT：光与髓质没有作用，折射进头发再被折射出去</p>
+<p>TRT：光与髓质没有作用，折射进头发，在头发内壁反射，再被折射出去</p>
+<p>TTs：折射进入, 第一次穿过髓质时, 产生散射, 再次折射出去</p>
+<p>TRTs:折射进入, 第一次穿过髓质后并未折射出去, 而是在头发内壁反射回来, 第二次穿过髓质, 再产生一次折射后出去（散射两次）</p>
+<h5 id="颗粒材质"><a href="#颗粒材质" class="headerlink" title="颗粒材质"></a>颗粒材质</h5><p>​		下面讨论几种表面模型。</p>
+<p>玉石</p>
+<p>​		光线从某个点进入物体表面，在物体内部发生大量散射，再从物体表面另一位置出去。也称作次表面散射。</p>
+<p>​		BRDF：对于任意方向来的光，到达某一个着色点，从任意方向反射出去</p>
+<p>​		BSSRDF:对于任意方向来的光，到达某一个着色点，从任意方向反射出去,但是反射点的位置可以表面任意一个位置。所以除了对立体角积分，还需要对物体表面积分。BSSRDF需要四个参数定义（入射点位置，入射点方向，出射点位置，入出射点方向）</p>
+<p>​		还可以将该模型模拟成两个光源，一个在物体内部，一个在物体外部。</p>
+<h5 id="布料"><a href="#布料" class="headerlink" title="布料"></a>布料</h5><p>纤维fibers-股ply-线yarn-布料</p>
+<p>​		计算表面与光的作用，结果与织法有关。给定编织模式，计算整体行为。但是表面渲染有限制，羊毛绒是往外一根一根, 不是一个平面。</p>
+<p>​		一种方法是不再把布料当成纤维，而是当成体积。对空间划分格子，在每一个格子内部将布料当成类似云的散射介质计算。但是计算量庞大。</p>
+<p>​		另一种方法是，知道每一个纤维的缠绕方式，渲染每一个纤维（如渲染每一根头发）。</p>
+<h5 id="详细外观"><a href="#详细外观" class="headerlink" title="详细外观"></a>详细外观</h5><p>​		看起来不真实，现实世界更复杂，车会有划痕等等, 鼠标会有大小不一的高光。用微表面模型得到的结果不太真实。</p>
+<p>​		在微表面模型中，D（h）采用简单的模型，如符合正态分布，因此效果不真实。真实情况是，D（h）基本符合统计规律，但是又自己的细节。</p>
+<p>​		在这种情况下路径采样困难。每一个微表面是一个镜面, 再假设一个针孔摄像机和点光源。无论从针孔摄像机, 还是点光源连接微表面, 发生镜面反射。都很难反射到点光源或者针孔摄像机.</p>
+<p>​		一个像素覆盖很多的微表面形成一个区域, 把这个区域的法线分布算出来, 然后替代原本的光滑的法线分布, 用在原本的微表面模型里.</p>
+<p>​		一个像素覆盖法线贴图的面积, 导致不同特征的法线分布。 不同的法线贴图, 有不同的法线分布。</p>
+<h5 id="通过波动光学研究材质"><a href="#通过波动光学研究材质" class="headerlink" title="通过波动光学研究材质"></a>通过波动光学研究材质</h5><p>​		波动光学得到的BRDF与几何得到的不太相同，有自己的特点。</p>
+<h4 id="程序化生成"><a href="#程序化生成" class="headerlink" title="程序化生成"></a>程序化生成</h4><p>​		定义三维纹理，但是内存开销较大。可以不进行存储，在需要的时候查询。如3D噪声函数，空间中任意一个坐标, 返回需要查询的值(纹理细节)。通过任意方式处理噪声函数，就可以得到任意的效果。</p>
  
       <!-- reward -->
       
@@ -182,7 +231,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/01/games101-categories/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/18/games101-18-Advanced-Rendering/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -193,19 +242,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/02/games101-2-Linear_algebra/" class="article-nav-link">
+      <a href="/2023/05/19/games101-19-Cameras/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            games101-2-Linear_algebra
+            games101-19-Cameras
           
         </div>
       </a>
     
     
-      <a href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/" class="article-nav-link">
+      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">gl函数流程图</div>
+        <div class="article-nav-title">games101-15-Ray-Tracing3</div>
       </a>
     
   </nav>

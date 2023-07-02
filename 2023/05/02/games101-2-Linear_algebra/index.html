@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.1k</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">4 min</span>
         </span>
     </span>
 </div>
@@ -112,16 +112,17 @@
   <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
 <p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
-<p>单位向量（只关心方向不关心长度）：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
-<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。</p>
+<p>单位向量（只关心方向不关心长度），将向量的每一个分量除以长度，也叫向量的标准化：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
+<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。向量相加是将每个对应的分量分别相加，相减同理。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
 
-<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。</p>
+<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。如向量（4，3）默认是过原点的。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
 <p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
 <p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
+<p>当把一个向量加&#x2F;减&#x2F;乘&#x2F;除一个标量，可以简单的把向量的每个分量分别进行该运算。数学上是没有向量与标量相加运算的，但是很多线性代数的库都对它有支持。向量取反就是将每一个分量取反。</p>
 <h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
-<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。</p>
+<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。例如两个单位向量点乘的结果就是他们夹角的余弦。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
 <p>点乘的性质：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
@@ -137,7 +138,7 @@
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
 <h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
 <p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
-<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用左手坐标系）:</p>
+<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用右手坐标系）:</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
 
 <p>向量叉乘的代数运算:</p>
@@ -156,6 +157,7 @@
 <p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
 <h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
+<p>数学上是没有矩阵与标量相加减的运算的，但是很多线性代数的库都对它有支持。矩阵与标量之间的加减就是将矩阵中每一个元素都与标量进行加减。矩阵与矩阵之间的加减就是两个矩阵对应元素的加减运算，所以总体的规则和与标量运算是差不多的，只不过在相同索引下的元素才能进行运算。</p>
 <p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
 <p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素Aij由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
 <p>矩阵乘法的性质：</p>
@@ -259,9 +261,9 @@
       </a>
     
     
-      <a href="/2023/05/01/games101-categories/" class="article-nav-link">
+      <a href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-categories</div>
+        <div class="article-nav-title">gl函数流程图</div>
       </a>
     
   </nav>
