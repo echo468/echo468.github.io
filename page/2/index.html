@@ -351,6 +351,199 @@
 
     
     <article
+  id="post-games101-5-6-Rasterization"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/07/games101-5-6-Rasterization/"
+    >games101-5/6-Rasterization</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/07/games101-5-6-Rasterization/" class="article-date">
+  <time datetime="2023-05-07T11:58:44.000Z" itemprop="datePublished">2023-05-07</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+   
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-4-Transformation1"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/04/games101-4-Transformation1/"
+    >games101-4-Transformation1</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/04/games101-4-Transformation1/" class="article-date">
+  <time datetime="2023-05-04T08:21:05.000Z" itemprop="datePublished">2023-05-04</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="MVP变换"><a href="#MVP变换" class="headerlink" title="MVP变换"></a>MVP变换</h4><p>局部空间-世界空间-观察空间-裁剪空间-屏幕空间</p>
+<p>局部坐标-世界坐标-观察坐标-裁剪坐标（会变成NDC坐标）-屏幕坐标-光栅化-片元</p>
+<p>​		一般可以直接将坐标定义在世界空间，M矩阵取单位矩阵。（当需要对物体进行修改的时候，在局部空间中来操作更方便；如果要对一个物体做出一个相对于其它物体位置的操作时，在世界坐标系中来操作更方便；）</p>
+<h4 id="View变换"><a href="#View变换" class="headerlink" title="View变换"></a>View变换</h4><p>确定相机坐标系：</p>
+<p>（1）相机位置坐标e</p>
+<p>（2）观察方向g:由相机位置指向目标物体</p>
+<p>（3）视点正方向t</p>
+<p>计算相机坐标系三个轴的方法：</p>
+<p>（1）观察方向向量g:目标物体坐标减相机坐标e,再除以长度变成单位向量</p>
+<p>（2）辅助向量up：一般设置成（0，1，0），认为相机本身不会歪</p>
+<p>（3）向量g×t（e）：通过向量g和辅助向量叉乘得到，此时向量g×t一定垂直于g和t所在平面,再除以长度变成单位向量</p>
+<p>（4）视点正方向t向量：通过向量g×t和g向量叉乘得到，再除以长度变成单位向量</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622014.png" alt="image-20230702162236905" style="zoom:67%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622687.png" alt="image-20230702162254649"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>​		如果相机和目标物体的相对位置不变，则最后的观察结果都相同。因此当相机处于任意位置时，可以将相机移动到原点，相机始终看向-z方向，且相机坐标系的剩下两个轴与世界坐标系的两个轴X,Y方向一致。之后将物体坐标进行相同的变换，即可得到相机在原位置时相同的结果（将作用于相机的矩阵作用在物体上）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021623987.png" alt="image-20230702162356943" style="zoom:67%;" />
+
+<p>下面求解view矩阵：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624535.png" alt="image-20230702162404488" style="zoom:67%;" />
+
+<p>（1）平移操作，将e点移动到原点</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624611.png" alt="img"></p>
+<p>（2）旋转操作</p>
+<p>由于计算从相机坐标系到世界坐标系的旋转矩阵较为复杂，因此可以先计算从世界坐标系变换到相机坐标系将y轴旋转到t轴，将z轴旋转到-g轴，将x轴旋转到g×t的轴。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624681.png" alt="img"></p>
+<p>该操作为将相机坐标系变换到世界坐标系的逆操作，因此求出来的R矩阵为目标R矩阵的逆矩阵，也是目标R矩阵的转置矩阵。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624648.png" alt="img"></p>
+<p>（3）最后求出的M矩阵如下，对目标物体坐标进行M矩阵变换</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624731.png" alt="img"></p>
+<h4 id="Projection变换"><a href="#Projection变换" class="headerlink" title="Projection变换"></a>Projection变换</h4><p> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625273.jpg" alt="img"></p>
+<h5 id="Orthographic-projection-正交投影"><a href="#Orthographic-projection-正交投影" class="headerlink" title="Orthographic projection 正交投影"></a>Orthographic projection 正交投影</h5><p>假设相机在原点，看向-z轴。</p>
+<p>将视线范围内的物体(假设在一个立方体中，该立方体通过六个数定义，注意越远z值越小，立方体外的部分都会被剪裁)全部压缩到[-1,1]范围内的正方体中，变成NDC坐标。先将立方体的重心平移到原点，再将立方体进行缩放(此处先不考虑旋转)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625714.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625766.png" alt="img"></p>
+<p>正交投影坐标的相对位置都不会改变，只需将物体全部转换到一个[−1,1]的正方体之中即可（其中x，y坐标便是投影结果，保留z是为了之后的深度检测）。压缩到一个正方体是为了之后的计算更加的方便在转换到屏幕坐标的时候就会重新拉伸回来。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626160.jpg" alt="img"></p>
+<p>正交投影不会影响w值,w仍为1，进行透视除法后没有任何作用。由于这个原因，正射投影主要用于二维渲染以及一些建筑或工程的程序，在这些场景中更希望顶点不会被透视所干扰。（opengl使用右手坐标系，此处越远z越小，在opengl中NDC坐标会变换成左手坐标，越远z越大）</p>
+<h5 id="Perspective-projection-透视投影"><a href="#Perspective-projection-透视投影" class="headerlink" title="Perspective projection 透视投影"></a>Perspective projection 透视投影</h5><p>(1) 将视锥体压缩成立方体</p>
+<p>距离越远，压缩程度越大，形成近大远小的效果。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626131.jpg" alt="img"> </p>
+<p>近平面n的xyz坐标不变，远平面f中心的xyz值不变。</p>
+<p>根据相似三角形：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626190.png" alt="img"></p>
+<p>即</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626271.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626239.jpg" alt="img"></p>
+<p>（x,y,z,1）,(kx,ky,kz,k!&#x3D;0)都是三维空间中的点（x,y,z）。</p>
+<p>可得矩阵：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627989.png" alt="img"></p>
+<p>近平面n的xyz坐标不变：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627136.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627025.png" alt="img"></p>
+<p>远平面f中心的xyz值不变：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627384.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627068.png" alt="img"></p>
+<p>最后解的<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627191.png" alt="img"></p>
+<p>（2）将立方体变换到[-1,1]的正方体</p>
+<p>将目标物体经过上述变换后，再进行正交投影变换即可：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627125.png" alt="img"></p>
+<p><em><strong>*为什么在（1）中中间压缩的点z值不知道？*</strong></em><br><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627363.png" alt="img"></p>
+<p>Persp-&gt;ortho矩阵会改变顶点的w值（w&#x3D;z＜0），在进行完透视投影的MVP变换后，得离观察者越远的顶点坐标w分量的绝对值越大。顶点坐标的每个分量都会除以它的w分量，距离观察者越远顶点坐标就会越小。（最后的顶点应该被赋值到顶点着色器中的gl_Position输出，OpenGL将会自动进行透视除法和裁剪。）。</p>
+<p>比较更新后的z值和原z值：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627495.png" alt="img"></p>
+<p>因为n≥z≥f，所以(z-n)(f-z)值＞0，因为z＜0，方程最左侧的分数值小＜0，即更新后的z值小于原z值，即透视投影之后，中间物体距离相机更远。所以在推算时不知道z值。</p>
+<p><em><strong>*如何确定视锥体？*</strong></em></p>
+<p>利用垂直可视角度或者水平可视角度、近平面距离、远平面距离（距离相机的距离）以及进平面宽高比(width&#x2F;heigth)可以确定一个视锥体。（在opengl中，可视角度一般取45°，近平面取0.1，远平面100.0f）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627813.jpg" alt="img"> </p>
+<p>如下图所示，相机在原点看向-z轴。已知Y（垂直可视角度）和n，可以计算出height&#x2F;2-&gt;height，通过宽高比可以得到width。远平面可以通过Y和f计算。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627150.jpg" alt="img"> </p>
+<p>如果只是图元(Primitive)，例如三角形，的一部分超出了裁剪体积(Clipping Volume)，则OpenGL会重新构建这个三角形为一个或多个三角形让其能够适合这个裁剪范围。</p>
+<h4 id="视口变换"><a href="#视口变换" class="headerlink" title="视口变换"></a>视口变换</h4><p>屏幕可以看作一组x<em>y的像素数组，数组的大小x</em>y为分辨率。此处认为在一个像素内部颜色不变，像素的颜色值通过RGB三个0-255之间的数表示。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627542.jpg" alt="img"> </p>
+<p>像素坐标从（0，0）到（x-1，y-1）。像素（x，y）的中心在（x+0.5，y+0.5）,这些像素的覆盖范围从（0，0）到（x，y）。</p>
+<p>视口变换就是将物体坐标从[-1,1]的正方体变到x*y的屏幕。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627754.jpg" alt="img"> </p>
+<p>该变换与z无关，z保持不变用于后续深度测试。先把正方体的x、y进行缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627215.png" alt="img"></p>
+<p>再将缩放后的立方体中心平移到屏幕中心：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021628869.png" alt="img"></p>
+<p><em><strong>*为什么不能先平移再缩放？*</strong></em></p>
+<p>缩放会将每个坐标以原点为中心进行缩放（也就是位移向量也会被缩放），而不是物体中心，如下白色正方形按照缩放矩阵缩小一半的结果是蓝色正方形而不是红色正方形。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627809.jpg" alt="img"> </p>
+<p>显示图像：将显存中的一块区映射到屏幕。</p>
+<p>（区分 view变换：先平移再旋转 正交投影：先平移再缩放）</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games101-3-Transformation"
   class="article article-type-post"
   itemscope
@@ -1131,268 +1324,13 @@ XConfigureWindow(display, win, mask, &amp;changes);
 </article>
 
     
-    <article
-  id="post-层级模型"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/"
-    >层级模型</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/02/05/%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%9E%8B/" class="article-date">
-  <time datetime="2023-02-05T15:44:24.000Z" itemprop="datePublished">2023-02-05</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/three-js/">three.js</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="使用层级模型"><a href="#使用层级模型" class="headerlink" title="使用层级模型"></a>使用层级模型</h4><p>创建两个网格模型mesh1、mesh2，通过<code>THREE.Group</code>类创建一个组对象group,然后通过<code>add</code>方法把网格模型mesh1、mesh2作为设置为组对象group的子对象，然后在通过执行<code>scene.add(group)</code>把组对象group作为场景对象的scene的子对象。也就是说场景对象是scene是group的父对象，group是mesh1、mesh2的父对象，这样就构成了一个三层的层级结构。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> group = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group.<span class="title function_">add</span>(mesh1);</span><br><span class="line">group.<span class="title function_">add</span>(mesh2);</span><br><span class="line">scene.<span class="title function_">add</span>(group);<span class="comment">//.add()方法都是继承自它们共同的基类(父类)Object3D</span></span><br><span class="line"><span class="comment">//等价于group.add(mesh1,mesh2);</span></span><br></pre></td></tr></table></figure>
-
-<p>Three.js场景对象<code>Scene</code>、组对象<code>Group</code>都有一个子对象属性<code>.children</code>,通过该属性可以访问父对象的子对象，子对象属性<code>.children</code>的值是数组，所有子对象是数组的值。场景对象<code>Scene</code>的子对象，除了组对象<code>Group</code>之外，还可以看到环境光<code>AmbientLight</code>、平行光<code>DirectionalLight</code>、辅助坐标对象<code>AxesHelper</code>等。场景对象<code>Scene</code>构成的层级模型本身是一个树结构，场景对象层级模型的第一层，也就是树结构的根节点，一般来说网格模型Mesh、点模型Points、线模型Line是树结构的最外层叶子结点。构建层级模型的中间层一般都是通过Three.js的<code>Group</code>类来完成，<code>Group</code>类实例化的对象可以称为组对象。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看group的子对象&#x27;</span>,group.<span class="property">children</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看Scene的子对象&#x27;</span>,scene.<span class="property">children</span>);</span><br></pre></td></tr></table></figure>
-
-<p>网格模型mesh1、mesh2作为设置为父对象group的子对象，如果父对象group进行旋转、缩放、平移变换，子对象同样跟着变换。使用层级模型可以操作一组对象。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//沿着Y轴平移mesh1和mesh2的父对象，mesh1和mesh2跟着平移</span></span><br><span class="line">group.<span class="title function_">translateY</span>(<span class="number">100</span>);</span><br><span class="line"><span class="comment">//父对象缩放，子对象跟着缩放</span></span><br><span class="line">group.<span class="property">scale</span>.<span class="title function_">set</span>(<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>);</span><br><span class="line"><span class="comment">//父对象旋转，子对象跟着旋转</span></span><br><span class="line">group.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
-
-<p>如下代码等效</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> mesh2 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> obj = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Object3D</span>();<span class="comment">//作为mesh1和mesh2的父对象</span></span><br><span class="line">obj.<span class="title function_">add</span>(mesh1,mesh2);</span><br></pre></td></tr></table></figure>
-
-<p>Three.js默认mesh也可以添加子对象，mesh基类也是Object3D。如下代码与<code>group.add(mesh1,mesh2);</code>等效。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">group.<span class="title function_">add</span>(mesh1);</span><br><span class="line">mesh1.<span class="title function_">add</span>(mesh2);</span><br></pre></td></tr></table></figure>
-
-<h4 id="遍历模型树结构、查询模型节点"><a href="#遍历模型树结构、查询模型节点" class="headerlink" title="遍历模型树结构、查询模型节点"></a>遍历模型树结构、查询模型节点</h4><p>在层级模型中可以给组或者模型对象通过<code>.name</code>属性命名进行标记。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">group.<span class="property">name</span>=<span class="string">&#x27;小区房子&#x27;</span>;</span><br><span class="line">mesh.<span class="property">name</span>=<span class="string">&#x27;一号楼&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>如下代码将5个mesh作为group1（高层）的子对象，将5个mesh作为group2（洋房）的子对象，将group1和group2作为group3（小区房子）的子对象，一共是4层模型。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> group1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group1.<span class="property">name</span> = <span class="string">&quot;高层&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    <span class="comment">/*...*/</span></span><br><span class="line">    group1.<span class="title function_">add</span>(mesh);</span><br><span class="line">    mesh.<span class="property">name</span> = i + <span class="number">1</span> + <span class="string">&#x27;号楼&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">group1.<span class="property">position</span>.<span class="property">y</span> = <span class="number">30</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> group2 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group2.<span class="property">name</span> = <span class="string">&quot;洋房&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    <span class="comment">/*...*/</span></span><br><span class="line">    group2.<span class="title function_">add</span>(mesh);</span><br><span class="line">    mesh.<span class="property">name</span> = i + <span class="number">6</span> + <span class="string">&#x27;号楼&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">group2.<span class="property">position</span>.<span class="property">z</span> = <span class="number">50</span>;</span><br><span class="line">group2.<span class="property">position</span>.<span class="property">y</span> = <span class="number">15</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> model = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">model.<span class="property">name</span>=<span class="string">&#x27;小区房子&#x27;</span>;</span><br><span class="line">model.<span class="title function_">add</span>(group1, group2);</span><br><span class="line">model.<span class="property">position</span>.<span class="title function_">set</span>(-<span class="number">50</span>,<span class="number">0</span>,-<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
-
-<p>Three.js层级模型就是一个树结构，可以通过递归遍历的算法去遍历Three.js一个模型对象包含的所有后代。obj.name包括mesh的name和group的name。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 递归遍历model包含所有的模型节点</span></span><br><span class="line">model.<span class="title function_">traverse</span>(<span class="keyword">function</span>(<span class="params">obj</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;所有模型节点的名称&#x27;</span>,obj.<span class="property">name</span>);</span><br><span class="line">    <span class="comment">// obj.isMesh：if判断模型对象obj是不是网格模型&#x27;Mesh&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> (obj.<span class="property">isMesh</span>) &#123;<span class="comment">//判断条件也可以是obj.type === &#x27;Mesh&#x27;</span></span><br><span class="line">        obj.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);。</span><br></pre></td></tr></table></figure>
-
-<p>通过一些方法查找一个模型树中的某个节点，并对其进行设置。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回名.name为&quot;4号楼&quot;对应的对象</span></span><br><span class="line"><span class="keyword">const</span> nameNode = scene.<span class="property">getObjectByName</span> (<span class="string">&quot;4号楼&quot;</span>);</span><br><span class="line">nameNode.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xff0000</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="本地坐标和世界坐标"><a href="#本地坐标和世界坐标" class="headerlink" title="本地坐标和世界坐标"></a>本地坐标和世界坐标</h4><p>改变子对象的<code>.position</code>，子对象在世界坐标系中的坐标会发生改变。改变父对象的<code>.position</code>，子对象在世界坐标系中的位置也会跟着变化，也就是说父对象<code>.position</code>和子对象<code>.position</code>叠加才是才是子对象的<code>.position</code>。任何一个模型的本地坐标就是模型的<code>.position</code>属性。一个模型的世界坐标，是模型自身<code>.position</code>和所有父对象<code>.position</code>累加的坐标。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">const</span> group = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Group</span>();</span><br><span class="line">group.<span class="title function_">add</span>(mesh);</span><br><span class="line">group.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<p><code>mesh.getWorldPosition(Vector3)</code>读取一个模型的世界坐标，并把读取结果存储到参数<code>Vector3</code>中。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明一个三维向量用来表示某个坐标</span></span><br><span class="line"><span class="keyword">const</span> worldPosition = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>();</span><br><span class="line"><span class="comment">// 获取mesh的世界坐标，mesh的世界坐标受到父对象group的.position影响</span></span><br><span class="line">mesh.<span class="title function_">getWorldPosition</span>(worldPosition);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;世界坐标&#x27;</span>,worldPosition);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;本地坐标&#x27;</span>,mesh.<span class="property">position</span>);</span><br></pre></td></tr></table></figure>
-
-<p><code>mesh.add(坐标系)</code>给mesh添加一个可视化的局部坐标系。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//可视化mesh的局部坐标系</span></span><br><span class="line"><span class="keyword">const</span> meshAxesHelper = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">AxesHelper</span>(<span class="number">50</span>);</span><br><span class="line">mesh.<span class="title function_">add</span>(meshAxesHelper);</span><br></pre></td></tr></table></figure>
-
-<h4 id="移除对象-remove"><a href="#移除对象-remove" class="headerlink" title="移除对象.remove()"></a>移除对象.remove()</h4><p><code>.add()</code>方法是给父对象添加一个子对象，<code>.remove()</code>方法是删除父对象中的一个子对象，这将改变<code>.children()</code>属性。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除父对象group的子对象网格模型mesh1</span></span><br><span class="line">group.<span class="title function_">remove</span>(mesh1);</span><br><span class="line">scene.<span class="title function_">remove</span>(ambient);<span class="comment">//移除场景中环境光</span></span><br><span class="line">scene.<span class="title function_">remove</span>(model);<span class="comment">//移除场景中模型对象</span></span><br></pre></td></tr></table></figure>
-
-<p>也可以一次性移除多个子对象。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">group.<span class="title function_">remove</span>(mesh1,mesh2);</span><br></pre></td></tr></table></figure>
-
-<h3 id="模型属性-visible"><a href="#模型属性-visible" class="headerlink" title="模型属性.visible"></a>模型属性<code>.visible</code></h3><p>模型对象的父类<code>Object3D</code>封装了一个属性<code>.visible</code>，通过该属性可以隐藏或显示一个模型。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">visible</span> =<span class="literal">false</span>;<span class="comment">// 隐藏一个网格模型，visible的默认值是true</span></span><br><span class="line">group.<span class="property">visible</span> =<span class="literal">false</span>;<span class="comment">// 隐藏一个包含多个模型的组对象group</span></span><br><span class="line">mesh.<span class="property">visible</span> =<span class="literal">true</span>;<span class="comment">// 使网格模型mesh处于显示状态</span></span><br></pre></td></tr></table></figure>
-
-<p>材质对象的父类<code>Material</code>封装了一个<code>.visible</code>属性，通过该属性可以控制是否隐藏该材质对应的模型对象。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 隐藏网格模型mesh，visible的默认值是true</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">visible</span> =<span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 注意如果mesh2和mesh的.material属性指向同一个材质，mesh2也会跟着mesh隐藏</span></span><br></pre></td></tr></table></figure>
-
-<p>注意:如果多个模型引用了同一个材质，如果该材质<code>.visible</code>设置为false，意味着隐藏绑定该材质的所有模型。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-模型对象及材质"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/"
-    >模型对象及材质</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/02/05/%E6%A8%A1%E5%9E%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E6%9D%90%E8%B4%A8/" class="article-date">
-  <time datetime="2023-02-05T09:18:27.000Z" itemprop="datePublished">2023-02-05</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/three-js/">three.js</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="三维向量Vector3与模型位置"><a href="#三维向量Vector3与模型位置" class="headerlink" title="三维向量Vector3与模型位置"></a>三维向量Vector3与模型位置</h4><p>点模型<code>Points</code>、线模型<code>Line</code>、网格网格模型<code>Mesh</code>等模型对象的父类都是Object3D。</p>
-<p>三维向量<code>Vector3</code>有xyz三个分量，Three.js中会用三维向量<code>Vector3</code>表示很多种数据。<code>Vector3</code>对象具有属性<code>.x</code>、<code>.y</code>、<code>.z</code>，<code>Vector3</code>对象还具有<code>.set()</code>等方法。位置属性<code>.position</code>使用Three.js三维向量对象<code>Vector3</code>表示，因此具有<code>Vector3</code>所有的属性和方法。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v3 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v3&#x27;</span>, v3);</span><br><span class="line">v3.<span class="title function_">set</span>(<span class="number">10</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">v3.<span class="property">x</span> = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
-
-<p>通过模型位置属性<code>.position</code>可以设置模型在场景<code>Scene</code>中的位置。模型位置<code>.position</code>的默认值是<code>THREE.Vector3(0.0,0.0,0.0)</code>，表示坐标原点。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置网格模型y坐标</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="property">y</span> = <span class="number">80</span>;</span><br><span class="line"><span class="comment">//设置模型xyz坐标</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">80</span>,<span class="number">2</span>,<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-
-<p>执行<code>.translateX()</code>、<code>.translateY()</code>、<code>.translateZ()</code>等方法本质上改变的都是模型的位置属性<code>.position</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 等价于mesh.position.x = mesh.position.x + 100;</span></span><br><span class="line"><span class="comment">//而不是mesh.position.x = 100;</span></span><br><span class="line">mesh.<span class="title function_">translateX</span>(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
-
-<p>如果调用两次<code>mesh.translateX(100);</code>，第二次是在第一次的基础上进行累计变换。注意这些平移以及缩放函数与<code>BufferGeometry</code>平移以及缩放函数的区别。如下图<code>mesh.position.set(50,50,0);mesh.translateZ(100);</code>函数将局部坐标系的原点设置在世界坐标系x&#x3D;50,y&#x3D;50处，接着将局部坐标系的原点沿着世界坐标系的z轴平移100。<code>geometry.rotateX(Math.PI/2);geometry.translate(50,0,0);</code>函数将物体的中心点绕局部坐标系的x轴旋转90°并且平移50。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052253053.png" alt="image-20230205225318979" style="zoom: 50%;" />
-
-<p>沿着自定义的方向移动。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//向量Vector3对象表示方向</span></span><br><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">axis.<span class="title function_">normalize</span>(); <span class="comment">//向量归一化</span></span><br><span class="line"><span class="comment">//沿着axis轴表示方向平移100</span></span><br><span class="line">mesh.<span class="title function_">translateOnAxis</span>(axis, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
-
-<p><code>.scale</code>表示模型对象的xyz三个方向上的缩放比例，<code>.scale</code>的属性值是一个三维向量对象<code>Vector3</code>,默认值是<code>THREE.Vector3(1.0,1.0,1.0)</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//x轴方向放大2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="property">x</span> = <span class="number">2.0</span>;</span><br><span class="line"><span class="comment">//网格模型xyz方向分别缩放0.5,1.5,2倍</span></span><br><span class="line">mesh.<span class="property">scale</span>.<span class="title function_">set</span>(<span class="number">0.5</span>, <span class="number">1.5</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
-
-<p>如下图通过旋转使得局部坐标系的y轴与世界坐标系的z轴平行，使用<code>geometry.scale(1,2,1);</code>函数后图形沿着局部坐标系的y轴放大至原来的2倍。即在世界坐标系中沿z轴前后放大而不是沿y轴上下放大。但是如果是<code>mesh.scale</code>会将局部坐标系和物体按照局部坐标系的轴一起缩放。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052323314.png" alt="image-20230205232310262" style="zoom:67%;" />
-
-<h4 id="欧拉Euler与角度属性-rotation"><a href="#欧拉Euler与角度属性-rotation" class="headerlink" title="欧拉Euler与角度属性.rotation"></a>欧拉Euler与角度属性.rotation</h4><p>模型的角度属性<code>.rotation</code>和四元数属性<code>.quaternion</code>都是表示模型的角度状态，只是表示方法不同，<code>.rotation</code>属性值是欧拉对象,<code>.quaternion</code>属性值是四元数对象。</p>
-<p> 创建一个欧拉对象，表示绕着xyz轴分别旋转45度，0度，90度。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Euler</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Euler</span>( <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>,<span class="number">0</span>, <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-
-<p>通过属性设置欧拉对象的三个分量值。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Euler</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Euler</span>();</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">x</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>;</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">y</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>;</span><br><span class="line"><span class="title class_">Euler</span>.<span class="property">z</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>;</span><br></pre></td></tr></table></figure>
-
-<p>角度属性<code>.rotation</code>的值是欧拉对象<code>Euler</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绕y轴的角度设置为60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> = <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br><span class="line"><span class="comment">//绕y轴的角度增加60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> += <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br><span class="line"><span class="comment">//绕y轴的角度减去60度</span></span><br><span class="line">mesh.<span class="property">rotation</span>.<span class="property">y</span> -= <span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
-
-<p>模型执行<code>.rotateX()</code>、<code>.rotateY()</code>等旋转方法，会发现改变了模型的角度属性<code>.rotation</code>。如下函数是对<code>model.rotation.y</code>的累计变化。注意如果是mesh下的rotate函数就会将局部坐标系和物体按照局部坐标系的轴一起旋转，如果是geometry下的rotate函数只将物体按照局部坐标系的轴旋转。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="title function_">rotateX</span>(<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">4</span>);</span><br><span class="line">mesh.<span class="title function_">rotateY</span>(<span class="title class_">Math</span>.<span class="property">PI</span> / <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-
-<p>旋转动画。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    model.<span class="property">rotation</span>.<span class="property">y</span>+=<span class="number">0.01</span>;</span><br><span class="line">    <span class="comment">//等价与model.rotateY(0.01);</span></span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    model.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果是绕某个轴旋转，如下是网格模型绕<code>(0,1,0)</code>向量表示的轴旋转<code>π/8</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> axis = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//向量axis</span></span><br><span class="line">mesh.<span class="title function_">rotateOnAxis</span>(axis,<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">8</span>);<span class="comment">//绕axis轴旋转π/8</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="模型材质颜色-Color对象"><a href="#模型材质颜色-Color对象" class="headerlink" title="模型材质颜色(Color对象)"></a>模型材质颜色(Color对象)</h4><p>浏览器控制台查看材质颜色属性的属性值。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.color&#x27;</span>,material.<span class="property">color</span>);</span><br></pre></td></tr></table></figure>
-
-<p>颜色对象有三个属性，分别为<code>.r</code>、<code>.g</code>、<code>.b</code>，表示颜色RGB的三个分量。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个颜色对象</span></span><br><span class="line"><span class="keyword">const</span> color = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>();<span class="comment">//默认是纯白色0xffffff。</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;查看颜色对象结构&#x27;</span>,color);<span class="comment">//可以查看rgb的值</span></span><br><span class="line"><span class="comment">// 查看Color对象设置0x00ff00对应的的.r、.g、.b值</span></span><br><span class="line"><span class="keyword">const</span> color = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>(<span class="number">0x00ff00</span>);</span><br><span class="line"><span class="comment">//通过.r、.g、.b属性改变颜色值</span></span><br><span class="line">color.<span class="property">r</span> = <span class="number">0.0</span>;</span><br><span class="line">color.<span class="property">b</span> = <span class="number">0.0</span>;</span><br></pre></td></tr></table></figure>
-
-<p><code>Color</code>提供了<code>.setHex()</code>、<code>.setRGB()</code>、<code>.setStyle()</code>、<code>.set()</code>等修改颜色值的方法。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">color.<span class="title function_">setRGB</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//RGB方式设置颜色</span></span><br><span class="line">color.<span class="title function_">setHex</span>(<span class="number">0x00ff00</span>);<span class="comment">//十六进制方式设置颜色</span></span><br><span class="line">color.<span class="title function_">setStyle</span>(<span class="string">&#x27;#00ff00&#x27;</span>);<span class="comment">//前端CSS颜色值设置颜色</span></span><br></pre></td></tr></table></figure>
-
-<p><code>.setHex()</code>、<code>.setStyle()</code>风格的颜色值都可以作为<code>.set()</code>的参数。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">color.<span class="title function_">set</span>(<span class="number">0x00ff00</span>);<span class="comment">//十六进制方式设置颜色</span></span><br><span class="line">color.<span class="title function_">set</span>(<span class="string">&#x27;#00ff00&#x27;</span>);<span class="comment">//前端CSS颜色值设置颜色</span></span><br></pre></td></tr></table></figure>
-
-<p>重置模型材质颜色。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0x00ffff</span>);</span><br><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="string">&#x27;#00ff00&#x27;</span>);</span><br><span class="line">material.<span class="property">color</span>.<span class="title function_">set</span>(<span class="string">&#x27;rgb(0,255,0)&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="模型材质父类Material"><a href="#模型材质父类Material" class="headerlink" title="模型材质父类Material"></a>模型材质父类Material</h4><p>基础网格材质<code>MeshBasicMaterial</code>、漫反射网格材质<code>MeshLambertMaterial</code>、高光网格材质<code>MeshPhongMaterial</code>等网格材质都有一个共同的父类<code>Material</code>。</p>
-<p>材质半透明设置。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">transparent</span> = <span class="literal">true</span>;<span class="comment">//开启透明</span></span><br><span class="line">material.<span class="property">opacity</span> = <span class="number">0.5</span>;<span class="comment">//设置透明度</span></span><br></pre></td></tr></table></figure>
-
-<p>材质面属性。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">BackSide</span>;<span class="comment">//背面可以看到</span></span><br><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">FrontSide</span>;<span class="comment">//正面面可以看到</span></span><br><span class="line">material.<span class="property">side</span> = <span class="variable constant_">THREE</span>.<span class="property">DoubleSide</span>;<span class="comment">//双面可见</span></span><br></pre></td></tr></table></figure>
-
-<p><code>THREE.FrontSide</code>、<code>THREE.BackSide</code>、<code>THREE.DoubleSide</code>其实在theeejs内部都表示一个数字,可以通过浏览器控制打印查看验证。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;material.side&#x27;</span>,material.<span class="property">side</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="模型材质和几何体属性"><a href="#模型材质和几何体属性" class="headerlink" title="模型材质和几何体属性"></a>模型材质和几何体属性</h4><p>浏览器控制打印模型对象mesh，可以展开对象，查看对象的几何体<code>.geometry</code>和材质属性<code>.material</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh&#x27;</span>,mesh);</span><br></pre></td></tr></table></figure>
-
-<p>浏览器控制台打印模型的几何体属性<code>.geometry</code>和材质属性<code>.material</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh.geometry&#x27;</span>,mesh.<span class="property">geometry</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;mesh.material&#x27;</span>,mesh.<span class="property">material</span>);</span><br></pre></td></tr></table></figure>
-
-<p>访问改变模型材质属性。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 访问模型材质,并设置材质的颜色属性</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br></pre></td></tr></table></figure>
-
-<p>访问改变模型几何体属性。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 访问模型几何体,并平移几何体顶点数据</span></span><br><span class="line">mesh.<span class="property">geometry</span>.<span class="title function_">translate</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<p>材质或几何体共享。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line"><span class="keyword">const</span> mesh1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geometry, material);</span><br><span class="line">mesh1.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">50</span>,<span class="number">50</span>,<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 两个mesh共享一个材质，改变一个mesh的颜色，另一个mesh2的颜色也会跟着改变</span></span><br><span class="line"><span class="comment">// 三者等价：mesh.material、mesh2.material、material</span></span><br><span class="line">mesh.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br><span class="line"><span class="comment">// 三者等价：mesh.geometry、mesh2.geometry、geometry</span></span><br><span class="line">mesh.<span class="property">geometry</span>.<span class="title function_">translate</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052331753.png" alt="image-20230205233114699" style="zoom:50%;" />
-
-<h4 id="克隆-clone-和复制-copy"><a href="#克隆-clone-和复制-copy" class="headerlink" title="克隆.clone()和复制.copy()"></a>克隆.clone()和复制.copy()</h4><p>克隆<code>.clone()</code>、复制<code>.copy()</code>是Three.js很多对象都具有的方法，比如三维向量对象<code>Vector3</code>、网格模型、几何体、材质。</p>
-<p>克隆<code>.clone()</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v1&#x27;</span>,v1);</span><br><span class="line"><span class="comment">//v2是一个新的Vector3对象，和v1的.x、.y、.z属性值一样</span></span><br><span class="line"><span class="keyword">const</span> v2 = v1.<span class="title function_">clone</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;v2&#x27;</span>,v2);</span><br></pre></td></tr></table></figure>
-
-<p>复制<code>.copy()</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> v1 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="keyword">const</span> v3 = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>);</span><br><span class="line"><span class="comment">//读取v1.x、v1.y、v1.z的赋值给v3.x、v3.y、v3.z</span></span><br><span class="line">v3.<span class="title function_">copy</span>(v1);</span><br></pre></td></tr></table></figure>
-
-<p>通过mesh克隆<code>.clone()</code>一个和mesh一样的新模型对象mesh2。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh2 = mesh.<span class="title function_">clone</span>();</span><br><span class="line">mesh2.<span class="property">position</span>.<span class="property">x</span> = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
-
-<p>通过克隆<code>.clone()</code>获得的新模型和原来的模型共享材质和几何体。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 改变材质颜色，或者说改变mesh2颜色，mesh和mesh2颜色都会改变</span></span><br><span class="line"><span class="comment">//material.color.set(0xffff00);</span></span><br><span class="line">mesh2.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff00</span>);</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052334395.png" alt="image-20230205233443346"></p>
-<p>几何体和材质克隆<code>.clone()</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mesh2 = mesh.<span class="title function_">clone</span>();</span><br><span class="line"><span class="comment">// 克隆几何体和材质，重新设置mesh2的材质和几何体属性</span></span><br><span class="line">mesh2.<span class="property">geometry</span> = mesh.<span class="property">geometry</span>.<span class="title function_">clone</span>();</span><br><span class="line">mesh2.<span class="property">material</span> = mesh.<span class="property">material</span>.<span class="title function_">clone</span>();</span><br><span class="line"><span class="comment">// 改变mesh2颜色，不会改变mesh的颜色</span></span><br><span class="line">mesh2.<span class="property">material</span>.<span class="property">color</span>.<span class="title function_">set</span>(<span class="number">0xffff0000</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202302052335397.png" alt="image-20230205233522340" style="zoom:67%;" />
-
-<p>改变mesh的位置，使之位于mesh2的正上方(y)，距离100。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mesh.<span class="property">position</span>.<span class="title function_">copy</span>(mesh2.<span class="property">position</span>);<span class="comment">//1. 第1步位置重合</span></span><br><span class="line">mesh.<span class="property">position</span>.<span class="property">y</span> += <span class="number">100</span>;<span class="comment">//1. 第2步mesh在原来y的基础上增加100</span></span><br></pre></td></tr></table></figure>
-
-<p>两个模型的姿态角度始终保持一样。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 渲染循环</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    mesh.<span class="title function_">rotateY</span>(<span class="number">0.01</span>);<span class="comment">// mesh旋转动画</span></span><br><span class="line">    <span class="comment">// 同步mesh2和mesh的姿态角度一样，不管mesh姿态角度怎么变化，mesh2始终保持同步</span></span><br><span class="line">    mesh2.<span class="property">rotation</span>.<span class="title function_">copy</span>(mesh.<span class="property">rotation</span>);</span><br><span class="line">    renderer.<span class="title function_">render</span>(scene, camera);</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">render</span>();</span><br></pre></td></tr></table></figure> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
   </nav>
   
 </section>

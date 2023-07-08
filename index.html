@@ -118,7 +118,7 @@
     
     
     <article
-  id="post-games101-3-Transformation1"
+  id="post-games202-2"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -129,118 +129,65 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2023/07/02/games101-3-Transformation1/"
-    >games101-3-Transformation1</a> 
+  <a class="article-title" href="/2023/07/08/games202-2/"
+    >games202-2</a> 
 </h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/07/02/games101-3-Transformation1/" class="article-date">
-  <time datetime="2023-07-02T08:21:05.000Z" itemprop="datePublished">2023-07-02</time>
+      <a href="/2023/07/08/games202-2/" class="article-date">
+  <time datetime="2023-07-08T05:44:01.000Z" itemprop="datePublished">2023-07-08</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
+    <a class="article-category-link" href="/categories/games202/">games202</a>
   </div>
    
     </div>
       
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="MVP变换"><a href="#MVP变换" class="headerlink" title="MVP变换"></a>MVP变换</h4><p>局部空间-世界空间-观察空间-裁剪空间-屏幕空间</p>
-<p>局部坐标-世界坐标-观察坐标-裁剪坐标（会变成NDC坐标）-屏幕坐标-光栅化-片元</p>
-<p>​		一般可以直接将坐标定义在世界空间，M矩阵取单位矩阵。（当需要对物体进行修改的时候，在局部空间中来操作更方便；如果要对一个物体做出一个相对于其它物体位置的操作时，在世界坐标系中来操作更方便；）</p>
-<h4 id="View变换"><a href="#View变换" class="headerlink" title="View变换"></a>View变换</h4><p>确定相机坐标系：</p>
-<p>（1）相机位置坐标e</p>
-<p>（2）观察方向g:由相机位置指向目标物体</p>
-<p>（3）视点正方向t</p>
-<p>计算相机坐标系三个轴的方法：</p>
-<p>（1）观察方向向量g:目标物体坐标减相机坐标e,再除以长度变成单位向量</p>
-<p>（2）辅助向量up：一般设置成（0，1，0），认为相机本身不会歪</p>
-<p>（3）向量g×t（e）：通过向量g和辅助向量叉乘得到，此时向量g×t一定垂直于g和t所在平面,再除以长度变成单位向量</p>
-<p>（4）视点正方向t向量：通过向量g×t和g向量叉乘得到，再除以长度变成单位向量</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622014.png" alt="image-20230702162236905" style="zoom:67%;" /></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021622687.png" alt="image-20230702162254649"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>​		如果相机和目标物体的相对位置不变，则最后的观察结果都相同。因此当相机处于任意位置时，可以将相机移动到原点，相机始终看向-z方向，且相机坐标系的剩下两个轴与世界坐标系的两个轴X,Y方向一致。之后将物体坐标进行相同的变换，即可得到相机在原位置时相同的结果（将作用于相机的矩阵作用在物体上）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021623987.png" alt="image-20230702162356943" style="zoom:67%;" />
+  <h4 id="渲染管线"><a href="#渲染管线" class="headerlink" title="渲染管线"></a>渲染管线</h4><p>1、三维物体：用点和连接关系（如obj文件）表示</p>
+<p>2、顶点处理：MVP矩阵变换，从三维空间中的点变换到屏幕上的点（但是连接关系没有改变）</p>
+<p>3、光栅化：将三角形离散成片元（像素），根据遮挡关系保留最终能看见的片元（深度测试）</p>
+<p>4、着色：计算片元的颜色值（不同的着色模型，如blinn-phong，可以很好的处理直接光照，但是不适合处理全局光照，如阴影和光线的多次弹射&#x2F;纹理映射（涉及重心坐标插值）等）</p>
+<p>5、屏幕显示</p>
+<p>关于先进行深度测试还是先计算片元的颜色值，会有不同的处理导致不同的顺序。硬件渲染管线在GPU上运行，速度快，并行性。</p>
+<h4 id="OpenGL"><a href="#OpenGL" class="headerlink" title="OpenGL"></a>OpenGL</h4><p>在CPU端执行的API调动GPU（快，很多操作封装成API可以直接调用），跨平台。缺点：版本太多；C风格代码没有面向对象的说法；很多年前不方便debug。</p>
+<p>使用：</p>
+<p>1、确定要绘制的模型     VBO：GPU中的一块内存，存储顶点属性</p>
+<p>2、定义矩阵进行顶点变换，使用变换相关API，不需要自己推导矩阵（M变换）</p>
+<p>3、确定相机位置（VP变换），创建&#x2F;指定帧缓冲（指定了帧缓冲可以渲染一次，获得多张图（多目标渲染，由片元着色器指定渲染到哪一个纹理，第一次渲染得到的纹理可以在第二次渲染使用），以及为了防止屏幕撕裂，可能需要使用双重&#x2F;三重缓冲）</p>
+<p>4、着色器</p>
+<p>顶点着色器：每个顶点进行变换如MVP变换；</p>
+<p>在两个着色器中间会进行光栅化，需要插值的属性插值好送往片段着色器。</p>
+<p>片段着色器：顶点着色器的输出是片段着色器的输入，顶点的属性会被插值到片段。为每一个片段着色。（可以手动进行深度测试）</p>
+<p>除了顶点和片段很多都是可封装的。在渲染前，一定要设置清楚GPU应该如何渲染。</p>
+<h4 id="GLSL"><a href="#GLSL" class="headerlink" title="GLSL"></a>GLSL</h4><p>着色语言写出来的着色器需要先编译，GPU再执行。</p>
+<p>（1）create shader（本质是字符串，可以存在文件中）</p>
+<p>（2）compile shader(编译)</p>
+<p>（3）attach shader to program（结合所有自定义的shader）</p>
+<p>（4）link program（链接，查看各个shader能否链接在一起，有无问题）</p>
+<p>（5）use program</p>
+<p>上述步骤可以封装。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307081609629.png" alt="image-20230708160920521"></p>
+<p>attribute顶点属性，只会出现在顶点着色器。（）</p>
+<p>varrying片段着色器需要使用的，要插值的量。（片段着色器有相同的变量）</p>
+<p>uniform全局变量，着色器都可以访问</p>
+<p>着色器不需要使用for循环，只是针对单个顶点&#x2F;单个片元要如何执行。</p>
+<p>texture2D:查一个纹理，在哪里查</p>
+<p>gl_Fragment、gl_Position内置变量，写入最终片段呈现的值&#x2F;变换后拿去视口变换的顶点（）</p>
+<h4 id="Debugging-shader"><a href="#Debugging-shader" class="headerlink" title="Debugging shader"></a>Debugging shader</h4><p>工具：</p>
+<p>Nsight Graphic</p>
+<p>RenderDoc</p>
+<p>将得出的值，当成颜色显示在屏幕（负数可以先偏移）</p>
+<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307081623378.png" alt="image-20230708162309332" style="zoom: 80%;" />
 
-<p>下面求解view矩阵：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624535.png" alt="image-20230702162404488" style="zoom:67%;" />
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307081624775.png" alt="image-20230708162427731" style="zoom:80%;" />
 
-<p>（1）平移操作，将e点移动到原点</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624611.png" alt="img"></p>
-<p>（2）旋转操作</p>
-<p>由于计算从相机坐标系到世界坐标系的旋转矩阵较为复杂，因此可以先计算从世界坐标系变换到相机坐标系将y轴旋转到t轴，将z轴旋转到-g轴，将x轴旋转到g×t的轴。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624681.png" alt="img"></p>
-<p>该操作为将相机坐标系变换到世界坐标系的逆操作，因此求出来的R矩阵为目标R矩阵的逆矩阵，也是目标R矩阵的转置矩阵。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624648.png" alt="img"></p>
-<p>（3）最后求出的M矩阵如下，对目标物体坐标进行M矩阵变换</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021624731.png" alt="img"></p>
-<h4 id="Projection变换"><a href="#Projection变换" class="headerlink" title="Projection变换"></a>Projection变换</h4><p> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625273.jpg" alt="img"></p>
-<h5 id="Orthographic-projection-正交投影"><a href="#Orthographic-projection-正交投影" class="headerlink" title="Orthographic projection 正交投影"></a>Orthographic projection 正交投影</h5><p>假设相机在原点，看向-z轴。</p>
-<p>将视线范围内的物体(假设在一个立方体中，该立方体通过六个数定义，注意越远z值越小，立方体外的部分都会被剪裁)全部压缩到[-1,1]范围内的正方体中，变成NDC坐标。先将立方体的重心平移到原点，再将立方体进行缩放(此处先不考虑旋转)：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625714.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021625766.png" alt="img"></p>
-<p>正交投影坐标的相对位置都不会改变，只需将物体全部转换到一个[−1,1]的正方体之中即可（其中x，y坐标便是投影结果，保留z是为了之后的深度检测）。压缩到一个正方体是为了之后的计算更加的方便在转换到屏幕坐标的时候就会重新拉伸回来。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626160.jpg" alt="img"></p>
-<p>正交投影不会影响w值,w仍为1，进行透视除法后没有任何作用。由于这个原因，正射投影主要用于二维渲染以及一些建筑或工程的程序，在这些场景中更希望顶点不会被透视所干扰。（opengl使用右手坐标系，此处越远z越小，在opengl中NDC坐标会变换成左手坐标，越远z越大）</p>
-<h5 id="Perspective-projection-透视投影"><a href="#Perspective-projection-透视投影" class="headerlink" title="Perspective projection 透视投影"></a>Perspective projection 透视投影</h5><p>(1) 将视锥体压缩成立方体</p>
-<p>距离越远，压缩程度越大，形成近大远小的效果。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626131.jpg" alt="img"> </p>
-<p>近平面n的xyz坐标不变，远平面f中心的xyz值不变。</p>
-<p>根据相似三角形：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626190.png" alt="img"></p>
-<p>即</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626271.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021626239.jpg" alt="img"></p>
-<p>（x,y,z,1）,(kx,ky,kz,k!&#x3D;0)都是三维空间中的点（x,y,z）。</p>
-<p>可得矩阵：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627989.png" alt="img"></p>
-<p>近平面n的xyz坐标不变：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627136.png" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627025.png" alt="img"></p>
-<p>远平面f中心的xyz值不变：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627384.png" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627068.png" alt="img"></p>
-<p>最后解的<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627191.png" alt="img"></p>
-<p>（2）将立方体变换到[-1,1]的正方体</p>
-<p>将目标物体经过上述变换后，再进行正交投影变换即可：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627125.png" alt="img"></p>
-<p><em><strong>*为什么在（1）中中间压缩的点z值不知道？*</strong></em><br><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627363.png" alt="img"></p>
-<p>Persp-&gt;ortho矩阵会改变顶点的w值（w&#x3D;z＜0），在进行完透视投影的MVP变换后，得离观察者越远的顶点坐标w分量的绝对值越大。顶点坐标的每个分量都会除以它的w分量，距离观察者越远顶点坐标就会越小。（最后的顶点应该被赋值到顶点着色器中的gl_Position输出，OpenGL将会自动进行透视除法和裁剪。）。</p>
-<p>比较更新后的z值和原z值：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627495.png" alt="img"></p>
-<p>因为n≥z≥f，所以(z-n)(f-z)值＞0，因为z＜0，方程最左侧的分数值小＜0，即更新后的z值小于原z值，即透视投影之后，中间物体距离相机更远。所以在推算时不知道z值。</p>
-<p><em><strong>*如何确定视锥体？*</strong></em></p>
-<p>利用垂直可视角度或者水平可视角度、近平面距离、远平面距离（距离相机的距离）以及进平面宽高比(width&#x2F;heigth)可以确定一个视锥体。（在opengl中，可视角度一般取45°，近平面取0.1，远平面100.0f）</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627813.jpg" alt="img"> </p>
-<p>如下图所示，相机在原点看向-z轴。已知Y（垂直可视角度）和n，可以计算出height&#x2F;2-&gt;height，通过宽高比可以得到width。远平面可以通过Y和f计算。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627150.jpg" alt="img"> </p>
-<p>如果只是图元(Primitive)，例如三角形，的一部分超出了裁剪体积(Clipping Volume)，则OpenGL会重新构建这个三角形为一个或多个三角形让其能够适合这个裁剪范围。</p>
-<h4 id="视口变换"><a href="#视口变换" class="headerlink" title="视口变换"></a>视口变换</h4><p>屏幕可以看作一组x<em>y的像素数组，数组的大小x</em>y为分辨率。此处认为在一个像素内部颜色不变，像素的颜色值通过RGB三个0-255之间的数表示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627542.jpg" alt="img"> </p>
-<p>像素坐标从（0，0）到（x-1，y-1）。像素（x，y）的中心在（x+0.5，y+0.5）,这些像素的覆盖范围从（0，0）到（x，y）。</p>
-<p>视口变换就是将物体坐标从[-1,1]的正方体变到x*y的屏幕。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627754.jpg" alt="img"> </p>
-<p>该变换与z无关，z保持不变用于后续深度测试。先把正方体的x、y进行缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627215.png" alt="img"></p>
-<p>再将缩放后的立方体中心平移到屏幕中心：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021628869.png" alt="img"></p>
-<p><em><strong>*为什么不能先平移再缩放？*</strong></em></p>
-<p>缩放会将每个坐标以原点为中心进行缩放（也就是位移向量也会被缩放），而不是物体中心，如下白色正方形按照缩放矩阵缩小一半的结果是蓝色正方形而不是红色正方形。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627809.jpg" alt="img"> </p>
-<p>显示图像：将显存中的一块区映射到屏幕。</p>
-<p>（区分 view变换：先平移再旋转 正交投影：先平移再缩放）</p>
+<p>全局光照：直接光照+间接光照（计算复杂）</p>
+<p>解决实时光照：解决多一次bounce的间接光照</p>
  
       <!-- reward -->
       
@@ -1368,7 +1315,7 @@
   
   <nav class="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
   </nav>
   
 </section>

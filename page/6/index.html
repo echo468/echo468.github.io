@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    环境配置 |  Hexo
+     Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -53,9 +53,72 @@
       
       
     <main class="content on">
-      <section class="outer">
-  <article
-  id="post-环境配置"
+      
+<section class="cover">
+    
+      
+      <a class="forkMe" href="https://github.com/Shen-Yu/hexo-theme-ayer"
+        target="_blank"><img width="149" height="149" src="/images/forkme.png"
+          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+    
+  <div class="cover-frame">
+    <div class="bg-box">
+      <img src="/images/cover1.jpg" alt="image frame" />
+    </div>
+    <div class="cover-inner text-center text-white">
+      <h1><a href="/">Hexo</a></h1>
+      <div id="subtitle-box">
+        
+        <span id="subtitle"></span>
+        
+      </div>
+      <div>
+        
+        <img
+          src="/images/ayer.svg"
+          class="cover-logo"
+          alt="Hexo"
+        />
+        
+      </div>
+    </div>
+  </div>
+  <div class="cover-learn-more">
+    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
+  </div>
+</section>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
+
+
+<!-- Subtitle -->
+
+  <script>
+    try {
+      var typed = new Typed("#subtitle", {
+        strings: ['keep learning!!!!', '', ''],
+        startDelay: 0,
+        typeSpeed: 200,
+        loop: true,
+        backSpeed: 100,
+        showCursor: true
+      });
+    } catch (err) {
+      console.log(err)
+    }
+  </script>
+  
+<div id="main">
+  <section class="outer">
+  <article class="articles">
+    
+    
+    
+    
+    <article
+  id="post-杭州-DAY1"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -65,219 +128,171 @@
     
     <header class="article-header">
        
-<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  环境配置
-</h1>
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/10/10/%E6%9D%AD%E5%B7%9E-DAY1/"
+    >杭州-DAY1</a> 
+</h2>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/06/25/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" class="article-date">
-  <time datetime="2023-06-25T03:23:34.000Z" itemprop="datePublished">2023-06-25</time>
+      <a href="/2022/10/10/%E6%9D%AD%E5%B7%9E-DAY1/" class="article-date">
+  <time datetime="2022-10-10T10:40:16.000Z" itemprop="datePublished">2022-10-10</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Learnopengl/">Learnopengl</a>
+    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
   </div>
-  
-<div class="word_count">
-    <span class="post-time">
-        <span class="post-meta-item-icon">
-            <i class="ri-quill-pen-line"></i>
-            <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">318</span>
-        </span>
-    </span>
-
-    <span class="post-time">
-        &nbsp; | &nbsp;
-        <span class="post-meta-item-icon">
-            <i class="ri-book-open-line"></i>
-            <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
-        </span>
-    </span>
-</div>
- 
+   
     </div>
       
-    <div class="tocbot"></div>
-
-
-
-
-  
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="vs下freetype环境配置"><a href="#vs下freetype环境配置" class="headerlink" title="vs下freetype环境配置"></a>vs下freetype环境配置</h4><p>1.下载并解压freetype-2.10.2.tar.gz，放在项目适当的目录下</p>
-<p>2.进入freetype-2.10.2&#x2F;builds&#x2F;windows&#x2F;vc2010，双击freetype.sln</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251139739.png" alt="image-20230625113913617"></p>
-<p>3.在Win32位下，右键项目点击生成</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251138342.png" alt="image-20230625113841193"></p>
-<p>4.如果生成成功，在freetype-2.10.2&#x2F;objs&#x2F;Win32&#x2F;Debug目录下会出现freetype.dll和freetype.lib</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251138526.png" alt="image-20230625113817362"></p>
-<p>5.cmake项目时选择Visual Studio 15 2017而不是Visual Studio 15 2017（Win64），不然之后运行会找不到freetype.lib，lib的x86与目标项目的x64冲突。</p>
-<p>6.将freetype.dll复制到项目生成的Debug目录下，否则之后运行会出错</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251140235.png" alt="image-20230625114033076"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251141972.png" alt="image-20230625114100871"></p>
-<p>7.右击项目，选择属性</p>
-<p>配置属性-VC++目录-包含目录：源文件#include需要的头文件所在目录</p>
-<p>D:\practice\case_learn\ogl-2.1_branch_tutorial\ogl-2.1_branch_tutorial\external\freetype-2.10.2\include</p>
-<p>配置属性-VC++目录-库目录：lib&#x2F;dll所在的库目录（为了以防万一将该目录添加进环境变量）</p>
-<p>D:\practice\case_learn\ogl-2.1_branch_tutorial\ogl-2.1_branch_tutorial\external\freetype-2.10.2\objs\Win32\Debug</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251150581.png" alt="image-20230625115053397"></p>
-<p>链接器-输入-附加依赖项：添加freetype.lib（为了以防万一将文件目录写全，而不是只写freetype.lib）</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202306251154084.png" alt="image-20230625115426929"></p>
-<p>8.准备好需要的字体文件.ttf，在需要freetype的源文件中添加如下两行：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ft2build.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> FT_FREETYPE_H  </span></span><br></pre></td></tr></table></figure>
+  <h4 id="STATION1-京杭大运河"><a href="#STATION1-京杭大运河" class="headerlink" title="STATION1-京杭大运河"></a>STATION1-京杭大运河</h4><p><strong>路线</strong>：地铁1号线-西湖文化广场站</p>
+<p><strong>一些科普</strong>：京杭大运河始建于春秋时期，是世界上里程最长、工程最大的古代运河，也是最古老的运河之一，与长城、坎儿井并称为中国古代的三项伟大工程，并且使用至今，是中国古代劳动人民创造的一项伟大工程，是中国文化地位的象征之一。大运河南起<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%BD%99%E6%9D%AD/260370?fromModule=lemma_inlink">余杭</a>（今<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%9D%AD%E5%B7%9E/147639?fromModule=lemma_inlink">杭州</a>），北到<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B6%BF%E9%83%A1/7966372?fromModule=lemma_inlink">涿郡</a>（今<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8C%97%E4%BA%AC/128981?fromModule=lemma_inlink">北京</a>）。人工运河。</p>
+<p><strong>我</strong>：放完行李立刻就奔向运河了。运河水上巴士有4条线，大家推荐比较多的是1号线和7号线，这一站正好是1号线。1号线是走运河的一段，和公交车一样到站可以下车，只要3块。那天天气很好，风吹的很舒服，也没啥人，我第一次见到运河，论风景的话还可以，但是没到惊艳我的程度。</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182319581.png" alt="image-20221018231905519"></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182319938.png" alt="image-20221018231926874"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182320131.png" alt="image-20221018232036070"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182320084.png" alt="image-20221018232041029"></td>
+</tr>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182320570.png" alt="image-20221018232045525"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182321052.png" alt="image-20221018232100994"></td>
+</tr>
+</tbody></table>
+<p>环球中心：地铁站一下就是，还有浙江省博物馆，浙江省自然博物馆，戏剧院等等，就在运河旁边。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182322112.png" alt="img"></p>
+<p>根据某书推荐，在拱宸桥下的船，虽然听说夜景更好看orz。桥一边是广场，另一边是类似文化街的弄堂，有中国伞博物馆、中国扇博物馆等。桥上可以看见宽阔的运河。第4张美死了（<del>感觉桥很有梦华录里的感jio</del>，<del>然后发现梦华录在无锡的拍的，那没事了</del>）</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182341888.png" alt="image-20221018234153826"></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182341349.png" alt="image-20221018234159285"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182342197.png" alt="image-20221018234205130"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190107685.png" alt="image-20221019010751619"></td>
+</tr>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182346190.png" alt="image-20221018234626139"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182346413.png" alt="image-20221018234643356"></td>
+</tr>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182346584.png" alt="image-20221018234649543"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190108131.png" alt="image-20221019010825085"></td>
+</tr>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182348790.png" alt="image-20221018234812729"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182348623.png" alt="image-20221018234822565"></td>
+</tr>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182348887.png" alt="image-20221018234850809"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210182349540.png" alt="image-20221018234900464"></td>
+</tr>
+</tbody></table>
+<h4 id="STATION2-河坊街-amp-南宋御街"><a href="#STATION2-河坊街-amp-南宋御街" class="headerlink" title="STATION2-河坊街&amp;南宋御街"></a>STATION2-河坊街&amp;南宋御街</h4><p><strong>路线</strong>：地铁1号线某一站</p>
+<p><strong>一些科普</strong>：南宋御街是南宋都城临安铺设的一条主要街道。河坊街自古就是杭州的商业中心，旧时，与中山中路相交的“清河坊四拐角”，成为当时远近闻名的所在。杭州闻名的“五杭”（杭剪、杭扇、杭粉、杭烟、杭线）就出于此。</p>
+<p><strong>我</strong>：不要去！不要去！不要去！杭州是没地方玩了吗，是没有地方可以吃饭了吗？？确实有很多小店，街道也很复古，但是根据我的经验全国都有这样的地方。最重要的是不知是大家现在已经不去了还是淡季的原因街道荒凉到让我怀疑我找错地方了。但是门口分明写着南宋御街…..还有人问我们请问这里是南宋御街吗。写着是，我反正不信。秉持着来都来了的心态跟着某书的推荐去找小吃，也路过了一些奇特的小店。ps:夜市的话或许可以去武林夜市。</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190027451.png" alt="image-20221019002759388"></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190028171.png" alt="image-20221019002807112"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190028399.png" alt="image-20221019002814359"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190028997.png" alt="image-20221019002817949"></td>
+</tr>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190028100.png" alt="image-20221019002823047"></td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190028375.png" alt="image-20221019002839318"></td>
+</tr>
+</tbody></table>
+<p>下面是一些美食（？）图鉴</p>
+<p>1、片儿川35r</p>
+<p>片儿川看起来在杭州就跟热干面在武汉一样的地位。下图南宋御街的一家面馆吃的腰花片儿川（旁边是平平无奇炒面），里面还有白蘑菇、笋和倒笃菜。汤很好喝，面是圆面，比较有劲道（对于我这种讨厌粉面的人来说，这是我除了热干面和日本拉面之外，最能接受的一种）。后来我才发现这家用的是新鲜倒笃菜，而且因为是猪腰价格就高了不少……</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190041879.png" alt="image-20221019004132817"></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190041820.png" alt="image-20221019004142760"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">面的特写</td>
+<td align="center">面</td>
+</tr>
+</tbody></table>
+<p>附一张第二天在民宿旁边早餐店吃的经典片儿川，腌制好的倒笃菜（酸酸的很开胃）、肉丝、白蘑菇和笋，汤真的很好喝。25r</p>
+<p>ps：如果想知道倒笃菜的味道，或许你吃过雪菜？</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210202043988.jpg" alt="QQ图片20221020204306" style="zoom: 50%;" />
 
+
+
+<p>2、葱包烩儿10r&#x2F;15r</p>
+<p>左边是南宋御街nm坑人的两块面皮，右边是楼下武林夜市半坑人的，因为我觉得15块也蛮离谱的。外面很像酥脆一些的春卷皮，里面是豆皮（还是千张？）油条以及甜面酱，最后在铁板上压扁。总体来说还行，以前没见过，好奇心是满足了，但至今不知道这b东西应该多少钱。</p>
+<table>
+<thead>
+<tr>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190052633.png" alt="image-20221019005217545"></th>
+<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190052546.png" alt="image-20221019005224450"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">坑爹玩意儿</td>
+<td align="center">半坑人玩意儿</td>
+</tr>
+</tbody></table>
+<p>3、龙港臭豆腐13r</p>
+<p>河坊街吃的臭豆腐，没见过这样的臭豆腐。外层想炸酥了的面包，酱好香。后来发现其他饭店的臭豆腐也是这种，不是黑色的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190054447.png" alt="image-20221019005406365"></p>
+<p>4、佳偶天成18r</p>
+<p>看某书推荐的龙井藕粉和桂花藕粉，旁边两小碗是鲜榨藕汁+冰糖。很好看但是味道一般。第二个是莲子零食，很香很酥（没有买觉得好贵）。ps：杭州藕粉挺多的，不过想吃藕粉可以选择淘宝，或许学校外就有，我家也产。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190057974.png" alt="image-20221019005723928"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190058042.png" alt="image-20221019005831937"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190058580.png" alt="image-20221019005846483"></p>
+<p>最后附上一张武林夜市（地铁1号线-凤起路站）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210190100806.png" alt="img"></p>
  
       <!-- reward -->
-      
-      <div id="reward-btn">
-        Donate
-      </div>
       
     </div>
     
 
     <!-- copyright -->
     
-    <div class="declare">
-      <ul class="post-copyright">
-        <li>
-          <i class="ri-copyright-line"></i>
-          <strong>Copyright： </strong>
-          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
-        </li>
-      </ul>
-    </div>
-    
     <footer class="article-footer">
        
-<div class="share-btn">
-      <span class="share-sns share-outer">
-        <i class="ri-share-forward-line"></i>
-        分享
-      </span>
-      <div class="share-wrap">
-        <i class="arrow"></i>
-        <div class="share-icons">
-          
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="ri-weibo-fill"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="ri-wechat-fill"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="ri-qq-fill"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="ri-douban-line"></i>
-          </a>
-          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a> -->
-          
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="ri-facebook-circle-fill"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="ri-twitter-fill"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="ri-google-fill"></i>
-          </a>
-        </div>
-      </div>
-</div>
-
-<div class="wx-share-modal">
-    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/06/25/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div id="share-mask"></div>  
     </footer>
   </div>
 
-   
-  <nav class="article-nav">
     
-      <a href="/2023/07/08/games202-2/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            games202-2
-          
-        </div>
-      </a>
-    
-    
-      <a href="/2023/05/22/games101-22-Animation/" class="article-nav-link">
-        <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-22-Animation</div>
-      </a>
-    
-  </nav>
-
-   
-<!-- valine评论 -->
-<div id="vcomments-box">
-  <div id="vcomments"></div>
-</div>
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-    el: "#vcomments",
-    app_id: "",
-    app_key: "",
-    path: window.location.pathname,
-    avatar: "monsterid",
-    placeholder: "给我的文章加点评论吧~",
-    recordIP: true,
-  });
-  const infoEle = document.querySelector("#vcomments .info");
-  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
-    infoEle.childNodes.forEach(function (item) {
-      item.parentNode.removeChild(item);
-    });
-  }
-</script>
-<style>
-  #vcomments-box {
-    padding: 5px 30px;
-  }
-
-  @media screen and (max-width: 800px) {
-    #vcomments-box {
-      padding: 5px 0px;
-    }
-  }
-
-  #vcomments-box #vcomments {
-    background-color: #fff;
-  }
-
-  .v .vlist .vcard .vh {
-    padding-right: 20px;
-  }
-
-  .v .vlist .vcard {
-    padding-left: 10px;
-  }
-</style>
-
  
-     
+   
 </article>
 
+    
+  </article>
+  
+
+  
+  <nav class="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+  </nav>
+  
 </section>
+</div>
+
       <footer class="footer">
   <div class="outer">
     <ul>
@@ -435,23 +450,6 @@
 <script src="/js/lazyload.min.js"></script>
 
 <!-- Tocbot -->
-
-
-<script src="/js/tocbot.min.js"></script>
-
-<script>
-  tocbot.init({
-    tocSelector: '.tocbot',
-    contentSelector: '.article-entry',
-    headingSelector: 'h1, h2, h3, h4, h5, h6',
-    hasInnerContainers: true,
-    scrollSmooth: true,
-    scrollContainer: 'main',
-    positionFixedSelector: '.tocbot',
-    positionFixedClass: 'is-position-fixed',
-    fixedSidebarOffset: 'auto'
-  });
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
