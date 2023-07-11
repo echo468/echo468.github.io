@@ -118,6 +118,65 @@
     
     
     <article
+  id="post-games202-3"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/07/10/games202-3/"
+    >games202-3</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/10/games202-3/" class="article-date">
+  <time datetime="2023-07-10T14:21:42.000Z" itemprop="datePublished">2023-07-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games202/">games202</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>shadow mapping</p>
+<p>1、从光源的视角渲染场景，输出在光源视角下的最浅深度shadow map（存储在纹理中，便于第二次渲染采样）。此时纹理可以代表场景的几何信息。</p>
+<p>2、从相机的视角渲染场景，判断当前片段是否在阴影中（能被光看见）</p>
+<p>坏处：</p>
+<p>在光的视角下，对于每个像素，记录光能看到的最近的物体的深度。存下后得到纹理。</p>
+<p>在相机的视角下，对于每个像素，判断是否能被光看见。如果该点到光源的距离与之前记录的深度一致，则可以看见，不在阴影中。如果比记录的更深，则在阴影里。</p>
+<p>细节：在光源视角下经过MVP变换后，在透视压缩中，z值会靠近远平面。因此纹理记录的z值并不是真正到光源的距离。在第二次渲染进行比较的过程中，只要一致即可。比较时，也用在光视角下MVP变换后的坐标z值即可。（或者两次均使用世界空间下，点到光源的实际距离）</p>
+<p>问题：</p>
+<p>在shadow map中，一个像素内部记录的深度是一个常数，纹理有一定分辨率。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games202-2"
   class="article article-type-post"
   itemscope
@@ -1176,120 +1235,6 @@
 <img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230513153752040.png" alt="image-20230513153752040" style="zoom:67%;" />
 
 <p>​		对各向同性点光源，所有方向上的亮度都与方向无关，所以I是一个常数，因此对Φ积分时只用对立体角积分。最后推算出的I是一个常数。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-13-Ray-Tracing1"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/13/games101-13-Ray-Tracing1/"
-    >games101-13-Ray_Tracing1</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/13/games101-13-Ray-Tracing1/" class="article-date">
-  <time datetime="2023-05-13T05:44:01.000Z" itemprop="datePublished">2023-05-13</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="光线追踪如何处理全局光照"><a href="#光线追踪如何处理全局光照" class="headerlink" title="光线追踪如何处理全局光照"></a>光线追踪如何处理全局光照</h4><p>​		光栅化不适合处理全局的效果。如软阴影、磨砂材质、间接光照（光反射多次后到达相机）。在之前的光栅化处理中，只考虑光的一次反射，从光源到达着色点再到达相机。光栅化渲染快，常用于实时渲染（每秒超过30帧）</p>
-<p>假设：</p>
-<p>（1）光线沿着直线传播</p>
-<p>（2）光线和光线不会发生碰撞</p>
-<p>（3）光线路径可逆，即从A发出的到B的光线，一定也可以从B发出到A（中途可发生反射和折射）</p>
-<p>​		从人眼或摄像机向近投影平面上的每一个像素点发射一条光线，判断与场景物体的交点。一条光线可能会与不止一个物体相交，但是考虑遮挡关系，只去找最近的交点（相当于进行了深度测试）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121407903.png" alt="image-20230512140740839" style="zoom:67%;" />
-
-<p>​		接着连接该交点和光源，只要判断这条连线之间是否有物体存在就可以知道该交点是否在阴影之中。如果该点不在阴影中，知道该点的法线、相机位置和光源位置，可以计算出该点对应的像素值。遍历所有近投影平面上的像素就能得到一张完整的图像。此时效果与局部光照模型是一样的，只考虑了光一次反射。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121409264.png" alt="image-20230512140905212" style="zoom:67%;" />
-
-<p>​		上一个例子中光线第一个与圆球物体相交，假设该圆球是一个玻璃球，那么便会发生镜面反射。除了镜面反射之外，也存在折射，同时反射与折射出去的光线可能与场景中的物体再次碰撞，发生第二次折射与反射。下图以两个光线，以两次折射或反射的部分光线为例。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121413323.png" alt="image-20230512141359281" style="zoom:67%;" />
-
-<p>​		此时每一个像素的颜色贡献来自直接光照，反射方向间接光，折射方向间接光（如果有折射的话）。下一步将这些所有交点（上图中4个交点）与光源连接，计算这些所有点的局部光照模型的结果（被遮挡就不用计算），将其按照光线能量权重累加(光在传播过程中会有损失，如果不添加权值最后会发生曝光)，最终得到近投影平面上该像素点的颜色。这是一个全局光照模型，不仅仅考虑了直接光源的贡献，还考虑各种折射与反射光线的贡献。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121414958.png" alt="image-20230512141440915" style="zoom:67%;" />
-
-<p>​		上图中的光线分成三种类别，相机到物体为primary ray；中间反射和折射的蓝线为secondary  ray；最后交点与光源的连线为shadow ray，因为要考虑遮挡。</p>
-<h4 id="如何判断光线与物体的交点"><a href="#如何判断光线与物体的交点" class="headerlink" title="如何判断光线与物体的交点"></a>如何判断光线与物体的交点</h4><h5 id="光线与隐式几何求交"><a href="#光线与隐式几何求交" class="headerlink" title="光线与隐式几何求交"></a>光线与隐式几何求交</h5><p>​		通过光源位置O和光线方向d定义一条光线（光线是射线）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121420925.png" alt="image-20230512142046886" style="zoom: 50%;" />
-
-<p>​		光线与球求交，t值对应的点需要满足两个表达式：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424656.png" alt="image-20230512142416606" style="zoom: 67%;" />
-
-<p>​		光线与球求交可能会没有交点、有一个交点或者有两个交点。在有两个交点的情况下，取更小的t值。（t必须是实数且为非负数）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121424151.png" alt="image-20230512142454099" style="zoom: 50%;" />
-
-<p>​		对于光线与隐式表面的交点，只要将光线方程代入求解 t 即可：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121502542.png" alt="image-20230512150218495" style="zoom:67%;" />
-
-<h5 id="光线与显示几何求交"><a href="#光线与显示几何求交" class="headerlink" title="光线与显示几何求交"></a>光线与显示几何求交</h5><p>​		对于显示表面，最重要的是判断光线如何与三角形求交（只考虑0&#x2F;1个交点）。如下图可以将该光线与所有三角形面求交，找到最小的t值。对于多个像素（多条光线）都与所有面计算，计算量相当大。总计算量为像素数（一个像素一个光线）✖三角形面。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121507126.png" alt="image-20230512150709077" style="zoom:67%;" />
-
-<p>​		判断光线与三角形所在平面是否有交点，如果有交点再判断该点是否在三角形内部。</p>
-<p>​		首先通过一个点和法线定义一个平面。如果任意一点和该点的连线与法线垂直，则说明该点在平面上。将p和n用xyz定义，展开后如右式。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121515786.png" alt="image-20230512151503743" style="zoom:67%;" />
-
-<p>​		得到参数 t 之后，可以计算出交点，并且再去计算出重心坐标就能判断该交点是否在三角形内。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520092.png" alt="image-20230512152052037" style="zoom: 50%;" />
-
-<p>​		如下方法直接判断光线在三角形内部是否有交点。假设该点在三角形内，则可以通过重心坐标表示。通过如下方法解出t,b1,b2。如果t,b1,b2,1-b1-b2都是非负数，则该点在三角形内部。</p>
-<p>​		<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121520552.png" alt="image-20230512152025494" style="zoom: 50%;" /></p>
-<h5 id="光线与包围盒求交"><a href="#光线与包围盒求交" class="headerlink" title="光线与包围盒求交"></a>光线与包围盒求交</h5><p>​		使用包围盒加速光线与物体求交。三维空间常用的包围盒是AABB包围盒，即一个长方体。包围盒是由3个对面形成的交集。以二维为例，计算出光线进入两个对面的时间，和光线出两个对面的时间。将第一幅图和第二幅图的线段做交集。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121549035.png" alt="image-20230512154907983" style="zoom:67%;" />
-
-<p>​		对于三维场景来说，光线进入一个盒子，就说明三个对面都要满足光线已经进入（对所有的进入时间tmin取最大值）；光线离开一个盒子，只要满足光线离开任意一个对面（对所有的离开时间tmax取最小值）。如果进入时间小于离开时间，光线一定会在盒子中停留一段时间，即有交点。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121559857.png" alt="image-20230512155903819" style="zoom: 67%;" />
-
-<p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
-
-<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121642550.png" alt="image-20230512164222503" style="zoom: 67%;" /></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121643720.png" alt="image-20230512164312676" style="zoom:67%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121652618.png" alt="image-20230512165258572" style="zoom:67%;" /></td>
-<td align="center"></td>
-</tr>
-</tbody></table>
  
       <!-- reward -->
       

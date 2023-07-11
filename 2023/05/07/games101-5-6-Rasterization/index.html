@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">0</span>
+            <span class="post-count">2.7k</span>
         </span>
     </span>
 
@@ -94,20 +94,137 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
+            <span class="post-count">9 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-   
+  <h4 id="三角形及光栅化"><a href="#三角形及光栅化" class="headerlink" title="三角形及光栅化"></a>三角形及光栅化</h4><p>三角形的好处：</p>
+<p>1.最基础的多边形</p>
+<p>2.三角形内部一定在一个平面</p>
+<p>3.三角形的内外定义清晰</p>
+<p>4.便于插值</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111544303.jpg" alt="img" style="zoom:67%;" /> 
+
+<p>光栅器是位于最终处理过的顶点之后到片段着色器之前所经过的所有算法和过程的总和。</p>
+<p>光栅器会将一个图元的所有顶点作为输入，并将它转换为一系列的片段。顶点坐标理论上可以取任意值，但片段不行，因为它们受限于窗口的分辨率。</p>
+<p>光栅化：判断像素和三角形的位置关系（判断像素中心点（采样点，像素中心与像素坐标区分）和三角形的位置关系）</p>
+<p>采样：被三角形所遮盖的采样点所在的像素处，会生成一个片段。对于三角形边缘，有的采样点没有被三角形内部遮盖，所以不会生成片元，也不会受到片段着色器的影响。由于屏幕像素总量的限制，有些边缘的像素能够被渲染出来，而有些则不会。结果就是使用了不光滑的边缘来渲染图元，导致锯齿边缘。</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111544352.jpg" alt="img"></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111544377.jpg" alt="img"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546146.jpg" alt="img"></p>
+<p>可以使用向量叉乘的方法，判断像素中心是否在三角形内部。如果在三角形边上，可以自定义是否属于在三角形内。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546119.jpg" alt="img"> </p>
+<p>使用包围盒可以减少计算量。此处使用轴向包围盒AABB，对窄且长的三角形不友好。窄且长的三角形可以使用右侧方式。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546100.jpg" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546178.jpg" alt="img"> </p>
+<p>像素内部颜色在不同设备有不同表现，此处简单认为一个像素内部颜色值相同。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546790.jpg" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546772.jpg" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546730.jpg" alt="img"> </p>
+<p>屏幕空间用一些离散的点（像素中心）是否在三角形内进行采样。会产生锯齿。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546706.jpg" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546751.jpg" alt="img">  </p>
+<h4 id="Aliasing走样"><a href="#Aliasing走样" class="headerlink" title="Aliasing走样"></a>Aliasing走样</h4><p>采样</p>
+<p>（1）空间中采样：像素所有到达感光元件的光学信息-离散成像素</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111546842.jpg" alt="img"> </p>
+<p>（2）采样除了可以发生在不同位置还可以发生在不同时间</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111547302.jpg" alt="img"> </p>
+<p>Artifcts</p>
+<p>（1）锯齿（空间位置上的采样）</p>
+<p>（2）摩尔纹（空间位置上的采样）</p>
+<p>（3）车轮效应（时间上的采样）</p>
+<p>（4）信号变化太快采样跟不上</p>
+<p>反走样</p>
+<p>采样之前滤波&#x2F;模糊</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111547258.jpg" alt="img"> </p>
+<p>不可采样-模糊：走样后模糊</p>
+<h5 id="频率和周期"><a href="#频率和周期" class="headerlink" title="频率和周期"></a>频率和周期</h5><p>修改系数f改变sin函数和cos函数的频率，频率定义函数变换有多快。频率的倒数是周期，周期定义函数隔多久重复一次</p>
+<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml10168\wps19.jpg" alt="img"> </p>
+<h5 id="傅里叶变换"><a href="#傅里叶变换" class="headerlink" title="傅里叶变换"></a>傅里叶变换</h5><p>傅里叶级数展开：任何一个周期函数，都可以写成一系列sin和cos的线性组合以及一个常数项</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111548357.jpg" alt="img"></p>
+<p>频率从低到高，通过增加更多sin和cos函数，会无限趋近于原周期函数</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111548631.jpg" alt="img"> </p>
+<p>傅里叶变换就是通过一些变换使得函数f(x)变成函数F(w)，F(w)通过逆傅里叶变换还原成函数f(x)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111548413.jpg" alt="img"> </p>
+<h5 id="从时域上看走样"><a href="#从时域上看走样" class="headerlink" title="从时域上看走样"></a>从时域上看走样</h5><p>如下使用同一采样频率对不同频率的函数采样，对于高频函数，使用低频采样无法还原原函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111548441.jpg" alt="img"> </p>
+<p>假设有如下黑色和蓝色两个函数，采用如下频率的采样，可以得到相同的采样结果（黑色函数）。同样的采样频率采样两个频率截然不同的函数，得到的结果无法区分，称之为走样。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549921.jpg" alt="img"></p>
+<h5 id="滤波-amp-时域频域"><a href="#滤波-amp-时域频域" class="headerlink" title="滤波&amp;时域频域"></a>滤波&amp;时域频域</h5><p>去掉一些特定的频率</p>
+<p>傅里叶变换可以将函数从时域变到频域</p>
+<p>此处没有时间信息，指的是是空间中的不同位置，傅里叶变换把图像空间变到频率空间，在频域图中，图中心是低频区域，更亮，图像信息越多，周围是高频区域，更黑，图像信息更少。从中心到边缘，频率逐渐增大，图像信息减少。通过傅里叶变换可以看到任何信号在不同频率的样子。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549894.jpg" alt="img"> </p>
+<p>高通滤波：去掉低频信息后再将频域图通过逆傅里叶变换恢复到时域图，可以看到只留下了图像内容的边界。由于边界左右发生剧烈变化，是高频信息，因此频域图的高频部分表示图像内容边界。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549970.jpg" alt="img"> </p>
+<p>低通滤波：去掉高频信息后再将频域图通过逆傅里叶变换恢复到时域图，可以看到图像边界模糊，相当于对图像进行了模糊操作。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549711.jpg" alt="img"></p>
+<p>留下了不太明显的边界，外围保留越多，边界越明显。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549683.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549740.jpg" alt="img"> </p>
+<h5 id="卷积"><a href="#卷积" class="headerlink" title="卷积"></a>卷积</h5><p>简单信号的卷积计算：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111549772.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111550328.jpg" alt="img"></p>
+<p>结论：</p>
+<p>（1）时域上用一个滤波器对信号卷积&#x3D;将时域信号和滤波器变成频域后，两个频域的乘积，再通过傅里叶逆变换变成时域</p>
+<p>（2）时域上一个滤波器和信号乘积&#x3D;将时域信号和滤波器变成频域后，用滤波器频域卷积信号频域，再通过傅里叶逆变换变成时域</p>
+<h5 id="从时域和频域看模糊"><a href="#从时域和频域看模糊" class="headerlink" title="从时域和频域看模糊"></a>从时域和频域看模糊</h5><p>如下利用3*3的卷积核对一张图片进行卷积操作，每一个像素的值为周围9个像素值的平均（除以9使得最后的值在0-255）,最后的结果是图片模糊。也可以将图片和卷积核通过傅里叶变换变成频域图，将两个频域图相乘得，通过傅里叶逆变换后得到最终结果。该卷积核的频域图相当于一个低通滤波，使得最后的图像边界模糊。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111550356.jpg" alt="img"> </p>
+<p>如下图左侧是上述卷积核的时域图，右侧是卷积核的频域图。卷积核越大，图片越模糊，过滤掉的高频信息就越多，频域图白色的部分越少。卷积核越小，图片越清晰，极端情况下卷积和小于等于一个像素的大小，图片所有信息都会被保留。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111553952.png" alt="image-20230711155305901"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111550051.jpg" alt="img"> </p>
+<h5 id="从频域看采样"><a href="#从频域看采样" class="headerlink" title="从频域看采样"></a>从频域看采样</h5><p>从频域的角度来看，采样是对频域内容的重复（重复原始信号的频谱）。第一行左侧是一个函数的时域图，右侧是该函数的频域图。第二行左侧是一个冲激函数的的时域图，右侧是该函数的频域图。将函数a和函数c相乘得到函数e，是a函数上一些离散的点（时域上）。将函数a的频域图b和函数c的频域图d进行卷积得到函数e的频域图f，为b的重复。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111550529.jpg" alt="img"> </p>
+<h5 id="从频域看为什么会发生走样现象"><a href="#从频域看为什么会发生走样现象" class="headerlink" title="从频域看为什么会发生走样现象"></a>从频域看为什么会发生走样现象</h5><p>采样频率下降意味着采样点之间间隔很大，这会导致频谱间的间隔非常小。</p>
+<p>因此走样在频域的角度就是频谱发生混叠。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111551931.jpg" alt="img"> </p>
+<h5 id="从频域看反走样"><a href="#从频域看反走样" class="headerlink" title="从频域看反走样"></a>从频域看反走样</h5><p>（1）增加采样率，使得像素和像素之间的间隔更小（但是很多时候分辨率是一定的，不能随意改变）</p>
+<p>（2）先模糊再采样</p>
+<p>模糊在频域上看是去掉高频信息，再采样（重复频谱），如下图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111551950.jpg" alt="img"> </p>
+<p>根据图可以分析出不能先采样（重复频谱），再模糊（掉高频信息）。</p>
+<h5 id="在实际应用中如何进行模糊操作"><a href="#在实际应用中如何进行模糊操作" class="headerlink" title="在实际应用中如何进行模糊操作"></a>在实际应用中如何进行模糊操作</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111551994.jpg" alt="img"> </p>
+<p>使用一个像素大小的滤波器，在一个像素内部卷积（做平均），此处做平均的方法是根据三角形在这个像素中的覆盖面积。如第一个覆盖1&#x2F;8，则红色1&#x2F;8，白色7&#x2F;8。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111551476.jpg" alt="img"></p>
+<p>使用MSAA的方法计算一个像素中的覆盖面积，将一个像素中间设置更多的采样点，如下是4*4。颜色缓冲的大小会随着子采样点的增加而增加。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111551497.jpg" alt="img"> </p>
+<p>如果是对每一个被遮盖住的子采样点运行一次片段着色器，最后将每个像素所有子采样点的颜色平均一下，这种计算方式会显著降低性能（早期SSAA）。实际MSAA的计算方式是每个图元中的每个像素只运行一次片段着色器。片段着色器所使用的顶点数据会插值到每个像素的中心，所得到的结果颜色会被储存在每个被遮盖住的且通过深度测试的子采样点中。最终这个像素的颜色值是像素内部所有子采样点的平均。如果该像素内部存在被覆盖且深度测试被通过的子样本，则计算像素的最终颜色。如4个采样点中只有2个被遮盖住了，这个像素的颜色将会是三角形颜色与其他两个采样点的颜色（不一定是背景色）的平均值。也就是通过一个像素中新增采样点在在三角形内部的占比来计算像素的颜色值。一个像素中如果有更多的采样点被三角形遮盖，那么这个像素的颜色就会更接近于三角形的颜色。三角形的不平滑边缘被稍浅的颜色所包围后，从远处观察时就会显得更加平滑了。</p>
+<p>不仅仅是颜色值会受到多重采样的影响，深度和模板测试也能够使用多个采样点。对深度测试来说，每个顶点的深度值会在运行深度测试之前被插值到各个子样本中（也就是颜色需要的顶点属性用像素中心的坐标插值，每个像素只运行一次片段着色器，但是深度值是用子样本的坐标插值）。对模板测试来说，对每个子样本，而不是每个像素，存储一个模板值。当然，这也意味着深度和模板缓冲的大小会乘以子采样点的个数。</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111552052.png" alt="image-20230711155217013"></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111552404.png" alt="image-20230711155233357"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111552076.png" alt="image-20230711155247023"></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>MSAA在一个像素中新增采样点是为了近似覆盖率进行模糊操作（包含了采样操作），并没有提高分辨率，并且增大了计算量。</p>
+<p>Ps:对直线进行反走样，可以取直线上点周围临近的四个像素，根据点到像素中心的距离，填充不同深浅的颜色值。MSAA是在一个像素中取四个子采样点。</p>
+<h5 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h5><p>FXAA:图像后期处理，找到边界把边界换成没有锯齿的边界</p>
+<p>TAA：利用上一帧的信息</p>
+<p>超分辨率:DLSS使用深度学习</p>
+ 
       <!-- reward -->
       
       <div id="reward-btn">
