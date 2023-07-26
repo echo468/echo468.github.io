@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2.6k</span>
+            <span class="post-count">3k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">8 min</span>
+            <span class="post-count">10 min</span>
         </span>
     </span>
 </div>
@@ -153,7 +153,20 @@
 <p>​		完整公式如下，f只与相对速度大小有关（也就是弹簧长度发生变化才有阻力），而与弹簧拉伸长度无关。如下对于b来说，阻力从b指向a，所以要添加-号，之后一项表示方向。红色点乘表示力的大小，b-a是相对速度大小，点乘后为该速度在a到b方向上的投影（对于ab不伸长的圆周运动，作用在b上的力垂直于ab，在ab方向上的投影为0，此时无阻力）。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151112803.png" alt="image-20230515111251697" style="zoom: 50%;" />
 
-<p>​		单个模型可以组成更复杂的模型：</p>
+<p>​		对于一根绳子而言，会有多个弹簧链接组成。对于每一个节点：需要知道节点位置、节点质量和是否允许节点运动。每两个节点间需要创建弹簧。对于每一根弹簧需要知道起始节点、结束节点(计算原长)和弹簧系数。</p>
+<p>​		对于某一时刻，更新位移和速度：</p>
+<p>​		（1）利用胡克定律计算每根弹簧两个节点的弹力（由于弹簧间是连在一起的，因此力是累加的;每一时刻都要单独计算受力）</p>
+<p>​		（2）遍历每一个节点利用显示欧拉求解</p>
+<p>​		先得到加速度：弹簧力&#x2F;节点质量+重力加速-阻力&#x2F;节点质量(此处简化直接用-kv计算阻力，v是绝对速度)</p>
+<p>​		显示欧拉：</p>
+<p>​		v(t+1)&#x3D;v(t)+a(t)×dt;		x(t+1)&#x3D;x(t)+v(t)×dt;</p>
+<p>​		半隐式欧拉（更稳定）：</p>
+<p>​		v(t+1)&#x3D;v(t)+a(t)×dt;		x(t+1)&#x3D;x(t)+v(t+1)×dt;</p>
+<p>​		（3）遍历每一个节点利用显示Verlet求解</p>
+<p>​		先得到加速度：弹簧力&#x2F;节点质量+重力加速（计算加速度时不考虑阻力）</p>
+<p>​		显示Verlet：x(t+1)&#x3D;x(t)+(x(t)-x(t-1))+a(t)×dt×dt</p>
+<p>​		加入阻尼的显示Verlet：x(t+1)&#x3D;x(t)+(1-kd)×(x(t)-x(t-1))+a(t)×dt×dt</p>
+<p>单个模型可以组成更复杂的模型：</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151134053.png" alt="image-20230515113408957" style="zoom:50%;" />
 
 <p>​		布料可以抵抗切变，但是如下模型不能抵抗切变（当有如下两个力拉动时，两端会被拉伸，中间会向内部收缩）。以及布料能力对抗“折”的力，例如纸很容易对折：</p>
@@ -165,8 +178,7 @@
 <p>​		这种结构将抵抗切变, 方向偏差较小, 也无法抵抗平面外弯曲，因为可以沿着竖线或者横线对折。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151243715.png" alt="image-20230515124344616" style="zoom: 67%;" />
 
-<pre><code>     这种结构将抵抗切变, 方向偏差较小, 也可以抵抗平面外弯曲。相比青色弹簧, 红色的弹簧相连接的力应该弱得多 (因为青色相连代表布的韧性, 红色则代表布放在桌边, 布会自然下垂, 红色线就会被拉扯)，所以不能只用红线，红线只是辅助作用。
-</code></pre>
+<p>​	这种结构将抵抗切变, 方向偏差较小, 也可以抵抗平面外弯曲。相比青色弹簧, 红色的弹簧相连接的力应该弱得多 (因为青色相连代表布的韧性, 红色则代表布放在桌边, 布会自然下垂, 红色线就会被拉扯)，所以不能只用红线，红线只是辅助作用。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151244150.png" alt="image-20230515124450068" style="zoom:67%;" />
 
 <p>​		如可以用质点弹簧裙子+人物，有时会采用更好的有限元法FEM代替弹簧系统。</p>

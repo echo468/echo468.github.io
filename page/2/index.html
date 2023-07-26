@@ -118,6 +118,664 @@
     
     
     <article
+  id="post-games101-19-Cameras"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/19/games101-19-Cameras/"
+    >games101-19-Cameras</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/19/games101-19-Cameras/" class="article-date">
+  <time datetime="2023-05-19T10:33:50.000Z" itemprop="datePublished">2023-05-19</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
+<p>2.不存在的合成的物体：光栅化和光追</p>
+<p>​		传感器用于捕捉并记录光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
+
+<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
+
+<p>​		针孔相机拍出来的结果不会出现虚化。</p>
+<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
+
+<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
+
+<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
+<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
+
+<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
+
+<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
+
+<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
+
+<p>​		高速摄影（更大光圈或者更大ISO）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
+
+<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
+
+<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
+
+<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
+
+<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
+
+<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
+
+<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
+
+<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
+
+<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-16-Ray-Tracing4"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/18/games101-16-Ray-Tracing4/"
+    >games101-15-Ray-Tracing4</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/18/games101-16-Ray-Tracing4/" class="article-date">
+  <time datetime="2023-05-18T15:45:53.000Z" itemprop="datePublished">2023-05-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>path tracing每个着色点考虑各个方向的光照，大量采样求积分结果，遇到漫反射物体也不会停止传播。（witted style只考虑了光线的多次弹射，不过和path tracing一样都考虑了能量守恒）。同时path tracing使用更接近物理的BRDF（考虑微表面等），可以表现更多材质（但不能处理折射），如磨砂材质（witted style漫反射材质，完美镜面反射及完全透明物体折射）。</p>
+<p>同时，path tracing 具有软阴影。所谓阴影，就是没有直接光照只有环境光。对于witted style来说，着色点的颜色取决于最后到达的漫反射和直接光照的作用，所以是硬阴影。但是path tracing如果没有直接光照的作用，会有来自四面八方间接光照的作用，形成不同程度的阴影。</p>
+<h4 id="蒙特卡洛积分"><a href="#蒙特卡洛积分" class="headerlink" title="蒙特卡洛积分"></a>蒙特卡洛积分</h4><p>求解渲染方程第一步：处理积分</p>
+<p>解决定积分，最后得出来的是面积&#x2F;体积值。当函数非常复杂，无法写出函数解析式时，考虑用蒙特卡洛积分。</p>
+<p>黎曼积分，分解成多个长方形，取中心的xy计算长方形的面积并累加。</p>
+<p>蒙特卡洛积分：在积分域随便取一个数xi，取其对应的yi值计算长方形面积（高度yi，宽度积分域a-b）。采样多次，并将结果平均。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307190905032.png" alt="image-20230719090531833"></p>
+<p>特殊情况：均匀采样，计算过程符合上述概念</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307190912620.png" alt="image-20230719091210507" style="zoom:80%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307190912852.png" alt="image-20230719091232712" style="zoom:80%;" />
+
+<p>​	推广到任何pdf的蒙特卡洛积分形式如下，积分域已经包含在了p(x)中。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307190913740.png" alt="image-20230719091318655" style="zoom:67%;" />
+
+<h4 id="路径追踪Path-tracing"><a href="#路径追踪Path-tracing" class="headerlink" title="路径追踪Path tracing"></a>路径追踪Path tracing</h4><p>Whitted光线追踪：</p>
+<p>1、光滑物体镜面反射</p>
+<p>对于specular的材质正确，但是对于glossy材质，光的反射方向也会分布在镜面反射方向周围。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191336344.png" alt="image-20230719133611179" style="zoom:67%;" />
+
+<p>2、透明物体一部分镜面反射一部分折射</p>
+<p>3、漫反射物体光线停止</p>
+<p>那么漫反射和漫反射物体之间的光线就没有考虑。光线到达漫反射物体应该向四面八方反射。如下图天花板应该是亮的，里面的长方体左侧应该是红色。本质还是考虑的漫反射物体和直接光照。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191341978.png" alt="image-20230719134126782" style="zoom:80%;" />
+
+<h4 id="解渲染方程"><a href="#解渲染方程" class="headerlink" title="解渲染方程"></a>解渲染方程</h4><p>​		先不考虑发光向（反射方程比渲染方程少了发光项）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191352788.png" alt="image-20230719135247700"></p>
+<p>​		对于一个场景直接光照（还是认为光照从着色点向外），从其他物体反射来的L为0。使用蒙特卡洛采样求积分。f(x)为反射方程待积分的函数，pdf为1&#x2F;2Π（因为是在半球上采样，此处是均匀采样）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191409460.png" alt="image-20230719140930347" style="zoom:80%;" />
+
+<p>​		要计算点p到w0方向反射的光：首先按照某种pdf采样n个方向，对于每一个方向，从点p按照方向连接一根光线。如果该光线能够连接到光源，则按照渲染方程计算其值，并且将n个结果累加。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191415073.png" alt="image-20230719141512966" style="zoom:80%;" />
+
+<p>​		下面引入间接光照的计算：当某个方向的光线打中物体时，对于要计算的点来说，物体也是光源，要计算打中物体的光，可以对该物体递归处理。光线方向作为观察方向。Q的光照结果即P的入射光。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191421138.png" alt="image-20230719142129054" style="zoom: 80%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191423483.png" alt="image-20230719142334364" style="zoom:80%;" />
+
+<p>​		上述算法问题1：递归没有停止条件。真实情况光线应该弹射无数次。但如果限制弹射次数会造成能量损失。引入的方式RR：先确定一个0-1的概率。 以一定的概率打出光线，最后结果就是L0&#x2F;P，1-p的概率不打出光线，结果为0。以一定概率打不打光线，这样计算的结果期望为L0。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191443102.png" alt="image-20230719144327043"></p>
+<p>​			先选取概率P，随机生成0-1的数ksi，如果大于概率p，则不打出光线，返回0。否则打出光线进行正常计算&#x2F;递归，只是结果要除以p。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191448209.png" alt="image-20230719144837080" style="zoom: 67%;" />
+
+<p>​		上述算法的问题2：光线数量爆炸。因此为了防止光线爆炸，只随机往一个方向采样一次。N&#x3D;1的蒙特卡洛积分叫路径追踪。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191428380.png" alt="image-20230719142838259" style="zoom:80%;" />
+
+<p>​			N&#x3D;1会造成很大的噪声，则从一个像素发出多条光线，将结果求平均即可。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191435291.png" alt="image-20230719143516172"></p>
+<p>​		首先选取相机位置，对于某个像素，采样N个光线。对于像素内部采样的每一个点，先生成一根光线。如果光线打到着色点p,计算着色点的颜色并且将结果累加平均。在shade函数中，视线是从着色点连接相机。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191435898.png" alt="image-20230719143559807" style="zoom: 80%;" />
+
+<p>​		如果在像素内部采样少，计算速度快，会造成很大的噪声，需要解决该问题：</p>
+<p>​		如果向四面八方均匀采样，根据距离光源的远近和光源大小，打到光源的概率不同。如果一直没有打到光源，则光线浪费。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191456439.png" alt="image-20230719145651328" style="zoom:67%;" />
+
+<p>​		解决办法是改变采样方式，蒙特卡洛可以使用任意pdf。比起原来从着色点均匀向半球任意方向采样，此处选择从光源上进行采样。则采样的pdf是1&#x2F;A（光源面积）。从光源连向着色点，该连线会与着色点法线和光源朝向的法线产生两个夹角。然而蒙特卡洛对立体角积分就应该在立体角采样，但此处是在光源采样，所以渲染方程需要写成在光源上的积分。找到dw和dA的关系即可：计算出dA在单位球的投影即为dw：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191515517.png" alt="image-20230719151517402" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191518804.png" alt="image-20230719151840687" style="zoom:67%;" />
+
+<p>​		最后着点的着色结果来源于光源直接光照和其他物体的间接光照，因此将着色分为两部分：</p>
+<p>1、直接光照：用上述方法对光源进行采样和积分（只采样一次）</p>
+<p>2、间接光照，使用之前的方式，引入俄罗斯轮盘赌</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191526157.png" alt="image-20230719152625933" style="zoom: 50%;" />
+
+<p>细节问题：上述方法默认了光源和物体直接没有遮挡，但如果光源和物体间有遮挡，在进行直接光照的计算时，需要判断光线是否被遮挡。可以将该光线计算判断交点，如果有交点且交点为光源，则计算着色，否则直接光照的结果是0。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307191529055.png" alt="image-20230719152920944" style="zoom:67%;" />
+
+<p>路径追踪暂不考虑点光源（可以做成很小的面光源）</p>
+<p>path tracing 属于ray tracing，还有许多其他的tracing 方法。问题还包括：如何进行均匀采样，随机数是否有要求，采用何种pdf可以得到更好的结果。能否结合光源和半球采样。对于一个像素的多个采样结果是直接平均还是加权平均，以及得到的radiance如何转化成颜色显示在屏幕。</p>
+<h5 id="实现过程梳理："><a href="#实现过程梳理：" class="headerlink" title="实现过程梳理："></a>实现过程梳理：</h5><p>1、每个像素产生n条光线，最后的该像素的着色结果是n个结果的平均（实际实现时，每个像素的光线还是从相机到像素中心，后期会因为采样取不同的方向）</p>
+<p>2、对于单根光线，先判断和场景有无交点，没有交点返回背景色&#x2F;黑色</p>
+<p>3、对于单根光线，如果和场景有交点：</p>
+<p>（1）计算直接光照：从光源上采样一次（N&#x3D;1），获得交点和pdf；在着色点和交点之间生成光线，如果没有遇到遮挡物，计算着色：L×f×cos×cosl&#x2F;d^2&#x2F;pdf（&#x2F;N）；如果遇到遮挡物，则没有直接光照这一项。</p>
+<p>（2）计算间接光照：选取俄罗斯转盘概率p，再随机生成[0-1]的浮点数k。如果k&gt;p,不进行迭代，无间接光照；如果k&lt;p，在半球上采样一个方向，并且在着色点和方向上生成光线。如果该光线相交的是物体而不是光源（光源在直接光照中计算了），计算着色L×f×cos&#x2F;pdf（&#x2F;N）&#x2F;p；L是递归的结果。</p>
+<p>（3）最终着色结果：自发光+直接光照+间接光照。</p>
+<p>关于自发光：如果不添加自发光则无法渲染光源。首先，光源需要正常接收间接光照。但是直接光照不会给自己提供颜色，因为着色点和采样点形成的光线与法线垂直。所以为了渲染光源，需要加上自发光。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-18-Advanced-Rendering"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/18/games101-18-Advanced-Rendering/"
+    >games101-18-Advanced_Rendering</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-date">
+  <time datetime="2023-05-18T15:38:39.000Z" itemprop="datePublished">2023-05-18</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="有偏与无偏的计算方法"><a href="#有偏与无偏的计算方法" class="headerlink" title="有偏与无偏的计算方法"></a>有偏与无偏的计算方法</h4><p>​		无偏积分的期望值总是正确的值，无论使用多少样本。反之就是有偏。但是如果取的样本无限多，最后期望会收敛到一定值，但这种情况也是有偏 ，但是一致。</p>
+<h5 id="BDPT（无偏）"><a href="#BDPT（无偏）" class="headerlink" title="BDPT（无偏）"></a>BDPT（无偏）</h5><p>单向光线追踪:从相机产生一条光线，连接最后一个点和光源</p>
+<p>双向光线追踪： 从光源和相机分别产生一些半路径，连接两个半路径的端点形成一条完整的光路。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190911290.png" alt="image-20230519091135260" style="zoom:67%;" />
+
+<p>​		对于如下场景，几乎整个场景都是通过漫反射照亮。如果从相机开始计算，找到带有很多能量的光路较为复杂。如果第一个点是漫反射点，很难控制光路打到光线集中的地方。这种情况下，从光源开始便于计算。但是该方法实现困难并且计算慢。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190917374.png" alt="image-20230519091728291" style="zoom:67%;" />
+
+<h5 id="MLT（无偏）"><a href="#MLT（无偏）" class="headerlink" title="MLT（无偏）"></a>MLT（无偏）</h5><p>​		用马尔科夫链作为采样工具。当前有一个样本，基于当前样本在附近生成新样本，用这些样本估计函数值。对于蒙特卡洛，采样的pdf和要积分的函数形状一值时，误差最小。马尔科夫链可以形成符合这种特性的样本。</p>
+<p>​		在光线传播上，在有一个路径的情况下，可以生成周围更多相似的路径。如下图对蓝色光路进行局部扰动获得新路径，最后可以找到所有路径。适合做复杂的光路传播，擅长从局部探索困难的路径。例如光线在水底聚焦被相机看到，经历了相机-折射-漫反射-折射-光源（SDS），但是光经过漫反射后只有在很小一部分区域才能折射出来。使用马尔科夫链就可以在折射出来的光线附近找到新的光线。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190021893.png" alt="image-20230519002121754" style="zoom: 80%;" />
+
+<p>​		简单的蒙特卡洛方法可以根据样本数分析其收敛速度。但是MLT很难估计收敛速度，不能保证每一个像素收敛速度相同，会产生噪声。因为每一张图收敛结果不确定且不同，因此不能渲染动画。</p>
+<h5 id="光子映射（有偏）"><a href="#光子映射（有偏）" class="headerlink" title="光子映射（有偏）"></a>光子映射（有偏）</h5><p>​		适合光在折射&#x2F;反射后聚焦产生新的图案及SDS下用该方法。</p>
+<p>一种光子映射的方法如下：</p>
+<p>1.从光源出发进行光线追踪，直至光线到达漫反射物体</p>
+<p>2.从相机出发进行光线追踪，直至光线到达漫反射物体</p>
+<p>3.局部的密度估计：对任意一个着色点，通过最邻近算法取离它最近的N个光子，计算这些光子所占的面积，得到光子的密度，也就是用光子数N除以面积。密度大的地方更亮。</p>
+<p>​		当取的光子数N比较少，采样点少，就会产生比较大的噪声。而光子取多图像就会比较模糊，对于临近的点计算出的结果可能相同。计算光子密度的时候，正确的方法应该是对当前一个点的一个微小的面积dA进行计算它的光子数从而计算密度，但是此处是对一定的光子数的实际面积进行的计算，所以两者本质上并不相等。</p>
+<p>​		当光源发出的光子足够多的时候，同样数量的光子覆盖的面积ΔA会更小，也就会更接近dA，最终的结果也会更准确，当打出的光子接近极限，ΔA&#x3D;dA，则结果正确，所以光子映射是一个有偏但是一致的方法。</p>
+<p>​		如果给定一个微小面积计算每个微小面积的光子密度，也就是ΔA是常数，则确定了光子范围。但是给定的常数始终不等于dA，所以得到的结果有偏但是不一致。</p>
+<h5 id="VCM（有偏）"><a href="#VCM（有偏）" class="headerlink" title="VCM（有偏）"></a>VCM（有偏）</h5><p>​		该方法是BDPT和光子映射的组合。对于两条半路径，如果两者的端点无法连接但是很接近，不要浪费两个子路径，使用光子映射来处理临近的光子。</p>
+<h5 id="实时辐射度-Instant-Radiosity-IR-（有偏）"><a href="#实时辐射度-Instant-Radiosity-IR-（有偏）" class="headerlink" title="实时辐射度 Instant Radiosity (IR)（有偏）"></a>实时辐射度 Instant Radiosity (IR)（有偏）</h5><p>​		已经被照亮的面都可以认为是光源，光源可以再照亮其他物体。光源首先发出光线，最后光线停住的点可以视作新的虚拟光源照亮着色点。在有很多细小光源的场景很适合，但是当虚拟光源接近着色点时会出现闪光点。该方法不适合毛玻璃材质。</p>
+<h4 id="外观建模"><a href="#外观建模" class="headerlink" title="外观建模"></a>外观建模</h4><p>​		对于表面模型，其材质就是BRDF，下面讨论非表面模型。</p>
+<h5 id="散射介质（如云、雾）"><a href="#散射介质（如云、雾）" class="headerlink" title="散射介质（如云、雾）"></a>散射介质（如云、雾）</h5><p>​		以光线穿过云为例，云由许多冰晶组成，不考虑自发光。光经过冰晶可能被吸收、被散射到各个方向，冰晶也可能接受别的方向散射来的光。</p>
+<p>​		光如何散射通过Phase Function定义（类似BRDF决定光如何反射）。从相机开始找光路，能走多远由散射介质的吸收能力决定，停下时考虑光的散射方向。最后找到的光路类似光在物体表面弹射，只是在光路了上的任何一点都可能发生方向的改变。此处不是光与表面作用而是和体积作用，因此不能使用渲染方程，但是都需要找光路。</p>
+<p>​		很多物体光都有进去的可能，只是穿透能力不强，光进去一段时间就消失。</p>
+<h5 id="头发"><a href="#头发" class="headerlink" title="头发"></a>头发</h5><p>​		头发是一根根，不能当作是一个表面。如下图，对于头发有无色的高光和有色的高光。计算量大，需要计算光线和每一根头发的作用。</p>
+<p> （1）Kajiya-Kay Model		</p>
+<p>​		将头发当作一个圆柱，光会散射成一个圆锥的形状，剩下一部分类似漫反射。但是渲染效果不真实。</p>
+<p>（2）Marschner Model</p>
+<p>​		将头发当成玻璃圆柱。光与头发的作用有三种情况，R-在表面直接被反射；TT-折射进头发再被折射出去；TRT-折射进头发，在头发内壁发生反射再折射出去。（将头发分为表面和内部，内部也会有色素，会发生光线被吸收）</p>
+<h5 id="动物毛发"><a href="#动物毛发" class="headerlink" title="动物毛发"></a>动物毛发</h5><p>​		动物毛发比人的头发的髓质更大，因此不能用头发模型来计算动物毛发。</p>
+<p>（1）Double Cylinder Model</p>
+<p>R:光再毛发表面直接被反射</p>
+<p>TT：光与髓质没有作用，折射进头发再被折射出去</p>
+<p>TRT：光与髓质没有作用，折射进头发，在头发内壁反射，再被折射出去</p>
+<p>TTs：折射进入, 第一次穿过髓质时, 产生散射, 再次折射出去</p>
+<p>TRTs:折射进入, 第一次穿过髓质后并未折射出去, 而是在头发内壁反射回来, 第二次穿过髓质, 再产生一次折射后出去（散射两次）</p>
+<h5 id="颗粒材质"><a href="#颗粒材质" class="headerlink" title="颗粒材质"></a>颗粒材质</h5><p>​		下面讨论几种表面模型。</p>
+<p>玉石</p>
+<p>​		光线从某个点进入物体表面，在物体内部发生大量散射，再从物体表面另一位置出去。也称作次表面散射。</p>
+<p>​		BRDF：对于任意方向来的光，到达某一个着色点，从任意方向反射出去</p>
+<p>​		BSSRDF:对于任意方向来的光，到达某一个着色点，从任意方向反射出去,但是反射点的位置可以表面任意一个位置。所以除了对立体角积分，还需要对物体表面积分。BSSRDF需要四个参数定义（入射点位置，入射点方向，出射点位置，入出射点方向）</p>
+<p>​		还可以将该模型模拟成两个光源，一个在物体内部，一个在物体外部。</p>
+<h5 id="布料"><a href="#布料" class="headerlink" title="布料"></a>布料</h5><p>纤维fibers-股ply-线yarn-布料</p>
+<p>​		计算表面与光的作用，结果与织法有关。给定编织模式，计算整体行为。但是表面渲染有限制，羊毛绒是往外一根一根, 不是一个平面。</p>
+<p>​		一种方法是不再把布料当成纤维，而是当成体积。对空间划分格子，在每一个格子内部将布料当成类似云的散射介质计算。但是计算量庞大。</p>
+<p>​		另一种方法是，知道每一个纤维的缠绕方式，渲染每一个纤维（如渲染每一根头发）。</p>
+<h5 id="详细外观"><a href="#详细外观" class="headerlink" title="详细外观"></a>详细外观</h5><p>​		看起来不真实，现实世界更复杂，车会有划痕等等, 鼠标会有大小不一的高光。用微表面模型得到的结果不太真实。</p>
+<p>​		在微表面模型中，D（h）采用简单的模型，如符合正态分布，因此效果不真实。真实情况是，D（h）基本符合统计规律，但是又自己的细节。</p>
+<p>​		在这种情况下路径采样困难。每一个微表面是一个镜面, 再假设一个针孔摄像机和点光源。无论从针孔摄像机, 还是点光源连接微表面, 发生镜面反射。都很难反射到点光源或者针孔摄像机.</p>
+<p>​		一个像素覆盖很多的微表面形成一个区域, 把这个区域的法线分布算出来, 然后替代原本的光滑的法线分布, 用在原本的微表面模型里.</p>
+<p>​		一个像素覆盖法线贴图的面积, 导致不同特征的法线分布。 不同的法线贴图, 有不同的法线分布。</p>
+<h5 id="通过波动光学研究材质"><a href="#通过波动光学研究材质" class="headerlink" title="通过波动光学研究材质"></a>通过波动光学研究材质</h5><p>​		波动光学得到的BRDF与几何得到的不太相同，有自己的特点。</p>
+<h4 id="程序化生成"><a href="#程序化生成" class="headerlink" title="程序化生成"></a>程序化生成</h4><p>​		定义三维纹理，但是内存开销较大。可以不进行存储，在需要的时候查询。如3D噪声函数，空间中任意一个坐标, 返回需要查询的值(纹理细节)。通过任意方式处理噪声函数，就可以得到任意的效果。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-15-Ray-Tracing3"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/15/games101-15-Ray-Tracing3/"
+    >games101-15-Ray-Tracing3</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
+  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
+
+<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
+
+<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。·但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
+
+<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F;	 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。当直接辐射到平面上的程度越低时，光线就越弱，而当光线完全垂直于平面时强度最高。如果把单位立体角和单位面积看作无穷小，则可以计算单根光线到单个着色点的辐射率。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
+
+<p>​		该方程也可以转换成如下两个方程：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
+
+<p>​		在单位时间单位面积上会接收不同方向来的能量，或者会向不同方向散发能量，将E对立体角求导，得到具体某一个方向上的能量。在单位时间单位立体角上会接收一块面积光散发的能量，或者会向一块面积散发能量，将I对面积求导，得到具体单位面积散发&#x2F;接收的能量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
+
+<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
+
+<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元，或者说着色点)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance，可以从光源获得)共同贡献得到。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
+
+<p>​		可以用如下离散的方式求积分函数的总面积&#x2F;总体积。增加离散步长可以提高准确率。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int steps = 100;</span><br><span class="line">float sum = 0.0f;</span><br><span class="line">vec3 P    = ...;</span><br><span class="line">vec3 Wo   = ...;</span><br><span class="line">vec3 N    = ...;</span><br><span class="line">float dW  = 1.0f / steps;</span><br><span class="line">for(int i = 0; i &lt; steps; ++i)</span><br><span class="line">&#123;</span><br><span class="line">    vec3 Wi = getNextIncomingLightDir(i);</span><br><span class="line">    sum += Fr(p, Wi, Wo) * L(p, Wi) * dot(N, Wi) * dW;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
+
+<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。Blinn-Phong光照模型也可以被认为是BRDF,但是没有考虑能量守恒。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
+
+<h5 id="Cook-Torrance-BRDF"><a href="#Cook-Torrance-BRDF" class="headerlink" title="Cook-Torrance BRDF"></a>Cook-Torrance BRDF</h5><p>Cook-Torrance BRDF兼有漫反射和镜面反射两个部分。kd是被折射的入射光能量比率，ks是被反射的比率。flambert 是漫反射部分（将以前漫反射的计算结果的点乘取出放入反射方程的cos），等于c&#x2F;Π，c是表面颜色,除以Π是对反射光标准化（此处暂不考虑）。flambert 满足大多数实时渲染的目的。</p>
+<p>镜面反射部分（分母部分用于归一化）：</p>
+<p>D:法线分布函数：估算在受到表面粗糙度的影响下，朝向方向与半程向量一致的微平面的数量。</p>
+<p>这是用来估算微平面的主要函数。在给定0-1的粗糙程度下，计算与半程向量取向一致的微表面比例，返回0-1的比例值。在不同粗糙度参数下，当粗糙度很低（也就是说表面很光滑）的时候，与半程向量取向一致的微平面会高度集中在一个很小的半径范围内。由于这种集中性，NDF最终会生成一个非常明亮的斑点。但是当表面比较粗糙的时候，微平面的取向方向会更加的随机。与半程向量取向一致的微平面分布在一个大得多的半径范围内，但是同时较低的集中性也会让最终效果显得更加灰暗。</p>
+<p>F:几何函数：描述了微平面自成阴影的属性。当一个平面相对比较粗糙的时候，平面表面上的微平面有可能挡住其他的微平面从而减少表面所反射的光线。几何函数从统计学上近似的求得了微平面间相互遮蔽的比率，这种相互遮蔽会损耗光线的能量。</p>
+<p>几何函数还是需要将粗糙度作为输入参数，不过这里的粗糙度是D函数粗糙度的重新映射，取决于是直接光照还是IBL光照。也需要考虑光线向量和观察方向。1.0表示没有微表面阴影，0.0表示彻底被遮蔽。</p>
+<p>G:菲涅尔方程：菲涅尔方程描述的是在不同的表面角下表面所反射的光线所占的比率。比例会随着观察角度的不同而不同。</p>
+<p>每个表面或材料在直视其表面时都有一定程度的基础反射率，但从某个角度观察表面时，与表面的基础反射率相比，所有反射都变得更加明显。F0是基础反射率，使用折射率或者IOR计算。</p>
+<p>Fresnel-Schlick近似仅仅对电介质或者说非金属表面有定义，使用一些处理和插值使得金属也可以使用该公式。对于导体或者金属表面而言基础反射率一般是带有色彩，所以F0会用RGB表示。这些金属表面相比于电介质表面所独有的特性引出了所谓的金属工作流的概念。也就是需要额外使用一个被称为金属度(Metalness)的参数来参与编写表面材质。金属度用来描述一个材质表面是金属还是非金属的。如果是金属需要对F0着色（表面纹理，金属无漫反射）。</p>
+<p>PBR渲染管线所需要的每一个表面参数都可以用纹理来定义或者建模。使用纹理可以逐个片段的来控制每个表面上特定的点对于光线是如何响应的。</p>
+<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即单位面积所接受的能量，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L（wi方向来达到点x的光线），而不同方向入射光irradiance对反射方向ωr（点x向wr方向辐射的光线）的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
+
+<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
+<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
+
+<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
+
+<p>​		对于多个点光源：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
+
+<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
+
+<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
+
+<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
+
+<p>​		进一步简写：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
+
+<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
+
+<p>​		如下是一个示例：</p>
+<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
+
+<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
+
+<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
+
+<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
+
+<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
+<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
+<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
+<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
+
+<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
+<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
+
+<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
+
+<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
+
+<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-14-Ray-Tracing2"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/14/games101-14-Ray-Tracing2/"
+    >games101-14-Ray-Tracing2</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/14/games101-14-Ray-Tracing2/" class="article-date">
+  <time datetime="2023-05-14T01:45:04.000Z" itemprop="datePublished">2023-05-14</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>​		如果整个场景只有一个极其复杂的单一人物模型，那么只对这一个物体做包围盒的话，相当于对效率没有任何提升。如果整个场景充斥着大量的细小模型，如草，花之类的，每个模型可能只有很少的面，如果此时对每个物体求包围盒，得到的包围盒数量会相当之多，对于光线追踪效率来说效率提升有限。基于以上两点考虑，AABB并不应只局限于以物体模型为单位，因此如何更好的划分场景形成不同的AABB，使得划分之后的AABB能够更好的加速光线追踪，就是接下来要考虑的问题关键。</p>
+<h4 id="均匀空间划分"><a href="#均匀空间划分" class="headerlink" title="均匀空间划分"></a>均匀空间划分</h4><p>（1）对所要考虑的场景找一个包围盒：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029114.png" alt="image-20230513102915947" style="zoom:50%;" />
+
+<p>（2）在光线追踪之前，均匀用小格子划分这个大包围盒（相当于把场景均匀划分成更小的AABB包围盒）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029151.png" alt="image-20230513102934066" style="zoom:50%;" />
+
+<p>（3）标记出与物体表面相交的格子(不包括物体内部)，存储物体模型信息:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029586.png" alt="image-20230513102953483" style="zoom:50%;" />
+
+<p>（4）根据光线的方向与判断出所有与光线相交的格子(这一步可以利用bresenham算法，如对于朝右上方的光线，光线经过的下一个格子为当前格子的右边或者上边的格子，求交点找更近的格子)，倘若格子还与物体表面相交，就说明光线可能会和物体相交，再进一步将光线与格子中的物体模型或是三角形面求交。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131030156.png" alt="image-20230513103007070" style="zoom:50%;" />
+
+<p>问题1：小格子的大小</p>
+<p>​		在该方法中，更多的计算是光线与AABB包围盒（小格子）而不是物体，通过包围盒把计算的三角形面限制在更小的范围内，所以某种程度上可以加速计算。但是格子的大小也会影响计算速度。在极端情况下，假如格子的大小为1✖1,相当于没有进行划分。如果格子太过密集，要计算的小格子很多，也会影响计算速度。较好的划分程度为格子数&#x3D;C✖物体个数，在3维情况下C的值一般取27。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131046138.png" alt="image-20230513104601004" style="zoom: 50%;" />
+
+<p>问题2：均匀划分场景引发的问题</p>
+<p>​		如果说场景较为空旷，物体较小且分离得比较开，那么均匀分割的效果就会很差了，因为会有很多无效的方格与光线的求交过程。例如对于一个空旷的操场，操场中间放置了一个茶壶，光线到达茶壶之前，需要计算光线和很多空格子求交过程。因此空旷的地方不适合划分太多小格子，用大格子快速跳过空旷位置的计算。均匀划分的方法适合的场景是空间中均匀布满了三角形面，如下图这种场景，物体多的地方适合划分更多的小格子，将需要计算的三角形面限制在更小范围，如果格子太大，就需要将光线和更多的三角面求交：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131120079.png" alt="image-20230513112034871" style="zoom:67%;" />
+
+<p>如下是其他划分方法：</p>
+<p>（1）八叉树，每次将空间分为8个相等的部分，再递归的对子空间进行划分。当划分的子空间足够小或是空间中三角形面的数量很少的时候会停止划分。这种方法的显著缺点是，随着维度的上升划分的空间数量会呈指数级增长。</p>
+<p>（2）KD-Tree，每次将空间划分为两部分，且划分依次沿着x-axis，y-axis，z-axis交替进行，使得空间划分相对均匀，终止条件与八叉树类似。</p>
+<p>（3）BSP-Tree，其与KD-Tree类似，唯一不同的是划分不再沿着固定一轴，可以任意方向划分，缺点是划分的空间没有规则性，对比于AABB来说，求交困难。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131059825.png" alt="image-20230513105950720" style="zoom:67%;" />
+
+<h4 id="KD-Tree空间划分"><a href="#KD-Tree空间划分" class="headerlink" title="KD-Tree空间划分"></a>KD-Tree空间划分</h4><p>​		如下所有操作都在光线追踪之前，对场景预处理，以2维为例。</p>
+<p>​		先将整个场景放在包围盒中，将空间分为两部分：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412006.png" alt="image-20230513141209956" style="zoom: 50%;" />
+
+<p>​		对左右两个子空间换个方向再分为两部分(这里只画出了右半部分，其实左边也是一样)，之后以此类推进一步分割，形成KD-tree。</p>
+<p>（1）依次沿着x-axis,y-axis,z-axis划分，使得空间被划分的更加平衡<br>（2）划分的位置由空间中三角面的分布决定，具体细节不展开<br>（3） 叶子节点存储对应空间的所有物体或三角面信息，中间节点仅存储指针指向两个子空间<br>（4） 当划分空间太小或是子空间内只有少量三角形则停止划分</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412784.png" alt="image-20230513141218740" style="zoom:50%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131416122.png" alt="image-20230513141650076" style="zoom:67%;" /></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>​		对于一条光线，第一步判断光线是否与最外层的包围盒相交，如果相交进一步判断是否与对应的两个子空间相交：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412799.png" alt="image-20230513141228752" style="zoom:50%;" />
+
+<p>​		因图中做了简化，最大包围盒的左半边并没继续进行划分(实际上应该要划分的)，所以左半部分对应的1号空间是叶子节点，如果光线与之相交，进一步判断与存储在叶子节点的物体求交。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412090.png" alt="image-20230513141238041" style="zoom:50%;" />
+
+<p>​		左半边判断完之后，接着判断右半部分，如果对于右半部分存在相交情况，则对于右半部分的所有子空间，递归的执行这个步骤即可：</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131444748.png" alt="image-20230513144410699" style="zoom: 50%;" /></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412368.png" alt="image-20230513141258321" style="zoom:50%;" /></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131427636.png" alt="image-20230513142703588"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131427025.png" alt="image-20230513142754978"></td>
+</tr>
+</tbody></table>
+<p>​		利用KD-Tree的结构来对空间划分AABB包围盒的好处是倘若光线与哪一部分空间不相交，那么则可以省略该部分空间所有子空间的判断过程，提升了效率。缺点是判断包围盒与三角面的是否相交较难，因此划分的过程不是那么想象的简单，其次同一个三角形面或物体可能被不同的包围盒同时占有，不同包围盒内的叶节点会同时存储这一个三角形面或物体。</p>
+<h4 id="BVH物体划分"><a href="#BVH物体划分" class="headerlink" title="BVH物体划分"></a>BVH物体划分</h4><p>​		BVH与前几种方法最显著的区别就是，不再以空间作为划分依据，而是从物体对象的角度考虑，即三角形面（物体）。作业中的实现方法如下：</p>
+<p>​		第一步同样找出场景的整体包围盒作为根节点。该包围盒需要包围住所有物体对象的包围盒（每个物体对象自己也有包围盒）:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131453263.png" alt="image-20230513145329220" style="zoom:50%;" />
+
+<p>​		第二步找到合适的划分点，将最大包围盒内的三角形面分为两部分，再分别重新就算新的包围盒。关于找到合适的划分点：划分顺序可以按照xyz轴。不过为了划分均匀，也可以每次划分一般选择包围盒最长的那一轴划分，假设是x轴，n个物体对象从左到右，找到中位数的物体对象进行左右划分（对于x轴，将物体对象包围盒中心坐标按照x排序，找到中间的物体对象），如此便能保证划分的左右两边物体对象数量尽可能差不多。（也可以直接将轴分成左右两部分，坐标小于轴中点将其划分到左边）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131454548.png" alt="image-20230513145402505" style="zoom:50%;" />
+
+<p>​		注意到这里，包围盒会重叠，但一个物体对象只会被存储在唯一的包围盒内，而这也就解决了KD-Tree的缺点。接下来与KD-Tree的建立类似，递归的对所有子空间重复该步骤（如何划分使得重叠部分更少很有讲究），当叶子节点物体对象个数足够少停止（一般≤5）。</p>
+<p>​		如果不是叶子节点，需要记录指向左右子节点的指针以及自己的包围盒。如果只剩下一个物体对象，则生成叶子节点，叶子节点需要除了上述信息还需要记录物体对象信息（以叶子节点中一个物体对象为例）。如果只剩下两个物体对象，为当前节点生成两个叶子节点即可。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131454256.png" alt="image-20230513145433211" style="zoom:50%;" />
+
+<p>​		之后判断光线与包围盒求交的步骤同KD-Tree。BVH不需要判断包围盒和物体对象的关系。判断过程如下：</p>
+<p>1、当前节点所代表的大的包围盒与光线无交点：则不用计算左右子树。返回空交点。</p>
+<p>2、当前节点所代表的大的包围盒与光线有交点：如果为叶子节点，计算包围盒内部的物体对象与光线的相交情况；如果还有左右子树，则递归处理左右子树。</p>
+<p>计算包围盒内部的物体对象与光线的相交情况:</p>
+<p>例如，当一个物体非常复杂，比如进行模型加载。在加载模型时，需要将网格模型变成多个三角形对象。将这些三角形作为物体对象，构建新的bvh树。计算包围盒内部的物体对象与光线的相交情况前，先计算光线和物体的bvh树，如果到达叶子节点，就是光线和三角形求交。</p>
+<p>最后得到的应该是与该光线相交的最近的交点及物体信息。</p>
+<h5 id="使用SAH进一步加速BVH"><a href="#使用SAH进一步加速BVH" class="headerlink" title="使用SAH进一步加速BVH"></a>使用SAH进一步加速BVH</h5><p>当物体&#x2F;三角形分布不均匀的时候，上面将轴分成两半&#x2F;将物体个数分成左右两半得到的划分结果会变得很差。例如在左边有大量物体，右侧只有一个。如下左侧是按照原始方法划分的结果。由于划分时要尽可能减少划分后两部分包围盒重叠的体积，因为重叠的体积越大，光线穿过重叠区域的可能性越大，遍历两个子树的可能性就越高，计算消耗越多。所以原始划分方法是在物体跨度最大的轴上进行划分。结合物体分布不均匀以及尽可以减少重叠面积两个问题，新方法采用基于表面积的启发式评估划分方法。如右侧。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307121932438.png" alt="image-20230712193236384" style="zoom:67%;" />
+
+<p>该方法通过对求交代价和遍历代价进行评估，给出了每一种划分的代价，而目的是去寻找代价最小的划分。假设当前节点的包围体中存在 n 个物体，设对每一个物体求交的代价为 t(i) ，如果不做划分依次对其求交则总的代价为：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307121932798.png" alt="image-20230712193222770" style="zoom:67%;" />
+
+<p>如果这些物体划分为2组，这两组物体分别处于它们的包围盒A和B中。设光线击中它们的概率分别为 p(A) 和 p(B) 。p(A)的概率等于A包围盒大小&#x2F;包含AB的大包围盒大小；p(B)的概率等于B包围盒大小&#x2F;包含AB的大包围盒大小。AB并不一定会填满其父节点的包围体，并且AB可能存在重叠，因此 p(A) 和 p(B) 的和不一定为1，且它们的和越大说明 A 和 B 的重叠程度越大。综上所述，当前节点求交的代价可以写为</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307121934320.png" alt="image-20230712193448279" style="zoom:67%;" />
+
+<p>其中 ttrav 表示遍历树状结构的代价。一般来说，假设对所有图元的求交代价是相同的，可设 t(i)&#x3D;1 ，又遍历的代价小于求交的代价，可设 ttrav&#x3D;0.125 。设包围盒A中图元的个数为 a ，B中图元的个数为 b ，则：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307121935558.png" alt="image-20230712193513520" style="zoom:80%;" />
+
+<p>光线击中包围盒的概率可以根据包围体的表面积来估计，即在父节点的包围体C中，A和B的表面积越大它们被击中的概率也就越大，设 A ， B 和 C 的表面积为 S(A) ， S(B) 和 S(C) ，则有：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307121935924.png" alt="image-20230712193532895" style="zoom:67%;" />
+
+<h4 id="辐射度量学Radiometry"><a href="#辐射度量学Radiometry" class="headerlink" title="辐射度量学Radiometry"></a>辐射度量学Radiometry</h4><p>​		在Blinn-Phong模型中，光的能量用常数I表示，没有单位和一个准确的定义。该模型在计算高光的时候，只考虑是否能看见高光，不考虑实际接收到的能量，即光线方向和法线的关系。whited-style的光线追踪模型中，认为所有反射都是完美镜面反射，对于漫反射的光线没有进行追踪，直接用当前点的颜色。并且光在多次折射和反射中会有能量损失，能量损失的值是自定义的。</p>
+<p>（1）Radiant Energy:光源辐射出能量Q[J]</p>
+<p>（2）Radiant flux:单位时间内光源辐射出的能量（时间越长能量越多，在辐射度量学中考虑单位时间的性质）光源包含的各种波长（对应一种颜色）的能量。	即如下函数的总面积。计算机图形使用RGB作为辐射通量表示的简化。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131520260.png" alt="image-20230513152037223" style="zoom: 67%;" />
+
+<p>（3）Radiant intensity：单位时间光源在单位立体角（某个方向）上辐射出的能量</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131526426.png" alt="image-20230513152636391" style="zoom: 67%;" />
+
+<p>​		弧度制，数学术语，指用弧长与半径之比度量对应圆心角角度的方式。用符号rad表示，读作弧度。等于半径长的圆弧所对的圆心角叫做1弧度的角。由于圆弧长短与圆半径之比，不因为圆的大小而改变，所以弧度数也是一个与圆的半径无关的量。（圆周长2 πR，面积 πR^2）整个圆的弧度为2 π。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131529358.png" alt="image-20230513152911322" style="zoom:67%;" />
+
+<p>​		对应在三维上的球的弧度(立体角)的计算方式如下，立体角度所对应球上的投影面积比上半径的平方，整个球的立体角为4 π 。（球表面积 4πR^2）（投射到单位求上截面的面积。可以当作一个带有体积的方向。）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131529984.png" alt="image-20230513152919949" style="zoom:67%;" />
+
+<p>​		利用微分立体角dw定义一个方向（就好比用一个浮点数定义一个时间），计算如下：通过θ,ϕ确定空间中一个方向，在这两个角度上分别增加一个微分值，其中rdθ 是微分面积元的高，rsinθdϕ 是微分面积元的宽，二者相乘是微分立体角在球面上的面积。用该微分面积除以半径的平方即为微分立体角的值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131534431.png" alt="image-20230513153447386" style="zoom: 67%;" />
+
+<p>​		对dw在整个球上积分，积分结果为4π。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131536006.png" alt="image-20230513153620960" style="zoom: 67%;" />
+
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230513153752040.png" alt="image-20230513153752040" style="zoom:67%;" />
+
+<p>​		对各向同性点光源，所有方向上的亮度都与方向无关，所以I是一个常数，因此对Φ积分时只用对立体角积分。最后推算出的I是一个常数。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games101-13-Ray-Tracing1"
   class="article article-type-post"
   itemscope
@@ -204,7 +862,7 @@
 <p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
 
-<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
+<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且离开时间≥0，光线与盒子有交点。（不考虑平行，光源在盒子内部也算有交点）</p>
 <table>
 <thead>
 <tr>
@@ -548,7 +1206,6 @@
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111547258.jpg" alt="img"> </p>
 <p>不可采样-模糊：走样后模糊</p>
 <h5 id="频率和周期"><a href="#频率和周期" class="headerlink" title="频率和周期"></a>频率和周期</h5><p>修改系数f改变sin函数和cos函数的频率，频率定义函数变换有多快。频率的倒数是周期，周期定义函数隔多久重复一次</p>
-<p><img src="C:\Users\华为\AppData\Local\Temp\ksohtml10168\wps19.jpg" alt="img"> </p>
 <h5 id="傅里叶变换"><a href="#傅里叶变换" class="headerlink" title="傅里叶变换"></a>傅里叶变换</h5><p>傅里叶级数展开：任何一个周期函数，都可以写成一系列sin和cos的线性组合以及一个常数项</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307111548357.jpg" alt="img"></p>
 <p>频率从低到高，通过增加更多sin和cos函数，会无限趋近于原周期函数</p>
@@ -758,712 +1415,6 @@
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307021627809.jpg" alt="img"> </p>
 <p>显示图像：将显存中的一块区映射到屏幕。</p>
 <p>（区分 view变换：先平移再旋转 正交投影：先平移再缩放）</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-3-Transformation"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/03/games101-3-Transformation/"
-    >games101-3-Transformation</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/03/games101-3-Transformation/" class="article-date">
-  <time datetime="2023-05-03T07:40:34.000Z" itemprop="datePublished">2023-05-03</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
-<p>（1）均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151616417.png" alt="image-20230515161619367"></p>
-<p>（2）非均匀缩放</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
-<h5 id="Reflection反射"><a href="#Reflection反射" class="headerlink" title="Reflection反射"></a>Reflection反射</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151617348.png" alt="image-20230515161742312"></p>
-<h5 id="Shear-Matric"><a href="#Shear-Matric" class="headerlink" title="Shear Matric"></a>Shear Matric</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151618772.png" alt="image-20230515161856725"></p>
-<h5 id="Rotate旋转"><a href="#Rotate旋转" class="headerlink" title="Rotate旋转"></a>Rotate旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
-<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转,也就是角度值为正。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
-<p>以边长为1进行旋转矩阵推导：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151620544.png" alt="image-20230515162027508"></p>
-<p>如果旋转-θ:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
-<p>矩阵为旋转θ时旋转矩阵的转置，并且由于旋转-θ是旋转θ的逆变换，因此该矩阵还为旋转θ时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
-<h5 id="线性变换"><a href="#线性变换" class="headerlink" title="线性变换"></a>线性变换</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623337.png" alt="image-20230515162329289"></p>
-<h5 id="Translation平移"><a href="#Translation平移" class="headerlink" title="Translation平移"></a>Translation平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
-<p>此处是先进性线性变换再平移。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623645.png" alt="image-20230515162355592"></p>
-<h5 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h5><p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
-<p>点的平移变换，点平移后成为新的点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
-<p>向量具有平移不变性：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151624937.png" alt="img"></p>
-<p>可以通过齐次坐标的w验证：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
-<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下，(x,y,w)是二维点（x&#x2F;w,y&#x2F;w,1）。</p>
-<h5 id="Affine-Transformation仿射变换"><a href="#Affine-Transformation仿射变换" class="headerlink" title="Affine Transformation仿射变换"></a>Affine Transformation仿射变换</h5><p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
-<table>
-<thead>
-<tr>
-<th>缩放变换矩阵</th>
-<th>旋转变换矩阵</th>
-<th>平移变换矩阵</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630316.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
-</tr>
-</tbody></table>
-<h5 id="Inverse-Transform逆变换"><a href="#Inverse-Transform逆变换" class="headerlink" title="Inverse Transform逆变换"></a>Inverse Transform逆变换</h5><p>逆变换相当于乘以变换的逆矩阵。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151641812.png" alt="image-20230515164100755" style="zoom:67%;" /> 
-
-<h5 id="Composite-Transform组合变换"><a href="#Composite-Transform组合变换" class="headerlink" title="Composite Transform组合变换"></a>Composite Transform组合变换</h5><p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。在c中cos和sin函数的参数都是弧度</p>
-<p>（1）弧度转角度：角度 &#x3D; 弧度 * (180.0f &#x2F; PI)</p>
-<p>（2）角度转弧度：弧度 &#x3D; 角度 * (PI &#x2F; 180.0f)</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630935.jpg" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630157.png" alt="img"></p>
-<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
-<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></h5><h5 id="变换分解"><a href="#变换分解" class="headerlink" title="变换分解"></a>变换分解</h5><p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
-<h5 id="三维齐次坐标"><a href="#三维齐次坐标" class="headerlink" title="三维齐次坐标"></a>三维齐次坐标</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
-<p>在w不等于0的情况下，(x,y,z,w)是三维点（x&#x2F;w,y&#x2F;w,z&#x2F;w,1）。</p>
-<h5 id="三维仿射变换"><a href="#三维仿射变换" class="headerlink" title="三维仿射变换"></a>三维仿射变换</h5><p>如下矩阵是先进行线性变换再进行平移变换。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629055.png" alt="img"></p>
-<h5 id="三维缩放"><a href="#三维缩放" class="headerlink" title="三维缩放"></a>三维缩放</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
-<h5 id="三维平移"><a href="#三维平移" class="headerlink" title="三维平移"></a>三维平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629010.png" alt="img"></p>
-<h5 id="三维绕轴旋转"><a href="#三维绕轴旋转" class="headerlink" title="三维绕轴旋转"></a>三维绕轴旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629293.png" alt="img"></p>
-<p>任意旋转都可由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
-<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-2-Linear_algebra"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/02/games101-2-Linear_algebra/"
-    >games101-2-Linear_algebra</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/02/games101-2-Linear_algebra/" class="article-date">
-  <time datetime="2023-05-02T07:40:24.000Z" itemprop="datePublished">2023-05-02</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
-<p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
-<p>单位向量（只关心方向不关心长度），将向量的每一个分量除以长度，也叫向量的标准化：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
-<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。向量相加是将每个对应的分量分别相加，相减同理。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
-
-<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。如向量（4，3）默认是过原点的。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
-<p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
-<p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
-<p>当把一个向量加&#x2F;减&#x2F;乘&#x2F;除一个标量，可以简单的把向量的每个分量分别进行该运算。数学上是没有向量与标量相加运算的，但是很多线性代数的库都对它有支持。向量取反就是将每一个分量取反。</p>
-<h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
-<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。例如两个单位向量点乘的结果就是他们夹角的余弦。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
-<p>点乘的性质：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
-<p>点乘的代数计算（对应元素相乘，最后将所有乘积相加）：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345885.jpg" alt="img"> </p>
-<p>点乘的作用：</p>
-<p>（1）计算一个向量在另一个向量上的投影</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345069.jpg" alt="img"> </p>
-<p>​		b向量在a向量上的投影的方向为a向量的方向，投影的大小为||b||cosθ，所以b向量在a向量上的投影为||b||cosθa，cosθ通过a向量和b向量的点乘获得。</p>
-<p>计算向量的投影可以对向量进行分解</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346329.jpg" alt="img"> </p>
-<p>（2）通过点乘结果的正负判断向量在前还是在后（方向基本一致，垂直或者相反），在图形学上通过点乘结果判断两个向量的接近程度。例如对于两个单位向量，如果这两个向量方向接近，则点乘结果接近1；如果方向垂直，点乘结果接近0；如果方向相反，点乘结果接近1.</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
-<h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
-<p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
-<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用右手坐标系）:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
-
-<p>向量叉乘的代数运算:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102350731.png" alt="image-20230510235008653"> </p>
-<p>向量叉乘的作用:</p>
-<p>（1）判断左右位置关系</p>
-<p>如下在X、Y平面，判断向量b在向量a的左侧还是右侧。计算向量a叉乘向量b，如果结果为正，则向量b在向量a在左侧，即a-b是逆时针；如果结果为负，则向量b在向量a在右侧，即a-b是顺时针。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554742.png" alt="image-20230515155411695" style="zoom:80%;" /> 
-
-<p>（2）判断内外</p>
-<p>如下三角形，ABC按照逆时针顺序输入。AB叉乘AP，结果为正，点p在AB左侧；BC叉乘BP，结果为正，点p在BC左侧；CA叉乘CP，结果为正，p在CA左侧；结论p在三角形内部。如果ABC按照顺时针顺序输入，如果p在三条边右侧，则p在三角形内部。所以不管顺时针还是逆时针输入，p如果在三角形内部，p必须在三条边的同一边。在三角形光栅化时，用该方法可以判断三角形覆盖哪些像素。如果叉乘结果为0，则自定义是否在三角形内部。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554163.png" alt="image-20230515155440122" style="zoom:67%;" /> 
-
-<h5 id="在三维直角坐标系（右手坐标系）中进行向量分解"><a href="#在三维直角坐标系（右手坐标系）中进行向量分解" class="headerlink" title="在三维直角坐标系（右手坐标系）中进行向量分解"></a>在三维直角坐标系（右手坐标系）中进行向量分解</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151555684.png" alt="image-20230515155508640" style="zoom: 67%;" /> 
-
-<p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
-<h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
-<p>数学上是没有矩阵与标量相加减的运算的，但是很多线性代数的库都对它有支持。矩阵与标量之间的加减就是将矩阵中每一个元素都与标量进行加减。矩阵与矩阵之间的加减就是两个矩阵对应元素的加减运算，所以总体的规则和与标量运算是差不多的，只不过在相同索引下的元素才能进行运算。</p>
-<p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
-<p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素Aij由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
-<p>矩阵乘法的性质：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550391.png" alt="image-20230515155028337" style="zoom:80%;" /> 
-
-<p>矩阵与向量相乘，一般默认向量在右侧，矩阵列数与向量行数相同：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550865.png" alt="image-20230515155049820" style="zoom:67%;" /> 
-
-<p>矩阵的转置：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551322.png" alt="image-20230515155114282" style="zoom: 50%;" /> 
-
-<p>单位矩阵和逆矩阵:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551377.png" alt="image-20230515155143338" style="zoom:67%;" /> 
-
-<p>原矩阵乘以单位矩阵，相当于不对原矩阵不做任何操作.</p>
-<p>向量的点积和叉积可以转换成矩阵乘法（向量默认为列向量）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151552558.png" alt="image-20230515155234507" style="zoom:67%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-gl函数流程图"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/"
-    >gl函数流程图</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/" class="article-date">
-  <time datetime="2023-04-17T01:33:58.000Z" itemprop="datePublished">2023-04-17</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>1.清除</p>
-<p>首先设置清除颜色缓冲区、深度缓冲区和模板缓冲区的值，这一步只是设置而并非真正的清除，每一个缓冲区的清除值都有默认值。之后调用glClear函数，通过设置参数，用上述设置的清除值清除指定的缓冲区。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934402.jpg" alt="img"> </p>
-<p>2.纹理贴图</p>
-<p>首先使用sgpugl_glGenTextures创建纹理对象，纹理对象的名称空间是无符号整数，纹理对象的名称仅限于在sgpugl_glGenTextures使用。sgpugl_glActiveTexture指定需要激活的纹理单元，之后的操作都在该纹理单元下进行（如果仅一个纹理单元默认为GL_TEXTURE0，可以指定多个纹理单元）。sgpugl_glBindTexture将纹理对象绑定在纹理目标上。如纹理对象texture1绑定在纹理单元GL_TEXTURE0下的纹理目标GL_TEXTURE_2D上。接下来的操作都是针对该纹理目标进行（一个纹理单元下可以有多个纹理目标）。sgpugl_glTexImage(12)D为该纹理目标指定纹理图片，生成纹理。sgpugl_glTexParameteri设置纹理参数，如环绕方式、过滤方式等。</p>
-<p>在绘制前需要指定激活的纹理单元。采样器的类型识别纹理单元上的纹理目标。例如，采样器类型为的sampler2D，则采样器会在先前指定的纹理单元上选择纹理目标TEXTURE_2D，进而对纹理进行采样。</p>
-<p>如下图是将三个纹理对象绑定在两个纹理单元下的三个纹理目标上，用其中一个纹理进行绘制的流程图。假如Draw前指定激活的纹理单元为GL_TEXTURE0，定位到红色区。假如着色器中采样器类型为的sampler2D，则定位到蓝色区域，找到对应纹理进行采样。</p>
-<p>其中绿色区域的函数可以用指定的数据修改纹理目标指定区域的内容。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934497.jpg" alt="img"> </p>
-<p>3.深度测试，多边形深度偏移</p>
-<p>用1中的方法清除深度缓冲区，此处以默认值为例。在进行深度测试前必须先用sgpugl_glEnable启用深度测试功能。顶点X,Y坐标会从标准化设备坐标经过视口变换变成窗口坐标。z值根据sgpugl_glDepthRange(f)设置的范围也会从标准化设备坐标映射到窗口坐标，两个范围参数都限制在[0,1]。光栅化之后深度测试之前，如果较多片元的深度相差非常小，例如在相同的深度上绘制两个重叠的三角形，会发生z-Fighting。因此需要使用sgpugl_glEnable启用偏移，再通过sgpugl_glPolygonOffset对绘制的片元的深度值（由顶点插值得到）进行整体偏移。深度测试时通过sgpugl_glDepthFunc设置深度缓冲比较函数，默认为GL_LESS,即当前绘制的片元深度如果小于深度缓冲对应位置的深度值，则将颜色值写入颜色缓冲（之后可能被覆盖或者混合），否则丢弃。保留片元的深度值是否更到深度缓冲，通过glDepthMask设置。最后根据情况关闭深度测试和偏移。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934544.jpg" alt="img"> </p>
-<p>4.颜色混合，Alpha测试</p>
-<p>如果要绘制完全透明的物体，可以将全透明物体的Alpha值设置为0，将不透明物体的Alpha值设置为1。利用sgpugl_glEnable启用透明测试，透明测试在模板测试之前。sgpugl_glAlphaFunc可以指定透明度测试函数，此处以CL_GREATER，预设值为0.1为例。如果当前绘制的片元的Alpha为0，小于预设值，片元被丢弃。如果当前绘制的片元的Alpha为1，大于预设值，则保留片元。通过保留和丢弃片元来实现完全透明的效果。最后根据情况关闭透明测试。透明测试还常用于去除纹理图白色背景。</p>
-<p>如果要绘制半透明物体，需要使用颜色混合（不透明物体直接颜色覆盖），该步骤在所有测试之后。绘制时要先绘制不透明物体（开启深度测试并允许深度写入）之后关闭深度写入，最后按照从远到近的顺序绘制半透明物体，不然可能会出现绘制错误。</p>
-<p>情况1：半透明物体A在不透明物体B后</p>
-<p>情况2：半透明物体A在不透明物体B前</p>
-<p>情况3：半透明物体A在半透明物体B前</p>
-<p>在情况1下，先绘制B再绘制A，且A不开启深度测试，不管A是否允许深度写入，A被遮挡的部分都会绘制出来。因此需要开启深度测试。在情况3下，先绘制A再绘制B，且A不禁止深度写入，B被遮挡的部分会被直接丢弃。因此需要禁止深度写入。在情况2下，假设先绘制A再绘制B，由于A禁止深度写入，B被遮挡的部分会绘制并覆盖A。因此需要先绘制不透明物体。在情况3下，先绘制A再绘制B，绘制B时，A为目标色B为源色；先绘制B再绘制A，绘制A时，B为目标色A为源色；根据混合算法的设置，这两次的结算结果可能不同。因此需要按照顺序绘制。</p>
-<p>利用sgpugl_glEnable启用颜色混合，sgpugl_glBlendFunc可以指定颜色混合方式，即如何将深度测试保留的片元颜色值与颜色缓冲区对应的已存在的颜色值进行计算得到新的颜色值。最后根据情况关闭颜色混合或再次开启深度写入。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934584.jpg" alt="img"> </p>
-<p>5.颜色填充</p>
-<p>可以使用sgpugl_glColorPointer或者sgpugl_glColor设置顶点颜色数据，在使用sgpugl_glColorPointer前需先开启顶点颜色属性。但是sgpugl_glColorPointer优先级高于sgpugl_glColor，当使用sgpugl_glColorPointer时，不管sgpugl_glColor使用在sgpugl_glolorPointer前还是后，最后绘制出的颜色为顶点颜色数组定义的颜色。sgpugl_glColor可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的颜色，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的颜色。sgpugl_glColorMask允许或禁⽌帧缓冲区某种通道的写⼊颜色缓冲。如果不允许R通道写入颜色缓冲，如果设置颜色为(1,0,1)紫色，最后绘制出来的会是(0,0,1)蓝色。注意如果着色模式不是平滑模式，则片元的颜色由图元的单个顶点得到。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934652.jpg" alt="img"> </p>
-<p>6.模板测试</p>
-<p>模板测试在深度测试之前。需要先清空模板缓冲区（清除值默认为0，每个值都为8位二进制，即有256种取值方式），并用sgpugl_glEnable启用模板测试。sgpugl_glStencilFunc设置模板测试的规则，如默认的“GL_ALWAYS，0, 0xFF”表示总是通过模板测试;下图中的“GL_NOTEQUAL，1，0xFF”表示如果片元对应模板缓冲的值不等于1，则通过模板测试。但是在比较之前，需要将模板缓冲的值和1分别与第三个参数0xFF进行与运算。sgpugl_glStencilOp设置如何更新模板缓冲，三个参数分别表示：模板测试失败时、模板测试通过但深度测试失败时及模板测试和深度测试都通过时采取的行为。如默认“GL_KEEP,GL_KEEP,GL_KEEP”表示无论测试结果如何，模板缓冲内的值都保持不变；下图中的“GL_KEEP,GL_KEEP,GL_REPLACE”表示当深度测试通过后，片元对应模板缓冲的值用sgpugl_glStencilFunc的第二个参数值代替。sgpugl_glStencilMask设置是否允许写入模板缓冲。如默认“0xFF”表示在写入模板缓冲之前，将写入的数和0xFF进行与运算（最后数保持原状，即允许写入）。如过设置“0x00”，写入的数会变成全0，即禁止写入，相当于sgpugl_glDepthMask（GL_FALSE）。也可以根据情况设置其他8位掩码。最后根据情况关闭模板测试。模板测试可用于绘制边框。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934268.jpg" alt="img"> </p>
-<p>7.多边形正面判断，正背面剔除</p>
-<p>在裁剪阶段，背面剔除用于绘制观察者所看到的面，不绘制看不到的面。这使得渲染的性能上可提高超过50%。gl按照如下方式区分图元的正面和背面： </p>
-<p>正面：顶点连接顺序按照逆时针</p>
-<p>背面：顶点连接顺序按照顺时针</p>
-<p>Sgpugl_glFrontFace可以修改上述规则。注意顶点连接的顺序是相对于观察者而言的。因此图元是否需要剔除，是顶点连接顺序和观察者位置共同决定的。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934549.jpg" alt="img"> </p>
-<p>8.渲染上下文的创建和管理</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934751.jpg" alt="img"> </p>
-<p>9.裁剪测试</p>
-<p>裁剪测试在透明测试之前。先用sgpugl_glEnable启用裁剪测试，再用sgpugl_glScissor设置裁剪框，类似sgpugl_glViewport在窗口框出一块区域。但是sgpugl_glScissor是在裁剪框内的才进行绘制。sgpugl_glViewport相当于变相重置本次绘制的窗口，将所有需要绘制的物体映射在视口区域内。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934152.jpg" alt="img"> </p>
-<p>10.顶点数据、矩阵变换、裁剪和视口</p>
-<p>可以使用sgpugl_glVertexPointer或者在sgpugl_glBegin和sgpugl_glEnd中用sgpugl_glVertex设置顶点坐标数据，在使用sgpugl_glColorPointer前需先开启顶点坐标属性。</p>
-<p>顶点首先经过世界变换（M）从模型空间变到世界空间，再经过观察变换（V）从世界空间变到观察空间，之后经过投影变换（P）从观察空间变到齐次裁剪空间。其中投影变换有正交投影和透视投影（近大远小）。上述变换需要对顶点坐标进行矩阵变换，在此之前需要先设置矩阵MV矩阵和P矩阵。可以用sgpugl_glLoadMatrixf自定义当前矩阵，也可以先通过sgpugl_glLoadIdentity将当前矩阵变成单位矩阵，再通过平移、旋转、缩放或者乘以其他矩阵得到最终需要的矩阵。但是调用draw前需要切换到MV空间下。</p>
-<p>图元组装后进行裁剪，除了视锥体裁剪和背面剔除外，还可以通过sgpugl_glClipPlane设置裁剪平面进行图元裁剪，但是要先用sgpugl_glEnable启用裁剪平面。裁剪后对顶点坐标进行齐次除法即除以w使其变到NDC空间。最后通过视口变换将顶点坐标从NDC空间映射到视口区域的屏幕空间。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934683.jpg" alt="img"> </p>
-<p>11.光照模型</p>
-<p>使用光照模型需要提供顶点法线数据。物体的法线向量决定了它相对于光源的方向，从而计算顶点从光源接收的光线数量。可以使用sgpugl_glNormalPointer或者sgpugl_glNormal设置顶点法线数据，在使用sgpugl_glNormalPointer前需先开启顶点法线属性。sgpugl_glNormal可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的法线，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的法线。</p>
-<p>下一步开始使用光照模型。先用sgpugl_glEnable(GL_LIGHTING)开启整体光照效果。使用sgpugl_glLightfv设置光源，即设置入射光。光源最多设置8个，从GL_LIGHT0到GL_LIGHT7，每个光源可以设置的参数如下图。其中光源位置分为方向性光源（平行光）和位置性光源（点光源），聚光灯光源方向到光源的常数衰减因子这6个属性都是针对位置性光源。用sgpugl_glEnable开启光源，如sgpugl_glEnable（GL_LIGHT0）。接下来使用sgpugl_glMaterialfv设置光照模型的材质参数，即设置出射光。由于物体有两面，材质可能不同，因此要先确定为哪一面设置材质，可以设置的材质参数如下图。最后用sgpugl_glLightModelfv设置光照模型，便于进行光照计算。光照模型的概念由下图所示4个部分组成。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934799.jpg" alt="img"> </p>
-<p>12.像素操作和帧缓冲区（更高版本的opengl基本不用这些）</p>
-<p>（1）sgpugl_glCopyPixels进行像素的复制操作，从帧缓冲区复制到帧缓冲区，不涉及内存，因此避免了显存与内存间格式转换的问题，并且加快了运算速度。该函数前四个参数表示复制像素来源的矩形的左下角坐标、宽度和高度，可以当作是在窗口确认了一块矩形区域，第五个参数用于确认复制的内容，通常使用GL_COLOR，表示复制像素的颜色，但也可以是GL_DEPTH（深度缓冲数据）或GL_STENCIL（模板缓冲数据）。通过sgpugl_glRasterPos2f设置像素绘制的起始位置，系统会将该起始位置转换成窗口坐标，之后将会从起始位置绘制出刚刚窗口上指定的矩形中的内容。</p>
-<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
-<p>（3）sgpugl_glBitmap用于将位图数据绘制在屏幕，位图数据可以理解为0、1矩阵，为1则在屏幕的对应像素绘制、为0不绘制。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170938068.png" alt="image-20230417093822003"></p>
-<p>​		第（3）部分代码如下，glBitmap函数参数前两位定义了位图的宽、高，如图字符大小为12*8的方阵，每一行数据用8位16进制表示。注意位图数据总是按块存储，每块的位数总是8的倍数，但实际位图的宽并不一定使8的倍数。组成位图的位从位图的左下角开始画：首先画最底下的一行，然后是这行的上一行，依此类推。第三、四个参数指定了位图的原点，默认为左下角，向上和向右为正方向。第五、六个参数指定该在位图光栅化后光栅位置的增量，如下代码的意思是第二个字符F在第一个字符F的基础上分别向X正轴和Y正轴移动20个像素单位。 （不过试的时候发现glRasterPos2i(0, 0)才显示，glRasterPos2i(20, 20)不显示，所以不太清楚这里的坐标系）</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304272020851.png" alt="image-20230427202027799"></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GLubyte rasters[<span class="number">12</span>] = &#123;</span><br><span class="line">    <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xfc</span>,</span><br><span class="line">    <span class="number">0xfc</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xff</span>, <span class="number">0xff</span>&#125;;</span><br><span class="line"><span class="built_in">glColor3f</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>);<span class="comment">//必须放RasterPos2i前</span></span><br><span class="line"><span class="built_in">glPixelStorei</span>(GL_UNPACK_ALIGNMENT, <span class="number">1</span>); </span><br><span class="line"><span class="comment">//光栅位置坐标与glVertex()提供的坐标同样对待,位于视口以外的点的当前光栅位置无效</span></span><br><span class="line"><span class="built_in">glRasterPos2i</span>(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glBitmap</span>(<span class="number">8</span>, <span class="number">12</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">20.0</span>, <span class="number">20.0</span>, rasters);</span><br><span class="line"><span class="built_in">glBitmap</span>(<span class="number">8</span>, <span class="number">12</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,<span class="number">0.0</span>, rasters);</span><br></pre></td></tr></table></figure>
-<p>​		不过位图的宽高和实际给的位图数据也可能不同。</p>
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230427203459953.png" alt="image-20230427203459953" style="zoom:50%;" />
-
-<p>13.图元绘制</p>
-<p>首先确定绘制的图元类型，注意gpugl_glDrawArrays和sgpugl_glBegin的图元参数不同。</p>
-<table>
-<thead>
-<tr>
-<th>图元类型</th>
-<th>gpugl_glDrawArrays是否有该参数</th>
-<th>sgpugl_glBegin是否有该参数</th>
-<th>流程图中对应类型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>GL_POINTS</td>
-<td>√</td>
-<td>√</td>
-<td>点</td>
-</tr>
-<tr>
-<td>GL_LINES</td>
-<td>√</td>
-<td>√</td>
-<td>线一类</td>
-</tr>
-<tr>
-<td>GL_LINE_LOOP</td>
-<td>√</td>
-<td>√</td>
-<td>线一类</td>
-</tr>
-<tr>
-<td>GL_LINE_STRIP</td>
-<td>√</td>
-<td>√</td>
-<td>线一类</td>
-</tr>
-<tr>
-<td>GL_TRIANGLES</td>
-<td>√</td>
-<td>√</td>
-<td>三角形一类&#x2F;多边形</td>
-</tr>
-<tr>
-<td>GL_TRIANGLE_STRIP</td>
-<td>√</td>
-<td>√</td>
-<td>三角形一类&#x2F;多边形</td>
-</tr>
-<tr>
-<td>GL_TRIANGLE_FAN</td>
-<td>√</td>
-<td>√</td>
-<td>三角形一类&#x2F;多边形</td>
-</tr>
-<tr>
-<td>GL_POLYGON</td>
-<td>×</td>
-<td>√</td>
-<td>三角形一类&#x2F;多边形</td>
-</tr>
-<tr>
-<td>GL_QUADS</td>
-<td>×</td>
-<td>√</td>
-<td>三角形一类&#x2F;多边形</td>
-</tr>
-<tr>
-<td>GL_QUAD_STRIP</td>
-<td>×</td>
-<td>√</td>
-<td>三角形一类&#x2F;多边形</td>
-</tr>
-</tbody></table>
-<p>如果是绘制点可以用sgpugl_glPointSize(f)设置光栅化时一个点的直径，默认为1。如果绘制线，可以用sgpugl_glLineWidth设置直线宽度，默认为1。</p>
-<p>直线可以用点画模式进行绘制。首先通过sgpugl_glEnable开启点画模式。sgpugl_glLineStipple设置点画的方式，其参数是由0、1组成的16位模式序列和重复因子，从模式低位开始，如果模式中的位是1，直线中对应像素就被绘制，否则就不绘制（如果直线长度大于16位则不断重复上述规则）。重复因子用来扩展模式，如模式中如果出现3个1会被扩展成个6个1。如果没有启用点画线功能，模式默认为OxFFFF、重复因子为1。多边形也可以用点画模式进行绘制。首先通过sgpugl_glEnable开启点画模式。sgpugl_glPolygonStipple设置点画的方式，其参数是一个指向32<em>32的位图指针，可以理解为32</em>32的0、1矩阵，通过GLubyte数组自定义（128个2位16进制序列）。从每个序列低位开始，模式中的位是1，多边形中对应像素就被绘制，否则就不绘制（如果多边形像素大于32*32则不断重复上述规则）。</p>
-<p>sgpugl_glShadeModel用于设置平滑着色或者恒定着色。注意除了GL_POLYGON以外，恒定着色图元中片元的颜色为图元最后一个顶点的颜色，而GL_POLYGON下图元中片元的颜色为图元第一个顶点的颜色。</p>
-<p>设置完上述所有后即可调用绘制函数，注意sgpugl_glDrawElements除了需要顶点数据以外，还需要索引数据。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934468.jpg" alt="img"> </p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-X11窗口_glfw_链接"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/"
-    >X11窗口、glfw和链接</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/" class="article-date">
-  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="文件区分"><a href="#文件区分" class="headerlink" title="文件区分"></a>文件区分</h4><p>​		glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和创建上下文等（这些操作在每个系统上不同，所以该文件将其封装使得我们可以直接使用）。它提供了一些渲染物体所需的最低限度的接口。它允许用户创建OpenGL上下文、定义窗口参数以及处理用户输入。</p>
-<p>  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h，包含该头文件可以使用gl,glu,glext,wgl,glx里的全部函数。glad.h与glew.h作用相同，可以看作其升级版。这两个头文件使用时要放在glfw3.h 或者glut.h文件之前。gl3w.h和glad.h作用类似。</p>
-<h4 id="glfw和上下文"><a href="#glfw和上下文" class="headerlink" title="glfw和上下文"></a>glfw和上下文</h4><p>​		除了窗口创建，glfw还封装了上下文创建。glfw可以用elg和glx创建上下文，egl可以支持gl、es和vukan，glx支持gl扩展支持es。glfw系统库为高版本3.3.2，可以在应用程序中对glfw进行配置。如下代码希望在运行gl程序使用glx的上下文，在运行es程序使用egl的上下文。其实在glfwinit的时候已经默认使用glx的上下文，支持gl和es了，所以在if(casetype&#x3D;&#x3D;”gl”)后不需要显示指定，也可以保证在运行gl程序使用glx的上下文，并且支持es。不过为了使得运行es程序使用egl的上下文，需要设置GLFW_CONTEXT_CREATION_API和GLFW_CLIENT_API，注释如下。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( !<span class="built_in">glfwInit</span>() )</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">fprintf</span>( stderr, <span class="string">&quot;Failed to initialize GLFW\n&quot;</span> );</span><br><span class="line">	<span class="built_in">getchar</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(casetype==<span class="string">&quot;gl&quot;</span>)&#123;</span><br><span class="line">    <span class="comment">//采样</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_SAMPLES, <span class="number">4</span>);</span><br><span class="line">    <span class="comment">//版本</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">2</span>);</span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MINOR, <span class="number">1</span>);</span><br><span class="line">    <span class="comment">//opengl模式</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_OPENGL_PROFILE, 			GLFW_OPENGL_COMPAT_PROFILE);</span><br><span class="line">    <span class="comment">//用户不能调节窗口大小</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_RESIZABLE, GL_FALSE);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_SAMPLES, <span class="number">16</span>);</span><br><span class="line">    <span class="comment">//上下文指定egl</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_CREATION_API, 	GLFW_EGL_CONTEXT_API);</span><br><span class="line">    <span class="comment">//API使用opengl es</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">3</span>);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MINOR, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_RESIZABLE, GL_FALSE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>​		GLFW_OPENGL_PROFILE用于指定opengl模式，opengl es无该模式。opengl模式有COMPAT和COREl两种，CORE抛弃了部分用法，如果想兼容，使用COMPAT会少很多问题。</p>
-<p>​	在如上代码中，如果程序以gl-es-gl的顺序运行，在运行到es时，进入else使用egl创建上下文，调用es的API；之后运行最后一个gl时，进入if，由于if中没有显示指定上下文和调用的API，因此还是会使用egl创建上下文，调用es的API。</p>
-<p>​		在低版本的glfw文件中，链接的不是系统库而是用户自己指定的库，不能在应用程序设置，而是通过Cmakelists.txt设置，如下，通过ON和OFF设置是否使用egl创建上下文。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304121622378.png" alt="image-20230412162211136" style="zoom:67%;" />
-
-<p>​		egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eglBindAPI</span>(EGL_OPENGL_ES_API);<span class="comment">//绑定ES的API</span></span><br><span class="line"><span class="built_in">eglBindAPI</span>(EGL_OPENGL_API);<span class="comment">//绑定GL的API</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="X11窗口"><a href="#X11窗口" class="headerlink" title="X11窗口"></a>X11窗口</h4><p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
-<p>2、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
-
-<p>3、X11窗口创建的部分函数和窗口监听</p>
-<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
-
-<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
-
-<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
-
-<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//设置窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
-
-<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，无法执行之后的步骤。因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
-<p>​		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
-<p>​		用上述指定颜色初始化颜色缓存，使用默认值初始化深度缓存，再利用函数</p>
-<p>​		eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口（此处以egl配置上下文为例）。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
-<pre><code>//while循环外
-Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
-XSetWMProtocols(display, win, &amp;deleteAtom, 1);
-//while循环内
- case ClientMessage:&#123;
-       if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
-           printf(&quot;X WINDOW DELETED\n&quot;);
-           return 0;
-       &#125;
-   &#125;
-</code></pre>
-<p>​		窗口改变事件</p>
-<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
-<pre><code>const unsigned int mask = CWWidth | CWHeight;
-XWindowChanges changes;
-int newWidth = 128, newHeight = 128;
-changes.width = newWidth;
-changes.height = newHeight;
-XConfigureWindow(display, win, mask, &amp;changes);
-</code></pre>
-<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化，在外部事件发生时才存在ConfigureNotify事件。</p>
-<pre><code>case ConfigureNotify:&#123;
-    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
-    break;
-&#125;
-</code></pre>
-<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
-<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
-
-<p>参考链接：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
-<h4 id="源文件-gt-可执行文件过程"><a href="#源文件-gt-可执行文件过程" class="headerlink" title="源文件-&gt;可执行文件过程"></a>源文件-&gt;可执行文件过程</h4><p>1.预处理：包括删除注释、宏扩展、#include文件包含等。预处理后生成.i文件。</p>
-<p>2.编译：由编译器完成，检查语法及语义，生成错误或警告。编译后生成汇编语言.s文件。</p>
-<p>3.汇编：将汇编文件翻译成机器码指令（二进制），将指令打包形成.o目标文件。</p>
-<p>4.链接：完成调用的各种函数、静态库和动态库的链接，从函数原型链接到函数实现。形成.exe文件。</p>
-<h4 id="Linux平台下cmake和make的区别"><a href="#Linux平台下cmake和make的区别" class="headerlink" title="Linux平台下cmake和make的区别"></a>Linux平台下cmake和make的区别</h4><p>Makefile编译规则文件。</p>
-<p>make通过Makefile文件自动化批量处理编译，将源文件变成最终的可执行文件（包含gcc的功能）。</p>
-<p>不同平台的Makefile文件不同，cmake作为跨平台编译工具可以将CMakeLists.txt文件转化为所需要的Makefile文件</p>
-<h4 id="Cmake"><a href="#Cmake" class="headerlink" title="Cmake"></a>Cmake</h4><p>window平台下利用Cmake软件代替Linux下的cmake命令，用编译器如vs代替Linux下的make命令。</p>
-<p>Cmake软件将cmake分为两步：</p>
-<p>1.Configure：配置，生成需要的文件夹及准备文件</p>
-<p>2.Generate：根据CMakeLists.txt生成工程文件。如果编译器选择vs，则生成vs工程文件，如果是Linux，则生成Makefile。生成vs工程文件，同Linux生成Makefile文件，都是规定了编译规则。</p>
-<p>最后由vs执行工程，即执行make。</p>
-<h4 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h4><p>1.区别</p>
-<p>​		使用封装好的库函数十分方便并且十分高效，库分为静态库和动态库。</p>
-<table>
-<thead>
-<tr>
-<th align="center">库类型</th>
-<th align="center">windows</th>
-<th align="center">linux</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">静态库</td>
-<td align="center">.lib</td>
-<td align="center">.a</td>
-</tr>
-<tr>
-<td align="center">动态库</td>
-<td align="center">.dll</td>
-<td align="center">.so</td>
-</tr>
-</tbody></table>
-<p>​		当程序与静态库链接时，静态库中所包含的所有函数方法都会被拷贝到最终的可执行文件中去。这就会导致最终生成的可执行代码量相对变多，相当于编译器将代码补充完整了。编译后的可执行程序不需要静态库，因为所有使用的函数都已经被编译进去了。这种方式会让程序运行起来相对快一些，不过也会有个缺点: 占用磁盘和内存空间，导致可执行程序过大。另外，静态库会被添加到和它链接的每个程序中去, 而且这些程序运行时, 都会被加载到内存中，无形中又多消耗了更多的内存空间。  与动态库链接的可执行文件只包含它需要的函数方法的引用表，而不是所有的函数代码，只有在程序执行时, 那些需要的函数代码才会被拷贝到内存中。这样就使可执行文件比较小, 节省磁盘空间，更进一步，操作系统使用虚拟内存，使得一份动态库驻留在内存中被多个程序使用，也同时节约了内存。不过由于运行时要去链接库会花费一定的时间，执行速度相对会慢一些。如果要修改的刚好是库函数的话，在接口不变的前提下，使用动态库的程序只需要将动态库重新编译就可以了，而使用静态库的程序则需要将静态库重新编译好后，将程序再重新编译一遍。</p>
-<p>2.两种链接</p>
-<p>​		现在源程序main.cpp链接库sub,sub链接库add</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*add.h */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ADD_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ADD_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*add.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;add\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*sub.h*/</span>v</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _SUB_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _SUB_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">----------------------------------------------------------</span><br><span class="line"><span class="comment">/*sub.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sub\n&quot;</span>);</span><br><span class="line">    <span class="built_in">add</span>();</span><br><span class="line">&#125;</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*main.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">sub</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c add.c</span><br><span class="line">gcc -c sub.c</span><br></pre></td></tr></table></figure>
-
-<p>​		首先生成的文件：sub.o ，add.o，无论是静态库文件还是动态库文件，都是由 .o 文件创建。使用-c不会链接、生成可执行文件，只会预处理、编译和汇编。</p>
-<p>（1）静态库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ar cr libadd.a add.o</span><br><span class="line">ar cr libsub.a sub.o </span><br></pre></td></tr></table></figure>
-
-<p>​		ar：静态函数库创建的命令</p>
-<p>​		-c :create创建</p>
-<p>​		库文件的命名规范是以lib开头（前缀），紧接着是静态库名，以 .a 为后缀名。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
-
-<p>​		-L ：指定函数库查找的位置，’.’表示在当前目录下查找</p>
-<p>​		-l：指定函数库名，其中的lib和.a(.so)省略。</p>
-<p>​		-o:链接，生成可执行文件，指名生成的可执行文件名</p>
-<p>​	  使用静态库内部函数，只需要在使用到这些函数的源程序中包含这些函数的原型声明（头文件），然后在用gcc命令生成可执行文件时指明静态库名，gcc将会从静态库中将函数拷贝到可执行文件中。gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。在程序main.c中，包含了静态库的头文件sub.h，然后在主程序main中直接调用函数sub()即可。生成可执行文件后静态库可以不再需要。</p>
-<p>​		注意：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub </span><br><span class="line">gcc -o main main.c -L . –l add -L . –l sub</span><br></pre></td></tr></table></figure>
-
-<p>​		都会发生sub无法链接到add导致sub中的函数undefined reference to，因此链接顺序不能变，而且用main链接sub和add即可，不需要单独写一行sub链接add。</p>
-<p>（2）动态库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -o add.o -c add.c</span><br><span class="line">gcc  -fPIC  -o sub.o -c sub.c</span><br><span class="line">gcc -shared -o libadd.so add.o</span><br><span class="line">gcc -shared -o libsub.so sub.o</span><br></pre></td></tr></table></figure>
-
-<pre><code>     -fpic:产生代码位置无关代码,则产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。
-</code></pre>
-<p>​		-shared ：生成共享库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
-
-<p>​		.&#x2F;执行时会发生如下报错：</p>
-<pre><code>     error while loading shared libraries:libmymath.so: cannot open shared object file: No such file or directory
-</code></pre>
-<p>​		原因如下：</p>
-<p>​		gcc -o 链接器工作于链接阶段，工作时需要-l指定库名和-L指定库路径。如果在指定库路径没有找到库，会发生</p>
-<p>undefined reference to的报错，导致可执行文件无法生成。但是有时不会发生该报错，可以对make添加-WL -Z DEFS编译选项，在生成可执行文件前找到该错误。</p>
-<p>​		.&#x2F;运行可执行程序时还需要动态链接器，工作于程序运行阶段，工作时需要提供动态库所在目录位置。该目录与上述-L指定的路径不同，动态链接器去固定位置（通过环境变量）查找动态库，如果找不到就会报错，所以需要先将动态库的工作目录加入到环境变量中。一般会去默认的动态库搜索路径&#x2F;usr&#x2F;lib查找，可以将.so文件复制到&#x2F;usr&#x2F;lib中来解决上述报错。</p>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ldd exe 查看可执行程序运行时链接的动态库</span><br></pre></td></tr></table></figure>
-
-<p>​		如果在源文件的头文件中使用</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<p>​		则之后会默认链接到&#x2F;usr&#x2F;lib下的系统库（库名&#x3D;&gt;目录）</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120856844.png" alt="image-20230412085632785"></p>
-<p>​		在项目文件中添加一个新文件夹，使用自定义的glfw库文件。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
-<p>​		头文件会链接到自己的库文件而不是系统的库文件。编译源文件时，需要将glfw文件一起编译，因此需要修改源文件的Cmakelist.txt文件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_subdirectory(external) </span><br></pre></td></tr></table></figure>
-
-<p>​		cmake会通过源文件的Cmakelist.txt找到external目录下的Cmakelist.txt</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include_directories（external/glfw-3.1.2/include/GLFW）</span><br></pre></td></tr></table></figure>
-
-<p>​		向工程添加多个特定的头文件搜索路径，添加该行后源文件的头文件部分可以改成</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<p>​		如果包含头文件后，没有找到external目录下的Cmakelist.txt，无法生成自己的库文件，最后还是会链接到系统库。如果glfw文件编译链接成功，最后就会链接到自己的库。在Cmakelist.txt或者其他文件中指明了动态链接库的搜索位置，因此不会去默认的路径&#x2F;usr&#x2F;lib。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120915237.png" alt="image-20230412091529196"></p>
-<h4 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120919388.png" alt="image-20230412091902342"></p>
-<p>​		可以用如下方式调试：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ gdb 可执行程序名</span><br><span class="line">(gdb) b 函数名 //设置断点，运行到该函数暂停</span><br><span class="line">(gdb) run //运行到第一个断点暂停</span><br><span class="line">(gdb) c	//继续运行到下一个断点暂停</span><br><span class="line">(gdb) quit //退出gdb环境</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-计算着色器"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/"
-    >计算着色器</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
-  <time datetime="2023-03-14T01:35:48.000Z" itemprop="datePublished">2023-03-14</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>计算着色器是在GPU上运行的，是在普通渲染管线之外的着色器程序。计算着色器是完全用于计算任意信息的着色器阶段。虽然它可以进行渲染，但它通常用于与绘制三角形和像素没有直接关系的任务。利用GUP的快速计算和并行性，可以用于处理大量的计算。</p>
-<p>opengl4.3才开始支持计算着色器，opengl es是3.1才开始支持计算着色器。</p>
-<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 320 es</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">local_size_x</span> = <span class="number">1</span>) <span class="keyword">in</span>; </span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">rgba32f</span>, <span class="keyword">binding</span> = <span class="number">0</span>) <span class="keyword">uniform</span> <span class="keyword">readonly</span> <span class="keyword">mediump</span> <span class="type">imageBuffer</span> po_buffer;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">rgba32f</span>, <span class="keyword">binding</span> = <span class="number">1</span>) <span class="keyword">uniform</span> <span class="keyword">writeonly</span> <span class="keyword">mediump</span> <span class="type">imageBuffer</span> po_buffer1;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//此处全局工作组和本地工作组yz均为1，因此可以通过x确定位置</span></span><br><span class="line">    <span class="type">int</span> pos = <span class="type">int</span>(<span class="built_in">gl_GlobalInvocationID</span>.x);</span><br><span class="line">    <span class="type">vec4</span> value = <span class="built_in">imageLoad</span>(po_buffer, pos);</span><br><span class="line">    value.x = value.x+<span class="number">0.4</span>;</span><br><span class="line">    value.y = value.y+<span class="number">0.4</span>;</span><br><span class="line">    <span class="built_in">imageStore</span>(po_buffer1, pos, value); </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>binding与之后glBindImageTexture的第一个参数相同，通过ID绑定对应的tbo，而tbo绑定对应的buffer。相当于通过绑定知道从哪个buffer读取数据，从哪个buffer写入数据。因为此处是读取buffer所以使用imageBuffer，如果是数组的话可能使用image2D。es需要指定精度，所以添加mediump。同时因为需要读取的是rgba而不是r（如果只设置r，value就无法读取y值），所以需要指定readonly和writeonly。但是在opengl4.3中不需要指定精度，并且读写可以在一个buffer中进行。</p>
-<p>imageLoad从buffer的指定位置读取数据，imageStore将值写入buffer的指定位置。</p>
-<p>计算着色器任务以组为单位进行执行，称为工作组。拥有邻居的工作组被称为本地工作组（局部）, 这些组可以组成更大的组，称为全局工作组，而全局工作组通常作为执行命令的一个单位。计算着色器会被全局工作组中每一个本地工作组中的每一个单元调用一次，工作组的每一个单元称为工作项，每一次调用称为一次执行。执行的单元之间可以u通过变量和显存进行通信（不同工作组不能通信），且可执行同步操作保持一致性（单个工作组内可以并行）。</p>
-<p>如下例子假设全局工作组yz轴都为1 ，局部工作组只有xy：</p>
-<p>gl_LocalInvocationID.x × local_size_y+gl_LocalInvocationID.y+local_size_x×local_size_y×gl_WorkGroupID.x&#x3D;gl_GlobalInvocationID.x×local_size_y×y轴的工作组个数+gl_GlobalInvocationID.y</p>
-<p>local_size是本地工作组的大小，有xyz三个维度，不设置默认为1。gl_WorkGroupID本地工作组在全局工作组的索引（从0开始），local_size_x×local_size_y本地工作组的大小（该大小尽量与硬件匹配），gl_LocalInvocationID工作项在本地工作组的坐标（从0开始）。gl_GlobalInvocationID：在全局工作组中，当前工作项所在位置。（在es中imageLoad后的pos只能使用int，所以可以设置本地工作组和全局工作组yz均为1，这样可以只使用gl_GlobalInvocationID.x就可以遍历到所有数据，否则可以通过上述公式计算。）本地工作组的大小×全局工作组的大小-&gt;所有需要遍历的数据</p>
-<p>与普通着色器一样正常链接</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">computeShader = LoadShader(GL_COMPUTE_SHADER, cShaderStr);</span><br><span class="line">compute_prog = glCreateProgram();</span><br><span class="line"><span class="keyword">if</span> (compute_prog == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">glAttachShader(compute_prog, computeShader);</span><br><span class="line">glLinkProgram(compute_prog);</span><br></pre></td></tr></table></figure>
-<p> 将顶点数据arraybuffer与texbuffer绑定</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">glGenBuffers(<span class="number">1</span>, &amp;po_buffer);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, po_buffer);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vVertices), vVertices, GL_DYNAMIC_COPY);</span><br><span class="line"></span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;po_buffer1);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, po_buffer1);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vVertices),vVertices, GL_DYNAMIC_COPY);</span><br><span class="line"></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;po_tbo);</span><br><span class="line">glBindTexture(GL_TEXTURE_BUFFER, po_tbo);</span><br><span class="line">glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, po_buffer);</span><br><span class="line"></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;po_tbo1);</span><br><span class="line">glBindTexture(GL_TEXTURE_BUFFER, po_tbo1);</span><br><span class="line">glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, po_buffer1);</span><br></pre></td></tr></table></figure>
-<p>先使用计算着色器，绑定tbo和id，GL_READ_WRITE设置读写权限（如果计算着色器规定了这里可以就设置读写,opengl因为读写可以在一个buffer进行因此一定要设置可读可写）。glDispatchCompute的三个参数设置了全局工作组的大小，三个参数可以理解为xyz方向各有几个本地工作组。glMemoryBarrier是隔断作用，为了保证计算着色器中纹理像素全部写入完成才进行下一步。最后使用渲染着色器进行绘制。如果至使用一次计算着色器的话，可以不用vao，渲染着色器默认使用writeonly的buffer。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glUseProgram(userData-&gt;compute_prog);</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glDispatchCompute(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);</span><br><span class="line">vao(po_tbo1配置数据与tbo1绑定)</span><br></pre></td></tr></table></figure>
-<p>如果要进行类似transformfeedback的操作，进行累加变换，需要交换读写tbo。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(flag)&#123;</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">vao(po_tbo配置数据与tbo绑定)</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">vao1(po_tbo1配置数据与tbo1绑定)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
  
       <!-- reward -->
       

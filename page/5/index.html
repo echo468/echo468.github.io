@@ -118,6 +118,765 @@
     
     
     <article
+  id="post-几何着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >几何着色器&amp;公告牌</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/28/%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2022-12-28T01:30:43.000Z" itemprop="datePublished">2022-12-28</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="几何着色器"><a href="#几何着色器" class="headerlink" title="几何着色器"></a>几何着色器</h4><img src="C:\Users\华为\Desktop\QQ图片20221228095854.png" alt="QQ图片20221228095854" style="zoom:50%;" />
+
+<p>渲染管线：顶点着色器-细分着色器-几何着色器-片段着色器</p>
+<p>作用：由于几何着色器可以在顶点发送到下一着色阶段之前对他们随意变换，所以作用就是将一个图元变换为另一个完全不同的图元，或者修改图元的位置</p>
+<p>使用方法：</p>
+<ul>
+<li>在几何着色器的顶部，声明从顶点着色器输入的图元类型：layout (类型) in;</li>
+<li>可以输入的图元有5类：points，lines，lines_adjacency，triangles，triangles_adjacency</li>
+<li>指定几何着色器的输出图元类型：layout (primitive, max_vertices &#x3D; n) out;</li>
+<li>输出图元有三种选项：points，line_strip，triangle_strip</li>
+<li>几何着色器还要设置一个他的最大输出顶点数量，如果绘制时超过了这个值，OpenGL将不会绘制多出的顶点</li>
+</ul>
+<p>以一个简单的几何着色器为例（顶点和细分着色器都不用修改，但是要注意细分着色器的patch不能为四边形）：</p>
+<p>注意ES中没有gl_PositionIn内置变量，因此需要从TES中通过out和in传入顶点数据，且进入几何着色器的数据为一个图元所有顶点数据，因此传入的顶点数据为数组。并且对于不确定大小的数据，不能通过变量访问，因此不能使用i循环访问，需要使用0,1,2。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="meta">#extension GL_ARB_geometry_shader4:enable</span></span><br><span class="line"><span class="built_in">layout</span>( triangles ) in;</span><br><span class="line"><span class="comment">//layout( line_strip, max_vertices = 3 ) out;的话一个三角形三个顶点用2条线绘制，四边形不能封口</span></span><br><span class="line"><span class="built_in">layout</span>( line_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line">out vec4 color;<span class="comment">//将当前顶点color传给片段着色器的gl_FragColor</span></span><br><span class="line">in vec4 fragmentColor[];<span class="comment">//几何着色器的输入为图元的一组顶点相关数据，必须设置为数组类型</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> i =<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//输入图元的一个图元的顶点的个数</span></span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;gl_PositionIn.<span class="built_in">length</span>();i++)</span><br><span class="line">	&#123;</span><br><span class="line">	    gl_Position=gl_PositionIn[i];</span><br><span class="line">		color=fragmentColor[<span class="number">0</span>];<span class="comment">//颜色传入一组，为当前顶点选择一个颜色值</span></span><br><span class="line">	    <span class="built_in">EmitVertex</span>();<span class="comment">//输出一个顶点</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//四边形在[0]封口</span></span><br><span class="line">	gl_Position=gl_PositionIn[<span class="number">0</span>];</span><br><span class="line">	color=fragmentColor[<span class="number">0</span>];</span><br><span class="line">	<span class="built_in">EmitVertex</span>();</span><br><span class="line">	<span class="built_in">EndPrimitive</span>();<span class="comment">//结束一个图元的输出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上几何着色器代码实现的效果同理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221228133913472.png" alt="image-20221228133913472" style="zoom:50%;" />
+
+<p>暂时不太会用几何着色器和细分着色器的情况下添加光照计算</p>
+<h4 id="几何着色器绘制公告牌"><a href="#几何着色器绘制公告牌" class="headerlink" title="几何着色器绘制公告牌"></a>几何着色器绘制公告牌</h4><p>​	公告板技术（billboarding）。公告板是一个始终朝向相机的四边形，当相机在场景中转动的时候，公告板也会随着相机转动保证相机方向向量始终垂直于公告板的正面。可以将怪物角色、树木等任何场景中重复性高、数量多的物体以纹理贴图的形式直接贴到四边形公告板上（而不需要复杂的计算和渲染实际的3d模型），始终朝向相机。公告板常常用来创建需要大量树木的森林效果，每一个公告板只需要4个顶点。</p>
+<p>让公告板始终朝向相机：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271142340.png" alt="image-20230127114208268"></p>
+<p>​	首先把公告板的四边形中心定义在世界中心center(0.0,0.0,0.0,0.0)。为了让四边形始终朝向相机，其四个顶点坐标与相机空间的u和s轴相同。（opengl使用右手坐标系）</p>
+<p>几何着色器中先求出 -f 向量，即摄像机朝向。先获取公告板中心坐标，用该坐标-相机位置坐标（也是定义在世界空间），最后将其标准化。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 Pos = gl_in[<span class="number">0</span>].gl_Position.xyz;</span><br><span class="line">vec3 toCamera = <span class="built_in">normalize</span>(Pos-gCameraPos);</span><br></pre></td></tr></table></figure>
+<p>在选取一个up向量，一般选取（0.0，1.0，0.0）,利用up向量和-f向量叉乘可以获得right向量，up向量和-f向量在一个平面，因此right一定垂直于-f。注意叉乘的顺序。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 up = <span class="built_in">vec3</span>(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>);</span><br><span class="line">vec3 right = <span class="built_in">normalize</span>(<span class="built_in">cross</span>(toCamera, up));</span><br></pre></td></tr></table></figure>
+
+<p>最后用rihgt向量和-f向量叉乘得到u向量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 u = <span class="built_in">cross</span>(right, toCamera);</span><br></pre></td></tr></table></figure>
+
+<p>通过中心点，u向量和right向量计算公告板的四个顶点坐标，每计算出一个顶点就输出一次顶点，还根据顶点位置计算UV坐标。顶点着色器只传入一个中心点，几何着色器输入point，输出triangle_strip形成三角形带。但是要注意的是up向量不一定就是u向量，向量仅仅是用于计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">layout</span>( points ) in;</span><br><span class="line"><span class="built_in">layout</span>( triangle_strip, max_vertices = <span class="number">4</span> ) out;</span><br><span class="line"></span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos - right * <span class="number">0.5</span> - u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">0.0</span>, <span class="number">0.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos - right * <span class="number">0.5</span> + u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos + right * <span class="number">0.5</span> - u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">0.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line">gl_Position =  gVP * <span class="built_in">vec4</span>((Pos + right * <span class="number">0.5</span> + u * <span class="number">0.5</span>),<span class="number">1.0</span>);</span><br><span class="line">TexCoord = <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="built_in">EmitVertex</span>();</span><br><span class="line"><span class="built_in">EndPrimitive</span>();</span><br></pre></td></tr></table></figure>
+<p>下图是view矩阵的结构，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271203336.png" alt="image-20230127120306288"></p>
+<p>glm库储存矩阵元素采用的是列优先的储存方式，因此除了在几何着色器中手动计算right，up向量，还可以通过如下代码直接获取right,up向量直接传入着色器，此时就不需要传入相机位置。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">computeMatricesFromInputs</span>();</span><br><span class="line">glm::mat4 ProjectionMatrix = <span class="built_in">getProjectionMatrix</span>();</span><br><span class="line">glm::mat4 ViewMatrix = <span class="built_in">getViewMatrix</span>();</span><br><span class="line"><span class="comment">//此处也可以使用glm::lookat函数计算ViewMatrix（参数：相机位置坐标，目标位置坐标，up向量）</span></span><br><span class="line"><span class="built_in">glUniform3f</span>(rightID, ViewMatrix[<span class="number">0</span>][<span class="number">0</span>], ViewMatrix[<span class="number">1</span>][<span class="number">0</span>], ViewMatrix[<span class="number">2</span>][<span class="number">0</span>]);</span><br><span class="line"><span class="built_in">glUniform3f</span>(upID, ViewMatrix[<span class="number">0</span>][<span class="number">1</span>], ViewMatrix[<span class="number">1</span>][<span class="number">1</span>], ViewMatrix[<span class="number">2</span>][<span class="number">1</span>]);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">glm::vec3 CameraPosition = glm::vec3(-ViewMatrix[0][2], -ViewMatrix[1][2], -ViewMatrix[2][2]);</span></span><br><span class="line"><span class="comment">glUniform3f(PosID, CameraPosition.x, CameraPosition.y, CameraPosition.z);</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-细分着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >细分着色器</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/20/%E7%BB%86%E5%88%86%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2022-12-20T07:47:36.000Z" itemprop="datePublished">2022-12-20</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="细分着色器"><a href="#细分着色器" class="headerlink" title="细分着色器"></a>细分着色器</h4><p>​	导入低精度的模型，自动将图元细分。同一个模型，在远处时希望用一个低精度的模型来代替展示，以省下更多的计算资源用于处理靠近镜头的物体，使得细节更加清晰。要增加细节就需要在原基础上细分更多的顶点，组成更多的三角形。细分也可用于将平面变成曲面。</p>
+<p>​	顶点着色器-曲面细分控制着色（TCS）-图源生成（PG，固定功能阶段，硬件完成）-曲面细分评估着色（TES）-几何着色器-片段着色器</p>
+<p>​     顶点着色器定义输入patch几个顶点组成–（输入patch一组顶点[]）–TCS定义输出patch几个顶点组成、细分区域、细分等级–硬件生成新顶点信息（根据TES设置的layout类型决定传输重心坐标还是uv）–输出新patch一组顶点[]和顶点信息–TES计算顶点坐标及属性、生成图元类型</p>
+<h5 id="1-平面区域细分顶点"><a href="#1-平面区域细分顶点" class="headerlink" title="1.平面区域细分顶点"></a>1.平面区域细分顶点</h5><p>​	     细分过程并不对OpenGL典型的几何图元（点、线和三角形）进行操作，而是使用一个新的图元，称为patch。patch是传入到OpenGL的一系列顶点列表。当对patch进行渲染时，使用glDrawArrays()渲染命令，函数参数为GL_PATCHES，并从绑定的顶点缓冲对象（VBO）读出的顶点数据，然后为该绘制调用进行处理。当使用一个patch时，需要告诉OpenGL要使用多少个顶点来组成一个patch。同一个绘制调用所处理的patch，每个patch的顶点个数是相同的。输入控制点的最大数量由驱动程序定义的GL_MAX_PATCH_VERTICES决定，但是至少需要大于等于3。</p>
+<p>（1）应用程序文件</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置线框绘制,更容易看见使用细分着色器后的变化</span></span><br><span class="line"><span class="built_in">glPolygonMode</span>(GL_FRONT_AND_BACK, GL_LINE);</span><br><span class="line"><span class="comment">//告诉OpenGL顶点数组中要使用多少个控制点作为顶点组来组成一个patch</span></span><br><span class="line"><span class="built_in">glPatchParameteri</span>(GL_PATCH_VERTICES, <span class="number">3</span>);</span><br><span class="line"><span class="comment">/*顶点/颜色缓冲区相关设置*/</span></span><br><span class="line"><span class="comment">//绘制patch，比如正方体需要12个3个顶点的patch，参数设置为36</span></span><br><span class="line"><span class="built_in">glDrawArrays</span>(GL_PATCHES, <span class="number">0</span>, <span class="number">3</span>*<span class="number">12</span>);</span><br></pre></td></tr></table></figure>
+
+<p>​		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)的设置可能会影响后续其他图形的绘制，所以之后需要用glPolygonMode(GL_FRONT, GL_FILL)设置填充绘制。</p>
+<p>（2）顶点着色器</p>
+<p>​		顶点缓冲中的所有顶点都会执行顶点着色器。使用细分着色器时，因为需要生成更多的顶点，而这些顶点都需要矩阵变换，因此没必要在顶点着色器进行MVP矩阵变换，推迟到TES将新顶点生成后再进行变换。此处简单的将顶点数据原样传给TCS。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_vert;</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> position_tcs;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    position_tcs = position_vert;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）曲面细分控制着色文件TCS</p>
+<p>​		TCS着色器以顶点着色器处理之后的数据作为输入并生成和输出新的patch，新的patch与输入的patch可以不同，控制点数可以不同。除此之外它还负责控制细分发生的区域，并通过任意算法计算细分等级TLs；OpenGL有三种细分区域：四边形、三角形、等值线集合。</p>
+<p>​		内侧细分层级：设置的是细分区域的内部划分方式，保存在gl_TessLevelInner中，内侧细分层级的值设置了区域内水平和垂直方向上各自划分多少区域。</p>
+<p>​		外侧细分层级：负责控制细分区域的周长划分成几段，保存在gl_TessLevelOuter数组中，外侧细分层级的值与周长上每条边细分的段数是对应的。</p>
+<p>​		在三角形域的情况下，只能使用gl_TessLevelOuter的前三个成员和gl_TessLevelInner的第一个成员,四边形域可以使用gl_TessLevelOuter的四个成员和gl_TessLevelInner的两个成员。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251631262.png" alt="image-20221225163139088" style="zoom:50%;" />
+
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">2.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">3.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = <span class="number">2.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">3</span>] = <span class="number">4.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="number">3.0</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelInner</span>[<span class="number">1</span>] = <span class="number">4.0</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251632158.png" alt="image-20221225163207047" style="zoom:50%;" />
+
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//6条等值线，每条等值线划分承8段</span></span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">6</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212251632243.png" alt="image-20221225163235088" style="zoom:50%;" />
+
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">6</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">5</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = <span class="number">8</span>;</span><br><span class="line"><span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​		以细分三角形为例：</p>
+<p>​		layout设置输出的控制点个数，与glPatchParameteri的设置可以不同，也就是输入控制点数量不一定要等与输出控制点数量(即输入patch与输出patch不一定相同)。每有一个控制点输出，就会运行一次TCS，在如下代码中，TCS会在该patch上运行3次。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">vertices</span> = <span class="number">3</span>) <span class="keyword">out</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​		细分着色器是处理patch，顶点着色器输入patch包含的一组顶点给TCS，TCS输入新patch包含的一组顶点给TES，因此使用数组修饰符[]定义每个属性。in的数组大小是glPatchParameteri设置的，out的数据大小是layout (vertices&#x3D;？) out；设置的。此处没有显示指明数组的大小，opengl会自动为其分配大小。也可以显示指明in vec3 position_tcs[3];</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uniform</span> <span class="type">vec3</span> gEyeWorldPos;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_tcs[];</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> position_tes[];</span><br></pre></td></tr></table></figure>
+
+<p>​		此处基于摄像机和顶点之间的世界空间距离计算TL，距离越近划分越细。</p>
+<p>​		 gl_InvocationID是OpenGL自带的变量，是控制点的索引值，类似于gl_VertexID。当TCS运行在第一个控制点时，gl_InvocationID值为0，当运行在第二个控制点时，gl_InvocationID值为1…以此类推。输出的控制点数量决定了TCS要运行多少次，所以gl_InvocationID也会与之对应。</p>
+<p>​		此处输入的控制点数量（通过glPatchParameteri设置）等于输出的控制点数量（通过layout (vertices&#x3D;？) out;设置的），用gl_InvocationID作为索引值，将TCS的数据原样传递给TES。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> GetTessLevel(<span class="type">float</span> Distance0, <span class="type">float</span> Distance1)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> AvgDistance = (Distance0 + Distance1) / <span class="number">2.0</span>;</span><br><span class="line">    <span class="keyword">if</span> (AvgDistance &lt;= <span class="number">2.0</span>) &#123;<span class="keyword">return</span> <span class="number">10.0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (AvgDistance &lt;= <span class="number">5.0</span>) &#123;<span class="keyword">return</span> <span class="number">7.0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;<span class="keyword">return</span> <span class="number">3.0</span>;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//或者使用内置变量gl_out[gl_InvocationID].gl_Positon=gl_in[gl_InvocationID].gl_Positon</span></span><br><span class="line">    position_tes[<span class="built_in">gl_InvocationID</span>] = position_tcs[<span class="built_in">gl_InvocationID</span>];</span><br><span class="line">    <span class="type">float</span> EyeToVertexDistance0 = <span class="built_in">distance</span>(gEyeWorldPos, WorldPos_ES_in[<span class="number">0</span>]);</span><br><span class="line">    <span class="type">float</span> EyeToVertexDistance1 = <span class="built_in">distance</span>(gEyeWorldPos, WorldPos_ES_in[<span class="number">1</span>]);</span><br><span class="line">    <span class="type">float</span> EyeToVertexDistance2 = <span class="built_in">distance</span>(gEyeWorldPos, WorldPos_ES_in[<span class="number">2</span>]);</span><br><span class="line">    <span class="comment">//仅在第一次执行（第一个顶点）时控制细分程度） </span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">gl_InvocationID</span> == <span class="number">0</span>)                                        </span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = GetTessLevel(EyeToVertexDistance1，EyeToVertexDistance2);</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = GetTessLevel(EyeToVertexDistance2, EyeToVertexDistance0);</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = GetTessLevel(EyeToVertexDistance0, EyeToVertexDistance1);</span><br><span class="line">    <span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		TCS后由硬件生成图元，图元生成是一个固定功能阶段。此阶段仅当一个TES在当前程序或程序流水线中活动时才会执行。图元生成受TCS中设置的曲面细分程度和TES中设置的layout影响。图元生成不受TCS中定义的输出patch大小影响。图元生成对实际的顶点坐标与其它patch数据是不可见的。图元生成的目的是确定要生成多少个顶点，用哪个次序来生成它们，以及用哪种图元来构造它们。实际为这些顶点的每个顶点的数据，诸如位置、颜色等等，是通过细分曲面计算着色器来生成的，基于图元生成所提供的信息。</p>
+<p>（4）曲面细分求值着色文件TES</p>
+<p>​		以细分三角形为例：</p>
+<p>​		layout参数：</p>
+<p>​		1.图元生成域，其他两个选项是四边形和等值线（即与TCS细分等级对应的细分区域，也是传入几何着色器的图元类型）</p>
+<p>​	  （1）quads——单位正方形中的一个矩形域；域坐标：带有范围在[0, 1]内的u, v值的坐标对(<em>u</em>, <em>v</em>)。</p>
+<p>​      （2） triangles——使用重心坐标的一个三角形域；域坐标：带有范围在[0, 1]内的a、b、c三个值的重心坐标(a, b, c)，这里a+b+c&#x3D;1。</p>
+<p>​      （3）isolines——跨单位正方形的一组线；域坐标：u值范围在[0, 1]，v值范围在[0, 1)范围的(<em>u</em>, <em>v</em>)坐标对。</p>
+<p>​		域坐标就是传递给TES的坐标信息，TES利用坐标信息计算顶点并插值顶点属性。</p>
+<p>​		2.equal_spaceing意味着三角形边缘将被细分为具有相等长度的段</p>
+<p>​		3.第三个参数：图元面朝向（cw顺，ccw逆）</p>
+<p>​		如果想输出点，而不是等值线或填充区域的话，可以添加第四个参数point_mode选项。该选项将为每个由TES所处理的顶点渲染一单个点。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">layout</span> (<span class="keyword">triangles</span>, <span class="keyword">equal_spacing</span>, <span class="keyword">ccw</span>, <span class="keyword">point_mode</span>) <span class="keyword">in</span>;</span><br></pre></td></tr></table></figure>
+
+<p>​		TES可以像任何其他着色器一样具有统一变量uniform，由于TES生成了新顶点，因此在TES中进行MVP矩阵变换。TES访问TCS输出的patch，因此TES输入的顶点数据为数组，数组大小即TCS中通过layout (vertices&#x3D;？) out;设置的。最后，声明输出顶点的属性，此处输出顶点数据不为数组，因为TES输出单个顶点。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">triangles</span>, <span class="keyword">equal_spacing</span>, <span class="keyword">ccw</span>) <span class="keyword">in</span>;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> gVP;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_tes[];</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> position;</span><br></pre></td></tr></table></figure>
+
+<p>​	   所有生成的位于细分空间下的新顶点都会经过TES着色器进行处理，TES根据硬件传来的信息计算并生成真正的顶点，除了顶点位置还会插值顶点属性。如下是通过硬件传来的三角形重心坐标生成新的顶点坐标，并且进行MVP变换。如果选择的TL值越高，获得的区域位置点就越多，而且通过在TES中对他们进行计算得到的顶点就会更多，这样就能更好的表示精细的表面。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">vec3</span> interpolate3D(<span class="type">vec3</span> v0, <span class="type">vec3</span> v1, <span class="type">vec3</span> v2)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">vec3</span>(<span class="built_in">gl_TessCoord</span>.x) * v0 + <span class="type">vec3</span>(<span class="built_in">gl_TessCoord</span>.y) * v1 + <span class="type">vec3</span>(<span class="built_in">gl_TessCoord</span>.z) * v2;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//通过硬件获得的重心坐标和TCS输出patch的顶点计算新的顶点</span></span><br><span class="line">    position = interpolate3D(position_tes[<span class="number">0</span>], position_tes[<span class="number">1</span>], position_tes[<span class="number">2</span>]);</span><br><span class="line">    <span class="built_in">gl_Position</span> = gVP * <span class="type">vec4</span>(position, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		以细分四边形为例：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//生成新顶点坐标和颜色值</span></span><br><span class="line"><span class="type">float</span> u = <span class="built_in">gl_TessCoord</span>.x; </span><br><span class="line"><span class="type">float</span> v = <span class="built_in">gl_TessCoord</span>.y;    </span><br><span class="line"><span class="comment">//从TCS输出的顶点（即，在gl_out数组中的gl_Position的值）在TES中的gl_in变量中可用，此处TCS的输出patch有4个顶点</span></span><br><span class="line"><span class="type">vec4</span> p0=<span class="built_in">gl_in</span>[<span class="number">0</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">vec4</span> p1 = <span class="built_in">gl_in</span>[<span class="number">1</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">vec4</span> p2 = <span class="built_in">gl_in</span>[<span class="number">2</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">vec4</span> p3 = <span class="built_in">gl_in</span>[<span class="number">3</span>].<span class="built_in">gl_Position</span>; </span><br><span class="line"><span class="type">void</span> main(<span class="type">void</span>)                                             </span><br><span class="line">&#123; </span><br><span class="line"><span class="comment">//根据硬件传来的uv坐标信息插值计算，该算法在平面上生成相同性质的点(可采用其他算法)</span></span><br><span class="line"><span class="built_in">gl_Position</span> = p0 * (<span class="number">1</span>-u) * (<span class="number">1</span>-v) + p1 * u * (<span class="number">1</span>-v) + p2 * v * (<span class="number">1</span>-u) + p3 * u * v; </span><br><span class="line">fragmentColor=tcs_color[<span class="number">0</span>] * (<span class="number">1</span>-u) * (<span class="number">1</span>-v) + tcs_color[<span class="number">1</span>] * u * (<span class="number">1</span>-v) + tcs_color[<span class="number">2</span>] * v * (<span class="number">1</span>-u) + tcs_color[<span class="number">3</span>] * u * v; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>​		以上细分只是patch上细分了多个顶点，形成了更多的三角形，插值出来的顶点都坐落在原始平面或三角形平面上，还未进行实际应用。</p>
+<p>参考文献：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lele0503/article/details/105881101">https://blog.csdn.net/lele0503/article/details/105881101</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aoxuestudy/article/details/124116047">https://blog.csdn.net/aoxuestudy/article/details/124116047</a></p>
+<p>其他问题：</p>
+<p>如果设置四个顶点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"><span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span></span><br></pre></td></tr></table></figure>
+<p>采用三角形细分区域，输出patch为4个顶点，最后得到的为三角形：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304271746157.png" alt="image-20230427174631026" style="zoom: 50%;" />
+
+<p>用四个顶点调用glDrawArrays(GL_TRIANGLES, 0,4);也只能绘制出一个三角形。</p>
+<p>如果设置六个顶点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"><span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"> <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line"><span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span></span><br></pre></td></tr></table></figure>
+<p>采用四边形细分区域，输出patch为6个顶点，最后得到的为三角形：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304271746157.png" alt="image-20230427174631026" style="zoom: 50%;" />
+
+<h5 id="2-PN三角曲面细分"><a href="#2-PN三角曲面细分" class="headerlink" title="2.PN三角曲面细分"></a>2.PN三角曲面细分</h5><p>（1）顶点着色器</p>
+<p>​		TCS依赖于具有单位长度的法线，否则将无法正确生成新的控制点，因此在顶点着色器需要将法线标准化。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> normal_vert;</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> normal_tcs;</span><br><span class="line">normal_tcs = <span class="built_in">normalize</span>(normal_vert);</span><br></pre></td></tr></table></figure>
+
+<p>（2）曲面细分控制着色文件</p>
+<p>​		layout的输出为1而不是为10：layout设置的输出控制点为多少，TCS就会执行多少次。但在这个算法中，对于10个控制点执行的是不同的操作，因此对所有控制点执行相同的操作不太合适。将输出patch的所有数据封装在OutputPatch结构中，并声明了一个名为oPatch的输出变量。oPatch的前缀是内置关键字patch。该关键字表示变量包含与整个patch相关的数据，而不是当前输出的某一个控制点。TCS主函数将为每个patch运行一次，而不是每个控制点运行一次，并且在这次执行过程中会将这10个控制点的数据存放在结构体中。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">vertices</span> = <span class="number">1</span>) <span class="keyword">out</span>;</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> position_tcs[];</span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> normal_tcs[];</span><br><span class="line">struct OutputPatch</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">vec3</span> B030;<span class="type">vec3</span> B021;<span class="type">vec3</span> B012;<span class="type">vec3</span> B003;<span class="type">vec3</span> B102;</span><br><span class="line">    <span class="type">vec3</span> B201;<span class="type">vec3</span> B300;<span class="type">vec3</span> B210;<span class="type">vec3</span> B120;<span class="type">vec3</span> B111;</span><br><span class="line">    <span class="type">vec3</span> Normal[<span class="number">3</span>];</span><br><span class="line">    <span class="type">vec2</span> uv[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">out</span> <span class="keyword">patch</span> OutputPatch oPatch;</span><br></pre></td></tr></table></figure>
+
+<p>​		三个法线原样从输入复制到输出，并且设置细分等级。10个控制点通过CalcPosition生成。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span> ; i &lt; <span class="number">3</span> ; i++) &#123;</span><br><span class="line">       oPatch.Normal[i] = normal_tcs[i];</span><br><span class="line">    &#125;</span><br><span class="line">    CalcPositions();</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">1</span>] = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">gl_TessLevelOuter</span>[<span class="number">2</span>] = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">gl_TessLevelInner</span>[<span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262245789.png" alt="image-20230126224517474"></p>
+<p>​		如图所示，控制点的形式像是在三角形上形成一个臌胀的表面。先把三个顶点作为输入patch。然后通过计算产生10个控制点并设置TLs。硬件将根据TLs细分三角形区域，TES会在每个新的顶点上执行。TES将把从PG硬件得到的新顶点的重心坐标和从TCS中得到的10个控制点输入到贝塞尔三角对应的多项式中，得到坐落在那个膨胀三角面上的新的顶点坐标。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262259972.png" alt="image-20230126225943786"></p>
+<p>​		上图所示是三角形的一边，每个端点都有它的原始法线（绿色那条线）。每个端点和它的法线构建了一个平面。如图，中间两个中间点按照虚线方向投影到最近顶点所在的平面上。10个顶点在三角形上形成一个臌胀的表面。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CalcPositions</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">&#123;</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//三角形上的原始顶点保持不变 (名字为B003,B030和B300)；</span></span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B030 = WorldPos_CS_in[<span class="number">0</span>];</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B003 = WorldPos_CS_in[<span class="number">1</span>];</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B300 = WorldPos_CS_in[<span class="number">2</span>];</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 EdgeB300 = oPatch.WorldPos_B003 - oPatch.WorldPos_B030;</span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 EdgeB030 = oPatch.WorldPos_B300 - oPatch.WorldPos_B003;</span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 EdgeB003 = oPatch.WorldPos_B030 - oPatch.WorldPos_B300;</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//每条边上产生两个中间点：一个三1/3处，一个在2/3处；</span></span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B021 = oPatch.WorldPos_B030 + EdgeB300 / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B012 = oPatch.WorldPos_B030 + EdgeB300 * <span class="number">2.0</span> / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B102 = oPatch.WorldPos_B003 + EdgeB030 / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B201 = oPatch.WorldPos_B003 + EdgeB030 * <span class="number">2.0</span> / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B210 = oPatch.WorldPos_B300 + EdgeB003 / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B120 = oPatch.WorldPos_B300 + EdgeB003 * <span class="number">2.0</span> / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//每个中间点投影到由最近的顶点和它的法线所在的平面上：</span></span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B021 = ProjectToPlane(oPatch.WorldPos_B021, oPatch.WorldPos_B030,oPatch.Normal[<span class="number">0</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B012 = ProjectToPlane(oPatch.WorldPos_B012, oPatch.WorldPos_B003,oPatch.Normal[<span class="number">1</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B102 = ProjectToPlane(oPatch.WorldPos_B102, oPatch.WorldPos_B003,oPatch.Normal[<span class="number">1</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B201 = ProjectToPlane(oPatch.WorldPos_B201, oPatch.WorldPos_B300,oPatch.Normal[<span class="number">2</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B210 = ProjectToPlane(oPatch.WorldPos_B210, oPatch.WorldPos_B300,oPatch.Normal[<span class="number">2</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B120 = ProjectToPlane(oPatch.WorldPos_B120, oPatch.WorldPos_B030,oPatch.Normal[<span class="number">0</span>]);</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">//为了计算B111，要计算得到一个向量，这个向量是从原三角形中心到6个投影后的中间点的平均点。延长该向量1.5的终点作为B111。</span></span></span></span><br><span class="line"><span class="params"><span class="function">    vec3 Center = (oPatch.WorldPos_B003 + oPatch.WorldPos_B030 + oPatch.WorldPos_B300) / <span class="number">3.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B111 = (oPatch.WorldPos_B021 + oPatch.WorldPos_B012 + oPatch.WorldPos_B102 + oPatch.WorldPos_B201 + oPatch.WorldPos_B210 + oPatch.WorldPos_B120) / <span class="number">6.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">    oPatch.WorldPos_B111 += (oPatch.WorldPos_B111 - Center) / <span class="number">2.0</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">&#125;</span></span></span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262253677.png" alt="image-20230126225354504" style="zoom:50%;" />
+
+<p>​		P1和P2位于由平面创建的不同半空间上。当在绿色法线上投影v1时，得到d1的长度。将该长度乘以法线以接收d1本身。现在从P1减去它，得到它在平面上的投影。当在绿色法线上投影v2时，得到d2的长度，但它是负值。将其乘以法线以接收d2本身（负长度意味着它反转法线）。现在从P2减去它，得到它在平面上的投影。结论：无论点在平面的哪一侧，该方法都能正确工作。因此可以用如下算法计算投影后的新控制点坐标。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec3 <span class="title">ProjectToPlane</span><span class="params">(vec3 Point, vec3 PlanePoint, vec3 PlaneNormal)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  vec3 v = Point - PlanePoint;</span><br><span class="line">  <span class="type">float</span> Len = <span class="built_in">dot</span>(v, PlaneNormal);</span><br><span class="line">  vec3 d = Len * PlaneNormal;</span><br><span class="line">  <span class="keyword">return</span> (Point - d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）曲面细分求值着色文件</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301262318510.png" alt="image-20230126231841370"></p>
+<p>​		根据贝塞尔三角公式计算新生成的顶点，（u，v，w）是硬件传进来的重心坐标，通过gl_TessCoord访问，它们的和永远为1:u+v+w&#x3D;1。Bxyz指的是控制点，式子右边有10个控制点，生成的b是通过插值后的真正的新顶点坐标，b坐标在patch平面之外，因而实现曲面效果。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 400 core</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">triangles</span>, <span class="keyword">equal_spacing</span>, <span class="keyword">ccw</span>) <span class="keyword">in</span>;</span><br><span class="line"><span class="keyword">uniform</span> <span class="type">mat4</span> MVP;</span><br><span class="line">struct OutputPatch</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">vec3</span> B030;<span class="type">vec3</span> B021;<span class="type">vec3</span> B012;<span class="type">vec3</span> B003;<span class="type">vec3</span> B102;</span><br><span class="line">    <span class="type">vec3</span> B201;<span class="type">vec3</span> B300; <span class="type">vec3</span> B210;<span class="type">vec3</span> B120;<span class="type">vec3</span> B111;</span><br><span class="line">    <span class="type">vec3</span> Normal[<span class="number">3</span>];<span class="type">vec2</span> uv[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">in</span> <span class="keyword">patch</span> OutputPatch oPatch;</span><br><span class="line"></span><br><span class="line"><span class="comment">//如果插值纹理就将vec3改成vec2，如下函数可以用于插值顶点其他属性</span></span><br><span class="line"><span class="comment">//vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)</span></span><br><span class="line"><span class="comment">//&#123;</span></span><br><span class="line">   <span class="comment">// return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">float</span> u = <span class="built_in">gl_TessCoord</span>.x;<span class="type">float</span> v = <span class="built_in">gl_TessCoord</span>.y;<span class="type">float</span> w = <span class="built_in">gl_TessCoord</span>.z;</span><br><span class="line"></span><br><span class="line">  <span class="type">float</span> uPow3 = <span class="built_in">pow</span>(u, <span class="number">3</span>);<span class="type">float</span> vPow3 = <span class="built_in">pow</span>(v, <span class="number">3</span>);<span class="type">float</span> wPow3 = <span class="built_in">pow</span>(w, <span class="number">3</span>);</span><br><span class="line">  <span class="type">float</span> uPow2 = <span class="built_in">pow</span>(u, <span class="number">2</span>);<span class="type">float</span> vPow2 = <span class="built_in">pow</span>(v, <span class="number">2</span>);<span class="type">float</span> wPow2 = <span class="built_in">pow</span>(w, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">  vvec3 fi_position = </span><br><span class="line">          oPatch.B300 * wPow3 +</span><br><span class="line">          oPatch.B030 * uPow3 +</span><br><span class="line">          oPatch.B003 * vPow3 +</span><br><span class="line">          oPatch.B210 * <span class="number">3.0</span> * wPow2 * u +</span><br><span class="line">          oPatch.B120 * <span class="number">3.0</span> * w * uPow2 +</span><br><span class="line">          oPatch.B201 * <span class="number">3.0</span> * wPow2 * v +</span><br><span class="line">          oPatch.B021 * <span class="number">3.0</span> * uPow2 * v +</span><br><span class="line">          oPatch.B102 * <span class="number">3.0</span> * w * vPow2 +</span><br><span class="line">          oPatch.B012 * <span class="number">3.0</span> * u * vPow2 +</span><br><span class="line">          oPatch.B111 * <span class="number">6.0</span> * w * u * v;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">gl_Position</span> = MVP * <span class="type">vec4</span>(fi_position, <span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		为了实现曲面效果，一个3个顶点的patch的三个法线不能设置成相同的,不然计算出的多余的10个控制点就不会在patch的平面之上形成曲面。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat vertexdata[] = &#123;</span><br><span class="line">	<span class="number">-1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	<span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">1.0f</span>, <span class="number">-1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	 <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	<span class="number">-1.0f</span>,  <span class="number">1.0f</span>, <span class="number">0.0f</span>,</span><br><span class="line">	&#125;;</span><br><span class="line"><span class="type">static</span> <span class="type">const</span> GLfloat normaldata[] = &#123;</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>,  <span class="number">-0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>,  <span class="number">-0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	 <span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,</span><br><span class="line">	<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​	效果如下，生成曲面：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301270039197.png" alt="image-20230127003907057"></p>
+<h5 id="3-增加法线"><a href="#3-增加法线" class="headerlink" title="3.增加法线"></a>3.增加法线</h5><p>​	通过在曲面细分求值着色文件利用法线，利用算法重新将插值后的新顶点坐标进行修改，使其位于原平面之上。用该方法可以用于绘制曲面等。</p>
+<p>​	曲面细分控制着色文件：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将法线数据传给TES</span></span><br><span class="line"><span class="keyword">in</span> <span class="type">vec3</span> normal_tcs[];</span><br><span class="line"><span class="keyword">out</span> <span class="type">vec3</span> normal_tes[];</span><br><span class="line">normal_tes[<span class="built_in">gl_InvocationID</span>] = normal_tcs[<span class="built_in">gl_InvocationID</span>];</span><br></pre></td></tr></table></figure>
+
+<p>​	曲面细分求值着色文件：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//根据顶点到中心的距离计算顶点的高度（可任意写）</span></span><br><span class="line"><span class="type">float</span> <span class="built_in">distance</span> = <span class="built_in">max</span>( <span class="built_in">abs</span>(u<span class="number">-0.5</span>), <span class="built_in">abs</span>(v<span class="number">-0.5</span>) );</span><br><span class="line"><span class="built_in">distance</span> = <span class="built_in">max</span>( <span class="built_in">distance</span>, <span class="built_in">abs</span>(w<span class="number">-0.5</span>) );</span><br><span class="line"><span class="type">float</span> <span class="keyword">offset</span> = <span class="number">0.0</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">distance</span>&lt;<span class="number">0.2</span>)&#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">9.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">distance</span>&lt;<span class="number">0.3</span>)&#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">10.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">distance</span>&lt;<span class="number">0.4</span>)&#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">11.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">distance</span>&lt;<span class="number">0.5</span>)&#123;</span><br><span class="line"> <span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">12.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line"><span class="keyword">offset</span> = (<span class="number">1.0</span> - <span class="built_in">distance</span>*<span class="number">2</span>)/<span class="number">13.0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">vec3</span> position = interpolate3D(position_tes[<span class="number">0</span>], position_tes[<span class="number">1</span>], position_tes[<span class="number">2</span>]);</span><br><span class="line">position +=  tes_normal[<span class="number">0</span>]*<span class="keyword">offset</span> +tes_normal[<span class="number">1</span>]*<span class="keyword">offset</span> +tes_normal[<span class="number">2</span>]*<span class="keyword">offset</span>;</span><br><span class="line"><span class="built_in">gl_Position</span> = MVP * <span class="type">vec4</span>(position, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>​	效果如下：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212261544205.png" alt="QQ图片20221226154044" style="zoom:50%;" />
+
+<h5 id="4-修改成ES后出现的问题"><a href="#4-修改成ES后出现的问题" class="headerlink" title="4.修改成ES后出现的问题"></a>4.修改成ES后出现的问题</h5><p>（1）ES的必须3.2版本才能支持细分着色器</p>
+<p>（2）ES的细分着色器TCS和TES间可以传递结构体，但传递的结构体中不能包含数组或者结构体</p>
+<p>（3）ES的细分着色器需要设置精度，如在着色器开头添加precIntision mediump float;但是在添加该行后，就不能用Int类型给之后所有变量赋值</p>
+<p>（4）TCS和TES中不可指定in&#x2F;out数组大小</p>
+<p>（5）TCS中访问当前的控制点只能使用内置变量gl_InvocationID</p>
+<p>（6）ES不支持该函数glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);，因此如果需要用线框绘制，得使用几何着色器</p>
+<p>（7）ES没有内置变量gl_FragColor</p>
+<p><em><a target="_blank" rel="noopener" href="https://blog.csdn.net/whl0071/article/details/127249456">OpenGL 4.0的Tessellation Shader（细分曲面着色器）_opengl4.0_龙行天下01的博客-CSDN博客</a></em></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-封装纹理贴图"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/12/%E5%B0%81%E8%A3%85%E7%BA%B9%E7%90%86%E8%B4%B4%E5%9B%BE/"
+    >封装纹理贴图</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/12/%E5%B0%81%E8%A3%85%E7%BA%B9%E7%90%86%E8%B4%B4%E5%9B%BE/" class="article-date">
+  <time datetime="2022-12-12T04:05:18.000Z" itemprop="datePublished">2022-12-12</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>原理：将要绘制的图案利用帧缓冲作为纹理渲染在四边形上，在将四边形绘制在需要的位置。</p>
+<p>重点代码：</p>
+<p>1.初始化帧缓冲（同理tutorial示例14，phrtest示例07）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">initRTT</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//生成一个纹理（如果四边形上要绘制多个纹理，就修改数字1）</span></span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">1</span>, renderTextureID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//纹理数组（空数组，仅分配了内存）</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span>* voxels;</span><br><span class="line">	voxels =</span><br><span class="line">		(<span class="type">unsigned</span> <span class="type">char</span>*)</span><br><span class="line">		<span class="built_in">malloc</span>((<span class="type">size_t</span>)(<span class="number">4</span> * <span class="number">1200</span> * <span class="number">800</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">        for (GLint i = 0; i &lt; 4; i++)</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        glBindTexture(GL_TEXTURE_2D, renderTextureID[i]);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span></span><br><span class="line"><span class="comment">        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span></span><br><span class="line"><span class="comment">        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fboWidth, fboHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, voxels);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//绑定纹理为2D渲染纹理</span></span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, renderTextureID[<span class="number">0</span>]);</span><br><span class="line">    <span class="comment">//纹理过滤</span></span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">    <span class="comment">//定义纹理，用空数组为纹理填充空图像</span></span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGBA, <span class="number">1200</span>, <span class="number">800</span>, <span class="number">0</span>, GL_RGBA, GL_UNSIGNED_BYTE, voxels);</span><br><span class="line">	<span class="built_in">free</span>(voxels);</span><br><span class="line">    </span><br><span class="line">     <span class="comment">//生成并绑定一个帧缓冲（至少一个颜色附件）</span></span><br><span class="line">	<span class="built_in">glGenFramebuffers</span>(<span class="number">1</span>, &amp;framebufferID);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//渲染一个3D模型，要进行深度测试，生成并绑定一个深度渲染缓冲区</span></span><br><span class="line">	<span class="built_in">glGenRenderbuffers</span>(<span class="number">1</span>, &amp;renderbufferID);</span><br><span class="line">	<span class="built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER, renderbufferID);</span><br><span class="line">    <span class="comment">//指定深度渲染缓冲区的数据格式和大小</span></span><br><span class="line">	<span class="built_in">glRenderbufferStorage</span>(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, <span class="number">1200</span>, <span class="number">800</span>);</span><br><span class="line">    <span class="comment">//深度渲染缓冲绑定为帧缓冲的深度附件</span></span><br><span class="line">	<span class="built_in">glFramebufferRenderbuffer</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferID);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//纹理绑定为帧缓冲的颜色附件（颜色附件可以有多个）</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     for (int i = 0; i &lt; 4; i++)</span></span><br><span class="line"><span class="comment">    &#123;</span></span><br><span class="line"><span class="comment">        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, renderTextureID[i], 0);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTextureID[<span class="number">0</span>], <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//默认渲染到窗口</span></span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>2.主循环重点代码</p>
+<p>第二行设置的是四边形的背景颜色，不过一般需要剔除所以可以不用刻意设置，不设置的话四边形的背景颜色就是整个窗口的背景颜色。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一次清屏</span></span><br><span class="line">   <span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line">   <span class="built_in">glClearColor</span>(<span class="number">1.0f</span>, <span class="number">0.5f</span>, <span class="number">1.0f</span>,<span class="number">1.0f</span>);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//把渲染目标绑定到我们定义的帧缓冲</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, framebufferID);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//第二次清屏</span></span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br><span class="line"><span class="built_in">glViewport</span>(<span class="number">0</span>, <span class="number">50</span>, <span class="number">1200</span>, <span class="number">800</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//指定接下来渲染时需要渲染到哪些颜色附件（此处仅一个颜色附件）</span></span><br><span class="line">GLenum buf[<span class="number">1</span>] = &#123; GL_COLOR_ATTACHMENT0 &#125;;</span><br><span class="line"><span class="built_in">glDrawBuffers</span>(<span class="number">1</span>, buf);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">绘制图案的代码（全部绘制在帧缓冲,不会显示在屏幕，用于接下来渲染四边形）</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">//渲染目标绑定到默认帧缓冲，显示在屏幕</span></span><br><span class="line">   <span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">绘制四边形的代码</span></span><br><span class="line"><span class="comment">（注意n个颜色附件就需要使用n个采样器，绑定n次纹理）</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>3.着色器文件</p>
+<p>（1）四边形顶点着色器文件主函数示例</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// wall.vert: simple quad (-1.-1)--(1,1) map texture2D(0.0)--(1,1)</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">	gl_Position = MVP * <span class="built_in">vec4</span>(position_wall,<span class="number">1</span>);</span><br><span class="line">	UV = (position_wall.xy+ <span class="built_in">vec2</span>(<span class="number">1.0</span>,<span class="number">1.0</span>))/<span class="number">2.0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）四分屏的四边形片段着色器文件主函数</p>
+<p>分屏代码计算：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1b1d9fd8ba17">https://www.jianshu.com/p/1b1d9fd8ba17</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span> <span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(UV.x &lt; <span class="number">0.5</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(UV.y&lt;<span class="number">0.5</span>)</span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, UV*<span class="number">2.0</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, <span class="number">2.0</span>*<span class="built_in">vec2</span>(UV.x,UV.y<span class="number">-0.5</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(UV.y&lt;<span class="number">0.5</span>)</span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, <span class="number">2.0</span>*<span class="built_in">vec2</span>(UV.x<span class="number">-0.5</span>,UV.y));</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            gl_FragColor = <span class="built_in">texture2D</span>(samplerRTT1, <span class="number">2.0</span>*<span class="built_in">vec2</span>(UV.x<span class="number">-0.5</span>,UV.y<span class="number">-0.5</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）不分屏的四边形片段着色器文件主函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span> <span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    vec4 color=<span class="built_in">texture2D</span>(samplerRTT1, UV);</span><br><span class="line">    gl_FragColor = color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该方法生成的纹理数据作为一张静态图由采样器根据UV采样访问，渲染在其他地方。</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20221227143718485.png" alt="image-20221227143718485" style="zoom:50%;" />
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-git版本管理命令使用"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/08/git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/"
+    >git版本管理命令使用</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/08/git%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2022-12-08T03:02:16.000Z" itemprop="datePublished">2022-12-08</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="权限问题"><a href="#权限问题" class="headerlink" title="权限问题"></a>权限问题</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_50790981/article/details/124991911">https://blog.csdn.net/qq_50790981&#x2F;article&#x2F;details&#x2F;124991911</a></p>
+<h4 id="创建版本库及版本管理命令"><a href="#创建版本库及版本管理命令" class="headerlink" title="创建版本库及版本管理命令"></a>创建版本库及版本管理命令</h4><p>1.创建工程目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir project(任取)</span><br></pre></td></tr></table></figure>
+
+<p>2.进入工程目录下，新建版本仓库（或者合并成git init project）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br></pre></td></tr></table></figure>
+
+<p>3.利用ls命令查看隐藏目录.git（版本库，最终要的是暂存区、分支及分支头指针）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -ah</span><br></pre></td></tr></table></figure>
+
+<p>4.工作目录或其子目录下编写或修改文件，如在project文件夹中新建一个readme.txt的文本文件</p>
+<p>（1）将readme.txt 单个文件添加到版本库的暂存区（一般不直接从工作区到分支）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git add readme.txt</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git add .</td>
+<td>将当前目录的所有文件添加到暂存区</td>
+<td>版本库管理工程</td>
+</tr>
+<tr>
+<td>$ git add all</td>
+<td>相当于$ git add .</td>
+<td>版本库管理工程</td>
+</tr>
+<tr>
+<td>$ git add folder</td>
+<td>将指定目录folder及其子目录添加到暂存区</td>
+<td>版本库管理一个目录</td>
+</tr>
+</tbody></table>
+<p>5.将暂存区的文件提交到仓库分支，并对本次提交进行说明</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit readme.txt -m &quot;文件说明&quot;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git commit –v</td>
+<td>提交时显示diff信息</td>
+</tr>
+<tr>
+<td>$ git commit –amend –m “我写了一个很好的文档”</td>
+<td>用本次提交代替上一次提交；若文件没有变化，则改写提交信息</td>
+</tr>
+<tr>
+<td>$ git commit –amend</td>
+<td>重做一次commit</td>
+</tr>
+<tr>
+<td>$ git commit –a</td>
+<td>将自上次提交后的工作区的变化直接提交到仓库</td>
+</tr>
+</tbody></table>
+<p>6.提交前可以先进行确认和检查</p>
+<p>查看工作区的文件又没有改动等信息,modified后为改动过的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git status</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081145022.png" alt="image-20221208114505983" style="zoom:67%;" />
+
+<p>查看文件进行了哪些修改，即暂存区和工作区的差异</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git diff</span><br></pre></td></tr></table></figure>
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081146143.png" alt="image-20221208114623103" style="zoom:67%;" />
+
+<p>如果运行git add readme.txt后，则暂存区和工作区无差异</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081157286.png" alt="image-20221208115714252" style="zoom:67%;" />
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git diff –cached</td>
+<td>显示暂存区和上一个commit的差异</td>
+</tr>
+<tr>
+<td>$ git diff HEAD</td>
+<td>显示工作区与当前分支下的最新commit之间的差异</td>
+</tr>
+<tr>
+<td>$ git diff [branch1] [branch2]</td>
+<td>显示两次提交之间的差异</td>
+</tr>
+</tbody></table>
+<p>7.提交后查看当前仓库中的所有提交的历史记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081147363.png" alt="image-20221208114756299" style="zoom:67%;" />
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git log –pretty&#x3D;oneline</td>
+<td>显示提交历史的简要信息</td>
+</tr>
+<tr>
+<td>$ git reflog</td>
+<td>显示当前分支最近几次操作</td>
+</tr>
+</tbody></table>
+<p>8.版本回退</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git reset –hard HEAD^</td>
+<td>将版本库、暂存区、工作区都回退到上一个版本</td>
+</tr>
+<tr>
+<td>$ git reset –soft HEAD^</td>
+<td>只回退版本库</td>
+</tr>
+<tr>
+<td>$ git reset –mixed HEAD^</td>
+<td>回退版本库和暂存区</td>
+</tr>
+<tr>
+<td>$ git reset –hard commit_id</td>
+<td>回退到commit_id表示的版本，可以是当前版本之前或之后的版本</td>
+</tr>
+</tbody></table>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081609072.png" alt="QQ图片20221208160912"></p>
+<p>9.恢复</p>
+<p>用暂存区（版本库）的内容覆盖工作区的内容（如果工作区的内容删除了也可以用这种方式恢复）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout --文件名</span><br></pre></td></tr></table></figure>
+
+<p>10.删除</p>
+<p>将文件删除并提交到暂存区（需要先从工作区删除，再使用本条命令，之后还要commit）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm 文件名</span><br></pre></td></tr></table></figure>
+
+<p>只从stage中删除，保留物理文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rm --cached 文件名</span><br></pre></td></tr></table></figure>
+
+<p>11.分支</p>
+<p>建立一个副本，在副本上修改，主分支master的内容不变</p>
+<p>（1）创建分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git branch</td>
+<td>列出所有本地分支</td>
+</tr>
+<tr>
+<td>$ git branch -r</td>
+<td>列出所有远程分支</td>
+</tr>
+<tr>
+<td>$ git branch -a</td>
+<td>列出所有本地和远程分支</td>
+</tr>
+<tr>
+<td>$ git branch dev</td>
+<td>新建一个分支dev，但不切换到此分支</td>
+</tr>
+<tr>
+<td>$ git branch dev commit_id</td>
+<td>新建一个分支，并指向某个commit</td>
+</tr>
+<tr>
+<td>$ git branch –d dev</td>
+<td>删除本地分支dev</td>
+</tr>
+<tr>
+<td>$ git branch –dr</td>
+<td>删除远程分支</td>
+</tr>
+</tbody></table>
+<p>在dev2上不存在第一个修改的记录</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928778.png" alt="QQ图片20221209092742" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212090928402.png" alt="QQ图片20221209092738" style="zoom:67%;" />
+
+<p>（2）切换分支</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git checkout –b dev</td>
+<td>新建一个分支dev，并切换到此分支</td>
+</tr>
+<tr>
+<td>$ git checkout  dev</td>
+<td>切换到分支dev，并更新工作区</td>
+</tr>
+</tbody></table>
+<p>（3）分支合并</p>
+<p>将分支dev合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git merge dev</span><br></pre></td></tr></table></figure>
+
+<p>选择一个commit，合并到当前分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git cherry --pick commit_id</span><br></pre></td></tr></table></figure>
+
+<p>（4）解决冲突</p>
+<p>如果同一个文件在合并分支时都被修改了则会引起冲突</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091109742.png" alt="QQ图片20221209110831" style="zoom: 80%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091110869.png" alt="QQ图片20221209110835" style="zoom:80%;" />
+
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt;，&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;，&gt;&gt;&gt;&gt;&gt;&gt;&gt;标记出不同分支的内容，其中&lt;&lt;&lt;HEAD是指主分支修改的内容，&gt;&gt;&gt;&gt;&gt;dev6 是指dev6上修改的内容</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212091114906.png" alt="QQ图片20221209110838"></p>
+<p>解决的办法是可以修改冲突文件后重新提交。master主分支应该非常稳定，用来发布新版本，一般情况下不允许在上面工作，工作一般情况下在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上。用<em>git log –graph</em>命令可以看到分支合并图。</p>
+<p>（5）删除本地分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d [branch-name] -D（大写）强制删除</span><br></pre></td></tr></table></figure>
+
+<p>12.为不好记的commit_id打标签</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$ git tag</td>
+<td>查看所有标签</td>
+</tr>
+<tr>
+<td>$git tag V1.0</td>
+<td>为当前分支打上标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag -d v1.0</td>
+<td>删除当前分支的标签V1.0</td>
+</tr>
+<tr>
+<td>$git tag V1.0 commit_id</td>
+<td>为指定的某次提交打上标签</td>
+</tr>
+<tr>
+<td>$git tag -a V1.0 -m “version1.0 released”</td>
+<td>为当前分支创建带说明性文字的标签号</td>
+</tr>
+<tr>
+<td>$git show V1.0</td>
+<td>查看标签为V1.0的信息</td>
+</tr>
+</tbody></table>
+<p>远程相关、忽略文件相关</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-git基本知识"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/12/07/git%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86/"
+    >git基本知识</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/12/07/git%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86/" class="article-date">
+  <time datetime="2022-12-07T02:15:41.000Z" itemprop="datePublished">2022-12-07</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h3><p>Linus为了管理Linux代码库编写的一个开源的分布式版本控制系统，可以有效、高速地实现从很小到非常大的项目的版本管理。</p>
+<p>版本控制:是一种在开发的过程中用于管理我们对文件、目录或工程等内容的修改历史，方便查看更改历史记录，备份以便恢复以前的版本的软件工程技术。</p>
+<p>优点：分支管理能力更强；运行更快；更安全，系统内任何一台机器出故障都不影响整体项目</p>
+<h4 id="Git的本地系统结构"><a href="#Git的本地系统结构" class="headerlink" title="Git的本地系统结构"></a>Git的本地系统结构</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081034180.png" alt="图片1" style="zoom: 67%;" />
+
+<p>Git将一个工作目录分为工作区和版本库。工作在工作区完成；所谓版本库是一个名为.git的隐藏文件夹，包括很多内容，其中最重要的是stage（暂存区）和第一条分支master，以及指向当前分支的指针HEAD。所有文件都可以从工作区流向分支，也可以从分支流向工作区，这些工作都有相应的命令完成。</p>
+<h4 id="Git的分支管理原理"><a href="#Git的分支管理原理" class="headerlink" title="Git的分支管理原理"></a>Git的分支管理原理</h4><p>一开始的时候，master分支是一条线，Git用master指向最新的一次提交（最近的一次commit），再用HEAD指向master，就能确定当前分支，以及当前分支的提交点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081035606.png" alt="image-20221208103538577"></p>
+<p>每次提交，master分支都会向前移动一步，这样，随着你不断提交，master分支的线也越来越长。</p>
+<p>当我们创建新的分支，例如dev时，Git新建了一个指针叫dev，指向master相同的提交，再把HEAD指向dev，就表示当前分支在dev上：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081039659.png" alt="image-20221208103935618" style="zoom:80%;" />
+
+<p>除了增加一个dev指针，改改HEAD的指向，工作区的文件都没有任何变化。从现在开始，对工作区的修改和提交就是针对dev分支了，比如新提交一次后，dev指针往前移动一步，而master指针不变</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081040024.png" alt="image-20221208104024986" style="zoom: 67%;" />
+
+<p>假如我们在dev上的工作完成了，就可以把dev合并到master上。把master指向dev的当前提交，就完成了合并</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081041268.png" alt="image-20221208104130235" style="zoom:80%;" />
+
+<p>合并完分支后，可以删除dev分支。删除dev分支就是把dev指针给删掉，删掉后就剩下了一条master分支</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081042956.png" alt="image-20221208104241927" style="zoom:80%;" />
+
+<p>现在，master分支和feature1分支各自都分别有新的提交，变成了这样：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081043389.png" alt="image-20221208104314358" style="zoom:80%;" />
+
+<p>这种情况下，Git无法执行“快速合并”，只能试图把各自的修改合并起来，但这种合并就可能会有冲突（比如两次提交的某个文件的某一句被都被修改了，且修改不一样），如果冲突了Git会告诉我们，哪个文件存在冲突，必须手动解决冲突后再提交。再次提交后，master分支和feature1分支变成了下图所示：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081043705.png" alt="image-20221208104338669" style="zoom: 67%;" />
+
+<p>在实际开发中，我们应该按照几个基本原则进行分支管理：</p>
+<p>首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；</p>
+<p>干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本；每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。</p>
+<p>所以，团队合作的分支看起来就像这样：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212081044566.png" alt="image-20221208104403529" style="zoom: 67%;" />
+
+<p>软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，每个bug都可以通过一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。</p>
+<h4 id="Git下多人开发的工作模式"><a href="#Git下多人开发的工作模式" class="headerlink" title="Git下多人开发的工作模式"></a>Git下多人开发的工作模式</h4><p>多人协作的工作模式通常是这样：</p>
+<ol>
+<li><p>首先，可以试图用git push origin <branch-name>推送自己的修改；</p>
+</li>
+<li><p>如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；</p>
+</li>
+<li><p>如果合并有冲突，则解决冲突，并在本地提交；</p>
+</li>
+<li><p>没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！</p>
+</li>
+</ol>
+<p>如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch –set-upstream-to <branch-name> origin&#x2F;<branch-name>。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-着色器文件"
   class="article article-type-post"
   itemscope
@@ -547,1143 +1306,6 @@
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211292345476.png" alt="image-20221129234518416" style="zoom: 80%;" />
 
 <p>git checkout 文件名：将文件恢复</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-Linux-cmake"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/11/29/Linux-cmake/"
-    >Linux&amp;cmake</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/11/29/Linux-cmake/" class="article-date">
-  <time datetime="2022-11-29T04:33:35.000Z" itemprop="datePublished">2022-11-29</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="1、虚拟机安装Ubuntu"><a href="#1、虚拟机安装Ubuntu" class="headerlink" title="1、虚拟机安装Ubuntu"></a>1、虚拟机安装Ubuntu</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39132095/article/details/109580423">https://blog.csdn.net/qq_39132095&#x2F;article&#x2F;details&#x2F;109580423</a></p>
-<h4 id="2、ubuntu装好vmware-tools却无法拖拽复制文件"><a href="#2、ubuntu装好vmware-tools却无法拖拽复制文件" class="headerlink" title="2、ubuntu装好vmware tools却无法拖拽复制文件"></a>2、ubuntu装好vmware tools却无法拖拽复制文件</h4><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/534068370">https://www.zhihu.com/question/534068370</a></p>
-<h4 id="3、安装cmake"><a href="#3、安装cmake" class="headerlink" title="3、安装cmake"></a>3、安装cmake</h4><p>（1）修改密码并且进入root权限</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo passwd root</span><br><span class="line"></span><br><span class="line">~$ su</span><br></pre></td></tr></table></figure>
-
-<p>（2）安装gcc</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo apt install gcc</span><br></pre></td></tr></table></figure>
-
-<p>（3）查看gcc版本确保安装成功</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># gcc --version</span><br></pre></td></tr></table></figure>
-
-<p>（4）安装make</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo apt install make</span><br></pre></td></tr></table></figure>
-
-<p>（5）安装cmake</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># sudo apt install cmake</span><br></pre></td></tr></table></figure>
-
-<p>（6）查看cmake版本确保安装成功</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># cmake --version</span><br></pre></td></tr></table></figure>
-
-<h4 id="4、运行项目"><a href="#4、运行项目" class="headerlink" title="4、运行项目"></a>4、运行项目</h4><p>（1）导入项目到目录</p>
-<p>（2）在项目工程目录下,先建立输出目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~$ mkdir build</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ cd build</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ cmake ..</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ make</span><br></pre></td></tr></table></figure>
-
-<p>cmake和make时会出现需要配置环境的问题，百度都可以找到，sudo apt install相关配置即可。</p>
-<p>（3)在源文件的文件夹下会出现可执行文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-$ ./可执行文件名</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY6"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/15/%E6%9D%AD%E5%B7%9E-DAY6/"
-    >杭州-DAY6</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/15/%E6%9D%AD%E5%B7%9E-DAY6/" class="article-date">
-  <time datetime="2022-10-15T15:33:01.000Z" itemprop="datePublished">2022-10-15</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="STATION1-浙江省博物馆"><a href="#STATION1-浙江省博物馆" class="headerlink" title="STATION1-浙江省博物馆"></a>STATION1-浙江省博物馆</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280054166.png" alt="QQ图片20221128005426" style="zoom:25%;" />
-
-<p><strong>路线</strong>：地铁1号线-西湖文化广场站</p>
-<p>最后一天专门买的下午的火车票，为了补一下之前落下的行程浙江省博物馆。之前去西湖的时候在孤山附近其实有一个，但是当时看到它只觉得它小到不觉得它是省博物馆，太没牌面了。后来搜了一下发现，主馆是武林馆（就是第一天去京杭大运河搭船的那一站），浙江省博物馆有10件镇馆之宝，9件在主馆，1件在西湖。所以下面分享一下镇馆之宝以及我个人觉得有意思的藏品。</p>
-<p>先来一张大门</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280058451.jpg" alt="QQ图片20221127235016" style="zoom: 50%;" />
-
-<h5 id="《古物影——黄宾虹古玺印收藏展》"><a href="#《古物影——黄宾虹古玺印收藏展》" class="headerlink" title="《古物影——黄宾虹古玺印收藏展》"></a>《古物影——黄宾虹古玺印收藏展》</h5><table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280118422.jpg" alt="QQ图片20221128011652"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280118079.jpg" alt="QQ图片20221128010310"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>一些科普：黄宾虹不单是大画家，他也是著名的鉴赏家、收藏家。在其逝世后，夫人及子女秉承其遗志，将其遗作、遗物全部捐献国家，由浙江省博物馆保存。在其捐赠的古物中，就有数以千计的古物收藏，囊括书法、绘画和古玺印等。至一九二〇年，黄氏收藏古玺印已达二千余钮。它们陪伴着黄宾虹北上南归，几经波折，最终入藏浙江省博物馆的有九百余钮。</p>
-<p>我：专门将印章作为一个展馆的，我见到的比较少，一般都是和其他物品放一起摆几个的，第一次见到还是在上海博物馆。在这里，除了印章、它的放大图，还有很多黄宾虹有关印学和关于自己收藏的手稿。比较让我惊讶的是居然有秦朝、春秋战国、魏晋南北朝等如此早期的物件；以及黄宾虹将它作为一门学问认真写的手稿。</p>
-<p>一些个人觉得特别（文字&#x2F;形状）的印章</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280111229.jpg" alt="QQ图片20221128010314"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280116657.jpg" alt="QQ图片20221128010320"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280116776.jpg" alt="QQ图片20221128010325"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280111458.jpg" alt="QQ图片20221128010336"></td>
-</tr>
-</tbody></table>
-<p>手稿</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280115638.jpg" alt="QQ图片20221128010330" style="zoom:50%;" />
-
-<h5 id="《非凡的心声——世界非物质文化遗产中的中国古琴》"><a href="#《非凡的心声——世界非物质文化遗产中的中国古琴》" class="headerlink" title="《非凡的心声——世界非物质文化遗产中的中国古琴》"></a>《非凡的心声——世界非物质文化遗产中的中国古琴》</h5><p>先来一点关于古琴的部分知识：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280133108.jpg" alt="QQ图片20221128011711"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280133046.jpg" alt="QQ图片20221128011706"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280135960.jpg" alt="QQ图片20221128011718"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>然后是第一个镇馆之宝唐落霞式”彩凤鸣岐”七弦琴,p1p2是原图，p3是官网官图（较清晰）</p>
-<p>官网复制：</p>
-<p>落霞式**(如果想知道这三个字的意思请看上图)**，面朱红色漆，背褐色漆下露出朱色漆。贝壳徽。长方形龙池凤沼。清九疑山人杨宗稷重修。琴面冰裂断纹和小流水断隐约可见，琴背均冰裂断纹和小流水断纹。龙池两侧有杨宗稷行书鉴定题刻。腹内刻正楷”大唐开元二年雷威制”</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280136033.png" alt="image-20221128013644753" style="zoom:50%;" />
-
-<p>我拍的（还不如看官图）：</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280138800.jpg" alt="QQ图片20221128011722"></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280138632.jpg" alt="QQ图片20221128011728"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">正面</td>
-<td align="center">背面</td>
-</tr>
-</tbody></table>
-<h5 id="《意匠生辉——浙江民间造型艺术》"><a href="#《意匠生辉——浙江民间造型艺术》" class="headerlink" title="《意匠生辉——浙江民间造型艺术》"></a>《意匠生辉——浙江民间造型艺术》</h5><p>  该陈列分为雕塑艺术、剪纸艺术、编织艺术、织染艺术四个单元。每个单元分为若干独立的艺术项目：雕塑艺术有著名的“浙江三雕”（东阳木雕、乐清黄杨木雕、青田石雕）、黄岩翻簧竹雕、瓯塑；剪纸艺术有乐清细纹刻纸、浦江剪纸；编织艺术有东阳竹编、嵊州竹编；织染艺术包括萧山花边、浙南夹缬、桐乡蓝印花布。</p>
-<p>拍了一些非常非常非常精致的工艺品，精致的让我难以想象这是手工。不过关于木雕或许你还记得雷峰塔的白娘子传奇木雕。说实话我看到一些木雕的时候，我当时第一个想法是或许他们的另一个现代化名字叫“手办”（我说的就是那两个长飘带的飞天，其实看到这个我还想到了莫高窟，如果大家今后有机会可以去敦煌看看，亲测不会失望的!）。最后两个是瓯塑，啥意思可以自己搜下，我不太懂…..</p>
-<p>木雕流程</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280155706.jpg" alt="QQ图片20221128015500" style="zoom: 50%;" />
-
-<p>木雕、石雕和瓯塑</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280156335.jpg" alt="QQ图片20221128015457"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280157334.jpg" alt="QQ图片20221128015454"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280157009.jpg" alt="QQ图片20221128015441"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280157990.jpg" alt="QQ图片20221128015444"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280158986.jpg" alt="QQ图片20221128015450"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280159935.jpg" alt="QQ图片20221128015447"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280158091.jpg" alt="QQ图片20221128015435"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280158170.jpg" alt="QQ图片20221128015439"></td>
-</tr>
-</tbody></table>
-<p>竹编(特别是p2的松鼠，细看才能看出细且密的竹丝，远看表面光滑的像木雕)</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280207322.jpg" alt="QQ图片20221128020404"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280207153.jpg" alt="QQ图片20221128020413"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>剪纸（p1是水浒传108将，细看每个人物旁边都有刻名；p2是红楼梦金陵12钗；p3放大看会看见极其细致的几圈不同的花纹。）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280951461.jpg" alt="QQ图片20221128020425"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280952237.jpg" alt="QQ图片20221128020513"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280952382.jpg" alt="QQ图片20221128020503"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>一些布类</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956819.jpg" alt="QQ图片20221128020537"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956772.jpg" alt="QQ图片20221128020530"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956880.jpg" alt="QQ图片20221128020546"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956020.jpg" alt="QQ图片20221128020559"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956829.jpg" alt="QQ图片20221128020542"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211280956949.jpg" alt="QQ图片20221128020551"></td>
-</tr>
-</tbody></table>
-<h5 id="《十里红妆——宁绍婚俗中的红妆家具》"><a href="#《十里红妆——宁绍婚俗中的红妆家具》" class="headerlink" title="《十里红妆——宁绍婚俗中的红妆家具》"></a>《十里红妆——宁绍婚俗中的红妆家具》</h5><p>​	看到了第二个镇馆之宝，清代的清金箔贴花花轿（万工轿）（据说是一万工时），官网介绍：此轿木质雕花，朱漆铺底饰以金箔贴花，轿上采用圆雕、浮雕、透雕等三种工艺手法进行装饰。轿顶上是锡制的立体形盛开的莲花，轿上雕有250个人物、花鸟虫兽。这顶轿子的结构前后左右对称，雕有24只凤凰，38条龙，54只仙鹤，74只喜鹊，92只狮子和124处石榴百子等。还有一组组圆雕人物，组成的戏曲场景。如《浣纱记》、《天水关》、《铁弓缘》、《水浒传》、《西厢记》、《荆钗记》、《拾玉镯》等。轿子的中段地方还辅以镜片玻璃画，每一幅彩绘画上也都是一个古典名剧片段。此轿子由几百片可拆卸的花板组成，没有特设的轿门。轿子上没有一枚钉子，都用榫卯结构联结。长轿杠二根，朱红漆圆角方杠，通体光素，有双孔。（插杠用），两端阳刻楷书”聚成號大鸿福轿”，短轿杠二根，朱红漆，通体光素，圆角长方杠，横连杠一根，两端楔口，中央阳刻填金彩楷书：”大鸿福”。长杠，592厘米，短杠长219厘米。</p>
-<p>贴图吧，实在震撼（p4是模拟该花轿出嫁队伍）：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011388.jpg" alt="QQ图片20221128101010"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011659.jpg" alt="QQ图片20221128101000"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011180.jpg" alt="QQ图片20221128101007"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011741.jpg" alt="QQ图片20221128101003"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011842.jpg" alt="QQ图片20221128101028"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281011806.jpg" alt="QQ图片20221128101015"></td>
-</tr>
-</tbody></table>
-<h5 id="《越地长歌——浙江历史文化陈列》"><a href="#《越地长歌——浙江历史文化陈列》" class="headerlink" title="《越地长歌——浙江历史文化陈列》"></a>《越地长歌——浙江历史文化陈列》</h5><p>因为二层为《钱江潮——浙江现代革命历史陈列》，不是特别感兴趣就跳过去了一楼。时间比较赶所以主要拍了镇馆之宝。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281035663.jpg" alt="QQ图片20221128102242"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281026313.jpg" alt="QQ图片20221128102633"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第三件新石器时代良渚文化玉琮：</p>
-<p>官网介绍：器形呈扁矮的方柱体，内圆外方，上下端为圆面的射，中有对钻圆孔，留有台痕。下端有取料时形成的凹缺。琮体四面由中间的直槽一分为二，又由横槽分为两节，每节再分上下两个组成部分。四面直槽内上下各琢刻一神人兽面纹图像，共八个，用浅浮雕和细线刻两种技法雕琢而成。在分为两节作角尺形的长方形凸面上，以转角为中轴线向两侧展开，每两节琢刻一组简化的象征性的神人兽面纹图案，四角相同，左右对称。这一种人与兽的组合图是良渚文化玉琮纹饰的基本特征。另外，在兽面纹的两侧各雕刻一鸟纹，鸟的头、翼、身均变形夸张。整体纹饰中大量填充卷云纹、直线、弧线，刻画及其繁缛细致。</p>
-<p>p3是我搞错的另一个玉琮，p1是宝物，p2是官网关于纹理的放大图</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281032959.jpg" alt="QQ图片20221128102409"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281143824.png" alt="1"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281032824.jpg" alt="QQ图片20221128102315"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第四件战国伎乐铜房屋模型被借走了，看官网信息叭.</p>
-<p>平面作长方形，三开间，三进深。南面敞开，无墙、门，立圆形明柱两根。东西两面为长方格透空落地式立壁。北墙仅在中心部位开一小窗。四角攒尖顶，顶心立一八角柱，柱顶塑一大尾鸠，柱身中空，但不与屋顶相通。屋下有四阶。屋顶、后墙及四阶均饰勾连回纹，八角柱各面饰S形勾连云纹。室内跪坐六人，束发裸身。二人双手相交于小腹，应是乐伎；其他四人或作吹笙状，或作抚琴弹拨状，或执槌作击拍鼓状，或执小棍作击筑状，当为乐师。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281041582.jpg" alt="4fdd0ec90315477084a6bc5e0f3b6e08"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281041369.jpg" alt="d308806b72a84172852937fc6360b391"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281119930.png" alt="QQ图片20221128111726"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第五件富山春居图，说实话明明是名画，当时找的时候差点错过，很小一段太不起眼了。（哦这段好像还是仿造的）</p>
-<p>百度百科介绍：富春山居图是元代画家<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%BB%84%E5%85%AC%E6%9C%9B/1601756?fromModule=lemma_inlink">黄公望</a>于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/1350%E5%B9%B4/4271036?fromModule=lemma_inlink">1350年</a>创作的纸本<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B0%B4%E5%A2%A8%E7%94%BB/201144?fromModule=lemma_inlink">水墨画</a>，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%AD%E5%9B%BD%E5%8D%81%E5%A4%A7%E4%BC%A0%E4%B8%96%E5%90%8D%E7%94%BB/7671736?fromModule=lemma_inlink">中国十大传世名画</a>之一。黄公望为师弟<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%83%91%E6%A8%97/4042377?fromModule=lemma_inlink">郑樗</a>（无用师）所绘，几经易手，并因“焚画殉葬”而身首两段。前半卷：剩山图，现收藏于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B5%99%E6%B1%9F%E7%9C%81%E5%8D%9A%E7%89%A9%E9%A6%86/1629454?fromModule=lemma_inlink">浙江省博物馆</a>；后半卷：无用师卷，现藏<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8F%B0%E5%8C%97%E6%95%85%E5%AE%AB%E5%8D%9A%E7%89%A9%E9%99%A2/1164?fromModule=lemma_inlink">台北故宫博物院</a>。</p>
-<p>以浙江<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%AF%8C%E6%98%A5%E6%B1%9F/427502?fromModule=lemma_inlink">富春江</a>为背景，画面用墨淡雅，山和水的布置疏密得当，墨色浓淡干湿并用，极富于变化。 富春山居图被誉为“画中之兰亭”，属<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%9B%BD%E5%AE%9D%E7%BA%A7%E6%96%87%E7%89%A9/5579118?fromModule=lemma_inlink">国宝级文物</a>。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281045316.jpg" alt="QQ图片20221128102345"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281045173.jpg" alt="QQ图片20221128102348"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第六件新石器时代河姆渡文化”双鸟朝阳”牙雕，找的时候更不起眼了….</p>
-<p>官网介绍：这是一件”蝶形器”的残件，上半部残缺，底端也稍残。正面中间部位以阴线形式雕刻出一幅寓意深奥的图案：中间为一组由五个大小不等的同心圆构成的太阳纹，外圆上端刻出炽烈的火焰状，以象征着太阳的光芒。两侧各有一振翅欲飞的双鸟。作圆眼、钩喙、伸脖昂首相望之态，器的边缘衬托以羽状纹，线条洗练简洁。鸟的眼和太阳纹中心均以圆锥浅钻而成，更富传神色彩。在图像两侧还对钻有6个小圆孔，以便于捆绑或悬挂之用。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281050768.jpg" alt="QQ图片20221128102338"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281050028.jpg" alt="QQ图片20221128102341"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>穿插一个无意看到的关于西湖十景的命名</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281050728.jpg" alt="QQ图片20221128102352" style="zoom: 50%;" />
-
-<p>第七件战国越王者旨於睗剑。说起来湖北省博物馆的镇馆之宝之一是越王勾践剑，是金色的比这个好看，不过形状大致相同。</p>
-<p>官网介绍：越王者旨於睗剑为铜质，通长52.4厘米，剑体宽阔，中脊起线，双刃呈弧形于近锋处收狭。圆盘形剑首，圆茎上有两凸箍，箍饰变形兽面纹，茎绕丝质缠缑。剑格两面铸双钩鸟虫书铭文，正面为：戉（越）王戉（越）王；反面为：者旨於睗。字口间镶嵌着薄如蝉翼的绿松石，现有部分脱落，脱落处可见红色粘接材料的痕迹。越王者旨於睗剑附有完整的剑鞘，系用两块薄木片粘合而成，外用丝线缠缚加固，再髹以黑漆。</p>
-<p>p4是官图，p2是我拍的乌漆嘛黑的原件。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281054988.jpg" alt="QQ图片20221128102335"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281054706.jpg" alt="QQ图片20221128102414"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281055801.jpg" alt="QQ图片20221128102329"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281055718.jpg" alt="636946489885550482"></td>
-</tr>
-</tbody></table>
-<p>第八件北宋泥塑彩绘观音立像</p>
-<p>官网介绍：高髻华冠,宝缯垂肩.面容端丽,眉目清秀.肩搭石绿色缠枝描金披巾,内着红色菱格纹交领襦衣.袒胸露背,肌肤洁白细腻.项饰璎珞,臂腕着钏,腰束石绿色蜂窝纹描金围裙,下露赭红色锦裙,腰肢微弯呈曲线形.双手纤巧,形体窈窕,婉丽动人.此像为白象塔出土众多彩塑中的精品之一。</p>
-<p>p1是这个，p2p3是另外两个也挺逼真的。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281101906.jpg" alt="QQ图片20221128102359"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281102839.jpg" alt="QQ图片20221128102356"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281102234.jpg" alt="QQ图片20221128102402"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>第九件五代十国吴越国鎏金纯银阿育王塔</p>
-<p>官网介绍：由塔座、塔身、山花蕉叶、塔刹等组成，每个部分捶揲成型，整体接合。塔座方形，下有底板，每侧以壸门、小佛像相间装饰。塔身方形，四面镂刻佛本生故事，每面一个，分别为萨埵太子舍身饲虎本生、尸毗王割肉贸鸽本生、快目王舍眼本生及月光王施首本生，外表鎏金，四角各有一只大鹏金翅鸟。塔身的最上层用忍冬及兽面纹作装饰。从塔身镂空处可见里面盛装金质容器（金棺），记载中的”佛螺髻发”应供奉其中，由于塔身没有打开，金棺的形制、大小及内部情况不明。四角的山花蕉叶正面捶揲反映佛祖一生事迹的佛传故事画面共16幅，如无忧树下诞生、尼连河边苦修、鹿野苑里说法等等，背面捶揲佛祖坐禅、说法等形象。塔刹由刹杆、五重相轮和顶部的火焰珠、宝瓶等构成，塔刹的底座装饰十二朵覆莲，五重相轮上饰忍冬、连珠纹，底轮最大，往上渐收。</p>
-<p>p1是镇馆之宝，p2是从雷峰塔发现的（p6）且供奉了舍利，p3特别特别而且上面很多琉璃宝石。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281112860.jpg" alt="QQ图片20221128102425"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281115961.jpg" alt="QQ图片20221128102433"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113544.jpg" alt="QQ图片20221128102449"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113856.jpg" alt="QQ图片20221128102418"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113464.jpg" alt="QQ图片20221128102422"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281113553.jpg" alt="QQ图片20221128102429"></td>
-</tr>
-</tbody></table>
-<p>p1是被端正的楷书惊艳到（应该是印刷），p2最初没觉得怎么样，仔细看才发现一圈一圈是用很小的字写的经书。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281106137.jpg" alt="QQ图片20221128102445"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281107973.jpg" alt="QQ图片20221128102436"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281107007.jpg" alt="QQ图片20221128102439"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281107123.jpg" alt="QQ图片20221128102442"></td>
-</tr>
-</tbody></table>
-<p>铜镜很漂亮</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281105588.jpg" alt="QQ图片20221128102452" style="zoom:67%;" />
-
-<p>快逛完的时候看见了这幅地图，我也在上面找到了很多去过的景点。突然想起来在湖滨银泰商业街通往西湖的一条路上，湖边的石板地上用浮雕刻了这幅画。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281104984.jpg" alt="QQ图片20221128102454" style="zoom:67%;" />
-
-<p>对啦，补一张孤山展馆的第十件镇馆之宝</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281155162.jpg" alt="QQ图片20221128115510" style="zoom:67%;" />
-
-<p>走出博物馆就彻底结束这次行程了，纪念一下高安站以及目前行程卡上记录最多的一次：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281115839.jpg" alt="QQ图片20221128102458" style="zoom:67%;" />
-
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211281115841.jpg" alt="QQ图片20221128102500" style="zoom:67%;" />
-
-
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY5"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/14/%E6%9D%AD%E5%B7%9E-DAY5/"
-    >杭州-DAY5</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/14/%E6%9D%AD%E5%B7%9E-DAY5/" class="article-date">
-  <time datetime="2022-10-14T12:43:25.000Z" itemprop="datePublished">2022-10-14</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>​	我们又来到了熟悉的街道，只不过换了一个民宿。其实本来没有今天的行程的，但是因为DAY3的悲惨遭遇今天决定再去一次飞来峰弥补遗憾，并且新白鹿还没有吃到。而且今天有空的话还准备看看阿里、网易和浙大。由于中午才到杭州，所以先去了附近的一家新白鹿。</p>
-<h4 id="STATION1-新白鹿"><a href="#STATION1-新白鹿" class="headerlink" title="STATION1-新白鹿"></a>STATION1-新白鹿</h4><p>比较常见，搜的时候也多次出现的餐厅，加上同学推荐，所以还挺期待的。（珍惜现在的期待心情）</p>
-<p>1.很脆的松露豆腐：油炸（油物）+1，自行脑补一下外酥里嫩，外咸内淡的口感。建议一大勺吃，因为一小颗一小颗不够塞牙缝。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202114279.jpg" alt="QQ图片20221220211218" style="zoom: 50%;" />
-
-<p>2.东坡肉：油物+1，在我心目中它一直是传说中的东坡肉，一直一直很好奇它的味道。emmm可以想象下大块红烧肉的味道，因为带着猪皮以及肥肉所以会很糯。因为汤汁较咸以及肥肉较油，建议拌饭吃（千万不要像我一样干吃完一整块，千万不要！！！）。下图请自行看一下这块猪肉的肥瘦比。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202121025.jpg" alt="QQ图片20221220212018" style="zoom:50%;" />
-
-<p>3.咸蛋黄鸡翅：油物+1，他们家招牌中的招牌。味道的话，之前麦当劳还是肯德基也出过咸蛋黄鸡翅，不过说实话虽然味道还可以，但这为什么会是招牌中的招牌呢……？这不就是咸蛋黄鸡翅吗？？当时因为大份更便宜所以买了大份8个，事实证明吃到最后真的想抽死自己，把自己的狗头摁进油缸：你欠油喝吗???前面那些菜还不够油吗！！</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202128937.jpg" alt="QQ图片20221220212805" style="zoom:50%;" />
-
-<p>4.酱烤鲈鱼：本场最佳。</p>
-<p>插播一个，其实本场最佳是当时菜单上写的top2广东菜心。我当时是觉得他们有病要把广东菜心放top2，现在理解了。只有清爽的广东菜心才能把我从油缸中捞出来。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202131175.jpg" alt="QQ图片20221220213046" style="zoom:50%;" />
-
-<p>5.荷花酥：油炸+1，想试试现炸的荷花酥，外面多层皮很酥，里面是绿色的甜馅（可能是绿豆味的）。不过，你他妈根本没想好好炸吧？？？？？这是野花酥吧，野花都比这好看吧？？？？这边附上一张我第一次刷到荷花酥的网图p2。再复习一下之前的，知味观现卖的荷花酥是网图p3的样子，盒装送礼的荷花酥是网图p4的样子，他们都是荷花酥。（虽然看起来p3p4可能是烤的，而且p4工艺最简单）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202134418.jpg" alt="QQ图片20221220213355"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202138766.jpg" alt="QQ图片20221220213813"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202143122.jpg" alt="QQ图片20221220214331"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202144385.jpg" alt="QQ图片20221220214328"></td>
-</tr>
-</tbody></table>
-<p>总结：因为没点好菜导致自己被油死，体验感极差。不过下次想去可以考虑去银泰之类的大商场的正规店，因为我去的这家因为荷花酥太丑了让我怀疑这家是假的….一点遗憾是之前同学去的那家有梦华录的蟹酿橙，我本来超级期待这个，但是这家下架了啊啊啊。附一张没有点但是看起来很有意思的宝塔肉。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212202149299.jpg" alt="QQ图片20221220214908" style="zoom:50%;" />
-
-<h4 id="STATION2-飞来峰"><a href="#STATION2-飞来峰" class="headerlink" title="STATION2-飞来峰"></a>STATION2-飞来峰</h4><p>​	上次去买了飞来峰和灵隐寺的票只去了灵隐寺，今天是菩萨出家日所以灵隐寺免费，然而因为时间问题只去了飞来峰，怎么听都是亏死。来到了熟悉的地方，中间是主路，左边的一排山都属于飞来峰，右边再往里走些是灵隐寺的大门。来张之前放过的图：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211605414.jpg" alt="QQ图片20221221160547" style="zoom:50%;" />
-
-<p>​	首先是飞来峰石刻造群像，除了表面这些，里面还有一些楼梯、奇形怪状野蛮生长的古树藤条、钟乳石岩洞之类的，岩洞钻进去里面也有很多石雕，并且有声控的灯，如果多探索探索应该会有很多法线。石头很粗糙，但是雕刻的地方都非常光滑，时间上宋代、元代、清代的都有。下面只是冰山一角：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558206.jpg" alt="QQ图片20221221155625"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558426.jpg" alt="QQ图片20221221155631"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558171.jpg" alt="QQ图片20221221155636"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558959.jpg" alt="QQ图片20221221155641"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558530.jpg" alt="QQ图片20221221155646"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558883.jpg" alt="QQ图片20221221155653"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558300.jpg" alt="QQ图片20221221155653"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558938.jpg" alt="QQ图片20221221155659"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558030.jpg" alt="QQ图片20221221155659"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211558048.jpg" alt="QQ图片20221221155702"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211559855.jpg" alt="QQ图片20221221155710"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211559731.jpg" alt="QQ图片20221221155717"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211559641.jpg" alt="QQ图片20221221155649"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211559196.jpg" alt="QQ图片20221221155714"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211559204.jpg" alt="QQ图片20221221155720"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>​	如果不去左边的灵隐寺就走右边的山路上山了，第一个就是图中的永福寺，黄墙配绿树真的很好看p5，p4中间挖了一块的墙超级适合做相框。进去以后还有不怕人蹲在地上一脸“我早就习惯了”任人宰割的小猫咪，和插满花的洗手台。不过逛完了务必出来，从门口走另一条路去韬光寺。（因为都是寺庙所以没怎么拍照）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211609609.jpg" alt="QQ图片20221221160703"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211609294.jpg" alt="QQ图片20221221160709"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211609081.jpg" alt="QQ图片20221221160712"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211609202.jpg" alt="QQ图片20221221160716"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211609704.jpg" alt="QQ图片20221221160719"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211611362.jpg" alt="QQ图片20221221161057"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211609199.jpg" alt="QQ图片20221221160728"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>​	下面的路就是逛寺庙——死亡爬山——逛寺庙——死亡爬山…..路上遇到了买茶叶5元一包的老奶奶，一些路人问她茶叶是不是开了光，然后被骂“你是傻子吧什么东西都开光茶叶也开光…..”。p2-p4是在最高的一个观海楼拍的（名字取的很贴切），p4还可以看到杭州的双子塔-杭州之门。好像到了观海楼再往上爬个几百米就到了北高峰索道顶端，真死亡爬山，头晕腿软的那种。飞来峰上面的寺庙香都可以自取，也有烧火的小台子，外面也会贴规范动作（没学会，太难了）。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211621987.jpg" alt="QQ图片20221221161520"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211621112.jpg" alt="QQ图片20221221161506"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211621110.jpg" alt="QQ图片20221221161517"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211621395.jpg" alt="QQ图片20221221161524"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION3-杭州酒家"><a href="#STATION3-杭州酒家" class="headerlink" title="STATION3-杭州酒家"></a>STATION3-杭州酒家</h4><p>临时决定了一家饭店，今天是没做攻略的随心所欲行程。这家店…或许你还记得第一次是在南方迷宗大包旁边出镜的？其实他们家的招牌是果木泥烤叫花鸡，但理智告诉我叫花鸡不如菜场的烤鸡…..他们家还有偏甜的杭州熏鱼（上海也有很多），没尝过的可以试试。桂花蜜藕、文思豆腐之类的在杭州也很常见。</p>
-<p>1.芝士闷骚南瓜：三个起售，最上层是奶香芝士，下面是南瓜馅儿的外酥里软的小蛋糕。这个超级好吃！</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211635516.jpg" alt="QQ图片20221221163325" style="zoom:50%;" />
-
-<p>2.酸菜鱼（其实还点了偏甜的铁板茄子）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211635117.jpg" alt="QQ图片20221221163332" style="zoom:50%;" />
-
-<p>3.猫耳朵：清汤寡水，看起来很像花生的江浙面食，吃起来比较有韧劲。看起来长得很可爱才点的。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211635034.jpg" alt="QQ图片20221221163334" style="zoom:50%;" />
-
-<p>因为要搭车之类的又在银泰的商业街逛了下，发现了小鹏的车展出了飞行车，看起来很高级。大家只能在玻璃展厅外面看，貌似只有预定的才能进去参观并且听讲解。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211637584.jpg" alt="QQ图片20221221163341"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211637550.jpg" alt="QQ图片20221221163345"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="STATION4-阿里和网易"><a href="#STATION4-阿里和网易" class="headerlink" title="STATION4-阿里和网易"></a>STATION4-阿里和网易</h4><p>​	我第一次知道阿里巴巴在杭州….之前同学的姐姐在网易工作，所以还挺好奇的。百度地图后那么多阿里哪个才是总部啊？？？虽然后来确实来到了一个阿里，但貌似不是总部…不过意外的离网易很近。看起来像一个基地，有好几个园区，建筑很有艺术感。8点多还灯火通明，果然大家都是996代码打工人吧？？</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211647283.jpg" alt="QQ图片20221221163357"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211647799.jpg" alt="QQ图片20221221163400"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>网易就在前面再走一段路，也有好几个园区。据说周围有一家很绝的日料，广泛流传在所有网易人的口中，吃过都说好；地铁站还有自助卖花机。看起来也有不少打工人……</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211650499.jpg" alt="QQ图片20221221163403"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211650494.jpg" alt="QQ图片20221221163409"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211650806.jpg" alt="QQ图片20221221163411"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211650905.jpg" alt="QQ图片20221221163414"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211650398.jpg" alt="QQ图片20221221163406"></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="STATION5-浙江大学"><a href="#STATION5-浙江大学" class="headerlink" title="STATION5-浙江大学"></a>STATION5-浙江大学</h4><p>下面就进入大怨种的剧情，让我彻底记住了在杭州的最后一个晚上。</p>
-<p>从网易出来差不多快九点了，因为有之前的悲惨经历，今天务必是要做到核酸的，搜了很久发现远处有一个可以做核酸的医院，就骑车过去了，当花了4块做完核酸快10点的时候，猛然想起来民宿门口早上有个时间段是有核酸的。……说实话特别想把管子里我的那个棉签抽出来扔掉，把四块钱捞出来。</p>
-<p>虽然这么晚了，秉持着一些执念，还是准备搭地铁去浙江大学的本部紫金港主校区（本部真的好远啊）。导航后下了地铁，准备开始一段长距离的步行，猛然发现了一件严重的事，我不知道哪个门才是正门啊。后来赶紧搜了一下发现不是这站地铁在下一站…因为导航给的是最近的路线……行吧….走到的时候是10点55，坐地铁无望了。不过在看到校门的一瞬间，突然觉得一切值得，很美很宏大很震撼的校门，门口有类似护城河的河以及两座桥p5，河对岸倾斜的草坪写着校训”求是创新”p6。（突然就明白了那天路过的校区为什么叫求是村）。本来天真的想混进去，但是这一脸痴汉的疯狂拍照一脸舔狗的摸校门，一看就不是浙大的学生吧？？？？好羡慕啊！！！！虽然之前也去过清华北大复旦上交同济，但我愿称其为最好看的校门！！晚上开灯之后，在黑夜里更有魅力了。（然而大家都保研去的软件学院在那天晚上我们无意路过的分校区）p7是校园内部。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211710676.jpg" alt="QQ图片20221221163417"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211710140.jpg" alt="QQ图片20221221163419"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211710911.jpg" alt="QQ图片20221221163433"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211710926.jpg" alt="QQ图片20221221163436"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211711269.jpg" alt="QQ图片20221221163429"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211711248.jpg" alt="QQ图片20221221163440"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202212211711464.jpg" alt="QQ图片20221221163423"></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>狠狠羡慕了，在那一瞬间终于理解了某个明知道软院缺陷却执意想来浙大的同学了。走的时候是11点，回头一看突然发现校门熄灯了！就在那一刻真的真的觉得这一趟跑过来太幸运太值得了，为了看5分钟跑了快一个小时的路，然而但凡晚到5分钟，哭都哭不出来。至今都觉得这5分钟有一种惊鸿一撇的感觉。</p>
-<p>下面问题来了，怎么回去？？？11点了，地铁关了，公交冒得，打车太危险估计也没人接单，貌似只有骑车回去。骑车…一个半小时….emmm，要不骑车试试…..事实证明，我他妈骑了两个小时啊啊啊啊啊！路过无数个红绿灯，无数个插口，无数条街道，1点了还在杭州的街上骑行，宽敞的马路通明的路灯高大的梧桐树就剩两辆自行车雷厉风行，街边零散的几家店到有些许温暖的感觉。路过了杭州电子科技大学，杭州市人民政府，杭州市监督总局等等一些学校和总部，用生命感受这座城市，属于健康大学生的新式浪漫。从剩余10公里开始，每骑一公里，就要问一句还剩多远，红灯是唯一的休息时间（要是遇到绿灯就倒霉），10 9 8 7 6 5 4 3 2 1，铁打的身体和钢铁的意志，坚持就是胜利！下车的时候腿已经软了，谢谢罗森的关东煮救了一命。到了民宿用吊着的最后一口气洗了澡，之后就短暂离开人世了…..ps：杭州的小红车太丝滑好骑了，1小时内免费，所以只要在快到一小时的时候换辆车，就可以两小时免费了嘻嘻。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY4"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/13/%E6%9D%AD%E5%B7%9E-DAY4/"
-    >乌镇-DAY4</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/13/%E6%9D%AD%E5%B7%9E-DAY4/" class="article-date">
-  <time datetime="2022-10-13T07:38:49.000Z" itemprop="datePublished">2022-10-13</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p><strong>一些说明：</strong></p>
-<p>乌镇的门票分成东栅（本地人读“诈”）110和西栅150，联票190。学生票半价但只能用一次并且不可以用在联票上。看某书或者民宿老板都表示西栅更好，东栅可以不用去。进去了千万不要出景区，否则需要重新购票。某书或者民宿老板都表示西栅一定要留到晚上看夜景。本人试了一下觉得对于爱拍照和体验的人来说西栅足够玩一整天了，比起联票还不如用一天好好玩一个地方。夜景确实很美，建议晚上坐船体验。ps:大家可能觉得景区吃饭玩耍可能会坑人，但是大部分都是正常价格，可以放心消费。</p>
-<p><strong>一些科普（可以跳过）：</strong></p>
-<p>乌镇镇，隶属于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B5%99%E6%B1%9F%E7%9C%81/190275?fromModule=lemma_inlink">浙江省</a><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%98%89%E5%85%B4%E5%B8%82?fromModule=lemma_inlink">嘉兴市</a><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%A1%90%E4%B9%A1%E5%B8%82/2155562?fromModule=lemma_inlink">桐乡市</a>，。乌镇境内水系属<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%A4%AA%E6%B9%96%E6%B5%81%E5%9F%9F/7431148?fromModule=lemma_inlink">太湖流域</a>，河流纵横交织，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%BA%AC%E6%9D%AD%E5%A4%A7%E8%BF%90%E6%B2%B3?fromModule=lemma_inlink">京杭大运河</a>依镇而过。乌镇镇是中国历史文化名镇、中国十大魅力名镇、全国环境优美乡镇、<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%9B%BD%E5%AE%B65A%E7%BA%A7%E6%97%85%E6%B8%B8%E6%99%AF%E5%8C%BA/9434223?fromModule=lemma_inlink">国家5A级旅游景区</a>，素有“中国最后的枕水人家”之誉，拥有7000多年文明史和1300年建镇史，是典型的中国江南水乡古镇，有“鱼米之乡、丝绸之府”之称，有六千年历史，是全国二十个黄金周预报景点及江南六大古镇之一。1991年被评为浙江省历史文化名镇；2013年起，举办乌镇戏剧节；2014年11月19日成为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%96%E7%95%8C%E4%BA%92%E8%81%94%E7%BD%91%E5%A4%A7%E4%BC%9A/15947338?fromModule=lemma_inlink">世界互联网大会</a>永久会址。2020年7月29日，入选2019年重新确认国家卫生乡镇（县城）名单。2019年10月20日至22日，由国家互联网信息办公室和浙江省人民政府共同举办的第六届世界互联网大会在浙江乌镇镇召开。</p>
-<h4 id="STATION1-乌镇大剧院"><a href="#STATION1-乌镇大剧院" class="headerlink" title="STATION1:乌镇大剧院"></a>STATION1:乌镇大剧院</h4><p>早餐是民宿旁边貌似唯一一家餐馆，雪菜黑🐟面真的很好吃（之后才发现江浙上海那边才有，看来短时间吃不到了）。之后民宿老板非常热心的把我们送到景区大门，还告诉我们门口就做核酸的9点结束，还说啥晚上玩完了就给他打电话他来接（真的人好好啊呜呜）。大门(p1p2)进去后穿过服务大厅，就是水上的木头路（p5p6），走几步就到了乌镇大剧院（p3p4），不过因为疫情里面暂时没有表演也没有开放。顺便一提，听到路过的导游说乌镇的水是京杭大运河的支流，不过之后我也确实走到了京杭大运河旁边。导游好像还说什么大剧院的木头是京杭大运河湖底的沉船木。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061136698.jpg" alt="QQ图片20221105201522"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061136640.jpg" alt="QQ图片20221105201531"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141044.jpg" alt="QQ图片20221105201508"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141374.jpg" alt="QQ图片20221105201511"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141870.jpg" alt="QQ图片20221105201515"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061141265.jpg" alt="QQ图片20221105201519"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION2-木心美术馆"><a href="#STATION2-木心美术馆" class="headerlink" title="STATION2-木心美术馆"></a>STATION2-木心美术馆</h4><p>民宿老板的妈妈很推荐的地方，很有设计感的水上美术馆。门票20r，学生票半价。因为里面很多是作者的手稿所以不允许拍照。很安静并且灯光昏暗，展出的主要是作者的绘画作品、文学作品以及生前使用的物件，以及某个电影的剧照。p3p4是快到出口的时候有一面墙贴满了俳句，以及展示了一些卡片，是一些有文化的游客自己写的俳句。只能说对于了解或者喜爱该作者的人来说这确实是一个很好的地方，但对于我这种没有文化的人来说，就是充满期待进去，一脸懵逼出来。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061157944.jpg" alt="QQ图片20221106115721"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061157787.jpg" alt="QQ图片20221106115732"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061157076.jpg" alt="QQ图片20221106115725"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061158881.jpg" alt="QQ图片20221106115728"></td>
-</tr>
-</tbody></table>
-<p>准备去下一站时路过的风景。别看黑瓦白墙的房屋和石板路特别老旧，水还是绿色的，其实都特别干净，而且房间里面都很新很干净。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209335.jpg" alt="QQ图片20221106120907"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209138.jpg" alt="QQ图片20221106120905"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209180.jpg" alt="QQ图片20221106120859"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061209031.jpg" alt="QQ图片20221106120901"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION3-草木本色染坊"><a href="#STATION3-草木本色染坊" class="headerlink" title="STATION3-草木本色染坊"></a>STATION3-草木本色染坊</h4><p>很期待的一个景点，因为在网上看见别人出片真的巨好看，现场确实有汉服小姐姐拍照。然而去的时候因为没有很大的风把将布条吹开，所以拍照效果会差一点（或许需要一个会抓拍且会取景的摄影师）。除了高杆以外，旁边还有木制阶梯式晒布架，可以走楼梯上在高处看看。那里还有染色体验处，好像没开。很喜欢p7，当然布条是被我手动扒开的。p9蓝染旁边还有红黄布条，大家好像不感兴趣。p8是染布商品店，我记得蓝染印花的书包很好看（200多orz）。</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246865.jpg" alt="QQ图片20221106124257"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246084.jpg" alt="QQ图片20221106124407"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246897.jpg" alt="QQ图片20221106124415"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246206.jpg" alt="QQ图片20221106124412"></td>
-</tr>
-<tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061856398.jpg" alt="QQ图片20221106185600"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246088.jpg" alt="QQ图片20221106124409"></td>
-</tr>
-<tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061246901.jpg" alt="QQ图片20221106124418"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061247068.jpg" alt="QQ图片20221106124303"></td>
-</tr>
-<tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061247655.jpg" alt="QQ图片20221106124404"></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="STATION4-水上集市"><a href="#STATION4-水上集市" class="headerlink" title="STATION4-水上集市"></a>STATION4-水上集市</h4><p>沿途的风景（ps：千万不要看房子很旧，拍照很好看而且房子里面都很新很舒服），沿途的房子一般都是小店，食店茶店比较多。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904686.jpg" alt="QQ图片20221106190331"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904077.jpg" alt="QQ图片20221106190327"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904633.jpg" alt="QQ图片20221106190323"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904929.jpg" alt="QQ图片20221106190318"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904120.jpg" alt="QQ图片20221106190302"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904889.jpg" alt="QQ图片20221106190306"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904867.jpg" alt="QQ图片20221106190310"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061904576.jpg" alt="QQ图片20221106190313"></td>
-</tr>
-</tbody></table>
-<p>网上是这样形容水上集市的：“一大清早，小船载着新鲜的蔬菜和家养禽畜，来到四通八达的河道枢纽出售，顺便也可喝个早茶。临河的居民只要吆喝一声，船就会摇到水阁边，不出门也可以买到新鲜的蔬菜，很受居民喜欢。”不过可能是因为快到中午了或者现在大家都去开店了，所以并没有看到，坐船的也都是游客。不过听说如果住在乌镇景区内部可以免费预订7-9店的早茶。最后加上两张水上集市的夜景来对比（我的手机尽力了，其实没那么绿，偏橙黄）。（喜欢p4p5）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937129.jpg" alt="QQ图片20221106193511"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937608.jpg" alt="QQ图片20221106193514"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937400.jpg" alt="QQ图片20221106193517"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061939102.jpg" alt="QQ图片20221106193524"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061937623.jpg" alt="QQ图片20221106193520"></td>
-<td></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061939356.jpg" alt="QQ图片20221106193825"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061939100.jpg" alt="QQ图片20221106193828"></td>
-</tr>
-</tbody></table>
-<p>穿过亭子找到了某书推荐的p4茅老太臭豆腐10r，酱很香，豆腐皮不是龙翔的炸面包口感，是正常的炸豆腐，但我觉得龙翔的更好吃。木制店真的很好看p1p2(可以脑部一下梦华录那种类型的)，进门边是集市——石板路和其他小店p3，窗边是河——能看见对面的店和路过的船p5。店里还有一个门，出去是通向河水的几节楼梯p6p7（难道是为了洗衣服之类的吗，看到很多店都是这样的）.外面太阳很暖和，凉风吹进来正好。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061948306.jpg" alt="QQ图片20221106194817"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061948521.jpg" alt="QQ图片20221106194821"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061949089.jpg" alt="QQ图片20221106194824"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061950396.jpg" alt="QQ图片20221106194833"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061950526.jpg" alt="QQ图片20221106194836"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061951342.jpg" alt="QQ图片20221106194827"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061951890.jpg" alt="QQ图片20221106194830"></td>
-<td></td>
-</tr>
-</tbody></table>
-<h4 id="STATION5-天下第一锅"><a href="#STATION5-天下第一锅" class="headerlink" title="STATION5-天下第一锅"></a>STATION5-天下第一锅</h4><p>一进去从门口就能看到天下第一锅（好像破了吉尼斯记录？），确实超级大。这里是曾经的冶炼坊，据说曾经每年可以生产30000+个锅，里面展示了冶炼的工具，冶炼的方法以及该冶炼坊的历史发展。门口还有卖锅的，只能说铁做的锅我单手提不动….</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211061957607.jpg" alt="QQ图片20221106195712"></th>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211062012129.jpg" alt="QQ图片20221106201158" style="zoom: 50%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211062011912.jpg" alt="QQ图片20221106201127"></td>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211062011137.jpg" alt="QQ图片20221106201130"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION6-水上戏台"><a href="#STATION6-水上戏台" class="headerlink" title="STATION6-水上戏台"></a>STATION6-水上戏台</h4><p>戏台是一家茶店的，很小的戏台，得过桥去对面的一个木制平台看（但不知为啥冒得座位）。因为人很少，所以就一个戏子象征性营业（感觉好凄惨….）</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-杭州-DAY3"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/10/12/%E6%9D%AD%E5%B7%9E-DAY3/"
-    >杭州-DAY3</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/10/12/%E6%9D%AD%E5%B7%9E-DAY3/" class="article-date">
-  <time datetime="2022-10-12T03:09:18.000Z" itemprop="datePublished">2022-10-12</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%97%85%E8%A1%8C/">旅行</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>极其悲惨的一天。也正是这一天，对于我这种每次恨不得期末考试考完最后一门的下午就逃离南昌大学回家的人，第一次产生了好想回南昌大学的想法。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301625212.png" alt="QQ图片20221030162525" style="zoom: 50%;" />
-
-<p>我们原来的计划：飞来峰-灵隐寺-新白鹿-知味观买点心-浙江省博物馆-六点火车去乌镇</p>
-<p>飞来峰-灵隐寺的计划：北高峰索道上山-慢慢下山-去参观山脚下的灵隐寺</p>
-<p>因为12点退房不能放东西了，就<del>拖家带口</del>准备去离民宿最近的行李寄存处。到后发现是酒店内部的寄存处，非住户不能存东西……搜了下决定打车去杭州东站存，存完再打车去灵隐寺。就这样比预定时间晚了两个小时到达，到了景区，发现景区门口右侧大写着行李寄存处，心情如下👇</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301631230.jpg" alt="1667118698(1)"></p>
-<p>ps：此处说一下这部分景区的价格是这样的，索道30r，寺庙在山里面，所以先花45r买山钱，再花30r买寺庙钱。（但是除了索道学生半价嘻嘻）<del>所以有人把寺庙从山里搬出来吗？</del></p>
-<h4 id="STATION1-北高峰"><a href="#STATION1-北高峰" class="headerlink" title="STATION1-北高峰"></a>STATION1-北高峰</h4><p>按照计划先去北高峰索道，北高峰就是双峰插云的两峰之一。索道上面可以看到茶园：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301709018.jpg" alt="QQ图片20221030170912" style="zoom: 33%;" />
-
-<p>山顶有一个小小的观景台，也可以看到西湖（一长条是苏堤），当然这山也不是特别高。山上有还有财神庙、撞钟啥的，没有看太多，下山准备看其它的。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301642337.jpg" alt="QQ图片20221030164102"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301642915.jpg" alt="QQ图片20221030164104"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301642354.jpg" alt="QQ图片20221030164106"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301645819.jpg" alt="QQ图片20221030164505"></td>
-</tr>
-</tbody></table>
-<p>下面是我们原计划路线：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301646907.jpg" alt="QQ图片20221030164636" style="zoom:33%;" />
-
-<p>正好下山的时候确实只找到了一条山路，就信誓旦旦下山了。楼梯特别陡，看的脑袋都晕，休息平台基本都有算命的。<del>为了赚（骗）点钱年纪大了还爬那么高的山真的辛苦了。</del>下了好久都山，看到了一个叫法华寺的寺庙，结合上图我们一度以为是不是韬光寺或者永福寺改名字了。（后来觉得自己跟傻逼一样）下面是寺庙牌坊：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301724196.jpg" alt="QQ图片20221030172405"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301710734.jpg" alt="QQ图片20221030171004"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>继续下山碰到连续两个岔口，凭感觉+导航选择了最错误的路，走了很久很久走到了居民区。</p>
-<p>……..居民区？</p>
-<p>导航一下发现距离灵隐寺1h。</p>
-<p>……1个小时？？</p>
-<p>导航说最近的路是原路返回。</p>
-<p>…..原路返回？？？</p>
-<p>行吧凭借稀碎的身体和钢铁般的意志走了好久返回到刚刚的第一个岔口，问了路过的人，路人告诉我们不用返回啊，下面走过居民区就到大路了。又看了一眼导航，导航让我们去北高峰山顶。</p>
-<p>…..你是说让我爬上去？？？？</p>
-<p>最后发现事情的真相是有两条下山的路，只有一条可以到灵隐寺，这条路景点也比较多，另一条通到了好远的地方。可是我确实只看到了一条下山路啊！某书那么多人去就没有一个人走错吗？？？现在最优解是穿过居民区去大路打车。所以这么长的破路来来回回走了tm三遍是吧？？？</p>
-<p>总之就是又又浪费两小时去灵隐寺，结合上山就是折腾了3小时到最初的门口。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301714595.jpg" alt="QQ图片20221030171450" style="zoom: 25%;" />
-
-<h4 id="STATION2-灵隐寺"><a href="#STATION2-灵隐寺" class="headerlink" title="STATION2-灵隐寺"></a>STATION2-灵隐寺</h4><p>时间比较紧，而且已经浪费4小时了，所以进去后我们就一直往上爬逛了中间一路五个主殿，其他偏殿没看。其实我觉得寺庙墙的那种黄色很好看，也看到有姐姐拍照，应该很出片，但觉拍寺庙大不敬此处就门口一些图。ps：进去会送三根香，不用单独破费。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722523.jpg" alt="QQ图片20221030172224"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722425.jpg" alt="QQ图片20221030172218"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722023.jpg" alt="QQ图片20221030172221"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210301722278.jpg" alt="QQ图片20221030172226"></td>
-</tr>
-</tbody></table>
-<p>寺庙很漂亮，来点网图：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302151515.jpg" alt="QQ图片20221030172722" style="zoom:25%;" />
-
-<h4 id="STATION3-知味观"><a href="#STATION3-知味观" class="headerlink" title="STATION3-知味观"></a>STATION3-知味观</h4><p>打车去的路上，在车里看到了晴天下的绝美西湖，特别羡慕图4那俩人啊呜呜。p2还是断桥。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310912435.png" alt="QQ图片20221030232513"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310912859.jpg" alt="QQ图片20221030232449"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310912207.jpg" alt="QQ图片20221030232457"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210310913137.png" alt="QQ图片20221030232935"></td>
-</tr>
-</tbody></table>
-<p>其实来这里是为了象征性买点纪念食物。知味观在杭州的地位大概跟北京稻香村那样，也是传统老字号。湖滨那里是总店，主要是一家杭州传统小吃馆，顺便卖了糕点和卤味。而且到了那里才发现其实卤味更多人排队……</p>
-<p>p1下面盘子右边是特别好看的荷花酥，上面第一块牌子左下角那个是绿马定胜糕，吃了一口感觉是平平无奇绿豆糕</p>
-<p>p2 条头糕，糯叽叽的里面是红豆沙（像条状版五芳斋糯米团子）</p>
-<p>p3 榨菜鲜肉月饼，很香，正好买到最后一个。不过现在这种咸月饼蛮常见的。</p>
-<p>其他的寄出去了回家尝尝（桃花酥、云片糕、桂花麻薯啥的，当然根据我多年经验老字号糕点一般都一般般）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302154114.jpg" alt="QQ图片20221030215429"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302153770.jpg" alt="QQ图片20221030213953"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302159594.jpg" alt="QQ图片20221030215938"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202210302157420.png" alt="QQ图片20221030215612"></td>
-</tr>
-</tbody></table>
-<h4 id="STATION4-大摆烂行程"><a href="#STATION4-大摆烂行程" class="headerlink" title="STATION4-大摆烂行程"></a>STATION4-大摆烂行程</h4><p>然后灾难了。</p>
-<p>准备按照计划去湖滨的新白鹿吃饭的，结果进商场一扫黄码了……</p>
-<p>后来醒悟了虽然火车站播报48小时核酸，但是外地人需要天天核检。</p>
-<p>加一天住宿（×）</p>
-<p>坐火车（×）</p>
-<p>打车（×）</p>
-<p>逛商场（×）</p>
-<p>找到核酸点了，4-6个小时出结果，当时三点半左右吧，乌镇的火车6点多。</p>
-<p>寄！</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102436.gif" alt="QQ图片20221101210156"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102040.gif" alt="QQ图片20221101210156"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102681.gif" alt="QQ图片20221101210156"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102132.gif" alt="QQ图片20221101210156"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102436.gif" alt="QQ图片20221101210156"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102073.gif" alt="QQ图片20221101210156"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102504.gif" alt="QQ图片20221101210156"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012102195.gif" alt="QQ图片20221101210156"></td>
-</tr>
-</tbody></table>
-<p>突然时间一点都不赶了，那天天空是蔚蓝色，窗外有千纸鹤….原本根本不打算逛的湖滨银泰突然就很有时间逛了….为了耗时间，就去买做核酸看到的一家排长队的包子和吴山烤禽。</p>
-<p>来看下这个包子排了多长的队（后来我在地铁上的广告看到这家包子是知味观下的，而且有很多别的口味），烤禽差不多也这么长吧：</p>
-<table>
-<thead>
-<tr>
-<th align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012121091.jpg" alt="QQ图片20221101211608"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012121548.jpg" alt="QQ图片20221101211622"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012122197.jpg" alt="QQ图片20221101211626" style="zoom:33%;" /></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012122040.jpg" alt="QQ图片20221101211618"></td>
-</tr>
-</tbody></table>
-<p>后两幅图，第一幅是p1的南方油包-&gt;豆沙包。刚蒸出来豆沙还有点流心效果，还加了西瓜子，陈皮和八宝饭上面那种红色绿色的糖丝。对我来说太甜了，或许对于江浙一带偏甜的来说刚刚好吧。肉包就是普通肉包，大了些。反正我不知道为什么排这么长队，可能跟我们一样闲的。我也不知道为什么有人买了十几个，可能家里人多吧p4那个是吴山烤禽，鸡肚子里塞了葱和一些料，更香了。味道还行，但还是配饭吃好些。</p>
-<p><strong>ps:真想吃好吃的烤鸡烤鸭去fxy家的菜场。</strong></p>
-<p>后来在某书看到了，也算是误打误撞得到一点意外收获（心理安慰）吧。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012133629.jpg" alt="QQ图片20221101213248" style="zoom:25%;" />
-
-<p>吃完了还有很多时间，游荡到西湖旁边决定摆烂坐船，师傅手划船。问了下价格200多。好！坐他妈的！正好最后一班了，师傅可能是为了200块也也可能是看我们面善放我们两个黄码上船了，之后又吓得要死说留个联系方式变绿了告诉他一声。傍晚的西湖比起白天又是一番景色，风吹的有点冷，湖水很凉，周围只有师傅划船的声音，躺着看太阳一点点落山，时不时师傅也会介绍下周围的景点（上一篇一些就是这个师傅说的）。比如说本地人都会去宝石山，因为有的时候火烧云山那一片全红之类的。有时晚上曲园荷风的湖上会亮很大一片灯为晚上的演出彩排（上一篇介绍过)。中秋时手划船上就会去掉顶棚挂上一个大灯当作月亮，船上摆上桌子和食物，据说每次都能订满，价格和年份相同，每年长一块。也听到隔壁船在放新白娘子传奇。</p>
-<p>p2很像出海的船，p12是过桥被惊艳了抓拍的。</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012154901.jpg" alt="QQ图片20221101211632"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012155172.jpg" alt="QQ图片20221101211645"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012157033.jpg" alt="QQ图片20221101215650"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012157292.jpg" alt="QQ图片20221101215653"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012159215.jpg" alt="QQ图片20221101215656"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158211.jpg" alt="QQ图片20221101215702"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158756.jpg" alt="QQ图片20221101215706"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158463.jpg" alt="QQ图片20221101215709"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158375.jpg" alt="QQ图片20221101215711"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012158165.jpg" alt="QQ图片20221101215713"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012200526.jpg" alt="QQ图片20221101215658"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012200770.jpg" alt="QQ图片20221101215716"></td>
-</tr>
-</tbody></table>
-<p>下船的时候已经天黑了..七点多了核酸还没出来，人又恢复到了绝望状态。准备先去寄东西，拎着包步行了好久好久，坐在街边的长椅休息上还会收到路人同情（bushi）的眼光。在寄存处附近路过了一个看起来很有气势的门，太黑了看不清，我还心想这是什么政府机关啊这么高的大门。到了寄存处，寄存处告诉我们明天早上才能寄。</p>
-<p>……</p>
-<p>突然看见旁边小区门口有一个丰巢柜塞进去就行，本来想着黄码怎么进小区，但是保安很善良。中途还跟我们搭话，说你们看到旁边的浙大吗，那个大名鼎鼎的浙大。我才反应过来我们刚刚居然无意路过了浙大!不过当时我还并不知道为什么这个小区叫求是村。</p>
-<p>寄完东西，突然就绿码了，我是真的会哭：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012218043.jpg" alt="QQ图片20221101221753" style="zoom: 25%;" />
-
-<p>就准备打车去火车站。因为晚去乌镇的一班车是8：50的。但是过去实在太远了，即使打车，到那里也8：40了。本来冲一波是可以赶上的，问题是还要取寄存的东西。最后的最后，为了不耽误第二天早上的行程，决定打车去乌镇。</p>
-<p>就这样，晚上11点我们还在高速上。本来20分钟-30分钟 2*30元的车程，花了90分钟300多元。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012215661.png" alt="QQ图片20221101221502" style="zoom: 50%;" />
-
-<p>此处纪念一下晚上十点多高速做核酸，看到乌镇两个字恨不得泪如雨下的场景。（去他妈的疫情）</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012219927.jpg" alt="QQ图片20221101221757"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211012219410.jpg" alt="QQ图片20221101221759"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>在高速的时候就要联系房东嘛</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211021031333.png" alt="微信图片_20221102103040" style="zoom: 50%;" />
-
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202211021031111.png" alt="微信图片_20221102103032" style="zoom: 67%;" />
-
-<p>emm我当时确实怀疑了一下对方的精神状态….还想着如果真的有问题要不要报警。</p>
-<p>最后到的时候房东乐呵呵跑出来接我们进去，贼热情，说什么看这里还有小兔子那边有小金鱼，这里这里那里那里….什么因为人少他妈妈给我们升级了更大的房间…房间里这个怎么用那个怎么用…反正就是热情到愧疚…那么晚了还说有事随便叫他，说明天早上叫他把我们送到景区。房间是木质的，因为他们家有孩子所以放了很多可爱的摆件，厕所窗户打开就可以看到下面的小花园，小桥池塘很多植物等等。也算是倒霉了一天最后有了好归宿吧。</p>
  
       <!-- reward -->
       

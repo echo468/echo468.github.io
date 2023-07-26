@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">7 min</span>
+            <span class="post-count">8 min</span>
         </span>
     </span>
 </div>
@@ -165,7 +165,7 @@
 <p>​		使用AABB便于计算，之前计算光线与任意平面求交计算很复杂。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121628668.png" alt="image-20230512162803617" style="zoom:67%;" />
 
-<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且进入时间≥0，光线与盒子有交点。（不考虑平行）</p>
+<p>​		如果光线离开盒子的时间＜0，说明盒子在光线背后。如果离开盒子的时间≥0，但是进入盒子的时间＜0，说明光线起点在盒子内部。如果离开时间＜进入时间，则没有交点。当且仅当进入时间小于离开时间，且离开时间≥0，光线与盒子有交点。（不考虑平行，光源在盒子内部也算有交点）</p>
 <table>
 <thead>
 <tr>

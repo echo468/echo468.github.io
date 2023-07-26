@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2k</span>
+            <span class="post-count">3.2k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">7 min</span>
+            <span class="post-count">11 min</span>
         </span>
     </span>
 </div>
@@ -115,31 +115,44 @@
 <p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
 
-<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
+<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。·但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
 
-<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
+<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F;	 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。当直接辐射到平面上的程度越低时，光线就越弱，而当光线完全垂直于平面时强度最高。如果把单位立体角和单位面积看作无穷小，则可以计算单根光线到单个着色点的辐射率。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
 
 <p>​		该方程也可以转换成如下两个方程：</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
 
-<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
+<p>​		在单位时间单位面积上会接收不同方向来的能量，或者会向不同方向散发能量，将E对立体角求导，得到具体某一个方向上的能量。在单位时间单位立体角上会接收一块面积光散发的能量，或者会向一块面积散发能量，将I对面积求导，得到具体单位面积散发&#x2F;接收的能量。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
 
 <p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
 
-<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
+<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元，或者说着色点)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance，可以从光源获得)共同贡献得到。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
+
+<p>​		可以用如下离散的方式求积分函数的总面积&#x2F;总体积。增加离散步长可以提高准确率。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int steps = 100;</span><br><span class="line">float sum = 0.0f;</span><br><span class="line">vec3 P    = ...;</span><br><span class="line">vec3 Wo   = ...;</span><br><span class="line">vec3 N    = ...;</span><br><span class="line">float dW  = 1.0f / steps;</span><br><span class="line">for(int i = 0; i &lt; steps; ++i)</span><br><span class="line">&#123;</span><br><span class="line">    vec3 Wi = getNextIncomingLightDir(i);</span><br><span class="line">    sum += Fr(p, Wi, Wo) * L(p, Wi) * dot(N, Wi) * dW;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
 
-<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
+<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。Blinn-Phong光照模型也可以被认为是BRDF,但是没有考虑能量守恒。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
 
-<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
+<h5 id="Cook-Torrance-BRDF"><a href="#Cook-Torrance-BRDF" class="headerlink" title="Cook-Torrance BRDF"></a>Cook-Torrance BRDF</h5><p>Cook-Torrance BRDF兼有漫反射和镜面反射两个部分。kd是被折射的入射光能量比率，ks是被反射的比率。flambert 是漫反射部分（将以前漫反射的计算结果的点乘取出放入反射方程的cos），等于c&#x2F;Π，c是表面颜色,除以Π是对反射光标准化（此处暂不考虑）。flambert 满足大多数实时渲染的目的。</p>
+<p>镜面反射部分（分母部分用于归一化）：</p>
+<p>D:法线分布函数：估算在受到表面粗糙度的影响下，朝向方向与半程向量一致的微平面的数量。</p>
+<p>这是用来估算微平面的主要函数。在给定0-1的粗糙程度下，计算与半程向量取向一致的微表面比例，返回0-1的比例值。在不同粗糙度参数下，当粗糙度很低（也就是说表面很光滑）的时候，与半程向量取向一致的微平面会高度集中在一个很小的半径范围内。由于这种集中性，NDF最终会生成一个非常明亮的斑点。但是当表面比较粗糙的时候，微平面的取向方向会更加的随机。与半程向量取向一致的微平面分布在一个大得多的半径范围内，但是同时较低的集中性也会让最终效果显得更加灰暗。</p>
+<p>F:几何函数：描述了微平面自成阴影的属性。当一个平面相对比较粗糙的时候，平面表面上的微平面有可能挡住其他的微平面从而减少表面所反射的光线。几何函数从统计学上近似的求得了微平面间相互遮蔽的比率，这种相互遮蔽会损耗光线的能量。</p>
+<p>几何函数还是需要将粗糙度作为输入参数，不过这里的粗糙度是D函数粗糙度的重新映射，取决于是直接光照还是IBL光照。也需要考虑光线向量和观察方向。1.0表示没有微表面阴影，0.0表示彻底被遮蔽。</p>
+<p>G:菲涅尔方程：菲涅尔方程描述的是在不同的表面角下表面所反射的光线所占的比率。比例会随着观察角度的不同而不同。</p>
+<p>每个表面或材料在直视其表面时都有一定程度的基础反射率，但从某个角度观察表面时，与表面的基础反射率相比，所有反射都变得更加明显。F0是基础反射率，使用折射率或者IOR计算。</p>
+<p>Fresnel-Schlick近似仅仅对电介质或者说非金属表面有定义，使用一些处理和插值使得金属也可以使用该公式。对于导体或者金属表面而言基础反射率一般是带有色彩，所以F0会用RGB表示。这些金属表面相比于电介质表面所独有的特性引出了所谓的金属工作流的概念。也就是需要额外使用一个被称为金属度(Metalness)的参数来参与编写表面材质。金属度用来描述一个材质表面是金属还是非金属的。如果是金属需要对F0着色（表面纹理，金属无漫反射）。</p>
+<p>PBR渲染管线所需要的每一个表面参数都可以用纹理来定义或者建模。使用纹理可以逐个片段的来控制每个表面上特定的点对于光线是如何响应的。</p>
+<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即单位面积所接受的能量，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L（wi方向来达到点x的光线），而不同方向入射光irradiance对反射方向ωr（点x向wr方向辐射的光线）的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
 
 <p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
@@ -193,7 +206,7 @@
 <p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
 
-<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
+<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
 
 <p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>

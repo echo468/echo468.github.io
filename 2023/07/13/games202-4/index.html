@@ -9,7 +9,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    games101-18-Advanced_Rendering |  Hexo
+    games202-4 |  Hexo
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -55,7 +55,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-games101-18-Advanced-Rendering"
+  id="post-games202-4"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -66,18 +66,18 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  games101-18-Advanced_Rendering
+  games202-4
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-date">
-  <time datetime="2023-05-18T15:38:39.000Z" itemprop="datePublished">2023-05-18</time>
+      <a href="/2023/07/13/games202-4/" class="article-date">
+  <time datetime="2023-07-13T15:45:41.000Z" itemprop="datePublished">2023-07-13</time>
 </a> 
   <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
+    <a class="article-category-link" href="/categories/games202/">games202</a>
   </div>
   
 <div class="word_count">
@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2.5k</span>
+            <span class="post-count">1.7k</span>
         </span>
     </span>
 
@@ -94,7 +94,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">8 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -109,62 +109,50 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h4 id="有偏与无偏的计算方法"><a href="#有偏与无偏的计算方法" class="headerlink" title="有偏与无偏的计算方法"></a>有偏与无偏的计算方法</h4><p>​		无偏积分的期望值总是正确的值，无论使用多少样本。反之就是有偏。但是如果取的样本无限多，最后期望会收敛到一定值，但这种情况也是有偏 ，但是一致。</p>
-<h5 id="BDPT（无偏）"><a href="#BDPT（无偏）" class="headerlink" title="BDPT（无偏）"></a>BDPT（无偏）</h5><p>单向光线追踪:从相机产生一条光线，连接最后一个点和光源</p>
-<p>双向光线追踪： 从光源和相机分别产生一些半路径，连接两个半路径的端点形成一条完整的光路。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190911290.png" alt="image-20230519091135260" style="zoom:67%;" />
+  <h4 id="深度了解PCF"><a href="#深度了解PCF" class="headerlink" title="深度了解PCF"></a>深度了解PCF</h4><p>​		pcf除了将当前像素深度和对应采样点p进行比较外，还会与对应采样点周围多个采样点如q进行比较。pcf计算阴影的过程如第一个和第二个公式，f是比较函数即x+（当[]内的结果小于0，则该函数为0；当[]内的结果大于等于0，则该函数为1-&gt;即深度测试的过程），w(p,q)是权重，可以根据p和q的距离定义。在范围N中取所有可能的p，将结果相加作为最终结果得到visibility。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307140026388.png" alt="image-20230714002636212" style="zoom: 67%;" />
 
-<p>​		对于如下场景，几乎整个场景都是通过漫反射照亮。如果从相机开始计算，找到带有很多能量的光路较为复杂。如果第一个点是漫反射点，很难控制光路打到光线集中的地方。这种情况下，从光源开始便于计算。但是该方法实现困难并且计算慢。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190917374.png" alt="image-20230519091728291" style="zoom:67%;" />
+<p>​		因此从第二个公式看出，pcf不是将shadow map进行过滤平均，再将当前像素深度和对应采样点p进行个比较，这样比较的结果还是非0即1。从第三个公式看出，pcf也不是将最后得到的锯齿visibility进行过滤模糊。（p,q应该改为x,y）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307140029541.png" alt="image-20230714002921411" style="zoom:67%;" />
 
-<h5 id="MLT（无偏）"><a href="#MLT（无偏）" class="headerlink" title="MLT（无偏）"></a>MLT（无偏）</h5><p>​		用马尔科夫链作为采样工具。当前有一个样本，基于当前样本在附近生成新样本，用这些样本估计函数值。对于蒙特卡洛，采样的pdf和要积分的函数形状一值时，误差最小。马尔科夫链可以形成符合这种特性的样本。</p>
-<p>​		在光线传播上，在有一个路径的情况下，可以生成周围更多相似的路径。如下图对蓝色光路进行局部扰动获得新路径，最后可以找到所有路径。适合做复杂的光路传播，擅长从局部探索困难的路径。例如光线在水底聚焦被相机看到，经历了相机-折射-漫反射-折射-光源（SDS），但是光经过漫反射后只有在很小一部分区域才能折射出来。使用马尔科夫链就可以在折射出来的光线附近找到新的光线。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190021893.png" alt="image-20230519002121754" style="zoom: 80%;" />
+<p>​		根据pcss的三个过程，在第一个求block的平均深度和进行pcf的过程是最耗时的。因为需要遍历filter内的每一个像素，也可以选择不遍历而是通过随机采样的方式得到近似的结果，但这样会引入噪声。采样方式可以选择泊松圆盘采样等，采样需要知道采样范围即filter大小和采样数。用纹理坐标产生随机种子，可以保证每次采样结果不同。将采样结果对纹理坐标进行偏移。工业界通常的处理方式是先对shadow map稀疏采样，再在图像空间内对含噪声结果进行一步降噪，就可以获得比较好的结果。连续的稀疏采样会造成闪烁，因为帧与帧之间随机采样相互独立，引入的噪声不一样，连续播放时会闪烁。</p>
+<h4 id="VSSM"><a href="#VSSM" class="headerlink" title="VSSM"></a>VSSM</h4><p>​		在考虑加权的情况下，将filter内的每一个像素与着色点进行深度比较并且将结果相加平均，想知道在该范围内，有百分之多少的深度比着色点浅。</p>
+<p>​		首先是PCSS的第三步，也就是PCF操作，VSSM假设在这一步对shadow map采样时得到深度值样本大致服从正态分布，想要定义出这样一个正态分布，就需要事先求得样本的均值和方差。</p>
+<p>​		想要迅速得到一块区域内的平均值，可以使用mipmap。但是该方法不同层级间要做插值并且只适合正方形，因此误差较大，另一种方法是使用SAT.</p>
+<p>​		想要得到一块区域内的方差，可以使用如下公式,将期望（均值，即上一步得到的结果，因为范围内每个像素概率相同）转换成方差。如下方式除了记录深度，还需要记录深度的平方。可以将两个数据记录在r通道和g通道，从而避免使用两个纹理。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141614929.png" alt="image-20230714161400809"></p>
+<p>​		在得到了方差和均值后，即可得到filter范围内的正态分布分数pdf(z)。现在想知道深度取某一值z1时，有百分之多少的纹素深度比z1小，即左图灰色区域的面积。每一个值都会对应一个面积值，即右侧函数cdf(z)。然而获得积分值只能通过查表，使用c++的内置函数也非常麻烦。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141656004.png" alt="image-20230714165617822" style="zoom:67%;" />
 
-<p>​		简单的蒙特卡洛方法可以根据样本数分析其收敛速度。但是MLT很难估计收敛速度，不能保证每一个像素收敛速度相同，会产生噪声。因为每一张图收敛结果不确定且不同，因此不能渲染动画。</p>
-<h5 id="光子映射（有偏）"><a href="#光子映射（有偏）" class="headerlink" title="光子映射（有偏）"></a>光子映射（有偏）</h5><p>​		适合光在折射&#x2F;反射后聚焦产生新的图案及SDS下用该方法。</p>
-<p>一种光子映射的方法如下：</p>
-<p>1.从光源出发进行光线追踪，直至光线到达漫反射物体</p>
-<p>2.从相机出发进行光线追踪，直至光线到达漫反射物体</p>
-<p>3.局部的密度估计：对任意一个着色点，通过最邻近算法取离它最近的N个光子，计算这些光子所占的面积，得到光子的密度，也就是用光子数N除以面积。密度大的地方更亮。</p>
-<p>​		当取的光子数N比较少，采样点少，就会产生比较大的噪声。而光子取多图像就会比较模糊，对于临近的点计算出的结果可能相同。计算光子密度的时候，正确的方法应该是对当前一个点的一个微小的面积dA进行计算它的光子数从而计算密度，但是此处是对一定的光子数的实际面积进行的计算，所以两者本质上并不相等。</p>
-<p>​		当光源发出的光子足够多的时候，同样数量的光子覆盖的面积ΔA会更小，也就会更接近dA，最终的结果也会更准确，当打出的光子接近极限，ΔA&#x3D;dA，则结果正确，所以光子映射是一个有偏但是一致的方法。</p>
-<p>​		如果给定一个微小面积计算每个微小面积的光子密度，也就是ΔA是常数，则确定了光子范围。但是给定的常数始终不等于dA，所以得到的结果有偏但是不一致。</p>
-<h5 id="VCM（有偏）"><a href="#VCM（有偏）" class="headerlink" title="VCM（有偏）"></a>VCM（有偏）</h5><p>​		该方法是BDPT和光子映射的组合。对于两条半路径，如果两者的端点无法连接但是很接近，不要浪费两个子路径，使用光子映射来处理临近的光子。</p>
-<h5 id="实时辐射度-Instant-Radiosity-IR-（有偏）"><a href="#实时辐射度-Instant-Radiosity-IR-（有偏）" class="headerlink" title="实时辐射度 Instant Radiosity (IR)（有偏）"></a>实时辐射度 Instant Radiosity (IR)（有偏）</h5><p>​		已经被照亮的面都可以认为是光源，光源可以再照亮其他物体。光源首先发出光线，最后光线停住的点可以视作新的虚拟光源照亮着色点。在有很多细小光源的场景很适合，但是当虚拟光源接近着色点时会出现闪光点。该方法不适合毛玻璃材质。</p>
-<h4 id="外观建模"><a href="#外观建模" class="headerlink" title="外观建模"></a>外观建模</h4><p>​		对于表面模型，其材质就是BRDF，下面讨论非表面模型。</p>
-<h5 id="散射介质（如云、雾）"><a href="#散射介质（如云、雾）" class="headerlink" title="散射介质（如云、雾）"></a>散射介质（如云、雾）</h5><p>​		以光线穿过云为例，云由许多冰晶组成，不考虑自发光。光经过冰晶可能被吸收、被散射到各个方向，冰晶也可能接受别的方向散射来的光。</p>
-<p>​		光如何散射通过Phase Function定义（类似BRDF决定光如何反射）。从相机开始找光路，能走多远由散射介质的吸收能力决定，停下时考虑光的散射方向。最后找到的光路类似光在物体表面弹射，只是在光路了上的任何一点都可能发生方向的改变。此处不是光与表面作用而是和体积作用，因此不能使用渲染方程，但是都需要找光路。</p>
-<p>​		很多物体光都有进去的可能，只是穿透能力不强，光进去一段时间就消失。</p>
-<h5 id="头发"><a href="#头发" class="headerlink" title="头发"></a>头发</h5><p>​		头发是一根根，不能当作是一个表面。如下图，对于头发有无色的高光和有色的高光。计算量大，需要计算光线和每一根头发的作用。</p>
-<p> （1）Kajiya-Kay Model		</p>
-<p>​		将头发当作一个圆柱，光会散射成一个圆锥的形状，剩下一部分类似漫反射。但是渲染效果不真实。</p>
-<p>（2）Marschner Model</p>
-<p>​		将头发当成玻璃圆柱。光与头发的作用有三种情况，R-在表面直接被反射；TT-折射进头发再被折射出去；TRT-折射进头发，在头发内壁发生反射再折射出去。（将头发分为表面和内部，内部也会有色素，会发生光线被吸收）</p>
-<h5 id="动物毛发"><a href="#动物毛发" class="headerlink" title="动物毛发"></a>动物毛发</h5><p>​		动物毛发比人的头发的髓质更大，因此不能用头发模型来计算动物毛发。</p>
-<p>（1）Double Cylinder Model</p>
-<p>R:光再毛发表面直接被反射</p>
-<p>TT：光与髓质没有作用，折射进头发再被折射出去</p>
-<p>TRT：光与髓质没有作用，折射进头发，在头发内壁反射，再被折射出去</p>
-<p>TTs：折射进入, 第一次穿过髓质时, 产生散射, 再次折射出去</p>
-<p>TRTs:折射进入, 第一次穿过髓质后并未折射出去, 而是在头发内壁反射回来, 第二次穿过髓质, 再产生一次折射后出去（散射两次）</p>
-<h5 id="颗粒材质"><a href="#颗粒材质" class="headerlink" title="颗粒材质"></a>颗粒材质</h5><p>​		下面讨论几种表面模型。</p>
-<p>玉石</p>
-<p>​		光线从某个点进入物体表面，在物体内部发生大量散射，再从物体表面另一位置出去。也称作次表面散射。</p>
-<p>​		BRDF：对于任意方向来的光，到达某一个着色点，从任意方向反射出去</p>
-<p>​		BSSRDF:对于任意方向来的光，到达某一个着色点，从任意方向反射出去,但是反射点的位置可以表面任意一个位置。所以除了对立体角积分，还需要对物体表面积分。BSSRDF需要四个参数定义（入射点位置，入射点方向，出射点位置，入出射点方向）</p>
-<p>​		还可以将该模型模拟成两个光源，一个在物体内部，一个在物体外部。</p>
-<h5 id="布料"><a href="#布料" class="headerlink" title="布料"></a>布料</h5><p>纤维fibers-股ply-线yarn-布料</p>
-<p>​		计算表面与光的作用，结果与织法有关。给定编织模式，计算整体行为。但是表面渲染有限制，羊毛绒是往外一根一根, 不是一个平面。</p>
-<p>​		一种方法是不再把布料当成纤维，而是当成体积。对空间划分格子，在每一个格子内部将布料当成类似云的散射介质计算。但是计算量庞大。</p>
-<p>​		另一种方法是，知道每一个纤维的缠绕方式，渲染每一个纤维（如渲染每一根头发）。</p>
-<h5 id="详细外观"><a href="#详细外观" class="headerlink" title="详细外观"></a>详细外观</h5><p>​		看起来不真实，现实世界更复杂，车会有划痕等等, 鼠标会有大小不一的高光。用微表面模型得到的结果不太真实。</p>
-<p>​		在微表面模型中，D（h）采用简单的模型，如符合正态分布，因此效果不真实。真实情况是，D（h）基本符合统计规律，但是又自己的细节。</p>
-<p>​		在这种情况下路径采样困难。每一个微表面是一个镜面, 再假设一个针孔摄像机和点光源。无论从针孔摄像机, 还是点光源连接微表面, 发生镜面反射。都很难反射到点光源或者针孔摄像机.</p>
-<p>​		一个像素覆盖很多的微表面形成一个区域, 把这个区域的法线分布算出来, 然后替代原本的光滑的法线分布, 用在原本的微表面模型里.</p>
-<p>​		一个像素覆盖法线贴图的面积, 导致不同特征的法线分布。 不同的法线贴图, 有不同的法线分布。</p>
-<h5 id="通过波动光学研究材质"><a href="#通过波动光学研究材质" class="headerlink" title="通过波动光学研究材质"></a>通过波动光学研究材质</h5><p>​		波动光学得到的BRDF与几何得到的不太相同，有自己的特点。</p>
-<h4 id="程序化生成"><a href="#程序化生成" class="headerlink" title="程序化生成"></a>程序化生成</h4><p>​		定义三维纹理，但是内存开销较大。可以不进行存储，在需要的时候查询。如3D噪声函数，空间中任意一个坐标, 返回需要查询的值(纹理细节)。通过任意方式处理噪声函数，就可以得到任意的效果。</p>
+<h5 id="切比雪夫近似"><a href="#切比雪夫近似" class="headerlink" title="切比雪夫近似"></a>切比雪夫近似</h5><p>​	如下不等式可以作为约等式使用。即只需要知道方差和均值，即可得到x&gt;t的概率。不等式不需要假设样本服从正态分布，也适用其他单峰函数。但其局限性在于x需要大于均值。在正态分布的情况下较好解决，但实际使用时不考虑太多。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141659766.png" alt="image-20230714165911683" style="zoom:67%;" />
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141700107.png" alt="image-20230714170019993"></p>
+<p>过程如下：在生成shadow map时在通道存入深度值和深度值的平方，通过mipmap或者sat生成深度和深度平方的均值。在确定着色点在像素上对应的点后，取一定filter，在mipmap上采样一定范围内的均值，并计算方差，从而计算概率，得到过滤平均后的visibility。采样和硬件生成mipmap开销较小。不过在物体变动或者光源移动必须更新mipmap，或者每一帧下。</p>
+<p>对于是PCSS的第一步，获得一定范围内，遮挡物的平均深度。例如在深度为7的着色点下，要求蓝色区域的均值zocc。（红色区域不是遮挡物，红色区域的平均深度时zuocc）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141839150.png" alt="image-20230714183939094"></p>
+<p>满足如下等式：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141912732.png" alt="image-20230714191216697"></p>
+<p>N1&#x2F;N即P（x&gt;t)，可以通过切比雪夫公式计算。得到N1&#x2F;N即可得到N2&#x2F;N（1-P（x&gt;t））。此时不知道zunocc。此处假设所有&gt;t的深度值为t。因为一般阴影接收的地方是平面。（pcss更常用，因为更加能容忍噪声，有很多效果很好的降噪手段）</p>
+<h4 id="一块区域内的平均值"><a href="#一块区域内的平均值" class="headerlink" title="一块区域内的平均值"></a>一块区域内的平均值</h4><p>最简单的办法mipmap:快速、近似方形的范围查询。各向异性过滤</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141943176.png" alt="image-20230714194353020"></p>
+<p>小，可以</p>
+<p>准确方式SAT：</p>
+<p>利用前缀和思想，范围内求平均前先将范围内求和，如下是一维：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141944050.png" alt="image-20230714194458942" style="zoom:67%;" />
+
+<p>二维情况（生成一个新矩形，大小与原图相同，每个元素都是从左上角加到该元素的值，只是累加可能会损失数值精度，可以得到任何范围大小内的综合）：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141950113.png" alt="image-20230714195036035"></p>
+<h4 id="Moment-shadow-mapping"><a href="#Moment-shadow-mapping" class="headerlink" title="Moment shadow mapping"></a>Moment shadow mapping</h4><p>vssm的问题在于</p>
+<p>不能假设竞态分布 简简单情况</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142001912.png" alt="image-20230714200113782"></p>
+<p>pcf</p>
+<p>偏黑，阴影变白不行！</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142003776.png" alt="image-20230714200333681"></p>
+<p>镂空  接受物不是平面 超过均值才准</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142005832.png" alt="image-20230714200510680"></p>
+<p>MSM是为了避免分布描述的不准。其方法是使用更高阶的矩去描述分布。关于矩最简单的就是一个数的几次方，例如记录到x的四次方，即保留x的四阶矩。VSSM记录了深度和深度的平方，即使用二阶矩。使用更高阶的矩可以使得分布更加准确（证明过程复杂）。如果保留前m阶的矩，可以表示越阶函数，有2&#x2F;m个台阶。例如使用z到z的四次方可以恢复出图中深绿的函数（一般使用4阶矩足够，但是恢复过程相当复杂）。得到的函数即cdf，可以发现与pcf得到的结果基本符合。（该方法增加存储量，但是工业界有方法可以存储，如一个32位float存储两个16位值，但不拆开无法插值，拆开后手动插值和计算机插值会有差别；对分布有更加精准的估计）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142014391.png" alt="image-20230714201442307"></p>
  
       <!-- reward -->
       
@@ -231,7 +219,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/05/18/games101-18-Advanced-Rendering/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2023/07/13/games202-4/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -242,19 +230,19 @@
    
   <nav class="article-nav">
     
-      <a href="/2023/05/18/games101-16-Ray-Tracing4/" class="article-nav-link">
+      <a href="/2023/07/17/games202-5/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            games101-15-Ray-Tracing4
+            games202-5
           
         </div>
       </a>
     
     
-      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-nav-link">
+      <a href="/2023/07/10/games202-3/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">games101-15-Ray-Tracing3</div>
+        <div class="article-nav-title">games202-3</div>
       </a>
     
   </nav>

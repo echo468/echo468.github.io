@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">326</span>
+            <span class="post-count">2.7k</span>
         </span>
     </span>
 
@@ -94,28 +94,94 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
+            <span class="post-count">9 min</span>
         </span>
     </span>
 </div>
  
     </div>
       
+    <div class="tocbot"></div>
+
 
 
 
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>shadow mapping</p>
-<p>1、从光源的视角渲染场景，输出在光源视角下的最浅深度shadow map（存储在纹理中，便于第二次渲染采样）。此时纹理可以代表场景的几何信息。</p>
-<p>2、从相机的视角渲染场景，判断当前片段是否在阴影中（能被光看见）</p>
-<p>坏处：</p>
+  <h4 id="shadow-mapping"><a href="#shadow-mapping" class="headerlink" title="shadow mapping"></a>shadow mapping</h4><p>1、从光源的视角渲染场景，输出在光源视角下的最浅深度shadow map（存储在纹理中，便于第二次渲染采样）。此时纹理可以代表场景的几何信息。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170033485.png" alt="image-20230717003300439" style="zoom:67%;" />
+
+<p>2、从相机的视角渲染场景，判断当前片段是否在阴影中（能被光看见，在使用管glsl时考虑到精度需要用eps）</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170033159.png" alt="image-20230717003346102"></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170033076.png" alt="image-20230717003352027"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170034765.png" alt="image-20230717003407715"></td>
+<td></td>
+</tr>
+</tbody></table>
 <p>在光的视角下，对于每个像素，记录光能看到的最近的物体的深度。存下后得到纹理。</p>
 <p>在相机的视角下，对于每个像素，判断是否能被光看见。如果该点到光源的距离与之前记录的深度一致，则可以看见，不在阴影中。如果比记录的更深，则在阴影里。</p>
-<p>细节：在光源视角下经过MVP变换后，在透视压缩中，z值会靠近远平面。因此纹理记录的z值并不是真正到光源的距离。在第二次渲染进行比较的过程中，只要一致即可。比较时，也用在光视角下MVP变换后的坐标z值即可。（或者两次均使用世界空间下，点到光源的实际距离）</p>
-<p>问题：</p>
-<p>在shadow map中，一个像素内部记录的深度是一个常数，纹理有一定分辨率。</p>
+<p>细节：在光源视角下经过MVP变换后，在透视压缩中，z值会靠近远平面。因此纹理记录的z值并不是真正到光源的距离。在第二次渲染进行比较的过程中，只要一致即可。比较时，也用在光视角下MVP变换后的坐标z值即可（MVP后还会经过透视除法变到NDC空间）。（或者两次均使用世界空间下，点到光源的实际距离）</p>
+<h4 id="问题：自遮挡"><a href="#问题：自遮挡" class="headerlink" title="问题：自遮挡"></a>问题：自遮挡</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170034618.png" alt="image-20230717003436555"></p>
+<p>​		在shadow map中，一个像素内部记录的深度是一个常数，纹理有一定分辨率。如下图所示，场景中仅有一个三角形，全部能被光源看见。（最终要插值的深度是NDC的深度，使用的重心坐标是view空间下（只涉及等比缩放、旋转和平移，不会导致形变因此不影响重心坐标）的）</p>
+<p>假如在光源视角下光栅化该三角形，一个片段可能覆盖了view空间下的一块区域。比如对于片段1来说，假如片段1对应光源view空间中的点2，则记录了用view空间中点2重心坐标插值得到的NDC下的深度z。那么，被片段1覆盖的对应到光源view空间的点345（假设）在shaodow map上都是记录的深度z，实际上345在NDC中的深度值是越来越大的。</p>
+<p>​		在相机视角下的光栅化，假如要计算片段6，对应光源view空间下的点4，通过相机view空间下点6的重心坐标插值得到光源NDC下的深度z6，采样得到的深度是z。z6一定大于z，则会判定为在阴影中。（下图世界空间应该改为光源view空间）。采样使用的是光源NDC下的xy坐标映射到0-1(与shadow map一一对应)。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122212098.png" alt="image-20230712221207051" style="zoom: 67%;" />
+
+<p>​		如下图所示，最后光栅化的结果，每个像素相当于是垂直于光线的小平面，自遮挡现象如同图中蓝线和黄线所示。因此光源垂直于照射平面，像素与平面没有夹角，几乎不存在该问题。如果光线和屏幕近乎平行，该问题是最大的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122154838.png" alt="image-20230712215424797"></p>
+<p>​	解决办法如下，可以将相机看到的该点，沿着光线方向偏移一段距离，例如插值计算得到的光源下NDC的深度为5，偏移到4.95。再与采样得到的深度对比。如果偏移后未被遮挡，则可以被光源看见。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122154734.png" alt="image-20230712215441695"></p>
+<p>如下是一种自适应bias的实现方法，偏移值可以根据光线和法线的夹角变化，夹角很小可以设置较小偏移值，夹角很大，可以设置较大偏移值。其中ctrl是最终要修改的bias值，在使用和不使用pcf时会取不同的值。为了更好的效果，m值受投影矩阵、shadow map分辨率和range（filter步长&#x2F;分辨率）的影响。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307161511988.png" alt="image-20230716151148886" style="zoom:80%;" />
+
+<p>​		但是该方法存在的问题在于对偏移量的控制。如果偏移量选取过大，原本应该在阴影当中的点会判定为可以被光源看见。(如图，地板与遮挡物鞋离得太近)</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122158418.png" alt="image-20230712215814378" style="zoom:80%;" />
+
+<p>​		另一种解决办法是记录二次深度。假设光照是从上面照射到下面，图一是最近深度，图二是次近深度。在比较时，使用最近深度和次近深度的中间值去比较。相当于自适应调整偏移值。但实际上并没有真正的进行偏移。该方法的缺点是，只适合有厚度的封闭物体，不适合面片。需要存储更多数据，计算时间会翻倍，但是实时对时间精度要求很高，翻倍会有很大影响，因此该方法几乎不使用。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122351600.png" alt="image-20230712235123542"></p>
+<p>​		由于shadow map本身存在一定分辨率，因此会发生走样。解决办法有不同位置不同分辨率、动态分辨率等。</p>
+<h4 id="shadow-mapping的数学原理"><a href="#shadow-mapping的数学原理" class="headerlink" title="shadow mapping的数学原理"></a>shadow mapping的数学原理</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307130056919.png" alt="image-20230713005650824"></p>
+<p>将不等式作为约等式使用：</p>
+<p>分式部分是一个归一化操作，其实求积分域内f(x)的均值。例如对于常值函数2，积分域是0-3，积分f(x)结果是6，积分dx结果是3，分式得到的结果是2。如下约等式能够将乘积的积分拆为两个积分的乘积，并且当 g(x) 的积分域很小时，或当 g(x) 在其积分域内足够光滑（变化不大）的时候，这个约等式的结果是更加准确的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307130058264.png" alt="image-20230713005802220" style="zoom:67%;" />
+
+<p>对于渲染方程来说：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307130107309.png" alt="image-20230713010716269" style="zoom:80%;" />
+
+<p>​	对于等式最右侧一项来说，是不考虑是否可见，计算出的着色结果。之后乘以是否可见的项。也就是在说，一边判断可见与否一边算着色结果，和先算着色结果再乘以shadow map的结果是近似相等的，即shadow mapping硬阴影最基本的思路。当 g(x) 的积分域很小时，该等式是准确的。此处f(x)和g(x)的积分与相同，当积分域很小的，即立体角小到只有一个方向时准确，也就是一个点光源&#x2F;方向光投射到该着色点的一根光线。另一种情况是着色计算的积分光滑。也就是brdf函数光滑即漫反射材质&#x2F;或者面光源，假设在面光源立体角上在假设在单位立体角辐射的能量相同。（直接光照）</p>
+<h4 id="PCSS"><a href="#PCSS" class="headerlink" title="PCSS"></a>PCSS</h4><p>在光栅化下，使用shadow map产生软阴影（光源有一定面积）的方法。软阴影是本影到没有阴影间的过度，也就是光源部分被遮挡。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230713013649915.png" alt="image-20230713013649915"></p>
+<h5 id="pcf"><a href="#pcf" class="headerlink" title="pcf"></a>pcf</h5><p>​		最初设计出来是为了抗锯齿，使用pcf生成软阴影的过程叫pcss。可以看见设置为1，不能看见设置为0，将结果进行过滤平均。然而并不是在走样的结果图上进行过滤平均。类似反走样，不是在走样结果上进行模糊。也不是在shadow map深度图上进行过滤平均，平均的结果没有物理意义，并且在第二次pass时，进行比较的结果也是非0即1。</p>
+<p>​		实际上，pcf过滤的是多个深度比较的结果。如图所示，假如当前点要与shadow map上的点p进行深度比较，此处会与周围一圈采样点的深度比较，并将结果平均。如与周围3×3的结果比较，得到3×3的01矩阵，将结果除以9（每个权重相同）得到本次比较的结果（也可以加权相加）。该方法可以缓解抗锯齿，但也会增加计算量。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131529060.png" alt="image-20230713152936921"></p>
+<p>​		如果范围取太小，极端情况下如1×1，相当于没有进行抗锯齿，导致阴影锐利。如果范围取太大，会导致阴影过于模糊。因此取合适的范围，可以产生软阴影。范围取多大决定了是硬阴影还是软阴影。如果只是使用filter的话，可以实现抗锯齿。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131558759.png" alt="image-20230713155813570"></p>
+<h5 id="pcss"><a href="#pcss" class="headerlink" title="pcss"></a>pcss</h5><p>纸张是阴影的接受物，笔是阴影的投射物。接受物距离投射物近，产生硬阴影，距离远产生软阴影。根据距离远近选择不同的范围。计算方式如下，根据相似三角形，结合距离和大小可以计算出范围w即过滤范围。通过相似三角形可以看到，当遮挡物越靠近光源、w的范围越大；当遮挡物越靠近接收面，w范围越小。之后用相似三角形公式进行计算。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131608444.png" alt="image-20230713160800341" style="zoom:80%;" />
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131630862.png" alt="image-20230713163029822"></p>
+<p>​		在使用shadow map时考虑的是定向光，使用正交矩阵（z值是线性变化到0-1的），由于要生成shadow map，需要在光的方向上取一点（远近不影响结果）。在具体计算时，为了进行相似三角形计算，需要给光假设一定大小面积，即WLight已知。dBlocker（在shadow map上采样得到的平均深度）和dReceiver（着色点深度-平均深度）可以同一使用MVP变换后并归一化到0-1的深度。虽然是用近平面计算的，但得到的w可直接作为shadow map上filter的范围。</p>
+<p>​		由于光源有一定面积、遮挡物也可能有一定面积而不是一个点。在找到着色点对应到shadow map 上的点的时候，可以取周围一小部分的点的深度。先判断哪些点是遮挡点，选取范围内所有遮挡点的深度取平均值。（非遮挡点忽略）将平均深度值用于后续计算过滤范围，并进行pcf。注意面光源无法生成shadow map，shadow map是假设相机在面光源中心。</p>
+<p>pcss（开销大）:</p>
+<ol>
+<li>寻找blocker，并计算平均深度。</li>
+<li>通过blocker 深度计算filter size。</li>
+<li>按照PCF方式绘制软阴影</li>
+</ol>
+<p>对于第一步，范围的选取，可以自定义一个固定范围，并且模仿pcf遍历&#x2F;采样。也可以将着色点与光源连线，求该锥体在znear平面上的投影面积作为shadow map 上的filter大小。由于此处是平行光，相当于光源和着色点相对位置不变。则可以通过在view空间下，利用相似三角形，即物体深度（变成正值）和znear（正值）和深度计算：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170013342.png" alt="image-20230717001324258" style="zoom:50%;" />
+
+<p>离光源越远，遮挡物越多，计算blocker所用的样本范围就越小；而离光源越近，遮挡物越少，计算blocker所用的样本空间就越大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131623398.png" alt="image-20230713162358288" style="zoom:67%;" />
+
+<p>ps:作业的实现是模仿太阳定向光使用正交矩阵。在面积光源上用一点创建shadow map。</p>
  
       <!-- reward -->
       
@@ -192,6 +258,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2023/07/13/games202-4/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            games202-4
+          
+        </div>
+      </a>
     
     
       <a href="/2023/07/08/games202-2/" class="article-nav-link">

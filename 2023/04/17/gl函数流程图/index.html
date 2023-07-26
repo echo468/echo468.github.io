@@ -85,7 +85,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">4.4k</span>
+            <span class="post-count">4.5k</span>
         </span>
     </span>
 
@@ -151,8 +151,8 @@
 <p>图元组装后进行裁剪，除了视锥体裁剪和背面剔除外，还可以通过sgpugl_glClipPlane设置裁剪平面进行图元裁剪，但是要先用sgpugl_glEnable启用裁剪平面。裁剪后对顶点坐标进行齐次除法即除以w使其变到NDC空间。最后通过视口变换将顶点坐标从NDC空间映射到视口区域的屏幕空间。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934683.jpg" alt="img"> </p>
 <p>11.光照模型</p>
-<p>使用光照模型需要提供顶点法线数据。物体的法线向量决定了它相对于光源的方向，从而计算顶点从光源接收的光线数量。可以使用sgpugl_glNormalPointer或者sgpugl_glNormal设置顶点法线数据，在使用sgpugl_glNormalPointer前需先开启顶点法线属性。sgpugl_glNormal可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的法线，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的法线。</p>
-<p>下一步开始使用光照模型。先用sgpugl_glEnable(GL_LIGHTING)开启整体光照效果。使用sgpugl_glLightfv设置光源，即设置入射光。光源最多设置8个，从GL_LIGHT0到GL_LIGHT7，每个光源可以设置的参数如下图。其中光源位置分为方向性光源（平行光）和位置性光源（点光源），聚光灯光源方向到光源的常数衰减因子这6个属性都是针对位置性光源。用sgpugl_glEnable开启光源，如sgpugl_glEnable（GL_LIGHT0）。接下来使用sgpugl_glMaterialfv设置光照模型的材质参数，即设置出射光。由于物体有两面，材质可能不同，因此要先确定为哪一面设置材质，可以设置的材质参数如下图。最后用sgpugl_glLightModelfv设置光照模型，便于进行光照计算。光照模型的概念由下图所示4个部分组成。</p>
+<p>使用光照模型需要提供顶点法线数据。物体的法线向量决定了它相对于光源的方向，从而计算顶点从光源接收的光线能量。可以使用sgpugl_glNormalPointer或者sgpugl_glNormal设置顶点法线数据，在使用sgpugl_glNormalPointer前需先开启顶点法线属性。sgpugl_glNormal可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的法线，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的法线。</p>
+<p>下一步开始使用光照模型。先用sgpugl_glEnable(GL_LIGHTING)开启整体光照效果。使用sgpugl_glLightfv设置光源，即设置入射光。光源最多设置8个，从GL_LIGHT0到GL_LIGHT7，每个光源可以设置的参数如下图。其中光源位置分为方向性光源（平行光）和位置性光源（点光源），聚光灯光源方向到光源的常数衰减因子这6个属性都是针对位置性光源。用sgpugl_glEnable开启光源，如sgpugl_glEnable（GL_LIGHT0）。接下来使用sgpugl_glMaterialfv设置光照模型的材质参数，即设置材质颜色（材质颜色和光照颜色作用形成出射光）。由于物体有两面，材质可能不同，因此要先确定为哪一面设置材质，可以设置的材质参数如下图。最后用sgpugl_glLightModelfv设置光照模型，便于进行光照计算。光照模型的概念由下图所示4个部分组成。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934799.jpg" alt="img"> </p>
 <p>12.像素操作和帧缓冲区（更高版本的opengl基本不用这些）</p>
 <p>（1）sgpugl_glCopyPixels进行像素的复制操作，从帧缓冲区复制到帧缓冲区，不涉及内存，因此避免了显存与内存间格式转换的问题，并且加快了运算速度。该函数前四个参数表示复制像素来源的矩形的左下角坐标、宽度和高度，可以当作是在窗口确认了一块矩形区域，第五个参数用于确认复制的内容，通常使用GL_COLOR，表示复制像素的颜色，但也可以是GL_DEPTH（深度缓冲数据）或GL_STENCIL（模板缓冲数据）。通过sgpugl_glRasterPos2f设置像素绘制的起始位置，系统会将该起始位置转换成窗口坐标，之后将会从起始位置绘制出刚刚窗口上指定的矩形中的内容。</p>

@@ -118,6 +118,376 @@
     
     
     <article
+  id="post-games202-7"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/07/24/games202-7/"
+    >games202-7</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/24/games202-7/" class="article-date">
+  <time datetime="2023-07-24T14:01:28.000Z" itemprop="datePublished">2023-07-24</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games202/">games202</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="Specular下计算环境光照"><a href="#Specular下计算环境光照" class="headerlink" title="Specular下计算环境光照"></a>Specular下计算环境光照</h4><p>从另一个角度解diffuse情况下的渲染方程。f是常数。在不考虑先后顺序的情况下将light和light-transport变成基函数的形式（关于积分区域：此处一个是在球面积分，相同为1不同为0。所以渲染方程的积分区域是球面，但是因为下半球都为0，所以不影响积分结果。）。将方程进行如下变换，由于SH的正交性，相同的B相乘积分为1，不同的为0。最后的结果和上节课的相同。（不过也能反应两个函数相乘积分最后的频率取决于两个函数本身频率更低的那个）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307242249613.png" alt="image-20230724224947569" style="zoom:67%;" />
+
+<p>对于specular的情况，f是四维函数，对于每一个不同的相机向量o，都有不同的函数。也就是说light-transport项，对于每个顶点的每个相机向量都不同。（diffuse情况下不用考虑相机位置，相机本身可以运动）也就是不同的相机位置，着色结果都不同。</p>
+<p>此时四维函数投影在二维SH上得到的不再是一组系数而是一组球面函数。可以进一步将球面函数用SH基函数表示。此时Ti(o)不再是一个系数向量，而是一个矩阵。可以理解为每一个方向o都对应一个系数向量，多个方向合起来就是一个矩阵。结果就从原来的向量点乘变为了一个向量和一个矩阵的乘法，显著增加计算量。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307242311646.png" alt="image-20230724231107601" style="zoom:67%;" />
+
+<p>对于完全镜面反射物体，SH不适合描述过于高阶的函数。这种情况下可以换基函数或者ray tracing&#x2F;不需要求积分，可以直接采样。</p>
+<h4 id="光线多次弹射"><a href="#光线多次弹射" class="headerlink" title="光线多次弹射"></a>光线多次弹射</h4><p>在path tracing中材质分为三种：diffuse specular glossy</p>
+<p>LE:光线直接进入相机</p>
+<p>LGE：光线打到glossy物体再进入人眼</p>
+<p>L(G|D)*E：光线打到glossy&#x2F;diffuse物体经过n次弹射再进入人眼</p>
+<p>LS*(G|D)*E：光线打到specular物体上经过n次弹射，再打到glossy&#x2F;diffuse物体经过n次弹射再进入人眼</p>
+<p>所有光线的传播路径的起点和终点都是光源light和摄像机，不论中间有多少次bounce，最终的表达式都可以被描述为light和light transport两部分，也就是中间多次弹射的过程都可以列入light transport进行预计算。</p>
+<p>对于diffuse的场景来说，transport部分如下：只是将有关L的球面函数改成了某个SH基函数。也就是可以将某个SH基函数当作某种L</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307250012513.png" alt="image-20230725001238475"></p>
+<p>着色点</p>
+<h5 id="问题："><a href="#问题：" class="headerlink" title="问题："></a>问题：</h5><p>SH基本只适合描述低频函数，不太适合描述高频</p>
+<p>场景静态，不能改变位置和材质</p>
+<p>预计算的计算、存储和读取</p>
+<p>二维小波基函数</p>
+<p>SH定义在球面上。小波函数定义在图像块上，不同小波函数定义域不同。如下是某一种小波函数。定义域有明确界限。</p>
+<p>支持全频率</p>
+<p>不支持快速旋转</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307250047513.png" alt="image-20230725004751422" style="zoom:67%;" />
+
+
+
+<h4 id="全局光照"><a href="#全局光照" class="headerlink" title="全局光照"></a>全局光照</h4><p>环境光：无限远到处L已知每个点一样</p>
+<p>L</p>
+<p>直接</p>
+<p>无法通过bulin-phong模型中简单的提高所有物体亮度实现。</p>
+<p>全局光照&#x3D;直接光照+间接光照；具体想解决一次或多次的光线弹射。</p>
+<p>哪些是刺激光源</p>
+<p>shadow map 像素</p>
+<p>贡献给p的贡献</p>
+<p>反射无diffuse 接受五不要求贡献相同</p>
+<p>da</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games202-6"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/07/21/games202-6/"
+    >games202-6</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/21/games202-6/" class="article-date">
+  <time datetime="2023-07-21T11:01:49.000Z" itemprop="datePublished">2023-07-21</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games202/">games202</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="环境光照下的阴影"><a href="#环境光照下的阴影" class="headerlink" title="环境光照下的阴影"></a>环境光照下的阴影</h4><p>即在渲染方程中考虑visibility，无法进行</p>
+<p>1、环境光照相当于记录了每个方向的光照，可以认为每个方向上都有光源。此时着色可以看成多光源绘制，绘制阴影需要给每一个方向的光源生成shadow map，数量极其庞大。</p>
+<p>2、visibility 项不能进行预处理然后采样，因为每个点的可见度都是不同的，其复杂度任意，难以通过预处理计算积分。且该项不好从渲染方程中拆出来。</p>
+<p>目前，工业界的一般方案是选取环境中最亮的那个光源（例如太阳）或前几个光源生成阴影图，然后由此生成阴影。</p>
+<h4 id="傅里叶级数展开"><a href="#傅里叶级数展开" class="headerlink" title="傅里叶级数展开"></a>傅里叶级数展开</h4><p>对于任何函数，都可以通过常数项和增加更多的sin和cos项逼近。也就是sin和cos的线性组合，且这些sin和cos函数频率都不同（从低频到高频，这些sin cos函数叫基函数）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212034583.png" alt="image-20230721203450497" style="zoom: 50%;" />
+
+<p>图像作为二维数据，可以将其频域显示出来即频谱（傅里叶变换）。频谱中心最低频，外部最高频。通过滤波留下图中低频的部分，再恢复成原图，可以发现图片变模糊了。同时，时域的卷积（模糊操作）&#x3D;频域的乘积。</p>
+<p>两个函数相乘并积分（如x函数和y函数相乘对x积分，不然积分出来的是一个值而不是一个函数）&#x3D;卷积&#x2F;滤波操作&#x3D;频域上这两个函数对应的频谱相乘。这两个频谱只要有一个是低频，那么频域上乘积的结果就是低频的，即两个函数相乘并积分的结果是低频的，结果变化小平滑。结果的频率由这两个函数更低的频率决定。</p>
+<p>一个函数可以表示成多个基函数的线性组合。使用不同的基函数（一系列函数组合）可以表示不同的函数。除了sin cos还有常用的基函数：1+x+x^2+x^3…</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212052229.png" alt="image-20230721205214199" style="zoom:67%;" />
+
+<h4 id="Spherical-Harmonics"><a href="#Spherical-Harmonics" class="headerlink" title="Spherical Harmonics"></a>Spherical Harmonics</h4><p>一系列二维基函数，并且每一个函数都定义在球面上（可以理解为对方向的一个函数，三维空间中球面上的方向可以用两个变量表示。单位球上的一个点即为一个方向）。</p>
+<p>SH是一系列二维函数，这些函数有不同的频率（每一行一个频率）。每一个频率有几种不同的函数（一行每一列）。l&#x3D;0，第0阶的SH；l&#x3D;1，第1阶的SH。每一阶的SH有2l+1个SH基函数，这些基函数编号从-l~l。 前n阶n^2个函数。（这些二维函数不进行二维傅里叶变换，把球展开成二维的图。因为经过很多操作后恢复到球面上球面上会出现缝，很适合直接用SH分析球面上的性质）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212107650.png" alt="image-20230721210710588" style="zoom:67%;" />
+
+<p>现在给一个二维球面函数，要展开成SH的线性组合，前面的系数该为多少，这个求解的过程叫做投影。展开的任何一个基函数前面的系数如下（蒙特卡洛采样或者预计算）。关于为什么称为投影： 对于空间中一个向量，可以用（x,y,z）表示，xyz是该向量在三个轴上的投影&#x2F;系数。xyz轴是基函数。求投影的方法是用向量点乘xyz轴（基函数）。函数相乘再积分也是点乘。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212142430.png" alt="image-20230721214251335"></p>
+<p>可以看到l可以无限多。如果对于一个函数，只希望用前4阶进行表示，那么该函数保留的最高频率是l&#x3D;3的频率，丢弃了更高阶的频率。一般选取前几阶，所有基函数都使用，而不会在每一阶挑个别几个。</p>
+<p><strong>结论：环境光贴图提供了渲染方程中的L项。由于环境贴图已知，所以L项是一项已知的二维球面函数。可以用SH基函数表示，系数是用原函数和某一个基函数积分。</strong></p>
+<p>对于漫反射环境光着色（不考虑阴影）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212228309.png" alt="image-20230721222819046" style="zoom:67%;" />
+
+<p>L项是环境光球面函数。BRDF是定义在半球上非常光滑的函数。这两个函数驻点相乘并积分。L可以任意频率，BRDF（包含cos）相当于一个低通滤波器，只是用三阶SH就可以很好的恢复。可以看到当函数投影到l&#x3D;3及之后系数基本为0，再次说明BRDF是低频函数。也就是不管环境光多复杂，与漫反射物体作用后看不到高频信息。因此L没有必要使用高频描述。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212234120.png" alt="image-20230721223414984" style="zoom:67%;" />
+
+<p>如下用0、1、2阶函数表示环境光照照到漫反射物体的结果，可以看到光照用3阶表示（同BRDF）就可以与实际计算得到一样的结果。也就是光照没必要保留太多高频信息。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212240618.png" alt="image-20230721224036531" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212241959.png" alt="image-20230721224128875" style="zoom:67%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212242511.png" alt="image-20230721224213422" style="zoom:67%;" />
+
+<p><strong>结论：当待计算的物体是类似漫反射物体，则BRDF平滑，基本可以用少阶SH表示，则L也可以用少阶的SH表示，丢弃高频信息。</strong></p>
+<h4 id="PRT"><a href="#PRT" class="headerlink" title="PRT"></a>PRT</h4><h5 id="漫反射"><a href="#漫反射" class="headerlink" title="漫反射"></a>漫反射</h5><p>对于一个着色点、环境光可以描述成入射光i的球面函数，visibility项可以描述成入射光i球面函数，对于brdf已知出射光o，入射光i为2维，也可以表示成球面函数。解积分值最直接的方法是将每个对应像素相乘再相加。假如一个纹理是64×64×6的大小，每一个着色点需要计算64×64×6次。并且每个点的visibility*max纹理不同，BRDF纹理也可能不同（本质还是多次采样 ）。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307212311019.png" alt="image-20230721231102958" style="zoom:67%;" />
+
+<h5 id="采用预计算和SH简化计算："><a href="#采用预计算和SH简化计算：" class="headerlink" title="采用预计算和SH简化计算："></a>采用预计算和SH简化计算：</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230723211340675.png" style="zoom:67%;" />
+
+<p>首先将渲染方程看成两部分，V和BRDF与L拆分成两部分。L可以用基函数表示，Vmax和B对于一个着色点不变，可以认为是一个着色点的性质。也就是在渲染之前可以先计算好VB。在确定了o和n之后，VB以及cos项总体是一个球面函数，可以用基函数表示。（也就是场景物体不能变，只要光源被预计算，光源是可以切换的；光源旋转后会有不同的预计算结果，但是SH会立刻得到旋转后的光源系数如何改变）</p>
+<p>则在diffuse场景（考虑阴影）：在漫反射场景下，BRDF是一个常数，可以取到积分外。将L变成基函数的表示形式系数为l（求系数的积分是在球面积分），交换求和和积分函数（此处可交换）。将系数l移到积分外。Vmax(0,n·i)是和L无关的项，简称light-transport。light-transport和基函数积分即light-transport球面函数投影到基函数的系数，该系数可以预计算（求系数的积分是在球面积分，所以渲染方程的积分域应该改成球面，因为下半球都为0所以不影响积分结果）。也就是说将light-transport这个二维球面函数用和L一样的基函数表示，计算系数是多少。则对于任何一个着色点的值，假设要用m个基函数，将L的m个系数和light-transport的m个系数对应相乘再相加，并将结果乘以常数BRDF。</p>
+<p>（对于确定的着色点，可以将light-transport投影到任何基函数；场景中只有L改变，也就是li）</p>
+<h5 id="SH："><a href="#SH：" class="headerlink" title="SH："></a>SH：</h5><p>正交性：基函数投影到其他基函数结果为0</p>
+<p>投影好计算</p>
+<p>支持旋转，旋转原球面函数只需旋转基函数，线性组合不变。旋转后得到的函数不再是SH基函数，但可以由同阶的基函数的线性组合得到。也就是旋转某一个基函数，实际上是改同阶基函数的系数。所以可以打表记录旋转角度以及对应的组合。</p>
+<p>使用阶数越多，越能逼近原始环境光（BFDR也要高阶）。</p>
+<h4 id="具体实现："><a href="#具体实现：" class="headerlink" title="具体实现："></a>具体实现：</h4><p>在path tracing的基础上，在L已知的情况下，使用SH和预处理而不是采样的方法计算着色点的渲染方程，减少因大量采样耗费的时间。</p>
+<h5 id="一、只考虑来自环境光的直接光照"><a href="#一、只考虑来自环境光的直接光照" class="headerlink" title="一、只考虑来自环境光的直接光照"></a>一、只考虑来自环境光的直接光照</h5><p>不考虑光的多次弹射和间接光照，可以在光栅化（因为片段着色器不知道坐标系下场景的坐标情况因此无法计算弹射和间接光照）的基础上使用渲染方程。对于积分和渲染方程，需要知道L即光源位置（不考虑递归L）。对于多个点光源，可以将点光源方向的L相加；对于面光源可以采样；此处环境光下L已知。</p>
+<p>此处积分是在整个球而不是半球积分。对于下半球，max&#x3D;0，所以不影响计算。</p>
+<p>1、计算环境光的SH系数（使用3阶SH，对于每个顶点环境光函数是相同的，因为有RGB三个通道，系数为vec3）。每个像素代表一个方向，对于单个SH计算系数：</p>
+<p>L：图片像素对应的RGB	SH值：由像素得到方向，通过归一化后的方向向量得到某一阶下某个SH的在该方向的值。	dw：通过像素大小计算在单位球上的投影面积	∫：对每个像素执行上述操作。</p>
+<p>2、计算light-transport的SH系数（使用3阶SH，对于每个顶点light-transport函数是不同的，因此每个顶点都要计算一个SH系数作为顶点属性，系数为float）。对于一个顶点的单个SH计算系数：f(x)：（1）考虑阴影：visibility× max(N·wi,0)（2）不考虑阴影：max(N·wi,0)采样一个方向，通过顶点法线和生成光线向量判断是否有遮挡物计算f(x)的值（不能光栅化）。	SH值：通过采样得到的方向向量得到某一阶下某个SH的在该方向的值。	∫：多次采样得到多个方向向量重复上述操作。</p>
+<p>3、计算着色：将顶点着色器计算每个顶点的颜色值再插值到片元。因为在预计算时只知道顶点的属性(坐标法线),因此只预计算了每个顶点的light-transport的SH系数作为顶点属性，所以在顶点着色器计算顶点的着色再插值到每一个片段&#x2F;或者将light-transport的SH系数传入片段着色器，经过插值后计算片段着色（L对于每个片段相同）。</p>
+<h5 id="二、考虑间接光照（即光线多次弹射）"><a href="#二、考虑间接光照（即光线多次弹射）" class="headerlink" title="二、考虑间接光照（即光线多次弹射）"></a>二、考虑间接光照（即光线多次弹射）</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307261837739.png" alt="image-20230726183745871" style="zoom: 50%;" />
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307261838205.png" alt="image-20230726183842491"></p>
+<h5 id="三、SH旋转"><a href="#三、SH旋转" class="headerlink" title="三、SH旋转"></a>三、SH旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307261838204.png" alt="image-20230726183852172"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games202-5"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/07/17/games202-5/"
+    >games202-5</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/17/games202-5/" class="article-date">
+  <time datetime="2023-07-17T08:27:32.000Z" itemprop="datePublished">2023-07-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games202/">games202</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="距离场SDF软阴影"><a href="#距离场SDF软阴影" class="headerlink" title="距离场SDF软阴影"></a>距离场SDF软阴影</h4><p>distance function：描述了空间中任何一点到物体表面的最小距离。通常会定义成带符号的距离，物体内部负号；物体外部正号。如下图是在二维平面对字母A进行的距离函数进行可视化；左侧是直接打印数据、右侧是等值线，相同颜色的一圈距离相等。</p>
+<p>如下图是对两个运动状态进行混合，得到运动边界。A是当物体运动到第一个位置时的图片；B是当物体运动到第二个位置时的图片。如果对两张图的每一个对应像素进行内部线性插值（如50%和50%）会得到第三张图形成了灰色过渡带。如果先将图变换成距离场，再对距离场进行内部线性插值&#x2F;相加，则会得到正确的结果。距离场可以得到物体边界。</p>
+<p>距离场可以做任何形状的混合。如图对于两个图形，可以先转变为距离场，将两个距离场靠近和融合，混合成新的图形，得到几何上很好的过度。</p>
+<p>1、可以用作光线追踪实现与场景求交</p>
+<p>假设场景已经传换成了距离场。从相机发出的光线与距离场定义的隐含表面求交：假设对于点p，其SDF值为m；则不管从点p朝哪个方向发射，走m，都不会与任何物体碰撞。这个距离称为安全距离，从而实现在该方向上的步进。循环多次，直到步长（安全距离）小到一定范围，即可认为光线与物体相交。如果步进次数达到多次还不满足步长与物体相交的条件，则抛弃这根光线。</p>
+<p>对于场景的距离场，可以为场景每一个物体计算距离场，对于任意一点，找到该点到各个物体SDF值的最小值，即距离该点最近的物体的SDF值。</p>
+<p>2.可以用作生成软阴影</p>
+<p>软阴影需要阴影从0-1过度。pcf的做法是根据距离比自适应生成过滤范围大小，从而使得模糊程度不同。在SDF的方法中，在着色点到光源（光源有一定大小）中心的光线上，可以用上述方法在光线方向逐步递进。找到所有安全距离最小的点，也就是安全角度最小的点。安全角度小说明距离遮挡物近，如果光源有大小会遮住更多物体，阴影更硬。反之，越软。当角度大于某个值，可以认为没有阴影。该方法没有具体计算安全距离和光源大小的比值，只是用角度近似判断；也不考虑物体会出现在安全距离球体内的哪里。</p>
+<p>可以利用三角函数计算球的切线从而计算安全角度，但开销较大。与其求arcsin，可以直接用比值近似，并且将取值归一化到0-1（此处0不可见、1可见）。k的取值决定了软硬过度程度，即总体软硬。k值越小越软，过度范围越大。k值越大，过度范围越小，阴影越硬。</p>
+<p>SDF的优势:速度快,相比于阴影图渲染两次快的（不考虑SDF的生成时间，此处只考虑拿来用的数据），生成的软阴影质量高。劣势:需要预计算和存储SDF，对于动态物体需要逐帧更新，需要较大的存储空间，有其他的走样，表面参数化不好得到，不容易贴uv。</p>
+<h4 id="环境光照（不考虑阴影）"><a href="#环境光照（不考虑阴影）" class="headerlink" title="环境光照（不考虑阴影）"></a>环境光照（不考虑阴影）</h4><p>贴图记录了来自四面八方的光照结果。环境光照认为光照来自无限远，也就是假如给场景中桌上的两个不同物体渲染环境光会是相同的结果。假如环境光中有一张桌子，因为认为来自无限远，也不能把物体渲染放置在桌上。(也就是相比于原来path tracing的场景，比起场景中个别点光源或者面光源；环境光相当于四面八方都有无穷远的光源，对于场景中的任何一点，L相同且已知)</p>
+<p>环境光不考虑阴影。任何方向都可能有光线达到，当然只考虑正半球的光照。此处要解决的问题是对于每一个点的shading，能否不通过采样计算。</p>
+<p>如果在积分的过程中，BRDF是glossy的，那么积分限是小区间（覆盖了球面很小部分）；如果BRDF是漫反射的，那么意味着积分限是大的，但是非常平滑smooth（值的变化不大，L也可以默认是各个radiance都是相同的）。</p>
+<p>此处对积分域说明：理论上说是对半个球面积分，但是实际上只用对在i方向有贡献的入射光区域积分即可。对于漫反射，任何方向的入射光都会对i方向有贡献；对于glossy材质，镜面反射方向周围的部分入射方向才会对i方向有贡献。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307172238770.png" alt="image-20230717223838602"></p>
+<p>积分近似公式的要求，所以可以使用前一节介绍的近似公式进行拆分。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307172244562.png" alt="image-20230717224423488"></p>
+<p>着色是光照和表面BRDF综合作用得来的，对于每个表面的着色，要逐个考虑光线和表面BRDF比较麻烦，所以把光照项和BRDF拆分考虑。此时方程表示的是，平均光照（将积分域内的irradiance平均）与BRDF共同作用——&gt;可以理解为事先把环境光贴图进行一系列不同大小的平均滤波，以对应不同积分域的BRDF，对于这些光线，表面BRDF积分域越大（越漫反射），就选择更大的滤波核滤波后的环境光贴图（更模糊）对其采样。不过此处的滤波不是卷积，而是立体角，不同的滤波和即选择不同的立体角，所以需要将立体角的范围对应到纹理。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307172245741.png" alt="image-20230717224535632" style="zoom:80%;" />
+
+<p>如下可以使用mipmap生成，使用时进行三线性插值。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307172248025.png" alt="image-20230717224847876" style="zoom:80%;" />
+
+<h5 id="split-sum"><a href="#split-sum" class="headerlink" title="split sum"></a>split sum</h5><p>​	原先的光线着色计算过程是，对于给定的相机到着色点的光线（出射光），在对出射光有贡献的入射光积分域进行多次采样，将多次采样得到的计算结果平均。经过预滤波后的光线着色计算过程：先对环境光贴图进行不同大小核的滤波，对于glossy材质，在出射光的镜面反射入射光方向采样一次即可（镜面反射方向周围的区域范围需要已知）。对于漫反射材质，查询方向规定为法线方向。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307172302078.png" alt="image-20230717230207930"></p>
+<p>对于积分BRDF：</p>
+<p>​		考虑到微表面的BRDF涉及菲涅尔项和法线分布等至少五维（观察角度、基础反射率RGB三通道、法线分布（粗糙度表示））的数据处理，直接暴力预计算不可取，需要通过一些近似来降低维度，以此来简化预计算。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307172318811.png" alt="image-20230717231832694" style="zoom:67%;" />
+
+<p>​		不考虑G，首先对F函数和D函数进行近似。F函数可以近似成一个由基础反射率和入射角度的指数函数。D函数可以近似成一个半程向量和粗糙度的函数,半程向量可以近似成入射角度相关的数。此时五维的函数降为成三维。</p>
+<p>有关BRDF的积分可以进行如下变换，将基础反射率拆出积分，积分内部只有变量粗糙度和入射角度。对于这两个变量的不同取值，每一个值都可以预计算积分值并且保存在纹理中。这样对于一个着色点，不需要输入五个参数计算积分，只需要通过两个参数采样一次即可。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games202-4"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/07/13/games202-4/"
+    >games202-4</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/07/13/games202-4/" class="article-date">
+  <time datetime="2023-07-13T15:45:41.000Z" itemprop="datePublished">2023-07-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games202/">games202</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="深度了解PCF"><a href="#深度了解PCF" class="headerlink" title="深度了解PCF"></a>深度了解PCF</h4><p>​		pcf除了将当前像素深度和对应采样点p进行比较外，还会与对应采样点周围多个采样点如q进行比较。pcf计算阴影的过程如第一个和第二个公式，f是比较函数即x+（当[]内的结果小于0，则该函数为0；当[]内的结果大于等于0，则该函数为1-&gt;即深度测试的过程），w(p,q)是权重，可以根据p和q的距离定义。在范围N中取所有可能的p，将结果相加作为最终结果得到visibility。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307140026388.png" alt="image-20230714002636212" style="zoom: 67%;" />
+
+<p>​		因此从第二个公式看出，pcf不是将shadow map进行过滤平均，再将当前像素深度和对应采样点p进行个比较，这样比较的结果还是非0即1。从第三个公式看出，pcf也不是将最后得到的锯齿visibility进行过滤模糊。（p,q应该改为x,y）</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307140029541.png" alt="image-20230714002921411" style="zoom:67%;" />
+
+<p>​		根据pcss的三个过程，在第一个求block的平均深度和进行pcf的过程是最耗时的。因为需要遍历filter内的每一个像素，也可以选择不遍历而是通过随机采样的方式得到近似的结果，但这样会引入噪声。采样方式可以选择泊松圆盘采样等，采样需要知道采样范围即filter大小和采样数。用纹理坐标产生随机种子，可以保证每次采样结果不同。将采样结果对纹理坐标进行偏移。工业界通常的处理方式是先对shadow map稀疏采样，再在图像空间内对含噪声结果进行一步降噪，就可以获得比较好的结果。连续的稀疏采样会造成闪烁，因为帧与帧之间随机采样相互独立，引入的噪声不一样，连续播放时会闪烁。</p>
+<h4 id="VSSM"><a href="#VSSM" class="headerlink" title="VSSM"></a>VSSM</h4><p>​		在考虑加权的情况下，将filter内的每一个像素与着色点进行深度比较并且将结果相加平均，想知道在该范围内，有百分之多少的深度比着色点浅。</p>
+<p>​		首先是PCSS的第三步，也就是PCF操作，VSSM假设在这一步对shadow map采样时得到深度值样本大致服从正态分布，想要定义出这样一个正态分布，就需要事先求得样本的均值和方差。</p>
+<p>​		想要迅速得到一块区域内的平均值，可以使用mipmap。但是该方法不同层级间要做插值并且只适合正方形，因此误差较大，另一种方法是使用SAT.</p>
+<p>​		想要得到一块区域内的方差，可以使用如下公式,将期望（均值，即上一步得到的结果，因为范围内每个像素概率相同）转换成方差。如下方式除了记录深度，还需要记录深度的平方。可以将两个数据记录在r通道和g通道，从而避免使用两个纹理。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141614929.png" alt="image-20230714161400809"></p>
+<p>​		在得到了方差和均值后，即可得到filter范围内的正态分布分数pdf(z)。现在想知道深度取某一值z1时，有百分之多少的纹素深度比z1小，即左图灰色区域的面积。每一个值都会对应一个面积值，即右侧函数cdf(z)。然而获得积分值只能通过查表，使用c++的内置函数也非常麻烦。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141656004.png" alt="image-20230714165617822" style="zoom:67%;" />
+
+<h5 id="切比雪夫近似"><a href="#切比雪夫近似" class="headerlink" title="切比雪夫近似"></a>切比雪夫近似</h5><p>​	如下不等式可以作为约等式使用。即只需要知道方差和均值，即可得到x&gt;t的概率。不等式不需要假设样本服从正态分布，也适用其他单峰函数。但其局限性在于x需要大于均值。在正态分布的情况下较好解决，但实际使用时不考虑太多。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141659766.png" alt="image-20230714165911683" style="zoom:67%;" />
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141700107.png" alt="image-20230714170019993"></p>
+<p>过程如下：在生成shadow map时在通道存入深度值和深度值的平方，通过mipmap或者sat生成深度和深度平方的均值。在确定着色点在像素上对应的点后，取一定filter，在mipmap上采样一定范围内的均值，并计算方差，从而计算概率，得到过滤平均后的visibility。采样和硬件生成mipmap开销较小。不过在物体变动或者光源移动必须更新mipmap，或者每一帧下。</p>
+<p>对于是PCSS的第一步，获得一定范围内，遮挡物的平均深度。例如在深度为7的着色点下，要求蓝色区域的均值zocc。（红色区域不是遮挡物，红色区域的平均深度时zuocc）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141839150.png" alt="image-20230714183939094"></p>
+<p>满足如下等式：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141912732.png" alt="image-20230714191216697"></p>
+<p>N1&#x2F;N即P（x&gt;t)，可以通过切比雪夫公式计算。得到N1&#x2F;N即可得到N2&#x2F;N（1-P（x&gt;t））。此时不知道zunocc。此处假设所有&gt;t的深度值为t。因为一般阴影接收的地方是平面。（pcss更常用，因为更加能容忍噪声，有很多效果很好的降噪手段）</p>
+<h4 id="一块区域内的平均值"><a href="#一块区域内的平均值" class="headerlink" title="一块区域内的平均值"></a>一块区域内的平均值</h4><p>最简单的办法mipmap:快速、近似方形的范围查询。各向异性过滤</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141943176.png" alt="image-20230714194353020"></p>
+<p>小，可以</p>
+<p>准确方式SAT：</p>
+<p>利用前缀和思想，范围内求平均前先将范围内求和，如下是一维：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141944050.png" alt="image-20230714194458942" style="zoom:67%;" />
+
+<p>二维情况（生成一个新矩形，大小与原图相同，每个元素都是从左上角加到该元素的值，只是累加可能会损失数值精度，可以得到任何范围大小内的综合）：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307141950113.png" alt="image-20230714195036035"></p>
+<h4 id="Moment-shadow-mapping"><a href="#Moment-shadow-mapping" class="headerlink" title="Moment shadow mapping"></a>Moment shadow mapping</h4><p>vssm的问题在于</p>
+<p>不能假设竞态分布 简简单情况</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142001912.png" alt="image-20230714200113782"></p>
+<p>pcf</p>
+<p>偏黑，阴影变白不行！</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142003776.png" alt="image-20230714200333681"></p>
+<p>镂空  接受物不是平面 超过均值才准</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142005832.png" alt="image-20230714200510680"></p>
+<p>MSM是为了避免分布描述的不准。其方法是使用更高阶的矩去描述分布。关于矩最简单的就是一个数的几次方，例如记录到x的四次方，即保留x的四阶矩。VSSM记录了深度和深度的平方，即使用二阶矩。使用更高阶的矩可以使得分布更加准确（证明过程复杂）。如果保留前m阶的矩，可以表示越阶函数，有2&#x2F;m个台阶。例如使用z到z的四次方可以恢复出图中深绿的函数（一般使用4阶矩足够，但是恢复过程相当复杂）。得到的函数即cdf，可以发现与pcf得到的结果基本符合。（该方法增加存储量，但是工业界有方法可以存储，如一个32位float存储两个16位值，但不拆开无法插值，拆开后手动插值和计算机插值会有差别；对分布有更加精准的估计）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307142014391.png" alt="image-20230714201442307"></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-games202-3"
   class="article article-type-post"
   itemscope
@@ -148,15 +518,79 @@
       
     <div class="article-entry" itemprop="articleBody">
        
-  <p>shadow mapping</p>
-<p>1、从光源的视角渲染场景，输出在光源视角下的最浅深度shadow map（存储在纹理中，便于第二次渲染采样）。此时纹理可以代表场景的几何信息。</p>
-<p>2、从相机的视角渲染场景，判断当前片段是否在阴影中（能被光看见）</p>
-<p>坏处：</p>
+  <h4 id="shadow-mapping"><a href="#shadow-mapping" class="headerlink" title="shadow mapping"></a>shadow mapping</h4><p>1、从光源的视角渲染场景，输出在光源视角下的最浅深度shadow map（存储在纹理中，便于第二次渲染采样）。此时纹理可以代表场景的几何信息。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170033485.png" alt="image-20230717003300439" style="zoom:67%;" />
+
+<p>2、从相机的视角渲染场景，判断当前片段是否在阴影中（能被光看见，在使用管glsl时考虑到精度需要用eps）</p>
+<table>
+<thead>
+<tr>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170033159.png" alt="image-20230717003346102"></th>
+<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170033076.png" alt="image-20230717003352027"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170034765.png" alt="image-20230717003407715"></td>
+<td></td>
+</tr>
+</tbody></table>
 <p>在光的视角下，对于每个像素，记录光能看到的最近的物体的深度。存下后得到纹理。</p>
 <p>在相机的视角下，对于每个像素，判断是否能被光看见。如果该点到光源的距离与之前记录的深度一致，则可以看见，不在阴影中。如果比记录的更深，则在阴影里。</p>
-<p>细节：在光源视角下经过MVP变换后，在透视压缩中，z值会靠近远平面。因此纹理记录的z值并不是真正到光源的距离。在第二次渲染进行比较的过程中，只要一致即可。比较时，也用在光视角下MVP变换后的坐标z值即可。（或者两次均使用世界空间下，点到光源的实际距离）</p>
-<p>问题：</p>
-<p>在shadow map中，一个像素内部记录的深度是一个常数，纹理有一定分辨率。</p>
+<p>细节：在光源视角下经过MVP变换后，在透视压缩中，z值会靠近远平面。因此纹理记录的z值并不是真正到光源的距离。在第二次渲染进行比较的过程中，只要一致即可。比较时，也用在光视角下MVP变换后的坐标z值即可（MVP后还会经过透视除法变到NDC空间）。（或者两次均使用世界空间下，点到光源的实际距离）</p>
+<h4 id="问题：自遮挡"><a href="#问题：自遮挡" class="headerlink" title="问题：自遮挡"></a>问题：自遮挡</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170034618.png" alt="image-20230717003436555"></p>
+<p>​		在shadow map中，一个像素内部记录的深度是一个常数，纹理有一定分辨率。如下图所示，场景中仅有一个三角形，全部能被光源看见。（最终要插值的深度是NDC的深度，使用的重心坐标是view空间下（只涉及等比缩放、旋转和平移，不会导致形变因此不影响重心坐标）的）</p>
+<p>假如在光源视角下光栅化该三角形，一个片段可能覆盖了view空间下的一块区域。比如对于片段1来说，假如片段1对应光源view空间中的点2，则记录了用view空间中点2重心坐标插值得到的NDC下的深度z。那么，被片段1覆盖的对应到光源view空间的点345（假设）在shaodow map上都是记录的深度z，实际上345在NDC中的深度值是越来越大的。</p>
+<p>​		在相机视角下的光栅化，假如要计算片段6，对应光源view空间下的点4，通过相机view空间下点6的重心坐标插值得到光源NDC下的深度z6，采样得到的深度是z。z6一定大于z，则会判定为在阴影中。（下图世界空间应该改为光源view空间）。采样使用的是光源NDC下的xy坐标映射到0-1(与shadow map一一对应)。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122212098.png" alt="image-20230712221207051" style="zoom: 67%;" />
+
+<p>​		如下图所示，最后光栅化的结果，每个像素相当于是垂直于光线的小平面，自遮挡现象如同图中蓝线和黄线所示。因此光源垂直于照射平面，像素与平面没有夹角，几乎不存在该问题。如果光线和屏幕近乎平行，该问题是最大的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122154838.png" alt="image-20230712215424797"></p>
+<p>​	解决办法如下，可以将相机看到的该点，沿着光线方向偏移一段距离，例如插值计算得到的光源下NDC的深度为5，偏移到4.95。再与采样得到的深度对比。如果偏移后未被遮挡，则可以被光源看见。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122154734.png" alt="image-20230712215441695"></p>
+<p>如下是一种自适应bias的实现方法，偏移值可以根据光线和法线的夹角变化，夹角很小可以设置较小偏移值，夹角很大，可以设置较大偏移值。其中ctrl是最终要修改的bias值，在使用和不使用pcf时会取不同的值。为了更好的效果，m值受投影矩阵、shadow map分辨率和range（filter步长&#x2F;分辨率）的影响。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307161511988.png" alt="image-20230716151148886" style="zoom:80%;" />
+
+<p>​		但是该方法存在的问题在于对偏移量的控制。如果偏移量选取过大，原本应该在阴影当中的点会判定为可以被光源看见。(如图，地板与遮挡物鞋离得太近)</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122158418.png" alt="image-20230712215814378" style="zoom:80%;" />
+
+<p>​		另一种解决办法是记录二次深度。假设光照是从上面照射到下面，图一是最近深度，图二是次近深度。在比较时，使用最近深度和次近深度的中间值去比较。相当于自适应调整偏移值。但实际上并没有真正的进行偏移。该方法的缺点是，只适合有厚度的封闭物体，不适合面片。需要存储更多数据，计算时间会翻倍，但是实时对时间精度要求很高，翻倍会有很大影响，因此该方法几乎不使用。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307122351600.png" alt="image-20230712235123542"></p>
+<p>​		由于shadow map本身存在一定分辨率，因此会发生走样。解决办法有不同位置不同分辨率、动态分辨率等。</p>
+<h4 id="shadow-mapping的数学原理"><a href="#shadow-mapping的数学原理" class="headerlink" title="shadow mapping的数学原理"></a>shadow mapping的数学原理</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307130056919.png" alt="image-20230713005650824"></p>
+<p>将不等式作为约等式使用：</p>
+<p>分式部分是一个归一化操作，其实求积分域内f(x)的均值。例如对于常值函数2，积分域是0-3，积分f(x)结果是6，积分dx结果是3，分式得到的结果是2。如下约等式能够将乘积的积分拆为两个积分的乘积，并且当 g(x) 的积分域很小时，或当 g(x) 在其积分域内足够光滑（变化不大）的时候，这个约等式的结果是更加准确的。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307130058264.png" alt="image-20230713005802220" style="zoom:67%;" />
+
+<p>对于渲染方程来说：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307130107309.png" alt="image-20230713010716269" style="zoom:80%;" />
+
+<p>​	对于等式最右侧一项来说，是不考虑是否可见，计算出的着色结果。之后乘以是否可见的项。也就是在说，一边判断可见与否一边算着色结果，和先算着色结果再乘以shadow map的结果是近似相等的，即shadow mapping硬阴影最基本的思路。当 g(x) 的积分域很小时，该等式是准确的。此处f(x)和g(x)的积分与相同，当积分域很小的，即立体角小到只有一个方向时准确，也就是一个点光源&#x2F;方向光投射到该着色点的一根光线。另一种情况是着色计算的积分光滑。也就是brdf函数光滑即漫反射材质&#x2F;或者面光源，假设在面光源立体角上在假设在单位立体角辐射的能量相同。（直接光照）</p>
+<h4 id="PCSS"><a href="#PCSS" class="headerlink" title="PCSS"></a>PCSS</h4><p>在光栅化下，使用shadow map产生软阴影（光源有一定面积）的方法。软阴影是本影到没有阴影间的过度，也就是光源部分被遮挡。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230713013649915.png" alt="image-20230713013649915"></p>
+<h5 id="pcf"><a href="#pcf" class="headerlink" title="pcf"></a>pcf</h5><p>​		最初设计出来是为了抗锯齿，使用pcf生成软阴影的过程叫pcss。可以看见设置为1，不能看见设置为0，将结果进行过滤平均。然而并不是在走样的结果图上进行过滤平均。类似反走样，不是在走样结果上进行模糊。也不是在shadow map深度图上进行过滤平均，平均的结果没有物理意义，并且在第二次pass时，进行比较的结果也是非0即1。</p>
+<p>​		实际上，pcf过滤的是多个深度比较的结果。如图所示，假如当前点要与shadow map上的点p进行深度比较，此处会与周围一圈采样点的深度比较，并将结果平均。如与周围3×3的结果比较，得到3×3的01矩阵，将结果除以9（每个权重相同）得到本次比较的结果（也可以加权相加）。该方法可以缓解抗锯齿，但也会增加计算量。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131529060.png" alt="image-20230713152936921"></p>
+<p>​		如果范围取太小，极端情况下如1×1，相当于没有进行抗锯齿，导致阴影锐利。如果范围取太大，会导致阴影过于模糊。因此取合适的范围，可以产生软阴影。范围取多大决定了是硬阴影还是软阴影。如果只是使用filter的话，可以实现抗锯齿。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131558759.png" alt="image-20230713155813570"></p>
+<h5 id="pcss"><a href="#pcss" class="headerlink" title="pcss"></a>pcss</h5><p>纸张是阴影的接受物，笔是阴影的投射物。接受物距离投射物近，产生硬阴影，距离远产生软阴影。根据距离远近选择不同的范围。计算方式如下，根据相似三角形，结合距离和大小可以计算出范围w即过滤范围。通过相似三角形可以看到，当遮挡物越靠近光源、w的范围越大；当遮挡物越靠近接收面，w范围越小。之后用相似三角形公式进行计算。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131608444.png" alt="image-20230713160800341" style="zoom:80%;" />
+
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131630862.png" alt="image-20230713163029822"></p>
+<p>​		在使用shadow map时考虑的是定向光，使用正交矩阵（z值是线性变化到0-1的），由于要生成shadow map，需要在光的方向上取一点（远近不影响结果）。在具体计算时，为了进行相似三角形计算，需要给光假设一定大小面积，即WLight已知。dBlocker（在shadow map上采样得到的平均深度）和dReceiver（着色点深度-平均深度）可以同一使用MVP变换后并归一化到0-1的深度。虽然是用近平面计算的，但得到的w可直接作为shadow map上filter的范围。</p>
+<p>​		由于光源有一定面积、遮挡物也可能有一定面积而不是一个点。在找到着色点对应到shadow map 上的点的时候，可以取周围一小部分的点的深度。先判断哪些点是遮挡点，选取范围内所有遮挡点的深度取平均值。（非遮挡点忽略）将平均深度值用于后续计算过滤范围，并进行pcf。注意面光源无法生成shadow map，shadow map是假设相机在面光源中心。</p>
+<p>pcss（开销大）:</p>
+<ol>
+<li>寻找blocker，并计算平均深度。</li>
+<li>通过blocker 深度计算filter size。</li>
+<li>按照PCF方式绘制软阴影</li>
+</ol>
+<p>对于第一步，范围的选取，可以自定义一个固定范围，并且模仿pcf遍历&#x2F;采样。也可以将着色点与光源连线，求该锥体在znear平面上的投影面积作为shadow map 上的filter大小。由于此处是平行光，相当于光源和着色点相对位置不变。则可以通过在view空间下，利用相似三角形，即物体深度（变成正值）和znear（正值）和深度计算：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307170013342.png" alt="image-20230717001324258" style="zoom:50%;" />
+
+<p>离光源越远，遮挡物越多，计算blocker所用的样本范围就越小；而离光源越近，遮挡物越少，计算blocker所用的样本空间就越大。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202307131623398.png" alt="image-20230713162358288" style="zoom:67%;" />
+
+<p>ps:作业的实现是模仿太阳定向光使用正交矩阵。在面积光源上用一点创建shadow map。</p>
  
       <!-- reward -->
       
@@ -502,7 +936,20 @@
 <p>​		完整公式如下，f只与相对速度大小有关（也就是弹簧长度发生变化才有阻力），而与弹簧拉伸长度无关。如下对于b来说，阻力从b指向a，所以要添加-号，之后一项表示方向。红色点乘表示力的大小，b-a是相对速度大小，点乘后为该速度在a到b方向上的投影（对于ab不伸长的圆周运动，作用在b上的力垂直于ab，在ab方向上的投影为0，此时无阻力）。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151112803.png" alt="image-20230515111251697" style="zoom: 50%;" />
 
-<p>​		单个模型可以组成更复杂的模型：</p>
+<p>​		对于一根绳子而言，会有多个弹簧链接组成。对于每一个节点：需要知道节点位置、节点质量和是否允许节点运动。每两个节点间需要创建弹簧。对于每一根弹簧需要知道起始节点、结束节点(计算原长)和弹簧系数。</p>
+<p>​		对于某一时刻，更新位移和速度：</p>
+<p>​		（1）利用胡克定律计算每根弹簧两个节点的弹力（由于弹簧间是连在一起的，因此力是累加的;每一时刻都要单独计算受力）</p>
+<p>​		（2）遍历每一个节点利用显示欧拉求解</p>
+<p>​		先得到加速度：弹簧力&#x2F;节点质量+重力加速-阻力&#x2F;节点质量(此处简化直接用-kv计算阻力，v是绝对速度)</p>
+<p>​		显示欧拉：</p>
+<p>​		v(t+1)&#x3D;v(t)+a(t)×dt;		x(t+1)&#x3D;x(t)+v(t)×dt;</p>
+<p>​		半隐式欧拉（更稳定）：</p>
+<p>​		v(t+1)&#x3D;v(t)+a(t)×dt;		x(t+1)&#x3D;x(t)+v(t+1)×dt;</p>
+<p>​		（3）遍历每一个节点利用显示Verlet求解</p>
+<p>​		先得到加速度：弹簧力&#x2F;节点质量+重力加速（计算加速度时不考虑阻力）</p>
+<p>​		显示Verlet：x(t+1)&#x3D;x(t)+(x(t)-x(t-1))+a(t)×dt×dt</p>
+<p>​		加入阻尼的显示Verlet：x(t+1)&#x3D;x(t)+(1-kd)×(x(t)-x(t-1))+a(t)×dt×dt</p>
+<p>单个模型可以组成更复杂的模型：</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151134053.png" alt="image-20230515113408957" style="zoom:50%;" />
 
 <p>​		布料可以抵抗切变，但是如下模型不能抵抗切变（当有如下两个力拉动时，两端会被拉伸，中间会向内部收缩）。以及布料能力对抗“折”的力，例如纸很容易对折：</p>
@@ -514,8 +961,7 @@
 <p>​		这种结构将抵抗切变, 方向偏差较小, 也无法抵抗平面外弯曲，因为可以沿着竖线或者横线对折。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151243715.png" alt="image-20230515124344616" style="zoom: 67%;" />
 
-<pre><code>     这种结构将抵抗切变, 方向偏差较小, 也可以抵抗平面外弯曲。相比青色弹簧, 红色的弹簧相连接的力应该弱得多 (因为青色相连代表布的韧性, 红色则代表布放在桌边, 布会自然下垂, 红色线就会被拉扯)，所以不能只用红线，红线只是辅助作用。
-</code></pre>
+<p>​	这种结构将抵抗切变, 方向偏差较小, 也可以抵抗平面外弯曲。相比青色弹簧, 红色的弹簧相连接的力应该弱得多 (因为青色相连代表布的韧性, 红色则代表布放在桌边, 布会自然下垂, 红色线就会被拉扯)，所以不能只用红线，红线只是辅助作用。</p>
 <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151244150.png" alt="image-20230515124450068" style="zoom:67%;" />
 
 <p>​		如可以用质点弹簧裙子+人物，有时会采用更好的有限元法FEM代替弹簧系统。</p>
@@ -739,502 +1185,6 @@
 <li>CMYK系统在印刷时很常见 Widely used in printing</li>
 <li>通过混合CMY可以得到黑色，但是由于打印成本原因，黑色墨水成本低需求大，故存在黑色 黑色墨水好造</li>
 </ul>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-19-Cameras"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/19/games101-19-Cameras/"
-    >games101-19-Cameras</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/19/games101-19-Cameras/" class="article-date">
-  <time datetime="2023-05-19T10:33:50.000Z" itemprop="datePublished">2023-05-19</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="成像"><a href="#成像" class="headerlink" title="成像"></a>成像</h4><p>1.存在的物体：捕捉</p>
-<p>2.不存在的合成的物体：光栅化和光追</p>
-<p>​		传感器用于捕捉并记录光。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121852319.png" alt="image-20230512185246238" style="zoom:67%;" />
-
-<p>​		感光元件不能直接与光源接触，感光元件不区分来自各个方向的光，所以感光元件上任意一个点都会混合来自各个方向的光。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121854905.png" alt="image-20230512185420851" style="zoom:67%;" />
-
-<p>​		针孔相机拍出来的结果不会出现虚化。</p>
-<h4 id="FOV视场"><a href="#FOV视场" class="headerlink" title="FOV视场"></a>FOV视场</h4><p>​		视场分为水平和竖直，此处以竖直为例，并且此处不考虑棱镜只考虑针孔摄像机。视场大小受传感器的大小和传感器与小孔的距离也就是焦距影响。市场对于焦距的定义，都是以传感器35mm为标准。在此标准下，每一个焦距都对应一个视场：17mm-104°；50mm-47°；200mm-12°。以手机为例，如果手机写的焦距为28mm（然而手机厚度并没有28mm，实际焦距会更小），手机通过减小传感器大小，来等效35mm传感器28mm焦距的视场。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121859414.png" alt="image-20230512185925369" style="zoom:67%;" />
-
-<p>​		传感器大小不变的情况下焦距越长，可视范围越小，对于相同大小的图片相当于把远处的物体拉大。（焦距不变的情况下，传感器越小，视场越小）实际上传感器用于记录光的信息，胶片用于将信息保存为指定格式，此处不做严格区分。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121908026.png" alt="image-20230512190820795" style="zoom: 50%;" />
-
-<h4 id="Exposure曝光"><a href="#Exposure曝光" class="headerlink" title="Exposure曝光"></a>Exposure曝光</h4><p>​		曝光度&#x3D;进来多少光（光圈-F数）*光进来多长时间（快门-Shutter speed（越快，开放时间越短））</p>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305121936650.png" alt="image-20230512193636600"></p>
-<h5 id="ISO感光度"><a href="#ISO感光度" class="headerlink" title="ISO感光度"></a>ISO感光度</h5><p>​		ISO也会影响曝光度，可以理解为是后期处理 ，将接收到的光*某个数 。如对于一张暗图乘以某个数，然后使图更亮。任何信号都会存在噪声，对整个信息乘以一个很大的数，在放大信号的同时也放大了噪声。（将光理解为光子，简单理解是快门不够，进入传感器的光子少，光子少会产生噪声）ISO是线性的，ISO200一定是ISO100的两倍。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122008746.png" alt="image-20230512200802700" style="zoom: 80%;" />
-
-<h5 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h5><p>​		快门会发生运动模糊的现象(关心从关闭到打开的过程)。加入快门的开放时间是t，在t&#x2F;3时运动运动位置为A，在t&#x2F;2时物体运动位置为B，物体运动的中间过程都会被传感器记录，传感器将记录结果平均，形成模糊。如果快门时间更长，物体在这段时间内的运动过程更长，结果就越模糊。如果快门时间不变，物体运动越快，越容易模糊。较小快门时间可以减轻模糊，但也会减小曝光度（调ISO或者光圈）。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122021932.png" alt="image-20230512202130885" style="zoom:67%;" />
-
-<p>​		运动模糊存在一定的反走样效果。因为快门打开需要时间，所以会导致不同的地方记录不同时间的图像，出现了螺旋桨扭曲。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122037367.png" alt="image-20230512203703294" style="zoom:67%;" />
-
-<p>​		减少曝光时间，就会减小曝光度，需要调大光圈，即减小F数。如下图每一列的F数和快门时间可以基本达到相同的曝光度。但是拍照结果不太一样，大光圈即小F数会有景深现象，长快门时间会有运动模糊，所以运动模糊和景深不能同时发生。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/image-20230512204405151.png" style="zoom:67%;" />
-
-<p>​		高速摄影（更大光圈或者更大ISO）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122048605.png" alt="image-20230512204857544" style="zoom:67%;" />
-
-<p>​		延时摄影（小光圈，用更长的曝光时间记录物体的运动过程(运动模糊)）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122052243.png" alt="image-20230512205245169" style="zoom: 50%;" />
-
-<h5 id="透镜"><a href="#透镜" class="headerlink" title="透镜"></a>透镜</h5><p>​		实际的透镜很复杂，此处研究理想化薄透镜（不考虑透镜的厚度）。对于平行射入透镜的光，射出透镜会聚焦到一个点，该点为焦点，焦点到透镜中心的距离为焦距。反之如果摄入透镜的光线经过焦点，射出时会变成平行于透镜的光。任意一个过透镜中心的光线，射出透镜时不会改变方向。（假设可以任意改变焦距（现代技术通过多个透镜的组合模拟一个可以任意改变焦距的薄透镜））</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122059997.png" alt="image-20230512205925953" style="zoom:67%;" />
-
-<p>​		z0物距，zi像距，f焦距。通过相似三角形推三者关系。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122103393.png" alt="image-20230512210354341" style="zoom: 50%;" />
-
-<h5 id="模糊现象及F数"><a href="#模糊现象及F数" class="headerlink" title="模糊现象及F数"></a>模糊现象及F数</h5><p>​		假设物体在focal plane，最后会在sensor plane有一个清晰的成像。如果物体在focal plane后面的object，清晰的成像位置一定在sensor plane之前的image处。如果还是想在sensor plane上成像，光穿过iamge会继续传播，最后一个点会在sensor plane上呈现出一个区域而不是一个点（coc）。coc大小计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122126154.png" alt="image-20230512212620103" style="zoom:67%;" />
-
-<p>​		F数的写法：FN或者F&#x2F;N，N即F数，F数的值为焦距&#x2F;光圈的直径。在zs和zi不变的情况下，coc的大小受光圈大小的影响。F数越小，光圈越大，模糊越明显。光圈越小越接近小孔成像，形成的图像清晰范围越大，景深就越大。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122128900.png" alt="image-20230512212816841" style="zoom:50%;" />
-
-<h5 id="利用薄棱镜渲染"><a href="#利用薄棱镜渲染" class="headerlink" title="利用薄棱镜渲染"></a>利用薄棱镜渲染</h5><p>​		定义成像平面的大小，定义薄棱镜的大小和焦距，定义物距z0，可以计算出像距zi。在成像平面上选一点x’，连接透镜上一点x’’，根据光经过透镜中心方向不变的性质可以找到x’x’’光线穿过透镜后会到物体的点x’’’。那么此时就找到了一条到成像平面某一点的光线，从而计算成像平面上某一点的值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122346440.png" alt="image-20230512234608362" style="zoom:67%;" />
-
-<h5 id="景深"><a href="#景深" class="headerlink" title="景深"></a>景深</h5><p>​	光圈会影响模糊的范围。在清晰的成像平面附近一小段距离的coc非常小，可以认为这个范围内的成像都是清晰的。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122355823.png" alt="image-20230512235555713" style="zoom: 67%;" />
-
-<p>​		如下右边蓝色区域为可以认为是清晰的成像区域，左边蓝色的区域为景深。物距、 焦距和光圈都会影响景深的范围。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305122357532.png" alt="image-20230512235747426" style="zoom:67%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-18-Advanced-Rendering"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/18/games101-18-Advanced-Rendering/"
-    >games101-18-Advanced_Rendering</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/18/games101-18-Advanced-Rendering/" class="article-date">
-  <time datetime="2023-05-18T15:38:39.000Z" itemprop="datePublished">2023-05-18</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="有偏与无偏的计算方法"><a href="#有偏与无偏的计算方法" class="headerlink" title="有偏与无偏的计算方法"></a>有偏与无偏的计算方法</h4><p>​		无偏积分的期望值总是正确的值，无论使用多少样本。反之就是有偏。但是如果取的样本无限多，最后期望会收敛到一定值，但这种情况也是有偏 ，但是一致。</p>
-<h5 id="BDPT（无偏）"><a href="#BDPT（无偏）" class="headerlink" title="BDPT（无偏）"></a>BDPT（无偏）</h5><p>单向光线追踪:从相机产生一条光线，连接最后一个点和光源</p>
-<p>双向光线追踪： 从光源和相机分别产生一些半路径，连接两个半路径的端点形成一条完整的光路。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190911290.png" alt="image-20230519091135260" style="zoom:67%;" />
-
-<p>​		对于如下场景，几乎整个场景都是通过漫反射照亮。如果从相机开始计算，找到带有很多能量的光路较为复杂。如果第一个点是漫反射点，很难控制光路打到光线集中的地方。这种情况下，从光源开始便于计算。但是该方法实现困难并且计算慢。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190917374.png" alt="image-20230519091728291" style="zoom:67%;" />
-
-<h5 id="MLT（无偏）"><a href="#MLT（无偏）" class="headerlink" title="MLT（无偏）"></a>MLT（无偏）</h5><p>​		用马尔科夫链作为采样工具。当前有一个样本，基于当前样本在附近生成新样本，用这些样本估计函数值。对于蒙特卡洛，采样的pdf和要积分的函数形状一值时，误差最小。马尔科夫链可以形成符合这种特性的样本。</p>
-<p>​		在光线传播上，在有一个路径的情况下，可以生成周围更多相似的路径。如下图对蓝色光路进行局部扰动获得新路径，最后可以找到所有路径。适合做复杂的光路传播，擅长从局部探索困难的路径。例如光线在水底聚焦被相机看到，经历了相机-折射-漫反射-折射-光源（SDS），但是光经过漫反射后只有在很小一部分区域才能折射出来。使用马尔科夫链就可以在折射出来的光线附近找到新的光线。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305190021893.png" alt="image-20230519002121754" style="zoom: 80%;" />
-
-<p>​		简单的蒙特卡洛方法可以根据样本数分析其收敛速度。但是MLT很难估计收敛速度，不能保证每一个像素收敛速度相同，会产生噪声。因为每一张图收敛结果不确定且不同，因此不能渲染动画。</p>
-<h5 id="光子映射（有偏）"><a href="#光子映射（有偏）" class="headerlink" title="光子映射（有偏）"></a>光子映射（有偏）</h5><p>​		适合光在折射&#x2F;反射后聚焦产生新的图案及SDS下用该方法。</p>
-<p>一种光子映射的方法如下：</p>
-<p>1.从光源出发进行光线追踪，直至光线到达漫反射物体</p>
-<p>2.从相机出发进行光线追踪，直至光线到达漫反射物体</p>
-<p>3.局部的密度估计：对任意一个着色点，通过最邻近算法取离它最近的N个光子，计算这些光子所占的面积，得到光子的密度，也就是用光子数N除以面积。密度大的地方更亮。</p>
-<p>​		当取的光子数N比较少，采样点少，就会产生比较大的噪声。而光子取多图像就会比较模糊，对于临近的点计算出的结果可能相同。计算光子密度的时候，正确的方法应该是对当前一个点的一个微小的面积dA进行计算它的光子数从而计算密度，但是此处是对一定的光子数的实际面积进行的计算，所以两者本质上并不相等。</p>
-<p>​		当光源发出的光子足够多的时候，同样数量的光子覆盖的面积ΔA会更小，也就会更接近dA，最终的结果也会更准确，当打出的光子接近极限，ΔA&#x3D;dA，则结果正确，所以光子映射是一个有偏但是一致的方法。</p>
-<p>​		如果给定一个微小面积计算每个微小面积的光子密度，也就是ΔA是常数，则确定了光子范围。但是给定的常数始终不等于dA，所以得到的结果有偏但是不一致。</p>
-<h5 id="VCM（有偏）"><a href="#VCM（有偏）" class="headerlink" title="VCM（有偏）"></a>VCM（有偏）</h5><p>​		该方法是BDPT和光子映射的组合。对于两条半路径，如果两者的端点无法连接但是很接近，不要浪费两个子路径，使用光子映射来处理临近的光子。</p>
-<h5 id="实时辐射度-Instant-Radiosity-IR-（有偏）"><a href="#实时辐射度-Instant-Radiosity-IR-（有偏）" class="headerlink" title="实时辐射度 Instant Radiosity (IR)（有偏）"></a>实时辐射度 Instant Radiosity (IR)（有偏）</h5><p>​		已经被照亮的面都可以认为是光源，光源可以再照亮其他物体。光源首先发出光线，最后光线停住的点可以视作新的虚拟光源照亮着色点。在有很多细小光源的场景很适合，但是当虚拟光源接近着色点时会出现闪光点。该方法不适合毛玻璃材质。</p>
-<h4 id="外观建模"><a href="#外观建模" class="headerlink" title="外观建模"></a>外观建模</h4><p>​		对于表面模型，其材质就是BRDF，下面讨论非表面模型。</p>
-<h5 id="散射介质（如云、雾）"><a href="#散射介质（如云、雾）" class="headerlink" title="散射介质（如云、雾）"></a>散射介质（如云、雾）</h5><p>​		以光线穿过云为例，云由许多冰晶组成，不考虑自发光。光经过冰晶可能被吸收、被散射到各个方向，冰晶也可能接受别的方向散射来的光。</p>
-<p>​		光如何散射通过Phase Function定义（类似BRDF决定光如何反射）。从相机开始找光路，能走多远由散射介质的吸收能力决定，停下时考虑光的散射方向。最后找到的光路类似光在物体表面弹射，只是在光路了上的任何一点都可能发生方向的改变。此处不是光与表面作用而是和体积作用，因此不能使用渲染方程，但是都需要找光路。</p>
-<p>​		很多物体光都有进去的可能，只是穿透能力不强，光进去一段时间就消失。</p>
-<h5 id="头发"><a href="#头发" class="headerlink" title="头发"></a>头发</h5><p>​		头发是一根根，不能当作是一个表面。如下图，对于头发有无色的高光和有色的高光。计算量大，需要计算光线和每一根头发的作用。</p>
-<p> （1）Kajiya-Kay Model		</p>
-<p>​		将头发当作一个圆柱，光会散射成一个圆锥的形状，剩下一部分类似漫反射。但是渲染效果不真实。</p>
-<p>（2）Marschner Model</p>
-<p>​		将头发当成玻璃圆柱。光与头发的作用有三种情况，R-在表面直接被反射；TT-折射进头发再被折射出去；TRT-折射进头发，在头发内壁发生反射再折射出去。（将头发分为表面和内部，内部也会有色素，会发生光线被吸收）</p>
-<h5 id="动物毛发"><a href="#动物毛发" class="headerlink" title="动物毛发"></a>动物毛发</h5><p>​		动物毛发比人的头发的髓质更大，因此不能用头发模型来计算动物毛发。</p>
-<p>（1）Double Cylinder Model</p>
-<p>R:光再毛发表面直接被反射</p>
-<p>TT：光与髓质没有作用，折射进头发再被折射出去</p>
-<p>TRT：光与髓质没有作用，折射进头发，在头发内壁反射，再被折射出去</p>
-<p>TTs：折射进入, 第一次穿过髓质时, 产生散射, 再次折射出去</p>
-<p>TRTs:折射进入, 第一次穿过髓质后并未折射出去, 而是在头发内壁反射回来, 第二次穿过髓质, 再产生一次折射后出去（散射两次）</p>
-<h5 id="颗粒材质"><a href="#颗粒材质" class="headerlink" title="颗粒材质"></a>颗粒材质</h5><p>​		下面讨论几种表面模型。</p>
-<p>玉石</p>
-<p>​		光线从某个点进入物体表面，在物体内部发生大量散射，再从物体表面另一位置出去。也称作次表面散射。</p>
-<p>​		BRDF：对于任意方向来的光，到达某一个着色点，从任意方向反射出去</p>
-<p>​		BSSRDF:对于任意方向来的光，到达某一个着色点，从任意方向反射出去,但是反射点的位置可以表面任意一个位置。所以除了对立体角积分，还需要对物体表面积分。BSSRDF需要四个参数定义（入射点位置，入射点方向，出射点位置，入出射点方向）</p>
-<p>​		还可以将该模型模拟成两个光源，一个在物体内部，一个在物体外部。</p>
-<h5 id="布料"><a href="#布料" class="headerlink" title="布料"></a>布料</h5><p>纤维fibers-股ply-线yarn-布料</p>
-<p>​		计算表面与光的作用，结果与织法有关。给定编织模式，计算整体行为。但是表面渲染有限制，羊毛绒是往外一根一根, 不是一个平面。</p>
-<p>​		一种方法是不再把布料当成纤维，而是当成体积。对空间划分格子，在每一个格子内部将布料当成类似云的散射介质计算。但是计算量庞大。</p>
-<p>​		另一种方法是，知道每一个纤维的缠绕方式，渲染每一个纤维（如渲染每一根头发）。</p>
-<h5 id="详细外观"><a href="#详细外观" class="headerlink" title="详细外观"></a>详细外观</h5><p>​		看起来不真实，现实世界更复杂，车会有划痕等等, 鼠标会有大小不一的高光。用微表面模型得到的结果不太真实。</p>
-<p>​		在微表面模型中，D（h）采用简单的模型，如符合正态分布，因此效果不真实。真实情况是，D（h）基本符合统计规律，但是又自己的细节。</p>
-<p>​		在这种情况下路径采样困难。每一个微表面是一个镜面, 再假设一个针孔摄像机和点光源。无论从针孔摄像机, 还是点光源连接微表面, 发生镜面反射。都很难反射到点光源或者针孔摄像机.</p>
-<p>​		一个像素覆盖很多的微表面形成一个区域, 把这个区域的法线分布算出来, 然后替代原本的光滑的法线分布, 用在原本的微表面模型里.</p>
-<p>​		一个像素覆盖法线贴图的面积, 导致不同特征的法线分布。 不同的法线贴图, 有不同的法线分布。</p>
-<h5 id="通过波动光学研究材质"><a href="#通过波动光学研究材质" class="headerlink" title="通过波动光学研究材质"></a>通过波动光学研究材质</h5><p>​		波动光学得到的BRDF与几何得到的不太相同，有自己的特点。</p>
-<h4 id="程序化生成"><a href="#程序化生成" class="headerlink" title="程序化生成"></a>程序化生成</h4><p>​		定义三维纹理，但是内存开销较大。可以不进行存储，在需要的时候查询。如3D噪声函数，空间中任意一个坐标, 返回需要查询的值(纹理细节)。通过任意方式处理噪声函数，就可以得到任意的效果。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-15-Ray-Tracing3"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/15/games101-15-Ray-Tracing3/"
-    >games101-15-Ray-Tracing3</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/15/games101-15-Ray-Tracing3/" class="article-date">
-  <time datetime="2023-05-15T03:39:40.000Z" itemprop="datePublished">2023-05-15</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h4><p>​		每单位照射面积所接收到的能量。此处面积必须与光线垂直，如果是不垂直的光线，需要类似Blinn-Phong的漫反射光照，乘以一个cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141342934.png" alt="image-20230514134205834" style="zoom:67%;" />
-
-<p>​		当光线垂直照射平面时，如上图左边所示，照射到平面上的面积与光线本身垂直。但当光线斜着照射到平面时，此时真正与光线垂直的面积为A2cosθ。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141409681.png" alt="image-20230514140908635" style="zoom:67%;" />
-
-<p>​		对于之前Blinn-Phong的例子，此处认为光每单位时间辐射出来的能量是一个定值，这些能量会均匀分布在球壳上，所以对于单位为1的球壳和单位r的球壳，总能量都是Φ。但是单位为r的球壳面积更大，计算出的irradiance就更小。（此处itensity没有变，对于同一个方向而言，根据计算公式微分立体角不随球壳的大小改变。能量衰减相当于能量分散）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141354164.png" alt="image-20230514135419108" style="zoom:50%;" />
-
-<h4 id="radiance"><a href="#radiance" class="headerlink" title="radiance"></a>radiance</h4><p>​		每单位垂直面积（所以dA要乘以cosθ）、每单位立体角（每个方向）上单位时间光辐射出的能量（所以做两次导数）&#x2F; 单位垂直面积，在单位时间内接收到某个方向的能量。也就是在irradiance的基础上增加的方向性。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141412287.png" alt="image-20230514141247249" style="zoom:67%;" />
-
-<p>​		该方程也可以转换成如下两个方程：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541083.png" alt="image-20230514154139046" style="zoom: 50%;" />
-
-<p>​		在单位时间单位面积上会接收不同方向来的能量，将E对立体角求导，得到具体某一个方向上的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541496.png" alt="image-20230514154149459" style="zoom:50%;" />
-
-<p>​		在单位时间单位面积光会向各个方向辐射出能量，得到具体向某一个方向辐射出的能量。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141541897.png" alt="image-20230514154158860" style="zoom:50%;" />
-
-<p>​		对于一个单位面积，会接收到来自各个方向的能量，这里只考虑正半球，因为负半球来的光照射不到单位面积（Blinn-Phong模型中也会把cos最小值限制在0）。通过对各个方向的radiance积分求和，就可以得到对于一个单位面积的irradiance。如下式子的含义式，一个点(微分面积元)所接收到的亮度(irradiance)，由所有不同方向的入射光线亮度(radiance)共同贡献得到。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141450693.png" alt="image-20230514145032647" style="zoom:67%;" />
-
-<h4 id="BRDF双向反射分布函数"><a href="#BRDF双向反射分布函数" class="headerlink" title="BRDF双向反射分布函数"></a>BRDF双向反射分布函数</h4><p>​		此处认为所谓反射，是指物体吸收了一部分能量（入射，接收光），再将一部分能量辐射出去（出射，反射光）。单位面积dA接收到 ωi 方向来的Radiance，下图中用 L(ωi) 表示，也能理解成iradicance的一个微元dE(ωi)&#x3D; L(ωi)cosθidwi，然后再辐射到四面八方 ωr 中去，这时候辐射出去的又是Radiance（因为反射出去无数多条，power会被分散，此处关注其中的一个反射方向），用 dLr(x, ωr))表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141519355.png" alt="image-20230514151942291" style="zoom: 50%;" />
-
-<p>​		BRDF描述了入射光线经过某个表面反射后在各个可能的出射方向上能量分布。比如已经知道入射方向 ωi ，对于任意 ωr反射方向，能得到值域在[0,1]的浮点数返回值。返回值意义：定义某个点在 ωr 方向的反射光线的能量跟 ωi 方向射入的光线能量的比值。比如镜面反射，则镜面反射的方向能量接近百分之百，其他反射方向接近0比如漫反射，则所有方向的能量比例相同，均分；该函数描述了物体表面与光线如何作用，可以定义不同材质。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559470.png" alt="image-20230514155905411" style="zoom: 50%;" />
-
-<h4 id="反射方程"><a href="#反射方程" class="headerlink" title="反射方程"></a>反射方程</h4><p>​		即摄像机所接受到的ωr，是由所有不同方向上入射光线的irradiance贡献得到的，图中的L，而不同方向入射光irradiance对反射方向ωr的贡献程度由BRDF函数决定。将所有irradiance对反射方向的贡献积分，得到一个单位面积（一点）在整个光照环境下,对出射方向（观测方向）的贡献。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141559858.png" alt="image-20230514155930809" style="zoom:50%;" />
-
-<p>​		入射光线的radiance不仅仅是光源所造成，还有可能是其他物体上着色点的反射光线的radiance，恰好反射到当前的着色点p。所以一个物体的反射光会成为另一个物体的入射光，因此是一个递归的过程。</p>
-<h4 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h4><p>​		此处所有方向认为朝外，从点p指向外。认为下半球的贡献为0。此处cos用法线和微分立体角（方向）的点积表示。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141608886.png" alt="image-20230514160826844" style="zoom:67%;" />
-
-<p>​		对于一个点光源，该点只会接收到来自点光源的一根光线：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141612720.png" alt="image-20230514161236661" style="zoom:67%;" />
-
-<p>​		对于多个点光源：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141613487.png" alt="image-20230514161340411" style="zoom: 50%;" />
-
-<p>​		对于面光源，就相当于无穷多个点光源的集合，只需要对面光源所在的立体角范围进行积分：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141616903.png" alt="image-20230514161626837" style="zoom: 67%;" />
-
-<p>​		如果场景中有加入其他物体，可以把其他物体同样考虑成面光源，对其所占的立体角进行积分。只不过对其它物体的立体角积分不像是面光源所有入射方向都有radiance，物体的立体角可能只有个别几个方向有入射的radiance(即多次物体间光线反射之后恰好照射到着色点x)，其它方向没有，但本质上都可以视作是面光源。如下对于物体x’：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141622884.png" alt="image-20230514162240837" style="zoom:67%;" />
-
-<p>​		其中各项与原渲染方程中一一对应，(这里其实是有数学严格推导的，不过只是为了接下来构建直观的物理解释，对于这些推导不必在意，默认成立即可	</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141629833.png" alt="image-20230514162954768" style="zoom: 67%;" />
-
-<p>​		进一步简写：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141632301.png" alt="image-20230514163214255" style="zoom:67%;" />
-
-<p>​		E为物体自己发光，KE则代表对光源反射一次的结果，即直接光照，那么前两项之和就是光栅化当中着色所考虑的结果。对于全局光照来说，还考虑了一次弹射的间接照明、两次弹射的间接照明，依次类推。着色点的值就是物体自发光加上直接光照与多次间接光照的结果，而这一切都是从渲染方程推导而来的，因此这也正是渲染方程的物理意义。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141633270.png" alt="image-20230514163328230" style="zoom:67%;" />
-
-<p>​		如下是一个示例：</p>
-<p>​		（1）一次反射直接光照（光栅化），能被光照亮的部分就是有颜色的，不能被光照亮的部分就是黑色：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641229.png" alt="image-20230514164109124" style="zoom: 50%;" />
-
-<p>​		（2）两次反射，考虑到一次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641516.png" alt="image-20230514164122323" style="zoom: 50%;" />
-
-<p>​		（3）3次反射，考虑到两次弹射的间接光照：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141641029.png" alt="image-20230514164142826" style="zoom:50%;" />
-
-<p>​		（4）4次反射,灯亮的原因：光经过两层玻璃折射进去，经过两层玻璃折射出来被照相机看到</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141642498.png" alt="image-20230514164254408" style="zoom:50%;" />
-
-<p>​		考虑次数越多越接近真实图片效果，如果经过无限次数，由于能量守恒，最后趋近收敛。与快门时间越长接收越来越多光照 导致曝光是两回事。</p>
-<h4 id="基础概率论"><a href="#基础概率论" class="headerlink" title="基础概率论"></a>基础概率论</h4><p>​		X：随机变量（可以取某些值的一个数）。</p>
-<p>​		X~p(x)：随机变量的概率分布，描述随机过程选择值 x 的相对概率，必须包含所有能取到的值。</p>
-<p>​		概率分布对于离散型随机变量按照如下方式表示：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141811301.png" alt="image-20230514181104266" style="zoom:50%;" />
-
-<p>​		例如对于骰子：p(1)&#x3D;p(2)&#x3D;p(3)&#x3D;p(4)&#x3D;p(5)&#x3D;p(6)&#x3D;1&#x2F;6。</p>
-<p>​		对于所有可能取值的概率，概率必须大于0，这些概率和相加为1：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141715860.png" alt="image-20230514171530816" style="zoom: 67%;" />
-
-<p>​		期望：从随机分布中重复抽取样本所获得的平均值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141716502.png" alt="image-20230514171636464" style="zoom:67%;" />
-
-<p>​		X~p(x)在连续情况下，一个随机变量 X，可以取任意一组连续值，其概率分布由连续概率密度函数PDF 给出。通过对该函数积分得到一段区间内的面积，即为X在这段区间内的概率值。也就是每个x对应的值并不是概率值，积分的面积才是。（就好比v-t的图，每个t对应的v并不是路程，积分的面积才是路程）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753930.png" alt="image-20230514175327878" style="zoom:67%;" />
-
-<p>​		 随机变量X的函数Y,也是随机变量，随机变量函数的期望值计算如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305141753995.png" alt="image-20230514175300955" style="zoom:67%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-games101-14-Ray-Tracing2"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/05/14/games101-14-Ray-Tracing2/"
-    >games101-14-Ray-Tracing2</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/05/14/games101-14-Ray-Tracing2/" class="article-date">
-  <time datetime="2023-05-14T01:45:04.000Z" itemprop="datePublished">2023-05-14</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/games101/">games101</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>​		如果整个场景只有一个极其复杂的单一人物模型，那么只对这一个物体做包围盒的话，相当于对效率没有任何提升。如果整个场景充斥着大量的细小模型，如草，花之类的，每个模型可能只有很少的面，如果此时对每个物体求包围盒，得到的包围盒数量会相当之多，对于光线追踪效率来说效率提升有限。基于以上两点考虑，AABB并不应只局限于以物体模型为单位，因此如何更好的划分场景形成不同的AABB，使得划分之后的AABB能够更好的加速光线追踪，就是接下来要考虑的问题关键。</p>
-<h4 id="均匀空间划分"><a href="#均匀空间划分" class="headerlink" title="均匀空间划分"></a>均匀空间划分</h4><p>（1）对所要考虑的场景找一个包围盒：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029114.png" alt="image-20230513102915947" style="zoom:50%;" />
-
-<p>（2）在光线追踪之前，均匀用小格子划分这个大包围盒（相当于把场景均匀划分成更小的AABB包围盒）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029151.png" alt="image-20230513102934066" style="zoom:50%;" />
-
-<p>（3）标记出与物体表面相交的格子(不包括物体内部)，存储物体模型信息:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131029586.png" alt="image-20230513102953483" style="zoom:50%;" />
-
-<p>（4）根据光线的方向与判断出所有与光线相交的格子(这一步可以利用bresenham算法，如对于朝右上方的光线，光线经过的下一个格子为当前格子的右边或者上边的格子，求交点找更近的格子)，倘若格子还与物体表面相交，就说明光线可能会和物体相交，再进一步将光线与格子中的物体模型或是三角形面求交。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131030156.png" alt="image-20230513103007070" style="zoom:50%;" />
-
-<p>问题1：小格子的大小</p>
-<p>​		在该方法中，更多的计算是光线与AABB包围盒（小格子）而不是物体，通过包围盒把计算的三角形面限制在更小的范围内，所以某种程度上可以加速计算。但是格子的大小也会影响计算速度。在极端情况下，假如格子的大小为1✖1,相当于没有进行划分。如果格子太过密集，要计算的小格子很多，也会影响计算速度。较好的划分程度为格子数&#x3D;C✖物体个数，在3维情况下C的值一般取27。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131046138.png" alt="image-20230513104601004" style="zoom: 50%;" />
-
-<p>问题2：均匀划分场景引发的问题</p>
-<p>​		如果说场景较为空旷，物体较小且分离得比较开，那么均匀分割的效果就会很差了，因为会有很多无效的方格与光线的求交过程。例如对于一个空旷的操场，操场中间放置了一个茶壶，光线到达茶壶之前，需要计算光线和很多空格子求交过程。因此空旷的地方不适合划分太多小格子，用大格子快速跳过空旷位置的计算。均匀划分的方法适合的场景是空间中均匀布满了三角形面，如下图这种场景，物体多的地方适合划分更多的小格子，将需要计算的三角形面限制在更小范围，如果格子太大，就需要将光线和更多的三角面求交：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131120079.png" alt="image-20230513112034871" style="zoom:67%;" />
-
-<p>如下是其他划分方法：</p>
-<p>（1）八叉树，每次将空间分为8个相等的部分，再递归的对子空间进行划分。当划分的子空间足够小或是空间中三角形面的数量很少的时候会停止划分。这种方法的显著缺点是，随着维度的上升划分的空间数量会呈指数级增长。</p>
-<p>（2）KD-Tree，每次将空间划分为两部分，且划分依次沿着x-axis，y-axis，z-axis交替进行，使得空间划分相对均匀，终止条件与八叉树类似。</p>
-<p>（3）BSP-Tree，其与KD-Tree类似，唯一不同的是划分不再沿着固定一轴，可以任意方向划分，缺点是划分的空间没有规则性，对比于AABB来说，求交困难。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131059825.png" alt="image-20230513105950720" style="zoom:67%;" />
-
-<h4 id="KD-Tree空间划分"><a href="#KD-Tree空间划分" class="headerlink" title="KD-Tree空间划分"></a>KD-Tree空间划分</h4><p>​		如下所有操作都在光线追踪之前，对场景预处理，以2维为例。</p>
-<p>​		先将整个场景放在包围盒中，将空间分为两部分：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412006.png" alt="image-20230513141209956" style="zoom: 50%;" />
-
-<p>​		对左右两个子空间换个方向再分为两部分(这里只画出了右半部分，其实左边也是一样)，之后以此类推进一步分割，形成KD-tree。</p>
-<p>（1）依次沿着x-axis,y-axis,z-axis划分，使得空间被划分的更加平衡<br>（2）划分的位置由空间中三角面的分布决定，具体细节不展开<br>（3） 叶子节点存储对应空间的所有物体或三角面信息，中间节点仅存储指针指向两个子空间<br>（4） 当划分空间太小或是子空间内只有少量三角形则停止划分</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412784.png" alt="image-20230513141218740" style="zoom:50%;" /></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131416122.png" alt="image-20230513141650076" style="zoom:67%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>​		对于一条光线，第一步判断光线是否与最外层的包围盒相交，如果相交进一步判断是否与对应的两个子空间相交：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412799.png" alt="image-20230513141228752" style="zoom:50%;" />
-
-<p>​		因图中做了简化，最大包围盒的左半边并没继续进行划分(实际上应该要划分的)，所以左半部分对应的1号空间是叶子节点，如果光线与之相交，进一步判断与存储在叶子节点的物体求交。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412090.png" alt="image-20230513141238041" style="zoom:50%;" />
-
-<p>​		左半边判断完之后，接着判断右半部分，如果对于右半部分存在相交情况，则对于右半部分的所有子空间，递归的执行这个步骤即可：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131444748.png" alt="image-20230513144410699" style="zoom: 50%;" /></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131412368.png" alt="image-20230513141258321" style="zoom:50%;" /></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131427636.png" alt="image-20230513142703588"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131427025.png" alt="image-20230513142754978"></td>
-</tr>
-</tbody></table>
-<p>​		利用KD-Tree的结构来对空间划分AABB包围盒的好处是倘若光线与哪一部分空间不相交，那么则可以省略该部分空间所有子空间的判断过程，提升了效率。缺点是判断包围盒与三角面的是否相交较难，因此划分的过程不是那么想象的简单，其次同一个三角形面或物体可能被不同的包围盒同时占有，不同包围盒内的叶节点会同时存储这一个三角形面或物体。</p>
-<h4 id="BVH物体划分"><a href="#BVH物体划分" class="headerlink" title="BVH物体划分"></a>BVH物体划分</h4><p>​		BVH与前几种方法最显著的区别就是，不再以空间作为划分依据，而是从对象的角度考虑，即三角形面（物体）。<br>​		第一步同样找出场景的整体包围盒作为根节点:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131453263.png" alt="image-20230513145329220" style="zoom:50%;" />
-
-<p>​		第二步找到合适的划分点，将最大包围盒内的三角形面分为两部分，再分别重新就算新的包围盒:</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131454548.png" alt="image-20230513145402505" style="zoom:50%;" />
-
-<p>​		注意到这里，包围盒会重叠，但一个三角形面只会被存储在唯一的包围盒内，而这也就解决了KD-Tree的缺点。接下来与KD-Tree的建立类似，递归的对所有子空间重复该步骤（如何划分使得重叠部分更少很有讲究），当叶子节点三角形个数足够少停止（一般≤5）：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131454256.png" alt="image-20230513145433211" style="zoom:50%;" />
-
-<p>​		划分顺序可以按照xyz轴。为了划分均匀，也可以每次划分一般选择最长的那一轴划分，假设是x轴，n个三角形从左到右，找到中位数的三角形进行左右划分（对于x轴，将三角形重心按照x排序，找到中间的三角形），如此便能保证划分的左右两边三角形数量尽可能差不多。之后判断光线与包围盒求交的步骤同KD-Tree。BVH不需要判断包围盒和三角形面的关系。</p>
-<h4 id="辐射度量学Radiometry"><a href="#辐射度量学Radiometry" class="headerlink" title="辐射度量学Radiometry"></a>辐射度量学Radiometry</h4><p>​		在Blinn-Phong模型中，光的能量用常数I表示，没有单位和一个准确的定义。该模型在计算高光的时候，只考虑是否能看见高光，不考虑实际接收到的能量，即光线方向和法线的关系。whited-style的光线追踪模型中，认为所有反射都是完美镜面反射，对于漫反射的光线没有进行追踪，直接用当前点的颜色。并且光在多次折射和反射中会有能量损失，能量损失的值是自定义的。</p>
-<p>（1）Radiant Energy:光源辐射出能量Q[J]</p>
-<p>（2）Radiant flux:单位时间内光源辐射出的能量（时间越长能量越多，在辐射度量学中考虑单位时间的性质）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131520260.png" alt="image-20230513152037223" style="zoom: 67%;" />
-
-<p>（3）Radiant intensity：单位时间光源在单位立体角（某个方向）上辐射出的能量</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131526426.png" alt="image-20230513152636391" style="zoom: 67%;" />
-
-<p>​		弧度制，数学术语，指用弧长与半径之比度量对应圆心角角度的方式。用符号rad表示，读作弧度。等于半径长的圆弧所对的圆心角叫做1弧度的角。由于圆弧长短与圆半径之比，不因为圆的大小而改变，所以弧度数也是一个与圆的半径无关的量。（圆周长2 πR，面积 πR^2）整个圆的弧度为2 π。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131529358.png" alt="image-20230513152911322" style="zoom:67%;" />
-
-<p>​		对应在三维上的球的弧度(立体角)的计算方式如下，立体角度所对应球上的投影面积比上半径的平方，整个球的立体角为4 π 。（球表面积 4πR^2）</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131529984.png" alt="image-20230513152919949" style="zoom:67%;" />
-
-<p>​		利用微分立体角dw定义一个方向（就好比用一个浮点数定义一个时间），计算如下：通过θ,ϕ确定空间中一个方向，在这两个角度上分别增加一个微分值，其中rdθ 是微分面积元的高，rsinθdϕ 是微分面积元的宽，二者相乘是微分立体角在球面上的面积。用该微分面积除以半径的平方即为微分立体角的值。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131534431.png" alt="image-20230513153447386" style="zoom: 67%;" />
-
-<p>​		对dw在整个球上积分，积分结果为4π。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305131536006.png" alt="image-20230513153620960" style="zoom: 67%;" />
-
-<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230513153752040.png" alt="image-20230513153752040" style="zoom:67%;" />
-
-<p>​		对各向同性点光源，所有方向上的亮度都与方向无关，所以I是一个常数，因此对Φ积分时只用对立体角积分。最后推算出的I是一个常数。</p>
  
       <!-- reward -->
       

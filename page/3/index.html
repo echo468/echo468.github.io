@@ -118,6 +118,712 @@
     
     
     <article
+  id="post-games101-3-Transformation"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/03/games101-3-Transformation/"
+    >games101-3-Transformation</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/03/games101-3-Transformation/" class="article-date">
+  <time datetime="2023-05-03T07:40:34.000Z" itemprop="datePublished">2023-05-03</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h5 id="Scale缩放"><a href="#Scale缩放" class="headerlink" title="Scale缩放"></a>Scale缩放</h5><p>默认以原点为中心缩放。</p>
+<p>（1）均匀缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556554.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151616417.png" alt="image-20230515161619367"></p>
+<p>（2）非均匀缩放</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556684.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556714.png" alt="img">-&gt;<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556762.png" alt="img"></p>
+<h5 id="Reflection反射"><a href="#Reflection反射" class="headerlink" title="Reflection反射"></a>Reflection反射</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556569.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151617348.png" alt="image-20230515161742312"></p>
+<h5 id="Shear-Matric"><a href="#Shear-Matric" class="headerlink" title="Shear Matric"></a>Shear Matric</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556856.jpg" alt="img"> </p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151618772.png" alt="image-20230515161856725"></p>
+<h5 id="Rotate旋转"><a href="#Rotate旋转" class="headerlink" title="Rotate旋转"></a>Rotate旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556794.jpg" alt="img"> </p>
+<p>此处是2维旋转，默认以（0，0）为重心旋转，默认以逆时针旋转,也就是角度值为正。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556864.png" alt="img"></p>
+<p>以边长为1进行旋转矩阵推导：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151620544.png" alt="image-20230515162027508"></p>
+<p>如果旋转-θ:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151556898.png" alt="img"></p>
+<p>矩阵为旋转θ时旋转矩阵的转置，并且由于旋转-θ是旋转θ的逆变换，因此该矩阵还为旋转θ时旋转矩阵的逆矩阵（一个矩阵的转置等于其正交矩阵，则该矩阵为正交矩阵）</p>
+<h5 id="线性变换"><a href="#线性变换" class="headerlink" title="线性变换"></a>线性变换</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623337.png" alt="image-20230515162329289"></p>
+<h5 id="Translation平移"><a href="#Translation平移" class="headerlink" title="Translation平移"></a>Translation平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557482.jpg" alt="img"> </p>
+<p>此处是先进性线性变换再平移。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151623645.png" alt="image-20230515162355592"></p>
+<h5 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h5><p>引入齐次坐标是为了将所有变换都变成一个矩阵乘以一个向量的形式。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557224.jpg" alt="img"> </p>
+<p>点的平移变换，点平移后成为新的点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557330.png" alt="img"></p>
+<p>向量具有平移不变性：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151624937.png" alt="img"></p>
+<p>可以通过齐次坐标的w验证：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557624.jpg" alt="img"> </p>
+<p>一个点加上一个点的结果是这两个点的中点，原因如下，在w不等于0的情况下，(x,y,w)是二维点（x&#x2F;w,y&#x2F;w,1）。</p>
+<h5 id="Affine-Transformation仿射变换"><a href="#Affine-Transformation仿射变换" class="headerlink" title="Affine Transformation仿射变换"></a>Affine Transformation仿射变换</h5><p>2维仿射变换最后一行才是（0，0，1），如下矩阵是先进行线性变换再进行平移变换。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557098.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>缩放变换矩阵</th>
+<th>旋转变换矩阵</th>
+<th>平移变换矩阵</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630316.png" alt="img"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557229.png" alt="img"></td>
+<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557387.png" alt="img"></td>
+</tr>
+</tbody></table>
+<h5 id="Inverse-Transform逆变换"><a href="#Inverse-Transform逆变换" class="headerlink" title="Inverse Transform逆变换"></a>Inverse Transform逆变换</h5><p>逆变换相当于乘以变换的逆矩阵。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151641812.png" alt="image-20230515164100755" style="zoom:67%;" /> 
+
+<h5 id="Composite-Transform组合变换"><a href="#Composite-Transform组合变换" class="headerlink" title="Composite Transform组合变换"></a>Composite Transform组合变换</h5><p>复杂变换可以通过简单变换得到，变换的顺序很重要，如下先进行平移变换再进行旋转变换（默认围绕原点旋转）和先进行旋转变换再进行平移变换的结果不同。再次说明了矩阵乘法不能随意交换顺序。在c中cos和sin函数的参数都是弧度</p>
+<p>（1）弧度转角度：角度 &#x3D; 弧度 * (180.0f &#x2F; PI)</p>
+<p>（2）角度转弧度：弧度 &#x3D; 角度 * (PI &#x2F; 180.0f)</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630935.jpg" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557237.jpg" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151630157.png" alt="img"></p>
+<p>将变换变成矩阵乘法，相当于从右到左应用。也可以先计算左边所有矩阵得到一个矩阵。</p>
+<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557575.png" alt="img"></h5><h5 id="变换分解"><a href="#变换分解" class="headerlink" title="变换分解"></a>变换分解</h5><p>由于旋转默认是围绕原点旋转，如果想围绕任意点旋转，可以将变换按照如下方式分解：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557864.jpg" alt="img"> </p>
+<h5 id="三维齐次坐标"><a href="#三维齐次坐标" class="headerlink" title="三维齐次坐标"></a>三维齐次坐标</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557958.jpg" alt="img"> </p>
+<p>在w不等于0的情况下，(x,y,z,w)是三维点（x&#x2F;w,y&#x2F;w,z&#x2F;w,1）。</p>
+<h5 id="三维仿射变换"><a href="#三维仿射变换" class="headerlink" title="三维仿射变换"></a>三维仿射变换</h5><p>如下矩阵是先进行线性变换再进行平移变换。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629055.png" alt="img"></p>
+<h5 id="三维缩放"><a href="#三维缩放" class="headerlink" title="三维缩放"></a>三维缩放</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557536.png" alt="img"></p>
+<h5 id="三维平移"><a href="#三维平移" class="headerlink" title="三维平移"></a>三维平移</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629010.png" alt="img"></p>
+<h5 id="三维绕轴旋转"><a href="#三维绕轴旋转" class="headerlink" title="三维绕轴旋转"></a>三维绕轴旋转</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557761.png" alt="img"><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557971.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151629293.png" alt="img"></p>
+<p>任意旋转都可由如下的欧拉角组合获得(还有一种四元数旋转法，便于做叉乘)：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557849.png" alt="img"></p>
+<p>任意旋转还可以使用如下的旋转公式，a是角度，n是任意向量，如果向量方向相同起始点不同，旋转结果会不同，所以此处默认向量过原点：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151557590.jpg" alt="img"> </p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-games101-2-Linear_algebra"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/05/02/games101-2-Linear_algebra/"
+    >games101-2-Linear_algebra</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/05/02/games101-2-Linear_algebra/" class="article-date">
+  <time datetime="2023-05-02T07:40:24.000Z" itemprop="datePublished">2023-05-02</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/games101/">games101</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h4><h5 id="向量基础知识"><a href="#向量基础知识" class="headerlink" title="向量基础知识"></a>向量基础知识</h5><p>向量（矢量）：方向和长度，不关心绝对开始位置，只要A和B的相对位置不变，平移后还是相同向量。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345796.jpg" alt="img"> </p>
+<p>向量的长度：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345918.png" alt="img"></p>
+<p>单位向量（只关心方向不关心长度），将向量的每一个分量除以长度，也叫向量的标准化：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345145.png" alt="img"></p>
+<p>向量操作：平行四边形法则和三角形法则（三角形法则也可以适用于多个向量首尾相连）。向量相加是将每个对应的分量分别相加，相减同理。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102348907.png" alt="image-20230510234841798" style="zoom: 67%;" /> 
+
+<p>向量的代数表示：将向量放入直角坐标系，X、Y为相互垂直的两个单位向量。用该方法向量就可以用x、y两个数表示，如下向量用4、3表示。将向量放入坐标系可以更方便的计算向量的长度。如向量（4，3）默认是过原点的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345025.jpg" alt="img"> </p>
+<p>图形学上默认向量是列向量：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345976.jpg" alt="img"> </p>
+<p>列向量转置和向量的长度计算：<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345663.png" alt="img"> <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003014.png" alt="img"></p>
+<p>当把一个向量加&#x2F;减&#x2F;乘&#x2F;除一个标量，可以简单的把向量的每个分量分别进行该运算。数学上是没有向量与标量相加运算的，但是很多线性代数的库都对它有支持。向量取反就是将每一个分量取反。</p>
+<h5 id="向量的点乘"><a href="#向量的点乘" class="headerlink" title="向量的点乘"></a>向量的点乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345955.jpg" alt="img"> </p>
+<p>两个向量的点乘结果是一个数，点乘可以快速计算两个向量的夹角。例如两个单位向量点乘的结果就是他们夹角的余弦。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305110003951.png" alt="img">   <img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345064.png" alt="img"></p>
+<p>点乘的性质：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345765.jpg" alt="img"> </p>
+<p>点乘的代数计算（对应元素相乘，最后将所有乘积相加）：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345885.jpg" alt="img"> </p>
+<p>点乘的作用：</p>
+<p>（1）计算一个向量在另一个向量上的投影</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102345069.jpg" alt="img"> </p>
+<p>​		b向量在a向量上的投影的方向为a向量的方向，投影的大小为||b||cosθ，所以b向量在a向量上的投影为||b||cosθa，cosθ通过a向量和b向量的点乘获得。</p>
+<p>计算向量的投影可以对向量进行分解</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346329.jpg" alt="img"> </p>
+<p>（2）通过点乘结果的正负判断向量在前还是在后（方向基本一致，垂直或者相反），在图形学上通过点乘结果判断两个向量的接近程度。例如对于两个单位向量，如果这两个向量方向接近，则点乘结果接近1；如果方向垂直，点乘结果接近0；如果方向相反，点乘结果接近1.</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346910.jpg" alt="img"> </p>
+<h5 id="向量的叉乘"><a href="#向量的叉乘" class="headerlink" title="向量的叉乘"></a>向量的叉乘</h5><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346426.jpg" alt="img"> </p>
+<p>两个向量的叉乘结果是一个新向量，该向量垂直于原来两个向量所在的平面。新向量的大小为<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346743.png" alt="img">，新向量的方向通过右手螺旋定则确定。</p>
+<p>向量叉乘的性质如下，注意一个向量叉乘自己得到的是长度为0的向量，而不是0。两个向量的叉乘可以得到一个三维空间的坐标系（右手坐标系x叉乘y是正z是右手坐标系，opengl使用右手坐标系）:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102349505.png" alt="image-20230510234944416" style="zoom:80%;" /> 
+
+<p>向量叉乘的代数运算:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102350731.png" alt="image-20230510235008653"> </p>
+<p>向量叉乘的作用:</p>
+<p>（1）判断左右位置关系</p>
+<p>如下在X、Y平面，判断向量b在向量a的左侧还是右侧。计算向量a叉乘向量b，如果结果为正，则向量b在向量a在左侧，即a-b是逆时针；如果结果为负，则向量b在向量a在右侧，即a-b是顺时针。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554742.png" alt="image-20230515155411695" style="zoom:80%;" /> 
+
+<p>（2）判断内外</p>
+<p>如下三角形，ABC按照逆时针顺序输入。AB叉乘AP，结果为正，点p在AB左侧；BC叉乘BP，结果为正，点p在BC左侧；CA叉乘CP，结果为正，p在CA左侧；结论p在三角形内部。如果ABC按照顺时针顺序输入，如果p在三条边右侧，则p在三角形内部。所以不管顺时针还是逆时针输入，p如果在三角形内部，p必须在三条边的同一边。在三角形光栅化时，用该方法可以判断三角形覆盖哪些像素。如果叉乘结果为0，则自定义是否在三角形内部。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151554163.png" alt="image-20230515155440122" style="zoom:67%;" /> 
+
+<h5 id="在三维直角坐标系（右手坐标系）中进行向量分解"><a href="#在三维直角坐标系（右手坐标系）中进行向量分解" class="headerlink" title="在三维直角坐标系（右手坐标系）中进行向量分解"></a>在三维直角坐标系（右手坐标系）中进行向量分解</h5><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151555684.png" alt="image-20230515155508640" style="zoom: 67%;" /> 
+
+<p>以u为例，u为单位向量，长度为1，p在u的投影为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305102346580.png" alt="img"></p>
+<h5 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h5><p>N*M的矩阵：N行M列的矩阵</p>
+<p>数学上是没有矩阵与标量相加减的运算的，但是很多线性代数的库都对它有支持。矩阵与标量之间的加减就是将矩阵中每一个元素都与标量进行加减。矩阵与矩阵之间的加减就是两个矩阵对应元素的加减运算，所以总体的规则和与标量运算是差不多的，只不过在相同索引下的元素才能进行运算。</p>
+<p>矩阵数乘：将矩阵中的每一个数都与n相乘</p>
+<p>矩阵乘法：N<em>M的矩阵与M</em>P的矩阵相乘得到N*P的矩阵，结果矩阵元素Aij由第一个矩阵第i行乘以第二个矩阵第j列获得。</p>
+<p>矩阵乘法的性质：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550391.png" alt="image-20230515155028337" style="zoom:80%;" /> 
+
+<p>矩阵与向量相乘，一般默认向量在右侧，矩阵列数与向量行数相同：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151550865.png" alt="image-20230515155049820" style="zoom:67%;" /> 
+
+<p>矩阵的转置：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551322.png" alt="image-20230515155114282" style="zoom: 50%;" /> 
+
+<p>单位矩阵和逆矩阵:</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151551377.png" alt="image-20230515155143338" style="zoom:67%;" /> 
+
+<p>原矩阵乘以单位矩阵，相当于不对原矩阵不做任何操作.</p>
+<p>向量的点积和叉积可以转换成矩阵乘法（向量默认为列向量）：</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202305151552558.png" alt="image-20230515155234507" style="zoom:67%;" /> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-gl函数流程图"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/"
+    >gl函数流程图</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/04/17/gl%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B%E5%9B%BE/" class="article-date">
+  <time datetime="2023-04-17T01:33:58.000Z" itemprop="datePublished">2023-04-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>1.清除</p>
+<p>首先设置清除颜色缓冲区、深度缓冲区和模板缓冲区的值，这一步只是设置而并非真正的清除，每一个缓冲区的清除值都有默认值。之后调用glClear函数，通过设置参数，用上述设置的清除值清除指定的缓冲区。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934402.jpg" alt="img"> </p>
+<p>2.纹理贴图</p>
+<p>首先使用sgpugl_glGenTextures创建纹理对象，纹理对象的名称空间是无符号整数，纹理对象的名称仅限于在sgpugl_glGenTextures使用。sgpugl_glActiveTexture指定需要激活的纹理单元，之后的操作都在该纹理单元下进行（如果仅一个纹理单元默认为GL_TEXTURE0，可以指定多个纹理单元）。sgpugl_glBindTexture将纹理对象绑定在纹理目标上。如纹理对象texture1绑定在纹理单元GL_TEXTURE0下的纹理目标GL_TEXTURE_2D上。接下来的操作都是针对该纹理目标进行（一个纹理单元下可以有多个纹理目标）。sgpugl_glTexImage(12)D为该纹理目标指定纹理图片，生成纹理。sgpugl_glTexParameteri设置纹理参数，如环绕方式、过滤方式等。</p>
+<p>在绘制前需要指定激活的纹理单元。采样器的类型识别纹理单元上的纹理目标。例如，采样器类型为的sampler2D，则采样器会在先前指定的纹理单元上选择纹理目标TEXTURE_2D，进而对纹理进行采样。</p>
+<p>如下图是将三个纹理对象绑定在两个纹理单元下的三个纹理目标上，用其中一个纹理进行绘制的流程图。假如Draw前指定激活的纹理单元为GL_TEXTURE0，定位到红色区。假如着色器中采样器类型为的sampler2D，则定位到蓝色区域，找到对应纹理进行采样。</p>
+<p>其中绿色区域的函数可以用指定的数据修改纹理目标指定区域的内容。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934497.jpg" alt="img"> </p>
+<p>3.深度测试，多边形深度偏移</p>
+<p>用1中的方法清除深度缓冲区，此处以默认值为例。在进行深度测试前必须先用sgpugl_glEnable启用深度测试功能。顶点X,Y坐标会从标准化设备坐标经过视口变换变成窗口坐标。z值根据sgpugl_glDepthRange(f)设置的范围也会从标准化设备坐标映射到窗口坐标，两个范围参数都限制在[0,1]。光栅化之后深度测试之前，如果较多片元的深度相差非常小，例如在相同的深度上绘制两个重叠的三角形，会发生z-Fighting。因此需要使用sgpugl_glEnable启用偏移，再通过sgpugl_glPolygonOffset对绘制的片元的深度值（由顶点插值得到）进行整体偏移。深度测试时通过sgpugl_glDepthFunc设置深度缓冲比较函数，默认为GL_LESS,即当前绘制的片元深度如果小于深度缓冲对应位置的深度值，则将颜色值写入颜色缓冲（之后可能被覆盖或者混合），否则丢弃。保留片元的深度值是否更到深度缓冲，通过glDepthMask设置。最后根据情况关闭深度测试和偏移。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934544.jpg" alt="img"> </p>
+<p>4.颜色混合，Alpha测试</p>
+<p>如果要绘制完全透明的物体，可以将全透明物体的Alpha值设置为0，将不透明物体的Alpha值设置为1。利用sgpugl_glEnable启用透明测试，透明测试在模板测试之前。sgpugl_glAlphaFunc可以指定透明度测试函数，此处以CL_GREATER，预设值为0.1为例。如果当前绘制的片元的Alpha为0，小于预设值，片元被丢弃。如果当前绘制的片元的Alpha为1，大于预设值，则保留片元。通过保留和丢弃片元来实现完全透明的效果。最后根据情况关闭透明测试。透明测试还常用于去除纹理图白色背景。</p>
+<p>如果要绘制半透明物体，需要使用颜色混合（不透明物体直接颜色覆盖），该步骤在所有测试之后。绘制时要先绘制不透明物体（开启深度测试并允许深度写入）之后关闭深度写入，最后按照从远到近的顺序绘制半透明物体，不然可能会出现绘制错误。</p>
+<p>情况1：半透明物体A在不透明物体B后</p>
+<p>情况2：半透明物体A在不透明物体B前</p>
+<p>情况3：半透明物体A在半透明物体B前</p>
+<p>在情况1下，先绘制B再绘制A，且A不开启深度测试，不管A是否允许深度写入，A被遮挡的部分都会绘制出来。因此需要开启深度测试。在情况3下，先绘制A再绘制B，且A不禁止深度写入，B被遮挡的部分会被直接丢弃。因此需要禁止深度写入。在情况2下，假设先绘制A再绘制B，由于A禁止深度写入，B被遮挡的部分会绘制并覆盖A。因此需要先绘制不透明物体。在情况3下，先绘制A再绘制B，绘制B时，A为目标色B为源色；先绘制B再绘制A，绘制A时，B为目标色A为源色；根据混合算法的设置，这两次的结算结果可能不同。因此需要按照顺序绘制。</p>
+<p>利用sgpugl_glEnable启用颜色混合，sgpugl_glBlendFunc可以指定颜色混合方式，即如何将深度测试保留的片元颜色值与颜色缓冲区对应的已存在的颜色值进行计算得到新的颜色值。最后根据情况关闭颜色混合或再次开启深度写入。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934584.jpg" alt="img"> </p>
+<p>5.颜色填充</p>
+<p>可以使用sgpugl_glColorPointer或者sgpugl_glColor设置顶点颜色数据，在使用sgpugl_glColorPointer前需先开启顶点颜色属性。但是sgpugl_glColorPointer优先级高于sgpugl_glColor，当使用sgpugl_glColorPointer时，不管sgpugl_glColor使用在sgpugl_glolorPointer前还是后，最后绘制出的颜色为顶点颜色数组定义的颜色。sgpugl_glColor可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的颜色，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的颜色。sgpugl_glColorMask允许或禁⽌帧缓冲区某种通道的写⼊颜色缓冲。如果不允许R通道写入颜色缓冲，如果设置颜色为(1,0,1)紫色，最后绘制出来的会是(0,0,1)蓝色。注意如果着色模式不是平滑模式，则片元的颜色由图元的单个顶点得到。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934652.jpg" alt="img"> </p>
+<p>6.模板测试</p>
+<p>模板测试在深度测试之前。需要先清空模板缓冲区（清除值默认为0，每个值都为8位二进制，即有256种取值方式），并用sgpugl_glEnable启用模板测试。sgpugl_glStencilFunc设置模板测试的规则，如默认的“GL_ALWAYS，0, 0xFF”表示总是通过模板测试;下图中的“GL_NOTEQUAL，1，0xFF”表示如果片元对应模板缓冲的值不等于1，则通过模板测试。但是在比较之前，需要将模板缓冲的值和1分别与第三个参数0xFF进行与运算。sgpugl_glStencilOp设置如何更新模板缓冲，三个参数分别表示：模板测试失败时、模板测试通过但深度测试失败时及模板测试和深度测试都通过时采取的行为。如默认“GL_KEEP,GL_KEEP,GL_KEEP”表示无论测试结果如何，模板缓冲内的值都保持不变；下图中的“GL_KEEP,GL_KEEP,GL_REPLACE”表示当深度测试通过后，片元对应模板缓冲的值用sgpugl_glStencilFunc的第二个参数值代替。sgpugl_glStencilMask设置是否允许写入模板缓冲。如默认“0xFF”表示在写入模板缓冲之前，将写入的数和0xFF进行与运算（最后数保持原状，即允许写入）。如过设置“0x00”，写入的数会变成全0，即禁止写入，相当于sgpugl_glDepthMask（GL_FALSE）。也可以根据情况设置其他8位掩码。最后根据情况关闭模板测试。模板测试可用于绘制边框。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934268.jpg" alt="img"> </p>
+<p>7.多边形正面判断，正背面剔除</p>
+<p>在裁剪阶段，背面剔除用于绘制观察者所看到的面，不绘制看不到的面。这使得渲染的性能上可提高超过50%。gl按照如下方式区分图元的正面和背面： </p>
+<p>正面：顶点连接顺序按照逆时针</p>
+<p>背面：顶点连接顺序按照顺时针</p>
+<p>Sgpugl_glFrontFace可以修改上述规则。注意顶点连接的顺序是相对于观察者而言的。因此图元是否需要剔除，是顶点连接顺序和观察者位置共同决定的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934549.jpg" alt="img"> </p>
+<p>8.渲染上下文的创建和管理</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934751.jpg" alt="img"> </p>
+<p>9.裁剪测试</p>
+<p>裁剪测试在透明测试之前。先用sgpugl_glEnable启用裁剪测试，再用sgpugl_glScissor设置裁剪框，类似sgpugl_glViewport在窗口框出一块区域。但是sgpugl_glScissor是在裁剪框内的才进行绘制。sgpugl_glViewport相当于变相重置本次绘制的窗口，将所有需要绘制的物体映射在视口区域内。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934152.jpg" alt="img"> </p>
+<p>10.顶点数据、矩阵变换、裁剪和视口</p>
+<p>可以使用sgpugl_glVertexPointer或者在sgpugl_glBegin和sgpugl_glEnd中用sgpugl_glVertex设置顶点坐标数据，在使用sgpugl_glColorPointer前需先开启顶点坐标属性。</p>
+<p>顶点首先经过世界变换（M）从模型空间变到世界空间，再经过观察变换（V）从世界空间变到观察空间，之后经过投影变换（P）从观察空间变到齐次裁剪空间。其中投影变换有正交投影和透视投影（近大远小）。上述变换需要对顶点坐标进行矩阵变换，在此之前需要先设置矩阵MV矩阵和P矩阵。可以用sgpugl_glLoadMatrixf自定义当前矩阵，也可以先通过sgpugl_glLoadIdentity将当前矩阵变成单位矩阵，再通过平移、旋转、缩放或者乘以其他矩阵得到最终需要的矩阵。但是调用draw前需要切换到MV空间下。</p>
+<p>图元组装后进行裁剪，除了视锥体裁剪和背面剔除外，还可以通过sgpugl_glClipPlane设置裁剪平面进行图元裁剪，但是要先用sgpugl_glEnable启用裁剪平面。裁剪后对顶点坐标进行齐次除法即除以w使其变到NDC空间。最后通过视口变换将顶点坐标从NDC空间映射到视口区域的屏幕空间。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934683.jpg" alt="img"> </p>
+<p>11.光照模型</p>
+<p>使用光照模型需要提供顶点法线数据。物体的法线向量决定了它相对于光源的方向，从而计算顶点从光源接收的光线能量。可以使用sgpugl_glNormalPointer或者sgpugl_glNormal设置顶点法线数据，在使用sgpugl_glNormalPointer前需先开启顶点法线属性。sgpugl_glNormal可以对sgpugl_glVertexPointer定义的一组顶点数据设置统一的法线，也可以在sgpugl_glBegin和sgpugl_glEnd中对每个顶点设置单独的法线。</p>
+<p>下一步开始使用光照模型。先用sgpugl_glEnable(GL_LIGHTING)开启整体光照效果。使用sgpugl_glLightfv设置光源，即设置入射光。光源最多设置8个，从GL_LIGHT0到GL_LIGHT7，每个光源可以设置的参数如下图。其中光源位置分为方向性光源（平行光）和位置性光源（点光源），聚光灯光源方向到光源的常数衰减因子这6个属性都是针对位置性光源。用sgpugl_glEnable开启光源，如sgpugl_glEnable（GL_LIGHT0）。接下来使用sgpugl_glMaterialfv设置光照模型的材质参数，即设置材质颜色（材质颜色和光照颜色作用形成出射光）。由于物体有两面，材质可能不同，因此要先确定为哪一面设置材质，可以设置的材质参数如下图。最后用sgpugl_glLightModelfv设置光照模型，便于进行光照计算。光照模型的概念由下图所示4个部分组成。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934799.jpg" alt="img"> </p>
+<p>12.像素操作和帧缓冲区（更高版本的opengl基本不用这些）</p>
+<p>（1）sgpugl_glCopyPixels进行像素的复制操作，从帧缓冲区复制到帧缓冲区，不涉及内存，因此避免了显存与内存间格式转换的问题，并且加快了运算速度。该函数前四个参数表示复制像素来源的矩形的左下角坐标、宽度和高度，可以当作是在窗口确认了一块矩形区域，第五个参数用于确认复制的内容，通常使用GL_COLOR，表示复制像素的颜色，但也可以是GL_DEPTH（深度缓冲数据）或GL_STENCIL（模板缓冲数据）。通过sgpugl_glRasterPos2f设置像素绘制的起始位置，系统会将该起始位置转换成窗口坐标，之后将会从起始位置绘制出刚刚窗口上指定的矩形中的内容。</p>
+<p>（2）首先开辟一块内存空间。sgpugl_glReadPixels用于读取帧缓冲区的数据到内存，前四个参数同sgpugl_glCopyPixels，在窗口确认了一块矩形区域。第五个参数表示读取的内容，例如：GL_RGB就会依次读取像素的红、绿、蓝三种数据。第六个参数表示读取的内容保存到内存时所使用的格式，如GL_UNSIGNED_BYTE会把各种数据保存为GLubyte。第七个参数表示一个指针，即从帧缓冲区读取的数据保存在内存的位置。必要时可以使用sgpugl_glPixelStorei设置像素保存到内存时的对齐方式。通过sgpugl_glRasterPos2f设置像素绘制的起始位置(因此该函数比起sgpugl_glReadPixels少了第一个和第二个参数)，sgpugl_glDrawPixels将从内存读取数据到帧缓冲区，从起始位置绘制出刚刚窗口上指定的矩形中的内容。该绘制方法比起sgpugl_glCopyPixels速度较慢，因为整个过程是从显存-内存-显存，并且涉及格式转换问题。</p>
+<p>（3）sgpugl_glBitmap用于将位图数据绘制在屏幕，位图数据可以理解为0、1矩阵，为1则在屏幕的对应像素绘制、为0不绘制。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170938068.png" alt="image-20230417093822003"></p>
+<p>​		第（3）部分代码如下，glBitmap函数参数前两位定义了位图的宽、高，如图字符大小为12*8的方阵，每一行数据用8位16进制表示。注意位图数据总是按块存储，每块的位数总是8的倍数，但实际位图的宽并不一定使8的倍数。组成位图的位从位图的左下角开始画：首先画最底下的一行，然后是这行的上一行，依此类推。第三、四个参数指定了位图的原点，默认为左下角，向上和向右为正方向。第五、六个参数指定该在位图光栅化后光栅位置的增量，如下代码的意思是第二个字符F在第一个字符F的基础上分别向X正轴和Y正轴移动20个像素单位。 （不过试的时候发现glRasterPos2i(0, 0)才显示，glRasterPos2i(20, 20)不显示，所以不太清楚这里的坐标系）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304272020851.png" alt="image-20230427202027799"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GLubyte rasters[<span class="number">12</span>] = &#123;</span><br><span class="line">    <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xfc</span>,</span><br><span class="line">    <span class="number">0xfc</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xc0</span>, <span class="number">0xff</span>, <span class="number">0xff</span>&#125;;</span><br><span class="line"><span class="built_in">glColor3f</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>);<span class="comment">//必须放RasterPos2i前</span></span><br><span class="line"><span class="built_in">glPixelStorei</span>(GL_UNPACK_ALIGNMENT, <span class="number">1</span>); </span><br><span class="line"><span class="comment">//光栅位置坐标与glVertex()提供的坐标同样对待,位于视口以外的点的当前光栅位置无效</span></span><br><span class="line"><span class="built_in">glRasterPos2i</span>(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glBitmap</span>(<span class="number">8</span>, <span class="number">12</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">20.0</span>, <span class="number">20.0</span>, rasters);</span><br><span class="line"><span class="built_in">glBitmap</span>(<span class="number">8</span>, <span class="number">12</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,<span class="number">0.0</span>, rasters);</span><br></pre></td></tr></table></figure>
+<p>​		不过位图的宽高和实际给的位图数据也可能不同。</p>
+<img src="C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20230427203459953.png" alt="image-20230427203459953" style="zoom:50%;" />
+
+<p>13.图元绘制</p>
+<p>首先确定绘制的图元类型，注意gpugl_glDrawArrays和sgpugl_glBegin的图元参数不同。</p>
+<table>
+<thead>
+<tr>
+<th>图元类型</th>
+<th>gpugl_glDrawArrays是否有该参数</th>
+<th>sgpugl_glBegin是否有该参数</th>
+<th>流程图中对应类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GL_POINTS</td>
+<td>√</td>
+<td>√</td>
+<td>点</td>
+</tr>
+<tr>
+<td>GL_LINES</td>
+<td>√</td>
+<td>√</td>
+<td>线一类</td>
+</tr>
+<tr>
+<td>GL_LINE_LOOP</td>
+<td>√</td>
+<td>√</td>
+<td>线一类</td>
+</tr>
+<tr>
+<td>GL_LINE_STRIP</td>
+<td>√</td>
+<td>√</td>
+<td>线一类</td>
+</tr>
+<tr>
+<td>GL_TRIANGLES</td>
+<td>√</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_TRIANGLE_STRIP</td>
+<td>√</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_TRIANGLE_FAN</td>
+<td>√</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_POLYGON</td>
+<td>×</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_QUADS</td>
+<td>×</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+<tr>
+<td>GL_QUAD_STRIP</td>
+<td>×</td>
+<td>√</td>
+<td>三角形一类&#x2F;多边形</td>
+</tr>
+</tbody></table>
+<p>如果是绘制点可以用sgpugl_glPointSize(f)设置光栅化时一个点的直径，默认为1。如果绘制线，可以用sgpugl_glLineWidth设置直线宽度，默认为1。</p>
+<p>直线可以用点画模式进行绘制。首先通过sgpugl_glEnable开启点画模式。sgpugl_glLineStipple设置点画的方式，其参数是由0、1组成的16位模式序列和重复因子，从模式低位开始，如果模式中的位是1，直线中对应像素就被绘制，否则就不绘制（如果直线长度大于16位则不断重复上述规则）。重复因子用来扩展模式，如模式中如果出现3个1会被扩展成个6个1。如果没有启用点画线功能，模式默认为OxFFFF、重复因子为1。多边形也可以用点画模式进行绘制。首先通过sgpugl_glEnable开启点画模式。sgpugl_glPolygonStipple设置点画的方式，其参数是一个指向32<em>32的位图指针，可以理解为32</em>32的0、1矩阵，通过GLubyte数组自定义（128个2位16进制序列）。从每个序列低位开始，模式中的位是1，多边形中对应像素就被绘制，否则就不绘制（如果多边形像素大于32*32则不断重复上述规则）。</p>
+<p>sgpugl_glShadeModel用于设置平滑着色或者恒定着色。注意除了GL_POLYGON以外，恒定着色图元中片元的颜色为图元最后一个顶点的颜色，而GL_POLYGON下图元中片元的颜色为图元第一个顶点的颜色。</p>
+<p>设置完上述所有后即可调用绘制函数，注意sgpugl_glDrawElements除了需要顶点数据以外，还需要索引数据。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304170934468.jpg" alt="img"> </p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-X11窗口_glfw_链接"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/"
+    >X11窗口、glfw和链接</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/04/03/X11%E7%AA%97%E5%8F%A3_glfw_%E9%93%BE%E6%8E%A5/" class="article-date">
+  <time datetime="2023-04-03T02:08:23.000Z" itemprop="datePublished">2023-04-03</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h4 id="文件区分"><a href="#文件区分" class="headerlink" title="文件区分"></a>文件区分</h4><p>​		glut跨平台窗口库；glfw跨平台窗口库（glut替代版）；glut和glfw封装了Window的窗口管理系统，linux的窗口管理系统和创建上下文等（这些操作在每个系统上不同，所以该文件将其封装使得我们可以直接使用）。它提供了一些渲染物体所需的最低限度的接口。它允许用户创建OpenGL上下文、定义窗口参数以及处理用户输入。</p>
+<p>  GL&#x2F;gl.h是基本的OpenGL标头，可提供OpenGL-1.1函数和令牌声明，甚至更多。对于超过1.1版的任何内容，都必须使用OpenGL扩展机制。由于这是一项枯燥而乏味的任务，因此GLEW项目已将其自动化，该项目将所有细节打包在一个易于使用的库中。该库的声明位于头文件GL&#x2F;glew.h中，该文件隐含了常规的OpenGL标头，因此在包含GL&#x2F;glew.h时，不再需要包含GL&#x2F;gl.h，包含该头文件可以使用gl,glu,glext,wgl,glx里的全部函数。glad.h与glew.h作用相同，可以看作其升级版。这两个头文件使用时要放在glfw3.h 或者glut.h文件之前。gl3w.h和glad.h作用类似。</p>
+<h4 id="glfw和上下文"><a href="#glfw和上下文" class="headerlink" title="glfw和上下文"></a>glfw和上下文</h4><p>​		除了窗口创建，glfw还封装了上下文创建。glfw可以用elg和glx创建上下文，egl可以支持gl、es和vukan，glx支持gl扩展支持es。glfw系统库为高版本3.3.2，可以在应用程序中对glfw进行配置。如下代码希望在运行gl程序使用glx的上下文，在运行es程序使用egl的上下文。其实在glfwinit的时候已经默认使用glx的上下文，支持gl和es了，所以在if(casetype&#x3D;&#x3D;”gl”)后不需要显示指定，也可以保证在运行gl程序使用glx的上下文，并且支持es。不过为了使得运行es程序使用egl的上下文，需要设置GLFW_CONTEXT_CREATION_API和GLFW_CLIENT_API，注释如下。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( !<span class="built_in">glfwInit</span>() )</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">fprintf</span>( stderr, <span class="string">&quot;Failed to initialize GLFW\n&quot;</span> );</span><br><span class="line">	<span class="built_in">getchar</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(casetype==<span class="string">&quot;gl&quot;</span>)&#123;</span><br><span class="line">    <span class="comment">//采样</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_SAMPLES, <span class="number">4</span>);</span><br><span class="line">    <span class="comment">//版本</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">2</span>);</span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MINOR, <span class="number">1</span>);</span><br><span class="line">    <span class="comment">//opengl模式</span></span><br><span class="line">	<span class="built_in">glfwWindowHint</span>(GLFW_OPENGL_PROFILE, 			GLFW_OPENGL_COMPAT_PROFILE);</span><br><span class="line">    <span class="comment">//用户不能调节窗口大小</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_RESIZABLE, GL_FALSE);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_SAMPLES, <span class="number">16</span>);</span><br><span class="line">    <span class="comment">//上下文指定egl</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_CREATION_API, 	GLFW_EGL_CONTEXT_API);</span><br><span class="line">    <span class="comment">//API使用opengl es</span></span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MAJOR, <span class="number">3</span>);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_CONTEXT_VERSION_MINOR, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">glfwWindowHint</span>(GLFW_RESIZABLE, GL_FALSE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​		GLFW_OPENGL_PROFILE用于指定opengl模式，opengl es无该模式。opengl模式有COMPAT和COREl两种，CORE抛弃了部分用法，如果想兼容，使用COMPAT会少很多问题。</p>
+<p>​	在如上代码中，如果程序以gl-es-gl的顺序运行，在运行到es时，进入else使用egl创建上下文，调用es的API；之后运行最后一个gl时，进入if，由于if中没有显示指定上下文和调用的API，因此还是会使用egl创建上下文，调用es的API。</p>
+<p>​		在低版本的glfw文件中，链接的不是系统库而是用户自己指定的库，不能在应用程序设置，而是通过Cmakelists.txt设置，如下，通过ON和OFF设置是否使用egl创建上下文。</p>
+<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304121622378.png" alt="image-20230412162211136" style="zoom:67%;" />
+
+<p>​		egl用于关联原生窗口，创建上下文，通过eglBindAPI指定使用gl还是es，与平台无关(窗口-egl-API)。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eglBindAPI</span>(EGL_OPENGL_ES_API);<span class="comment">//绑定ES的API</span></span><br><span class="line"><span class="built_in">eglBindAPI</span>(EGL_OPENGL_API);<span class="comment">//绑定GL的API</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="X11窗口"><a href="#X11窗口" class="headerlink" title="X11窗口"></a>X11窗口</h4><p>1、在linux中，“X11”指的是“X Window System”，是图形化窗口管理系统。因此调用X11使得窗口可以在linux上运行，不能在windows上运行。</p>
+<p>2、使用API时，gl.h头文件中只有函数声明，需要链接到函数实现，glfw已经封装了函数链接，如果直接用X11创建窗口需要在Makefile手动链接。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBS=-lX11 -lXext -lEGL -lGL //链接GL</span><br></pre></td></tr></table></figure>
+
+<p>3、X11窗口创建的部分函数和窗口监听</p>
+<p>​		创建窗口前先打开与server 的连接。在程序可以使用display 之前，必须先建立一个和X server 的连接。这个连接建立以后，就可以使用Xlib 的函数或宏定义来获得display 的信息了。当参数设置为NULL时，为默认的display环境变量。这个函数返回一个指向display类型结构的指针，表明与X server建立了连接，并且包含了X server的所有信息，可以使用display之上所有窗口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Display *display = XOpenDisplay(NULL);</span><br></pre></td></tr></table></figure>
+
+<p>​		在进行了一些配置参数配置后，使用如下两个函数创建窗口（参数含义以及创建窗口前的配置流程暂时未知）。函数返回创建的窗口的ID，并使得X server产生一个CreateNotify 事件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XCreateWindow</span><br><span class="line">XCreateSimpleWindow</span><br></pre></td></tr></table></figure>
+
+<p>​		X是一个服务器–客户端的结构。由服务器向客户端发送事件信息，让客户端知道发生了什么事情，然后客户端告诉服务器它感兴趣的是什么事情，也就是说，客户端会对那些事件产生反应。如下函数用于客户端告诉服务器窗口会对哪些事情有响应。StructureNotifyMask 即改变窗口状态，比如尺寸，位置等，对应事件ConfigureNotify；ExposureMask 对应事件Expose ；KeyPressMask 即键盘响应对应事件KeyPress。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XSelectInput(display, win,ExposureMask|StructureNotifyMask);</span><br></pre></td></tr></table></figure>
+
+<p>​		创建窗口之后，窗口并不能显示出来，需要调用如下函数来 画窗口让它显示。如果这个窗口有父窗口，那么在所有父窗口没有画出来之前，这个窗口即使用了这个函数，也是不能显示出来的。必须等所有父窗口都显示了，这个窗口才能画。X server产生一个MapNotify事件。客户端已经有相应操作了，绘制窗口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XStoreName (display, win, &quot;gears&quot;);//设置窗口名</span><br><span class="line">XMapWindow(display, win);</span><br></pre></td></tr></table></figure>
+
+<p>​		进入窗口事件循环，获得事件，处理或丢弃。接收到的事件由XNextEvent 函数从消息队列里获得，把事件放到event.type 里并从队列里删除该消息 。当队列为空也就是没有下一个事件被接收时，程序就一直停留在XNextEvent里直到有下一个事件，无法执行之后的步骤。因此可以使用XPending(display)在有事件的时候响应事件，没有事件的时候在窗口上绘制。如果窗口的信息改变了，就需要XFlush 函数让窗口重画，但XNextEvent函数会隐式地调用XFlush。在opengl绘制函数的部分，glClearColor设置窗口颜色后，需要用</p>
+<p>​		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</p>
+<p>​		用上述指定颜色初始化颜色缓存，使用默认值初始化深度缓存，再利用函数</p>
+<p>​		eglSwapBuffers(mContext.eglDisplay, mContext.eglSurface);才能显示在窗口（此处以egl配置上下文为例）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">XEvent myevent;</span><br><span class="line">while (1) &#123;       </span><br><span class="line">      if (XPending(display)) &#123;</span><br><span class="line">       XNextEvent(display, &amp;myevent);</span><br><span class="line">       switch(myevent.type) &#123;</span><br><span class="line">       case ClientMessage:&#123;</span><br><span class="line">       &#125;</span><br><span class="line">       case ConfigureNotify:&#123;</span><br><span class="line">       &#125;&#125;&#125;</span><br><span class="line">     /*opengl绘制函数*/</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>​		关闭窗口事件（若窗口关闭则打印信息）</p>
+<pre><code>//while循环外
+Atom deleteAtom = XInternAtom(display, &quot;WM_DELETE_WINDOW&quot;, False);
+XSetWMProtocols(display, win, &amp;deleteAtom, 1);
+//while循环内
+ case ClientMessage:&#123;
+       if ((unsigned)myevent.xclient.data.l[0] == deleteAtom)&#123;
+           printf(&quot;X WINDOW DELETED\n&quot;);
+           return 0;
+       &#125;
+   &#125;
+</code></pre>
+<p>​		窗口改变事件</p>
+<p>​		如下函数通过代码人为改变并重新设置窗口，因此一直存在ConfigureNotify事件。</p>
+<pre><code>const unsigned int mask = CWWidth | CWHeight;
+XWindowChanges changes;
+int newWidth = 128, newHeight = 128;
+changes.width = newWidth;
+changes.height = newHeight;
+XConfigureWindow(display, win, mask, &amp;changes);
+</code></pre>
+<p>​    	如下函数获取由外部事件对窗口产生的变化并改变viewport，使得绘制的图像根据窗口的变化变化，在外部事件发生时才存在ConfigureNotify事件。</p>
+<pre><code>case ConfigureNotify:&#123;
+    reshape(myevent.xconfigure.width,myevent.xconfigure.height); 
+    break;
+&#125;
+</code></pre>
+<p>​	  Expose 事件可能用于绘制和显示，在opengl绘制部分外部可以添加case Expose 。</p>
+<p>​	  退出窗口时，需要关闭和X server 的连接，于是也就销毁了相关资源，关闭了窗口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XDestroyWindow(display, win);</span><br><span class="line">XCloseDisplay(display)；</span><br></pre></td></tr></table></figure>
+
+<p>参考链接：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/rufanchen_/article/details/7640584">https://blog.csdn.net/rufanchen_&#x2F;article&#x2F;details&#x2F;7640584</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/okgogo2000/p/4322753.html">https://www.cnblogs.com/okgogo2000/p/4322753.html</a></p>
+<h4 id="源文件-gt-可执行文件过程"><a href="#源文件-gt-可执行文件过程" class="headerlink" title="源文件-&gt;可执行文件过程"></a>源文件-&gt;可执行文件过程</h4><p>1.预处理：包括删除注释、宏扩展、#include文件包含等。预处理后生成.i文件。</p>
+<p>2.编译：由编译器完成，检查语法及语义，生成错误或警告。编译后生成汇编语言.s文件。</p>
+<p>3.汇编：将汇编文件翻译成机器码指令（二进制），将指令打包形成.o目标文件。</p>
+<p>4.链接：完成调用的各种函数、静态库和动态库的链接，从函数原型链接到函数实现。形成.exe文件。</p>
+<h4 id="Linux平台下cmake和make的区别"><a href="#Linux平台下cmake和make的区别" class="headerlink" title="Linux平台下cmake和make的区别"></a>Linux平台下cmake和make的区别</h4><p>Makefile编译规则文件。</p>
+<p>make通过Makefile文件自动化批量处理编译，将源文件变成最终的可执行文件（包含gcc的功能）。</p>
+<p>不同平台的Makefile文件不同，cmake作为跨平台编译工具可以将CMakeLists.txt文件转化为所需要的Makefile文件</p>
+<h4 id="Cmake"><a href="#Cmake" class="headerlink" title="Cmake"></a>Cmake</h4><p>window平台下利用Cmake软件代替Linux下的cmake命令，用编译器如vs代替Linux下的make命令。</p>
+<p>Cmake软件将cmake分为两步：</p>
+<p>1.Configure：配置，生成需要的文件夹及准备文件</p>
+<p>2.Generate：根据CMakeLists.txt生成工程文件。如果编译器选择vs，则生成vs工程文件，如果是Linux，则生成Makefile。生成vs工程文件，同Linux生成Makefile文件，都是规定了编译规则。</p>
+<p>最后由vs执行工程，即执行make。</p>
+<h4 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h4><p>1.区别</p>
+<p>​		使用封装好的库函数十分方便并且十分高效，库分为静态库和动态库。</p>
+<table>
+<thead>
+<tr>
+<th align="center">库类型</th>
+<th align="center">windows</th>
+<th align="center">linux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">静态库</td>
+<td align="center">.lib</td>
+<td align="center">.a</td>
+</tr>
+<tr>
+<td align="center">动态库</td>
+<td align="center">.dll</td>
+<td align="center">.so</td>
+</tr>
+</tbody></table>
+<p>​		当程序与静态库链接时，静态库中所包含的所有函数方法都会被拷贝到最终的可执行文件中去。这就会导致最终生成的可执行代码量相对变多，相当于编译器将代码补充完整了。编译后的可执行程序不需要静态库，因为所有使用的函数都已经被编译进去了。这种方式会让程序运行起来相对快一些，不过也会有个缺点: 占用磁盘和内存空间，导致可执行程序过大。另外，静态库会被添加到和它链接的每个程序中去, 而且这些程序运行时, 都会被加载到内存中，无形中又多消耗了更多的内存空间。  与动态库链接的可执行文件只包含它需要的函数方法的引用表，而不是所有的函数代码，只有在程序执行时, 那些需要的函数代码才会被拷贝到内存中。这样就使可执行文件比较小, 节省磁盘空间，更进一步，操作系统使用虚拟内存，使得一份动态库驻留在内存中被多个程序使用，也同时节约了内存。不过由于运行时要去链接库会花费一定的时间，执行速度相对会慢一些。如果要修改的刚好是库函数的话，在接口不变的前提下，使用动态库的程序只需要将动态库重新编译就可以了，而使用静态库的程序则需要将静态库重新编译好后，将程序再重新编译一遍。</p>
+<p>2.两种链接</p>
+<p>​		现在源程序main.cpp链接库sub,sub链接库add</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*add.h */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ADD_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ADD_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*add.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;add\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*sub.h*/</span>v</span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _SUB_H_</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _SUB_H_</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">----------------------------------------------------------</span><br><span class="line"><span class="comment">/*sub.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sub</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sub\n&quot;</span>);</span><br><span class="line">    <span class="built_in">add</span>();</span><br><span class="line">&#125;</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"><span class="comment">/*main.c*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;sub.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">sub</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c add.c</span><br><span class="line">gcc -c sub.c</span><br></pre></td></tr></table></figure>
+
+<p>​		首先生成的文件：sub.o ，add.o，无论是静态库文件还是动态库文件，都是由 .o 文件创建。使用-c不会链接、生成可执行文件，只会预处理、编译和汇编。</p>
+<p>（1）静态库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ar cr libadd.a add.o</span><br><span class="line">ar cr libsub.a sub.o </span><br></pre></td></tr></table></figure>
+
+<p>​		ar：静态函数库创建的命令</p>
+<p>​		-c :create创建</p>
+<p>​		库文件的命名规范是以lib开头（前缀），紧接着是静态库名，以 .a 为后缀名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
+
+<p>​		-L ：指定函数库查找的位置，’.’表示在当前目录下查找</p>
+<p>​		-l：指定函数库名，其中的lib和.a(.so)省略。</p>
+<p>​		-o:链接，生成可执行文件，指名生成的可执行文件名</p>
+<p>​	  使用静态库内部函数，只需要在使用到这些函数的源程序中包含这些函数的原型声明（头文件），然后在用gcc命令生成可执行文件时指明静态库名，gcc将会从静态库中将函数拷贝到可执行文件中。gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。在程序main.c中，包含了静态库的头文件sub.h，然后在主程序main中直接调用函数sub()即可。生成可执行文件后静态库可以不再需要。</p>
+<p>​		注意：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub </span><br><span class="line">gcc -o main main.c -L . –l add -L . –l sub</span><br></pre></td></tr></table></figure>
+
+<p>​		都会发生sub无法链接到add导致sub中的函数undefined reference to，因此链接顺序不能变，而且用main链接sub和add即可，不需要单独写一行sub链接add。</p>
+<p>（2）动态库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -o add.o -c add.c</span><br><span class="line">gcc  -fPIC  -o sub.o -c sub.c</span><br><span class="line">gcc -shared -o libadd.so add.o</span><br><span class="line">gcc -shared -o libsub.so sub.o</span><br></pre></td></tr></table></figure>
+
+<pre><code>     -fpic:产生代码位置无关代码,则产生的代码中，没有绝对地址，全部使用相对地址，故而代码可以被加载器加载到内存的任意位置，都可以正确的执行。这正是共享库所要求的，共享库被加载时，在内存的位置不是固定的。
+</code></pre>
+<p>​		-shared ：生成共享库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main main.c -L . –l sub -L . –l add</span><br></pre></td></tr></table></figure>
+
+<p>​		.&#x2F;执行时会发生如下报错：</p>
+<pre><code>     error while loading shared libraries:libmymath.so: cannot open shared object file: No such file or directory
+</code></pre>
+<p>​		原因如下：</p>
+<p>​		gcc -o 链接器工作于链接阶段，工作时需要-l指定库名和-L指定库路径。如果在指定库路径没有找到库，会发生</p>
+<p>undefined reference to的报错，导致可执行文件无法生成。但是有时不会发生该报错，可以对make添加-WL -Z DEFS编译选项，在生成可执行文件前找到该错误。</p>
+<p>​		.&#x2F;运行可执行程序时还需要动态链接器，工作于程序运行阶段，工作时需要提供动态库所在目录位置。该目录与上述-L指定的路径不同，动态链接器去固定位置（通过环境变量）查找动态库，如果找不到就会报错，所以需要先将动态库的工作目录加入到环境变量中。一般会去默认的动态库搜索路径&#x2F;usr&#x2F;lib查找，可以将.so文件复制到&#x2F;usr&#x2F;lib中来解决上述报错。</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ldd exe 查看可执行程序运行时链接的动态库</span><br></pre></td></tr></table></figure>
+
+<p>​		如果在源文件的头文件中使用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​		则之后会默认链接到&#x2F;usr&#x2F;lib下的系统库（库名&#x3D;&gt;目录）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120856844.png" alt="image-20230412085632785"></p>
+<p>​		在项目文件中添加一个新文件夹，使用自定义的glfw库文件。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120901444.png" alt="image-20230412090145388"></p>
+<p>​		头文件会链接到自己的库文件而不是系统的库文件。编译源文件时，需要将glfw文件一起编译，因此需要修改源文件的Cmakelist.txt文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_subdirectory(external) </span><br></pre></td></tr></table></figure>
+
+<p>​		cmake会通过源文件的Cmakelist.txt找到external目录下的Cmakelist.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include_directories（external/glfw-3.1.2/include/GLFW）</span><br></pre></td></tr></table></figure>
+
+<p>​		向工程添加多个特定的头文件搜索路径，添加该行后源文件的头文件部分可以改成</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;glfw3.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​		如果包含头文件后，没有找到external目录下的Cmakelist.txt，无法生成自己的库文件，最后还是会链接到系统库。如果glfw文件编译链接成功，最后就会链接到自己的库。在Cmakelist.txt或者其他文件中指明了动态链接库的搜索位置，因此不会去默认的路径&#x2F;usr&#x2F;lib。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120915237.png" alt="image-20230412091529196"></p>
+<h4 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h4><p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202304120919388.png" alt="image-20230412091902342"></p>
+<p>​		可以用如下方式调试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ gdb 可执行程序名</span><br><span class="line">(gdb) b 函数名 //设置断点，运行到该函数暂停</span><br><span class="line">(gdb) run //运行到第一个断点暂停</span><br><span class="line">(gdb) c	//继续运行到下一个断点暂停</span><br><span class="line">(gdb) quit //退出gdb环境</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
+  id="post-计算着色器"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/"
+    >计算着色器</a> 
+</h2>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/03/14/%E8%AE%A1%E7%AE%97%E7%9D%80%E8%89%B2%E5%99%A8/" class="article-date">
+  <time datetime="2023-03-14T01:35:48.000Z" itemprop="datePublished">2023-03-14</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>计算着色器是在GPU上运行的，是在普通渲染管线之外的着色器程序。计算着色器是完全用于计算任意信息的着色器阶段。虽然它可以进行渲染，但它通常用于与绘制三角形和像素没有直接关系的任务。利用GUP的快速计算和并行性，可以用于处理大量的计算。</p>
+<p>opengl4.3才开始支持计算着色器，opengl es是3.1才开始支持计算着色器。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 320 es</span></span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">local_size_x</span> = <span class="number">1</span>) <span class="keyword">in</span>; </span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">rgba32f</span>, <span class="keyword">binding</span> = <span class="number">0</span>) <span class="keyword">uniform</span> <span class="keyword">readonly</span> <span class="keyword">mediump</span> <span class="type">imageBuffer</span> po_buffer;</span><br><span class="line"><span class="keyword">layout</span> (<span class="keyword">rgba32f</span>, <span class="keyword">binding</span> = <span class="number">1</span>) <span class="keyword">uniform</span> <span class="keyword">writeonly</span> <span class="keyword">mediump</span> <span class="type">imageBuffer</span> po_buffer1;</span><br><span class="line"><span class="type">void</span> main()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//此处全局工作组和本地工作组yz均为1，因此可以通过x确定位置</span></span><br><span class="line">    <span class="type">int</span> pos = <span class="type">int</span>(<span class="built_in">gl_GlobalInvocationID</span>.x);</span><br><span class="line">    <span class="type">vec4</span> value = <span class="built_in">imageLoad</span>(po_buffer, pos);</span><br><span class="line">    value.x = value.x+<span class="number">0.4</span>;</span><br><span class="line">    value.y = value.y+<span class="number">0.4</span>;</span><br><span class="line">    <span class="built_in">imageStore</span>(po_buffer1, pos, value); </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>binding与之后glBindImageTexture的第一个参数相同，通过ID绑定对应的tbo，而tbo绑定对应的buffer。相当于通过绑定知道从哪个buffer读取数据，从哪个buffer写入数据。因为此处是读取buffer所以使用imageBuffer，如果是数组的话可能使用image2D。es需要指定精度，所以添加mediump。同时因为需要读取的是rgba而不是r（如果只设置r，value就无法读取y值），所以需要指定readonly和writeonly。但是在opengl4.3中不需要指定精度，并且读写可以在一个buffer中进行。</p>
+<p>imageLoad从buffer的指定位置读取数据，imageStore将值写入buffer的指定位置。</p>
+<p>计算着色器任务以组为单位进行执行，称为工作组。拥有邻居的工作组被称为本地工作组（局部）, 这些组可以组成更大的组，称为全局工作组，而全局工作组通常作为执行命令的一个单位。计算着色器会被全局工作组中每一个本地工作组中的每一个单元调用一次，工作组的每一个单元称为工作项，每一次调用称为一次执行。执行的单元之间可以u通过变量和显存进行通信（不同工作组不能通信），且可执行同步操作保持一致性（单个工作组内可以并行）。</p>
+<p>如下例子假设全局工作组yz轴都为1 ，局部工作组只有xy：</p>
+<p>gl_LocalInvocationID.x × local_size_y+gl_LocalInvocationID.y+local_size_x×local_size_y×gl_WorkGroupID.x&#x3D;gl_GlobalInvocationID.x×local_size_y×y轴的工作组个数+gl_GlobalInvocationID.y</p>
+<p>local_size是本地工作组的大小，有xyz三个维度，不设置默认为1。gl_WorkGroupID本地工作组在全局工作组的索引（从0开始），local_size_x×local_size_y本地工作组的大小（该大小尽量与硬件匹配），gl_LocalInvocationID工作项在本地工作组的坐标（从0开始）。gl_GlobalInvocationID：在全局工作组中，当前工作项所在位置。（在es中imageLoad后的pos只能使用int，所以可以设置本地工作组和全局工作组yz均为1，这样可以只使用gl_GlobalInvocationID.x就可以遍历到所有数据，否则可以通过上述公式计算。）本地工作组的大小×全局工作组的大小-&gt;所有需要遍历的数据</p>
+<p>与普通着色器一样正常链接</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">computeShader = LoadShader(GL_COMPUTE_SHADER, cShaderStr);</span><br><span class="line">compute_prog = glCreateProgram();</span><br><span class="line"><span class="keyword">if</span> (compute_prog == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">glAttachShader(compute_prog, computeShader);</span><br><span class="line">glLinkProgram(compute_prog);</span><br></pre></td></tr></table></figure>
+<p> 将顶点数据arraybuffer与texbuffer绑定</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">glGenBuffers(<span class="number">1</span>, &amp;po_buffer);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, po_buffer);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vVertices), vVertices, GL_DYNAMIC_COPY);</span><br><span class="line"></span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;po_buffer1);</span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, po_buffer1);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vVertices),vVertices, GL_DYNAMIC_COPY);</span><br><span class="line"></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;po_tbo);</span><br><span class="line">glBindTexture(GL_TEXTURE_BUFFER, po_tbo);</span><br><span class="line">glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, po_buffer);</span><br><span class="line"></span><br><span class="line">glGenTextures(<span class="number">1</span>, &amp;po_tbo1);</span><br><span class="line">glBindTexture(GL_TEXTURE_BUFFER, po_tbo1);</span><br><span class="line">glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, po_buffer1);</span><br></pre></td></tr></table></figure>
+<p>先使用计算着色器，绑定tbo和id，GL_READ_WRITE设置读写权限（如果计算着色器规定了这里可以就设置读写,opengl因为读写可以在一个buffer进行因此一定要设置可读可写）。glDispatchCompute的三个参数设置了全局工作组的大小，三个参数可以理解为xyz方向各有几个本地工作组。glMemoryBarrier是隔断作用，为了保证计算着色器中纹理像素全部写入完成才进行下一步。最后使用渲染着色器进行绘制。如果至使用一次计算着色器的话，可以不用vao，渲染着色器默认使用writeonly的buffer。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glUseProgram(userData-&gt;compute_prog);</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glDispatchCompute(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);</span><br><span class="line">vao(po_tbo1配置数据与tbo1绑定)</span><br></pre></td></tr></table></figure>
+<p>如果要进行类似transformfeedback的操作，进行累加变换，需要交换读写tbo。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(flag)&#123;</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">vao(po_tbo配置数据与tbo绑定)</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">glBindImageTexture(<span class="number">1</span>, po_tbo, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">glBindImageTexture(<span class="number">0</span>, po_tbo1, <span class="number">0</span>, GL_FALSE, <span class="number">0</span>, GL_READ_WRITE, GL_RGBA32F);</span><br><span class="line">vao1(po_tbo1配置数据与tbo1绑定)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+   
+</article>
+
+    
+    <article
   id="post-webgl基础"
   class="article article-type-post"
   itemscope
@@ -633,432 +1339,6 @@
 <h3 id="光照pass"><a href="#光照pass" class="headerlink" title="光照pass"></a>光照pass</h3><h4 id="基本设置"><a href="#基本设置" class="headerlink" title="基本设置"></a>基本设置</h4><p>此处有点光源和平行光两种光源，混合这两种光源类型，因为每个光源都由自己的draw调用处理。在正向渲染中，我们积累了FS中所有光源的结果，但现在每个FS调用只处理一个光源。在我们的例子中，我们将混合方程设置为GL_FUNC_ADD。这意味着GPU只需添加源和目标。因为我们想要真正的加法，所以将源和目标的混合函数设置为gluOne。结果是：1<em>src+1</em>dst。哦，我们需要在做这件事之前启用混合。。。在处理好混合后，我们将G缓冲区设置为读取</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glEnable</span>(GL_BLEND);</span><br><span class="line"><span class="built_in">glBlendEquation</span>(GL_FUNC_ADD);</span><br><span class="line"><span class="built_in">glBlendFunc</span>(GL_ONE, GL_ONE);</span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span><br></pre></td></tr></table></figure>
 <h4 id="点光源"><a href="#点光源" class="headerlink" title="点光源"></a>点光源</h4> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-三维拾取"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/"
-    >三维拾取</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/27/%E4%B8%89%E7%BB%B4%E6%8B%BE%E5%8F%96/" class="article-date">
-  <time datetime="2023-01-27T14:56:03.000Z" itemprop="datePublished">2023-01-27</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>​	让每一个像素都有自己独特的索引，当鼠标点击时获取鼠标点击处的像素和像素索引（一般glReadPixels函数是获取鼠标点击处的指定的数据，比如说3d拾取就选择获取rgb颜色数据 ，但是此处并不是真正的获取颜色数据，而是在颜色纹理中填充的是三元索引，所以从颜色纹理中获取的是三元索引），就可知道点击的像素属于哪个对象 ，就可以知道点击到了哪个对象。</p>
-<p>​	通过创建帧缓冲， 将三元索引代替每个顶点像素的颜色rgb存储进入帧缓冲的颜色缓冲，从而使像素位置和索引相对应。这样在点击的时候就可以知道点击到了哪个索引。</p>
-<p>三元索引：</p>
-<ol>
-<li>第一级是像素所在物体的索引值，场景中的每一个物体都会得到一个唯一的索引；</li>
-<li>物体的draw call的索引，这个索引会在开始渲染新物体时重置；</li>
-<li>每个draw call中图元的索引值，每次新的draw call开始时该索引会重置；</li>
-</ol>
-<h4 id="拾取阶段"><a href="#拾取阶段" class="headerlink" title="拾取阶段"></a>拾取阶段</h4><p>把模型相应数据传进拾取着色器，绘制一遍模型，把相应的顶点和索引绘制进帧缓冲。</p>
-<h5 id="step1-创建帧缓冲，绑定颜色和深度纹理"><a href="#step1-创建帧缓冲，绑定颜色和深度纹理" class="headerlink" title="step1:创建帧缓冲，绑定颜色和深度纹理"></a>step1:创建帧缓冲，绑定颜色和深度纹理</h5><p>把模型的各个顶点放入帧缓冲的深度纹理，把模型的对象索引，绘制索引，原始索引放入帧缓冲的颜色纹理。下面只显示了基于阴影贴图init代码（只用了深度纹理）后添加的部分：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//注意颜色纹理的参数设置GL_RGB32F、GL_RGB</span></span><br><span class="line">    <span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;pickingTexture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, pickingTexture);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB32F, <span class="number">1024</span>, <span class="number">1024</span>,<span class="number">0</span>, GL_RGB, GL_FLOAT, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//将此纹理附加到FBO的GL_COLOR_ATTACHMENT0目标，这将使其成为片段着色器输出的目标。</span></span><br><span class="line">	<span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,pickingTexture, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glDrawBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//重置读取缓冲区和帧缓冲区</span></span><br><span class="line">    <span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="step2-拾取着色器"><a href="#step2-拾取着色器" class="headerlink" title="step2:拾取着色器"></a>step2:拾取着色器</h5><p>顶点着色器进行正常的MVP变换，片段着色器代码如下：</p>
-<p>​	在同一次绘图调用中对象索引和绘图索引对于所有像素都是相同的，因此它们来自统一的变量。为了获得原始索引，使用内置变量gl_PimitiveID（渲染过程中的图元数量）。这是系统自动维护的原语的运行索引。系统在绘图开始时将gl_PimitiveID重置为零。这使得很难区分“背景”像素和实际被对象覆盖的像素。为了克服这个问题，在将索引写入输出之前先将其递增一。这意味着可以识别背景像素，因为它们的图元ID为零，而对象覆盖的像素具有1…n作为图元ID。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line">uniform uint gDrawIndex;</span><br><span class="line">uniform uint gObjectIndex;</span><br><span class="line">out vec3 FragColor;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FragColor = <span class="built_in">vec3</span>(<span class="built_in">float</span>(gObjectIndex), <span class="built_in">float</span>(gDrawIndex),<span class="built_in">float</span>(gl_PrimitiveID + <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="step3-写入帧缓冲"><a href="#step3-写入帧缓冲" class="headerlink" title="step3:写入帧缓冲"></a>step3:写入帧缓冲</h5><p>主循环中：开启拾取帧缓冲-开启拾取着色器-把模型相应数据传进拾取着色器-绘制一遍模型-恢复默认缓冲</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_DRAW_FRAMEBUFFER, fbo);</span><br><span class="line"><span class="comment">/*绘制图形*/</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="绘制阶段"><a href="#绘制阶段" class="headerlink" title="绘制阶段"></a>绘制阶段</h4><p>如果左键点击了，获取鼠标点击处的像素的三元索引（此处将点击处改成了光标位置处）<br>如果该像素不是背景，通过得到的该像素的绘制索引和原始索引绘制出相应片段（此处将绘制出相应片段改成了设置不同的颜色）</p>
-<h5 id="step1-从点击的像素中获取三元索引"><a href="#step1-从点击的像素中获取三元索引" class="headerlink" title="step1:从点击的像素中获取三元索引"></a>step1:从点击的像素中获取三元索引</h5><p>​	函数参数为鼠标点击的屏幕上的xy坐标。要读取FBO，必须将其绑定到GL_read_FRAMEBUFFER目标。然后需要使用函数glReadBuffer（）指定从哪个颜色缓冲区读取，原因是FBO可以包含多个颜色缓冲区。函数glReadPixels执行实际读取，它使用左下角（第一对参数）和宽度&#x2F;高度（第二对参数）指定的矩形，并将结果读入最后一个参数给出的地址，此处矩形的大小是一个纹素。因为需要原始数据，因此使用GL_RGB作为格式，使用GL_FLOAT作为类型。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">PixelInfo</span> &#123;</span><br><span class="line">	<span class="type">float</span> ObjectID;<span class="type">float</span> DrawID;<span class="type">float</span> PrimID;</span><br><span class="line">	<span class="built_in">PixelInfo</span>() &#123;ObjectID = <span class="number">0.0f</span>;DrawID = <span class="number">0.0f</span>;PrimID = <span class="number">0.0f</span>;&#125;&#125;;</span><br><span class="line"><span class="function">PixelInfo <span class="title">ReadPixel</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> x, <span class="type">unsigned</span> <span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, fbo);</span><br><span class="line">	<span class="built_in">glReadBuffer</span>(GL_COLOR_ATTACHMENT0);</span><br><span class="line">	PixelInfo Pixel;</span><br><span class="line">	<span class="built_in">glReadPixels</span>(x, y, <span class="number">1</span>, <span class="number">1</span>, GL_RGB, GL_FLOAT, &amp;Pixel);</span><br><span class="line">    <span class="comment">//必须重置读取缓冲区和帧缓冲区</span></span><br><span class="line">	<span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">	<span class="built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">return</span> Pixel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="step2-绘制"><a href="#step2-绘制" class="headerlink" title="step2:绘制"></a>step2:绘制</h5><p>​	此处绘制一个物体正方体，但是利用不同的MVP矩阵将其draw两次。两次的gObjectIndex都为0，第一次draw的DrawIndex是0，第二次draw的DrawIndex是1。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glUniform1ui</span>(gObjectIndexID, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">glUniform1ui</span>(gDrawIndexID, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-<p>glfwGetCursorPos获取窗口上光标的位置，存入xy中。注意y轴的计算方式：height-int(y)+1(屏幕y轴与世界空间的y轴相反)。通过如下代码：如果光标在第一个物体的第一个三角形，则为红色；第一个物体的第二个三角形，则为墨绿色；如果光标在第二个物体的第一个三角形，则为蓝色；第二个物体的第二个三角形，则为灰色；光标不在物体上则为绿色。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">glfwGetCursorPos</span>(window,&amp;x,&amp;y);</span><br><span class="line">PixelInfo Pixel = <span class="built_in">ReadPixel</span>(<span class="built_in">int</span>(x), <span class="number">768</span>-<span class="built_in">int</span>(y)+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (Pixel.PrimID != <span class="number">0</span>) &#123;</span><br><span class="line">	glm::uint a = (uint)Pixel.DrawID;</span><br><span class="line">	glm::uint b = (uint)Pixel.PrimID;</span><br><span class="line">	<span class="keyword">if</span> (a == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(b == <span class="number">1</span>)&#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (a == <span class="number">1</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">1</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">		<span class="keyword">if</span> (b == <span class="number">2</span>) &#123;<span class="built_in">glColor4f</span>(<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>);&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="built_in">glColor4f</span>(<span class="number">0.0f</span>, <span class="number">0.4f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="真正绘制阶段"><a href="#真正绘制阶段" class="headerlink" title="真正绘制阶段"></a>真正绘制阶段</h4><p>主循环中正常绘制，使物体显示在屏幕。</p>
-<p>效果：</p>
-<table>
-<thead>
-<tr>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281856762.png" alt="img"></th>
-<th><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857280.png" alt="image-20230128185721248"></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857475.png" alt="image-20230128185707432"></td>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857155.png" alt="image-20230128185729121"></td>
-</tr>
-<tr>
-<td><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301281857598.png" alt="image-20230128185734563"></td>
-<td></td>
-</tr>
-</tbody></table>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-实例渲染"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/"
-    >实例渲染</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/26/%E5%AE%9E%E4%BE%8B%E6%B8%B2%E6%9F%93/" class="article-date">
-  <time datetime="2023-01-26T07:52:06.000Z" itemprop="datePublished">2023-01-26</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>假设想渲染一个有一支庞大军队经过的场景，要用一个士兵的模型渲出成千上万的士兵大军。一种方法是每次绘制一个士兵都调用一次draw call，并更新当前士兵相关的一致变量（位置、尺寸等）。例如，每个士兵都处于不同的位置，每个士兵都可以更高或者更矮尺寸不一等。因此，每次draw call都要更新当前士兵模型的WVP矩阵，这样开销会很大。</p>
-<p>实例渲染：一个实例就是要渲染的模型在场景的一次实际出现，这里例子中就是一个士兵。实例化渲染意味着可以在一次draw call中渲染多个实例，并为每个实例提供其特有的属性。</p>
-<p>方法1：在一个单独的顶点缓冲VB中定义实例的属性（例如：WVP矩阵）。通常顶点处理器会逐顶点每次处理一个顶点数据，有了存放实例数据的顶点缓冲VB后，定点处理器在每次处理一个顶点时要等所有顶点都已经被绘制，存有实例数据的VB提供的属性数据是针对所有顶点公共的。(第一种是将实例数据作为顶点属性传递)</p>
-<p>方法2：使用一个内置的叫做gl_InstanceID的shader变量，它是用来告诉当前的实例索引index的。我们可以根据这个索引值来定位一致变量数组中对应的实例数据来进行相应的渲染操作。</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271615735.png" alt="image-20230127161506622" style="zoom:50%;" />
-
-<p>这里有一个包含100个顶点的模型，每个顶点都有位置、法线、纹理坐标属性，三个属性中每个属性都有他们自己的顶点缓冲。另外，还有第四个顶点缓冲buffer存放着三个WVP矩阵。先使用第一个WVP矩阵应用到100个顶点pos位置的绘制上，然后再使用第二个WVP矩阵绘制一遍，然后再使用第三个绘制，并且这个过程是在一个draw call中实现的，而不是三个。WVP矩阵会作为输入参数传送到顶点处理器中，但由于第四个VB被标记为存有实例数据，所以WVP矩阵在所有顶点绘制完之前是不会变化的。</p>
-<p>cpp文件：</p>
-<p>​	由于WVP矩阵是一个4x4矩阵，不能仅为其启用一个顶点属性，因为顶点属性最多只能包含4个浮点或整数。因此需要启用和配置4个连续顶点属性的循环。每个属性将包含矩阵中的一个向量（第一个属性1包含三个MVP矩阵的第一个向量，第二个属性2包含三个MVP矩阵的第二个向量……）。四个属性中的每一个都由四个浮点组成，一个矩阵中的属性与下一个矩阵之间的距离是4x4矩阵的大小，因此一共占了1、2、3、4顶点属性。</p>
-<p>​	glVertexAttribDivisitor（）函数使其成为实例数据而不是顶点数据。它采用两个参数：第一个是顶点数组属性，第二个参数告诉OpenGL在实例化渲染过程中属性前进的速度。默认情况下，除数为零。如果除数是10，这意味着前10个实例将使用缓冲区中的第一条数据，接下来的10个实例会使用第二条数据。此处希望每个实例都有一个专用的WVP矩阵，因此使用1的除数。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建存储了3个MPV矩阵的顶点属性数组，glm::mat4类型</span></span><br><span class="line"><span class="type">static</span> glm::mat4 WVPMats[] = &#123;MVP1,MVP2,MVP3&#125;;</span><br><span class="line"><span class="comment">//创建并绑定缓冲区</span></span><br><span class="line">GLuint MVPbuffer;</span><br><span class="line"><span class="built_in">glGenBuffers</span>(<span class="number">1</span>, &amp;MVPbuffer);</span><br><span class="line"><span class="built_in">glBindBuffer</span>(GL_ARRAY_BUFFER, MVPbuffer);</span><br><span class="line"><span class="built_in">glBufferData</span>(GL_ARRAY_BUFFER, <span class="built_in">sizeof</span>(glm::mat4)* <span class="number">3</span>, WVPMats, GL_DYNAMIC_DRAW);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">	<span class="built_in">glEnableVertexAttribArray</span>(<span class="number">1</span> + i);</span><br><span class="line">	<span class="built_in">glVertexAttribPointer</span>(<span class="number">1</span> + i, <span class="number">4</span>, GL_FLOAT, GL_FALSE, <span class="built_in">sizeof</span>(glm::mat4),</span><br><span class="line">		(<span class="type">const</span> GLvoid*)(<span class="built_in">sizeof</span>(GLfloat) * i * <span class="number">4</span>));</span><br><span class="line">	<span class="built_in">glVertexAttribDivisor</span>(<span class="number">1</span> + i, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>该函数的唯一变化是将实例数作为第四个参数。</p>
-<p>对于（i&#x3D;0；i&lt;NumInstance；i++）</p>
-<p>如果（i mod除数&#x3D;&#x3D;0）</p>
-<p>从带有实例数据的VBs中获取属性i&#x2F;除数</p>
-<p>对于（j&#x3D;0；j&lt;NumVertices；j++）</p>
-<p>从带有顶点数据的VBs获取属性j</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawArraysInstanced</span>(GL_TRIANGLES, <span class="number">0</span>, <span class="number">36</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
-
-<p>顶点着色器中：</p>
-<p>不再将WVP和世界矩阵作为统一变量，而是将它们作为顶点属性。VS不关心它们的值只会在每个实例中更新一次，而不会在每个顶点中更新。WVP矩阵占据位置1-4。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 330</span></span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">0</span>) in vec3 Position;</span><br><span class="line"><span class="built_in">layout</span> (location = <span class="number">1</span>) in mat4 MVP;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    gl_Position = MVP * <span class="built_in">vec4</span>(Position, <span class="number">1.0</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用第二种方法</p>
-<p>顶点着色器</p>
-<p>​	gl_InstanceID是一个内置变量，仅在VS中可用。由于计划在FS中使用它，因此必须在此处访问它，并在常规输出变量中传递它。gl_InstanceID的类型是整数，因此使用相同类型的输出变量。由于光栅化器无法对整数进行插值，必须将输出变量标记为“flat”。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flat out int InstanceID;</span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  InstanceID = gl_InstanceID;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>片段着色器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#version 330</span><br><span class="line">flat in int InstanceID;</span><br><span class="line">out vec4 FragColor;</span><br><span class="line">vec4 gColor[4] = &#123;</span><br><span class="line">	vec4(0.5, 0.0, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.5, 0.0,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.5,0.0),</span><br><span class="line">	vec4(0.0, 0.0, 0.0,0.0)</span><br><span class="line">&#125;;</span><br><span class="line"> void main()</span><br><span class="line"> &#123;  </span><br><span class="line"> FragColor = gColor [InstanceID % 4];</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>效果如下：</p>
-<img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301271722256.png" alt="image-20230127172248210" style="zoom:50%;" /> 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-法线贴图"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/"
-    >法线贴图</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/25/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/" class="article-date">
-  <time datetime="2023-01-25T09:16:14.000Z" itemprop="datePublished">2023-01-25</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>表面光滑的法线：在三角形的三个顶点法向量之间进行平滑插值来得到三角形上每个点的法向量。</p>
-<p>法线贴图：从‘法线贴图’上进行采样得到对应的法线方向，表面上的所有法向量都是可以被计算并且存储在法线贴图中。在片段着色器阶段进行光照计算的时候，每个像素的特定法线也是根据纹理坐标采样来获取使用。</p>
-<p>切线空间：坐标系需要三个正交单位向量。物体表面确定了原法线后会有多个切线X和副切线Y，由于新法线是2D纹理的的一部分，而2D纹理有两个正交单位向量U和V，因此通常做法是将X分量对应到U轴（Tangent），而Y分量对应到V轴在（Bitangent），将切线方向与纹理空间对齐。由原法线、与纹理空间对齐的切线和副切线组成的矩阵是TBN矩阵，该矩阵向量定义的坐标系是切线空间。</p>
-<p>法线纹理：对于新法线，即使是在非常凹凸不平的表面，仍然认为法线的方向是从纹理朝外的。在切线空间定义法向量，并存储在纹理的RGB文素中。Z分量主导的一个分量，X和Y分量只能起到让其略微倾斜的作用。将XYZ向量存储在RGB文素中会使得法线纹理偏蓝色。但是法线坐标[-1,1]需要变成rgb文素[0,1]。</p>
-<p>切线和副切线的计算：</p>
-<img src="https://pic4.zhimg.com/80/v2-f89f1ddfc04a94294520b57a43dbaf33_720w.webp" alt="img" style="zoom: 50%;" />
-
-<p>找到物体本地空间下的向量T（表示tangent）和B（表示bitangent），可以看到两个三角形边E1和E2可以写成T和B的线性组合：</p>
-<img src="https://pic1.zhimg.com/80/v2-ff93301c5fa92878ab35e0cea8eaa7e8_720w.webp" alt="img" style="zoom: 67%;" />
-
-<p>也可以写成下面的形式：</p>
-<img src="https://pic2.zhimg.com/80/v2-6b58b632273e1268377495c13ff15731_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>现在可以很容易的转换成矩阵公式的形式：</p>
-<img src="https://pic2.zhimg.com/80/v2-480cb4f3bff672a721db1c83b27e5241_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>现在想把矩阵转换到等式的右边，为此可以两边乘以上面标红的矩阵的逆矩阵：</p>
-<img src="https://pic3.zhimg.com/80/v2-78d0b4ac1486170ab44a968782960566_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>计算如下:</p>
-<img src="https://pic4.zhimg.com/80/v2-a217ef03cf87b58dc57e1fd857db5243_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>算出逆矩阵的值得到：</p>
-<img src="https://pic4.zhimg.com/80/v2-410d78592022a7307711cd67634974d7_720w.webp" alt="img" style="zoom:67%;" />
-
-<p>​	对每一个三角形执行上述过程，可以为每个三角形通过三角形的边和UV坐标计算出tangent向量和bitangent向量（对三角形的三个顶点来说这两个向量都是一样的）。通常的做法是为每一个顶点都保存一个tangent&#x2F;bitangent值，每个顶点的tangent&#x2F;bitangent值由共享这个顶点的所有三角面的平均tangent&#x2F;bitangent值确定（这与顶点法线是一样的）。这样做的原因是使整个三角面的效果比较平滑，防止相邻三角面之间的不平滑过渡。这个坐标系空间的第三个分量——法线分量，是tangent和bitangent的叉乘积。</p>
-<p>向着色器中将法线数组、切线数组和副切线数组作为顶点属性传入着色器，同时用GLuint类型变量加载法线纹理。</p>
-<p>在顶点着色器中新增代码：</p>
-<p>计算都摄像机空间中做，因为在这一空间中更容易获取片段坐标。使用3*3的模型视图矩阵乘T、B、N向量：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;</span><br><span class="line">vec3 vertexBitangent_cameraspace = MV3x3 * vertexBitangent_modelspace;</span><br><span class="line">vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;</span><br></pre></td></tr></table></figure>
-
-<p>这三个向量确定了TBN矩阵，此矩阵是从世界空间到MV下的切线空间的变换：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mat3 TBN = <span class="built_in">transpose</span>(<span class="built_in">mat3</span>(</span><br><span class="line">	vertexTangent_cameraspace,</span><br><span class="line">	vertexBitangent_cameraspace,</span><br><span class="line">	vertexNormal_cameraspace ));</span><br></pre></td></tr></table></figure>
-
-<p>利用它计算切线空间中的光线方向和视线方向：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LightDirection_tangentspace = TBN * LightDirection_cameraspace;</span><br><span class="line">EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;</span><br></pre></td></tr></table></figure>
-<p>在片段着色器中添加如下代码：</p>
-<p>先获取法线数据，从rgb的[0,1]变换到齐次坐标的[-1,1]，再进行归一化作为计算光照的n向量。由于该n向量是在切线空间计算的，因此为了保证计算都在同一个空间进行，需要在顶点着色器中相关参数TBN矩阵：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vec3 TextureNormal_tangentspace = normalize(texture( NormalTextureSampler, UV ).rgb*2.0 - 1.0);</span><br></pre></td></tr></table></figure>
-
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-阴影贴图"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/"
-    >阴影贴图</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/18/%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE/" class="article-date">
-  <time datetime="2023-01-18T08:24:53.000Z" itemprop="datePublished">2023-01-18</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h4 id="将深度信息渲染到纹理"><a href="#将深度信息渲染到纹理" class="headerlink" title="将深度信息渲染到纹理"></a>将深度信息渲染到纹理</h4><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301061632501.png" alt="image-20230106163202431" style="zoom:67%;" />
-
-<p>​		首先从光源的角度来看，光源是位于左上角并且指向立方体。看图中A，B，C这3个点。当B被渲染时，它的深度值进入深度缓冲区，因为在B和光源之间没有任何东西，默认它是那条线上离光源最近的点。然而当A和C被渲染的时候，它们在深度缓冲区的同一个点上“竞争”。两个点都在同一条来自光源的直线上，所以在透视投影后，光栅器发现这两个点需要去往屏幕上的同一个像素，则C点的深度值被写入了深度缓存中。</p>
-<p>step1:创建纹理作为阴影图</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;depthTexture);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="comment">//GL_DEPTH_COMPONENT：每个纹素放一个单精度浮点数用于存放已经标准化后的深度值 0：暂时不提供数据</span></span><br><span class="line"><span class="built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="number">0</span>, GL_DEPTH_COMPONENT16, <span class="number">1024</span>, <span class="number">1024</span>, <span class="number">0</span>, GL_DEPTH_COMPONENT, GL_FLOAT, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//过滤</span></span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);</span><br><span class="line"><span class="built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);</span><br></pre></td></tr></table></figure>
-
-<p>step2:创建配置帧缓冲</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glGenFramebuffers</span>(<span class="number">1</span>, &amp;FramebufferName);</span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//GL_DEPTH_ATTACHMENT:附着在上面的纹理收到深度测试的结果,0：一个层级</span></span><br><span class="line"><span class="built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>step3：相关设置</p>
-<p>​	禁止向颜色缓存中写入，只输出深度，默认情况下，颜色缓存会被绑定在GL_COLOR_ATTACHMENT0上，此使的帧缓冲不包含纹理缓冲区，最后确认帧缓冲的状态完整。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDrawBuffer</span>(GL_NONE);</span><br><span class="line"><span class="built_in">glReadBuffer</span>(GL_NONE);</span><br><span class="line">GLuint error = <span class="built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER);</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
-<p>step4：在缓冲绘制图像</p>
-<p>本次绘制不要片段着色器，但一定要开启深度测试（此处以点光源的mvp为例）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将图像绘制进帧缓冲而不是显示在屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, FramebufferName);</span><br><span class="line"><span class="comment">//从光源的角度观察，计算mvp</span></span><br><span class="line">glm::vec3 lightInvDir = glm::<span class="built_in">vec3</span>(<span class="number">0.5f</span>, <span class="number">2</span>, <span class="number">-2</span>);</span><br><span class="line"><span class="function">glm::vec3 <span class="title">lightPos</span><span class="params">(<span class="number">5</span>, <span class="number">20</span>, <span class="number">20</span>)</span></span>;</span><br><span class="line">glm::mat4 depthP = glm::<span class="built_in">perspective</span>&lt;<span class="type">float</span>&gt;(<span class="number">45.0f</span>, <span class="number">1.0f</span>, <span class="number">2.0f</span>, <span class="number">50.0f</span>);</span><br><span class="line">glm::mat4 depthV = glm::<span class="built_in">lookAt</span>(lightPos, lightPos-lightInvDir, glm::<span class="built_in">vec3</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>));</span><br><span class="line">glm::mat4 depthM = glm::<span class="built_in">mat4</span>(<span class="number">1.0</span>);</span><br><span class="line">glm::mat4 depthMVP = depthP * depthV * depthM;</span><br><span class="line"><span class="comment">//正常绘制图像</span></span><br><span class="line"><span class="comment">//回到默认帧缓冲，渲染到屏幕</span></span><br><span class="line"><span class="built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<h4 id="绘制物体"><a href="#绘制物体" class="headerlink" title="绘制物体"></a>绘制物体</h4><p>step5：在屏幕绘制图像</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将帧缓冲纹理作为正常纹理渲染</span></span><br><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_2D, depthTexture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//便于从齐次坐标[-1,1]变换到纹理坐标[0,1]</span></span><br><span class="line"><span class="function">glm::mat4 <span class="title">biasMatrix</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">             <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">			<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">1.0</span>)</span></span>;</span><br><span class="line"><span class="comment">//除了传入相机视角的MVP矩阵，还要传入光源视角的MVP矩阵</span></span><br><span class="line">glm::mat4 depthBiasMVP = biasMatrix * depthMVP;</span><br></pre></td></tr></table></figure>
-<p>step6：着色器文件（与上一次绘制不同的着色器）</p>
-<p>​	其次，从摄像机的角度于每一个像素，从深度缓冲区中取出相应的深度值，同时也计算这个像素到光源的距离。如果这两个深度值不同，意味着从光源看这个像素时有其他像素遮挡了它，这种情况下在颜色计算中要增加阴影因子来模仿阴影效果。</p>
-<p>(1)顶点着色器</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ShadowCoord = DepthBiasMVP * <span class="built_in">vec4</span>(position,<span class="number">1</span>);<span class="comment">//光源视角</span></span><br><span class="line">gl_Position =  MVP * <span class="built_in">vec4</span>(position,<span class="number">1</span>);<span class="comment">//相机视角</span></span><br></pre></td></tr></table></figure>
-
-<p>​	由于片段着色器将接收到的裁剪空间下的坐标看做一个标准的顶点属性，光栅化程序不会对其进行透视分割（只有传到gl_position变量中的顶点才会自动执行透视分割）。将这个向量除以其W分量手动透视分割；</p>
-<p>(2)片段着色器</p>
-<p>   从阴影贴图中获取深度数据的，将上面阴影贴图的深度值和当前像素的深度值进行比较，如果阴影贴图的深度值小，也就是阴影离相机近，那么就返回0.2作为阴影参数，反之就返回1.0表示没有阴影。bias是修复参数，仅用这一个参数还是会出现粗糙的阴影，还需要更多参数调整。<a target="_blank" rel="noopener" href="https://blog.csdn.net/linjf520/article/details/105380551/">https://blog.csdn.net/linjf520/article/details/105380551/</a></p>
-<pre><code>float bias = 0.005;
-float visibility=1.0;
-if ( texture2D( sampler, (ShadowCoord.xy/ShadowCoord.w) ).x  &lt;  (ShadowCoord.z-bias)/ShadowCoord.w )&#123;
-    visibility=0.2;
-&#125;
-</code></pre>
-<p>将阴影参数传进来并调整漫射光和镜面反射光的颜色值，环境光就不受阴影影响。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gl_FragColor.rgb = </span><br><span class="line">	 MaterialAmbientColor +</span><br><span class="line">	 visibility* MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +</span><br><span class="line">	 visibility*MaterialSpecularColor * LightColor * LightPower * <span class="built_in">pow</span>(cosAlpha,<span class="number">5</span>) / (distance*distance);</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.jsdelivr.net/gh/echo468/picgo@main/img/202301251330627.png" alt="image-20230125133010521"></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-   
-</article>
-
-    
-    <article
-  id="post-天空盒"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/"
-    >天空盒</a> 
-</h2>
- 
-
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/01/18/%E5%A4%A9%E7%A9%BA%E7%9B%92/" class="article-date">
-  <time datetime="2023-01-18T03:38:27.000Z" itemprop="datePublished">2023-01-18</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AE%9E%E4%B9%A0/">实习</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>​	天空盒子是一种让场景看上去更广阔无垠的一种视觉技术，用无缝对接的封闭纹理将摄像机的视口360度无死角的包裹起来。视角中除了真实模型的其他空余部分被封闭纹理所完全填充充当背景。</p>
-<p>​	天空盒子的一种实现方法是渲染一个巨大的正六面体封闭盒子纹理，并将相机置于中心，当摄像机移动的时候封闭纹理也跟着移动，所以看上去永远走不到场景中的视平线边缘。天空盒子技术除了用上面的立方体实现，还可以用球面来实现。</p>
-<p>​	这种纹理叫做立方体贴图(Cubemap)。为了从立方体贴图中采样，要采用3d纹理坐标而不是我们之前用的2d纹理坐标。纹理采样器将3d纹理坐标看做一个向量，找出该文素位于立方体的哪一个面上并从那个面上取出需要的文素。</p>
-<h4 id="创建纹理"><a href="#创建纹理" class="headerlink" title="创建纹理"></a>创建纹理</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> GLuint</span></span><br><span class="line"><span class="function"><span class="title">InitTextures</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    GLenum imgFormat;</span><br><span class="line">    GLuint texture;</span><br><span class="line">	<span class="built_in">glGenTextures</span>(<span class="number">1</span>, &amp;texture);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, texture);</span><br><span class="line"></span><br><span class="line">	GLint imgWidth, imgHeight;</span><br><span class="line">	GLubyte* image = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	image = <span class="built_in">LoadRGBImage</span>(TexFiles[<span class="number">0</span>], &amp;imgWidth, &amp;imgHeight, &amp;imgFormat);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, <span class="number">0</span>,</span><br><span class="line">        GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_X, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, <span class="number">0</span>,</span><br><span class="line">		GL_RGB, imgWidth, imgHeight, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, image);</span><br><span class="line">	<span class="built_in">free</span>(image);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);</span><br><span class="line">	<span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> texture;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>​	开始先创建一个纹理对象来加载cubemap纹理，这个对象绑定到了一个特殊的GL_TEXTURE_CUBE_MAP目标对象上。设置cubemap的六个面枚举：</p>
-<p>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_X<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_X<br>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_Y<br>​	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z<br>​	GL_TEXTURE_CUBE_MAP_POSITIVE_Z</p>
-<p>​	通过glTexImage2D()函数将资源数据传给OpenGL。cubemap加载解析结束后，设置过滤。（这里简化只加载了一张图片）</p>
-<h4 id="着色器文件"><a href="#着色器文件" class="headerlink" title="着色器文件"></a>着色器文件</h4><p>顶点着色器</p>
-<p>1.顶点着色器之后，光栅器将获得gl_Position向量，并进行透视分割以完成投影变换(将各分量除以W分量)。将Z分量设置成W分量的值可以保证透视分割后位置向量最终的Z分量值为1.0。Z分量为1意味着永远处于Z轴最远处，在深度测试中相对于其他物体模型天空盒子将永远处于劣势，因此天空盒子就总是作为其他物体的背景了，而其他物体会一直渲染在背景前面。</p>
-<p>2.使用天空盒子自身坐标系中顶点的原始坐标来作为3D纹理坐标。因为对cubemap纹理采样时是从中心发射一个向量到立方体盒子或者球面上的，因此盒子表面上点的坐标恰好就是纹理坐标。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v_Position=vertexPosition_modelspace;</span><br><span class="line">gl_Position =  MVP * <span class="built_in">vec4</span>(vertexPosition_modelspace,<span class="number">1</span>);</span><br><span class="line">gl_Position=gl_Position.xyww;</span><br></pre></td></tr></table></figure>
-<p>片段着色器</p>
-<p>使用’samplerCube’而不是’sampler2D’以获取cubemap的纹理。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uniform samplerCube myTextureSampler;</span><br><span class="line">gl_FragColor=<span class="built_in">textureCube</span>(myTextureSampler, v_Position);</span><br></pre></td></tr></table></figure>
-
-<h4 id="应用纹理"><a href="#应用纹理" class="headerlink" title="应用纹理"></a>应用纹理</h4><p>1.第一个要改变的是表面剔除模式。通常，会剔除掉背向相机看不到的三角形图元，而对于天空盒子来说，相机是置于盒子内部的，所以想看到盒子的内部而不是外部。用相反的OpenGL剔除模式,就要告诉OpenGL剔除去正面的三角形。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glEnable</span>(GL_CULL_FACE);<span class="comment">//开启表面剔除(默认背面剔除)</span></span><br><span class="line"><span class="built_in">glCullFace</span>(GL_FRONT);<span class="comment">//剔除正面实现</span></span><br></pre></td></tr></table></figure>
-<p>2.第二个要改变的是深度测试函数模式。默认是告诉OpenGL，输入的片元如果比存储的片元Z值小就认为赢得深度测试而被渲染，但是对于天空盒子，Z值总是最远的边界，如果深度测试函数模式设置为‘小于’，天空盒子会被裁剪掉，为了让盒子成为场景的一部分要将深度测试函数模式改为‘小于等于’。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glDepthFunc</span>(GL_LEQUAL);</span><br></pre></td></tr></table></figure>
-
-<p>3.计算WVP矩阵。对于天空盒子来说，世界坐标系的中心位于相机处，从而保证相机始终在天空盒子中心。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glm::mat4 V = glm::<span class="built_in">mat4</span>(glm::<span class="built_in">mat3</span>(<span class="built_in">getViewMatrix</span>()));<span class="comment">//天空盒v矩阵</span></span><br><span class="line">glm::mat4 V1 = <span class="built_in">getViewMatrix</span>();<span class="comment">//其他物体v矩阵</span></span><br></pre></td></tr></table></figure>
-<p>cubemap的纹理贴图绑定到纹理单元0号上,设置为GL_TEXTURE_CUBE_MAP</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glActiveTexture</span>(GL_TEXTURE0);</span><br><span class="line"><span class="built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, Texture);</span><br><span class="line"><span class="built_in">glUniform1i</span>(TextureID, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>最后还原原本的剔除模式和深度测试函数还原</p>
- 
       <!-- reward -->
       
     </div>
